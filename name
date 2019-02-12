@@ -1,0 +1,362 @@
+README.txt:  $ find . -type f -exec sed -i 's/jitsi/widget/g' {} \;
+README.txt:  $ find . -type f -exec sed -i 's/JITSI/WIDGET/g' {} \;
+README.txt:  $ find . -type f -exec sed -i '' 's/jitsi/widget/g' {} \;
+README.txt:  $ find . -type f -exec sed -i '' 's/JITSI/WIDGET/g' {} \;
+README.txt:  $ find . -depth -name '*jitsi*' -execdir bash -c 'mv -i "$1" "${1//jitsi/widget}"' bash {} \;
+README.txt:We encourage you to share your code and experience - visit http://moodle.org
+backup/moodle2/backup_jitsi_activity_task.class.php:// This file is part of Moodle - http://moodle.org/
+backup/moodle2/backup_jitsi_activity_task.class.php:require_once($CFG->dirroot . '/mod/jitsi/backup/moodle2/backup_jitsi_stepslib.php');
+backup/moodle2/backup_jitsi_activity_task.class.php:        $this->add_step(new backup_jitsi_activity_structure_step('jitsi_structure', 'jitsi.xml'));
+backup/moodle2/backup_jitsi_activity_task.class.php:        $base = preg_quote($CFG->wwwroot, '/');
+backup/moodle2/backup_jitsi_activity_task.class.php:        $search = '/('.$base.'\/mod\/jitsi\/index.php\?id\=)([0-9]+)/';
+backup/moodle2/backup_jitsi_activity_task.class.php:        $search = '/('.$base.'\/mod\/jitsi\/view.php\?id\=)([0-9]+)/';
+backup/moodle2/restore_jitsi_activity_task.class.php:// This file is part of Moodle - http://moodle.org/
+backup/moodle2/restore_jitsi_activity_task.class.php:require_once($CFG->dirroot . '/mod/jitsi/backup/moodle2/restore_jitsi_stepslib.php');
+backup/moodle2/restore_jitsi_activity_task.class.php:        $this->add_step(new restore_jitsi_activity_structure_step('jitsi_structure', 'jitsi.xml'));
+backup/moodle2/restore_jitsi_stepslib.php:// This file is part of Moodle - http://moodle.org/
+backup/moodle2/restore_jitsi_stepslib.php:        return $this->prepare_activity_structure($paths);
+backup/moodle2/restore_jitsi_stepslib.php:        $oldid = $data->id;
+backup/moodle2/restore_jitsi_stepslib.php:        $data->course = $this->get_courseid();
+backup/moodle2/restore_jitsi_stepslib.php:        if (empty($data->timecreated)) {
+backup/moodle2/restore_jitsi_stepslib.php:            $data->timecreated = time();
+backup/moodle2/restore_jitsi_stepslib.php:        if (empty($data->timemodified)) {
+backup/moodle2/restore_jitsi_stepslib.php:            $data->timemodified = time();
+backup/moodle2/restore_jitsi_stepslib.php:        if ($data->grade < 0) {
+backup/moodle2/restore_jitsi_stepslib.php:            $data->grade = -($this->get_mappingid('scale', abs($data->grade)));
+backup/moodle2/restore_jitsi_stepslib.php:        $newitemid = $DB->insert_record('jitsi', $data);
+backup/moodle2/restore_jitsi_stepslib.php:        $this->apply_activity_instance($newitemid);
+backup/moodle2/restore_jitsi_stepslib.php:     * Post-execution actions
+backup/moodle2/restore_jitsi_stepslib.php:        $this->add_related_files('mod_jitsi', 'intro', null);
+backup/moodle2/backup_jitsi_stepslib.php:// This file is part of Moodle - http://moodle.org/
+backup/moodle2/backup_jitsi_stepslib.php:        $userinfo = $this->get_setting_value('userinfo');
+backup/moodle2/backup_jitsi_stepslib.php:        $jitsi->set_source_table('jitsi', array('id' => backup::VAR_ACTIVITYID));
+backup/moodle2/backup_jitsi_stepslib.php:        $jitsi->annotate_files('mod_jitsi', 'intro', null);
+backup/moodle2/backup_jitsi_stepslib.php:        return $this->prepare_activity_structure($jitsi);
+classes/event/course_module_instance_list_viewed.php:// This file is part of Moodle - http://moodle.org/
+classes/event/course_module_viewed.php:// This file is part of Moodle - http://moodle.org/
+classes/event/course_module_viewed.php:        $this->data['objecttable'] = 'jitsi';
+db/access.php:// This file is part of Moodle - http://moodle.org/
+db/install.xml:<?xml version="1.0" encoding="UTF-8" ?>
+db/install.xml:    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+db/install.php:// This file is part of Moodle - http://moodle.org/
+db/upgrade.php:// This file is part of Moodle - http://moodle.org/
+db/upgrade.php: * here will all be database-neutral, using the functions defined in DLL libraries.
+db/upgrade.php:    $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
+db/upgrade.php:        if (!$dbman->field_exists($table, $field)) {
+db/upgrade.php:            $dbman->add_field($table, $field);
+db/upgrade.php:        if (!$dbman->field_exists($table, $field)) {
+db/upgrade.php:            $dbman->add_field($table, $field);
+db/upgrade.php:        if (!$dbman->field_exists($table, $field)) {
+db/upgrade.php:            $dbman->add_field($table, $field);
+db/upgrade.php:        if (!$dbman->field_exists($table, $field)) {
+db/upgrade.php:            $dbman->add_field($table, $field);
+db/upgrade.php:        if (!$dbman->field_exists($table, $field)) {
+db/upgrade.php:            $dbman->add_field($table, $field);
+db/upgrade.php:        if (!$dbman->index_exists($table, $index)) {
+db/upgrade.php:            $dbman->add_index($table, $index);
+db/uninstall.php:// This file is part of Moodle - http://moodle.org/
+grade.php:// This file is part of Moodle - http://moodle.org/
+index.php:// This file is part of Moodle - http://moodle.org/
+index.php: * This is a one-line short description of the file
+index.php:$course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
+index.php:    'context' => context_course::instance($course->id)
+index.php:$event->add_record_snapshot('course', $course);
+index.php:$event->trigger();
+index.php:$PAGE->set_url('/mod/jitsi/index.php', array('id' => $id));
+index.php:$PAGE->navbar->add($strname);
+index.php:$PAGE->set_title("$course->shortname: $strname");
+index.php:$PAGE->set_heading($course->fullname);
+index.php:$PAGE->set_pagelayout('incourse');
+index.php:echo $OUTPUT->header();
+index.php:echo $OUTPUT->heading($strname);
+index.php:    notice(get_string('nojitsis', 'jitsi'), new moodle_url('/course/view.php', array('id' => $course->id)));
+index.php:$usesections = course_format_uses_sections($course->format);
+index.php:$table->attributes['class'] = 'generaltable mod_index';
+index.php:    $strsectionname = get_string('sectionname', 'format_'.$course->format);
+index.php:    $table->head  = array ($strsectionname, $strname);
+index.php:    $table->align = array ('center', 'left');
+index.php:    $table->head  = array ($strname);
+index.php:    $table->align = array ('left');
+index.php:foreach ($modinfo->instances['jitsi'] as $cm) {
+index.php:        if ($cm->sectionnum !== $currentsection) {
+index.php:            if ($cm->sectionnum) {
+index.php:                $row[] = get_section_name($course, $cm->sectionnum);
+index.php:                $table->data[] = 'hr';
+index.php:            $currentsection = $cm->sectionnum;
+index.php:    $class = $cm->visible ? null : array('class' => 'dimmed');
+index.php:    $row[] = html_writer::link(new moodle_url('view.php', array('id' => $cm->id)),
+index.php:                $cm->get_formatted_name(), $class);
+index.php:    $table->data[] = $row;
+index.php:echo $OUTPUT->footer();
+lang/en/jitsi.php:// This file is part of Moodle - http://moodle.org/
+lib.php:// This file is part of Moodle - http://moodle.org/
+lib.php: * Example constant, you probably want to remove this :-)
+lib.php:    require_once($CFG->dirroot.'/mod/jitsi/locallib.php');
+lib.php:    if (empty($jitsi->timeopen)) {
+lib.php:        $jitsi->timeopen = 0;
+lib.php:    $jitsi->timecreated = time();
+lib.php:    $cmid       = $jitsi->coursemodule;
+lib.php:    $jitsi->id = $DB->insert_record('jitsi', $jitsi);
+lib.php:    return $jitsi->id;
+lib.php:    require_once($CFG->dirroot.'/mod/jitsi/locallib.php');
+lib.php:    $jitsi->timemodified = time();
+lib.php:    $jitsi->id = $jitsi->instance;
+lib.php:    $result = $DB->update_record('jitsi', $jitsi);
+lib.php: * and make sure there are up-to-date events created for each of them.
+lib.php:    require_once($CFG->dirroot . '/mod/jitsi/locallib.php');
+lib.php:        if (!$jitsis = $DB->get_records('jitsi')) {
+lib.php:        if (!$jitsis = $DB->get_records('jitsi', array('course' => $courseid))) {
+lib.php:        $cm = get_coursemodule_from_instance('jitsi', $jitsi->id);
+lib.php:        //jitsi_update_calendar($jitsi, $cm->id);
+lib.php:    if (! $jitsi = $DB->get_record('jitsi', array('id' => $id))) {
+lib.php:    $DB->delete_records('jitsi', array('id' => $jitsi->id));
+lib.php: * $return->time = the time they did it
+lib.php: * $return->info = a short text description
+lib.php:    $return->time = 0;
+lib.php:    $return->info = '';
+lib.php:    if ($scaleid and $DB->record_exists('jitsi', array('id' => $jitsiid, 'grade' => -$scaleid))) {
+lib.php:    if ($scaleid and $DB->record_exists('jitsi', array('grade' => -$scaleid))) {
+lib.php:    require_once($CFG->libdir.'/gradelib.php');
+lib.php:    $item['itemname'] = clean_param($jitsi->name, PARAM_NOTAGS);
+lib.php:    if ($jitsi->grade > 0) {
+lib.php:        $item['grademax']  = $jitsi->grade;
+lib.php:    } else if ($jitsi->grade < 0) {
+lib.php:        $item['scaleid']   = -$jitsi->grade;
+lib.php:    grade_update('mod/jitsi', $jitsi->course, 'mod', 'jitsi',
+lib.php:            $jitsi->id, 0, null, $item);
+lib.php:    require_once($CFG->libdir.'/gradelib.php');
+lib.php:    return grade_update('mod/jitsi', $jitsi->course, 'mod', 'jitsi',
+lib.php:            $jitsi->id, 0, null, array('deleted' => 1));
+lib.php:    require_once($CFG->libdir.'/gradelib.php');
+lib.php:    grade_update('mod/jitsi', $jitsi->course, 'mod', 'jitsi', $jitsi->id, 0, $grades);
+lib.php:    if ($context->contextlevel != CONTEXT_MODULE) {
+locallib.php:// This file is part of Moodle - http://moodle.org/
+locallib.php:     require_once($CFG->dirroot.'/calendar/lib.php');
+locallib.php:     $event->eventtype = 'open';
+locallib.php:     $event->type = CALENDAR_EVENT_TYPE_STANDARD;
+locallib.php:     $event->name = get_string('calendarstart', 'jitsi', $jitsi->name);
+locallib.php:     //$event->description = format_module_intro('jitsi', $jitsi, $cmid);
+locallib.php:     $event->courseid = $jitsi->course;
+locallib.php:     $event->groupid = 0;
+locallib.php:     $event->userid = 0;
+locallib.php:     $event->modulename = 'jitsi';
+locallib.php:     $event->instance = $jitsi->id;
+locallib.php:     $event->timestart = $jitsi->timeopen;
+locallib.php:     $event->visible = instance_is_visible('jitsi', $jitsi);
+locallib.php:     $event->timeduration = 0;
+mod_form.php:// This file is part of Moodle - http://moodle.org/
+mod_form.php:require_once($CFG->dirroot.'/course/moodleform_mod.php');
+mod_form.php:        $mform = $this->_form;
+mod_form.php:        $mform->addElement('header', 'general', get_string('general', 'form'));
+mod_form.php:        $mform->addElement('text', 'name', get_string('jitsiname', 'jitsi'), array('size' => '64'));
+mod_form.php:        if (!empty($CFG->formatstringstriptags)) {
+mod_form.php:            $mform->setType('name', PARAM_TEXT);
+mod_form.php:            $mform->setType('name', PARAM_CLEANHTML);
+mod_form.php:        $mform->addRule('name', null, 'required', null, 'client');
+mod_form.php:        $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+mod_form.php:        $mform->addHelpButton('name', 'jitsiname', 'jitsi');
+mod_form.php:        if ($CFG->branch >= 29) {
+mod_form.php:            $this->standard_intro_elements();
+mod_form.php:            $this->add_intro_editor();
+mod_form.php:        //$mform->addElement('static', 'label1', 'jitsisetting1', 'Your jitsi fields go here. Replace me!');
+mod_form.php:        //$mform->addElement('header', 'jitsifieldset', get_string('jitsifieldset', 'jitsi'));
+mod_form.php:        //$mform->addElement('static', 'label2', 'jitsisetting2', 'Your jitsi fields go here. Replace me!');
+mod_form.php:        //$this->standard_grading_coursemodule_elements();
+mod_form.php:        $mform->addElement('header', 'availability', get_string('availability', 'assign'));
+mod_form.php:        $mform->setExpanded('availability', true);
+mod_form.php:        $mform->addElement('date_time_selector', 'timeopen', $name, $options);
+mod_form.php:        //$mform->addHelpButton('allowsubmissionsfromdate', 'allowsubmissionsfromdate', 'assign');
+mod_form.php:        $this->standard_coursemodule_elements();
+mod_form.php:        $this->add_action_buttons();
+Binary file pix/icon.png matches
+pix/icon.svg:<?xml version="1.0" encoding="utf-8"?>
+pix/icon.svg:<!-- Generator: Adobe Illustrator 21.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+pix/icon.svg:	 id="svg3357" inkscape:version="0.48.5 r10040" sodipodi:docname="icon.svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:svg="http://www.w3.org/2000/svg"
+pix/icon.svg:	 style="enable-background:new 0 0 24 24;" xml:space="preserve">
+pix/icon.svg:	.st10{opacity:0.5522;fill:url(#path4224_1_);enable-background:new    ;}
+pix/icon.svg:<sodipodi:namedview  bordercolor="#666666" borderopacity="1.0" id="base" inkscape:current-layer="layer1" inkscape:cx="7.2480563" inkscape:cy="11.624032" inkscape:document-units="px" inkscape:grid-bbox="true" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:showpageshadow="false" inkscape:window-height="727" inkscape:window-maximized="1" inkscape:window-width="1366" inkscape:window-x="0" inkscape:window-y="19" inkscape:zoom="22.627417" pagecolor="#ffffff" showborder="true" showgrid="true">
+pix/icon.svg:		<inkscape:perspective  id="perspective5496" inkscape:persp3d-origin="372.04724 : 350.78739 : 1" inkscape:vp_x="0 : 526.18109 : 1" inkscape:vp_y="0 : 1000 : 0" inkscape:vp_z="744.09448 : 526.18109 : 1" sodipodi:type="inkscape:persp3d">
+pix/icon.svg:		<inkscape:perspective  id="perspective5347" inkscape:persp3d-origin="0.5 : 0.33333333 : 1" inkscape:vp_x="0 : 0.5 : 1" inkscape:vp_y="0 : 1000 : 0" inkscape:vp_z="1 : 0.5 : 1" sodipodi:type="inkscape:persp3d">
+pix/icon.svg:<sodipodi:namedview  bordercolor="#666666" borderopacity="1.0" id="base" inkscape:current-layer="layer1" inkscape:cx="375" inkscape:cy="520" inkscape:document-units="px" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:window-height="690" inkscape:window-maximized="0" inkscape:window-width="798" inkscape:window-x="20" inkscape:window-y="20" inkscape:zoom="0.35" pagecolor="#ffffff" showgrid="false">
+pix/icon.svg:	<g id="g4202" transform="matrix(4.2070673,0,0,4.2070673,-152.93197,-3059.7049)">
+pix/icon.svg:			<linearGradient id="path4204_1_" gradientUnits="userSpaceOnUse" x1="11.4018" y1="741.0382" x2="12.1044" y2="738.6343" gradientTransform="matrix(4.2071 0 0 -4.2071 -9.5507 3846.1775)">
+pix/icon.svg:			<stop  offset="0" style="stop-color:#0F3060"/>
+pix/icon.svg:			<stop  offset="0.2712" style="stop-color:#0575CE"/>
+pix/icon.svg:			<stop  offset="0.7327" style="stop-color:#0575CE"/>
+pix/icon.svg:			<stop  offset="1" style="stop-color:#0F3060"/>
+pix/icon.svg:			<path id="path4204" inkscape:export-filename="/home/emcho/storage/images/sc_logo/sc_logo136x203.png" inkscape:export-xdpi="19.25" inkscape:export-ydpi="19.25" sodipodi:nodetypes="csssssssssssssssssssssssssssssssssccssssssssssccsssssssssccsssssssssscssssssssssccssssssscssssssssc" class="st0" d="
+pix/icon.svg:			M37.4,732.7C37.4,732.6,37.4,732.6,37.4,732.7c0-0.1-0.1-0.3-0.1-0.4c0-0.3-0.1-0.3-0.1-0.6c0-0.2,0-0.2,0-0.3
+pix/icon.svg:			c0.1-0.3,0.2-0.4,0.3-0.4c0.1,0,0.2,0,0.3,0c0,0,0.1,0.1,0.2,0.1c0.1,0,0.2,0.1,0.2,0.1c0,0,0.1,0.1,0.1,0.1c0.1,0,0.1,0,0.1,0
+pix/icon.svg:			c0,0,0.1-0.1,0.1-0.2c0.2-0.2,0-0.2,0-0.2c-0.1,0-0.1,0-0.2-0.1c-0.1-0.2-0.2-0.3-0.2-0.6c0-0.3,0-0.5,0.1-0.6
+pix/icon.svg:			c0-0.1,0.2-0.1,0.2-0.2c0.1,0,0.6-0.1,0.6-0.1c0,0-0.1-0.3,0-0.6c0-0.1,0.1-0.3,0.1-0.3c0,0,0.4-0.2,0.5-0.2
+pix/icon.svg:			c0.1-0.1,0.4-0.2,0.4-0.3c0-0.3,0-0.4,0.1-0.4c0,0,0.2,0.3,0.1,0.7c0,0.1-0.1,0.2-0.2,0.3c0,0,0,0.1,0.1,0.1
+pix/icon.svg:			c-0.1,0.4-0.6,1-0.6,0.9l-0.1-0.1l-0.2,0.2c-0.1,0.1-0.2,0.2-0.2,0.2c-0.1,0.1-0.2,0.2-0.3,0.2c0,0,0,0-0.1,0
+pix/icon.svg:			c-0.1,0-0.2,0.1-0.4,0.1c-0.6,0-0.4,0-0.9-0.3c0,0-0.1,0.1-0.2,0.2c-0.1,0.1-0.2,0.2-0.2,0.3c0,0,0,0.1-0.1,0.1
+pix/icon.svg:			c0.1,0,0.1,0,0.2-0.1c0.1,0,0.1-0.1,0.1-0.1c0.1,0-0.1-0.1-0.1-0.1c-0.1,0-0.2-0.1-0.2-0.1s-0.1-0.1-0.1-0.1c0,0,0,0,0,0.1
+pix/icon.svg:			c0-0.2,0-0.4-0.1-0.5c-0.3-0.2-0.3,0-0.4,0c0,0.1,0,0.1,0,0.2c0.1,0.2,0.2,0.5,0.2,0.6c0.1,0.2,0.1,0.3,0.1,0.5c0,0.1,0,0.1,0,0.1
+pix/icon.svg:			c0,0-0.4,0.1-0.5,0.2c-0.1,0,0,0.1,0,0.2c0,0-0.1,0.3-0.1,0.3C40.3,731.8,41,730.4,40.9,729.6z M40.3,730.8
+pix/icon.svg:			C40.3,730.7,40.3,730.7,40.3,730.8c0.1,0,0.1,0,0.1,0c0,0,0.1,0,0.1,0c0,0,0.1,0,0.1-0.1c0,0-0.4-0.3-0.4-0.3
+pix/icon.svg:			c-0.6-0.3-0.9-0.3-1-0.3c-0.3,0.1-0.6,0.2-0.6,0.3c0,0,0.5-0.2,0.9,0c0.1,0,0.2,0.1,0.3,0.2c0.1,0.1,0.2,0.2,0.2,0.2
+pix/icon.svg:			C40,730.8,40.1,730.8,40.3,730.8L40.3,730.8z M39.6,729.6c0.2,0,0.5-0.4,0.4-0.4c0,0,0.1-0.1,0-0.1c-0.3-0.1-0.3-0.4-0.3-0.4
+pix/icon.svg:			c0,0-0.5,0.2-0.6,0.3c-0.1,0,0,0.3,0.1,0.4c0,0.1,0.2,0.2,0.2,0.2C39.5,729.6,39.6,729.6,39.6,729.6L39.6,729.6z M40,728.4
+pix/icon.svg:			c0.1-0.1,0.4-0.5,0.3-0.6c-0.1-0.6-0.2-0.2-0.2-0.2c0,0,0,0.1,0,0.1c0,0,0,0.1,0,0.1c0,0,0,0.1,0,0.1c0,0,0,0.1,0,0.1
+pix/icon.svg:			c0,0,0,0.1-0.1,0.2C39.9,728.4,39.9,728.5,40,728.4C39.9,728.5,39.9,728.5,40,728.4L40,728.4z"/>
+pix/icon.svg:			<linearGradient id="path4206_1_" gradientUnits="userSpaceOnUse" x1="11.2824" y1="740.4265" x2="10.4491" y2="739.0173" gradientTransform="matrix(4.2071 0 0 -4.2071 -9.5507 3846.1775)">
+pix/icon.svg:			<stop  offset="0" style="stop-color:#092D61"/>
+pix/icon.svg:			<stop  offset="1" style="stop-color:#0575CE"/>
+pix/icon.svg:		<path id="path4206" sodipodi:nodetypes="ccssc" class="st1" d="M37.4,732.7c0.1-0.6,0.3-0.7,0.6-0.9c-0.1,0-0.3-0.2-0.3-0.3
+pix/icon.svg:			c0-0.2,0-0.6-0.2-0.5C37.1,731.3,37.3,732.3,37.4,732.7z"/>
+pix/icon.svg:			<linearGradient id="path4208_1_" gradientUnits="userSpaceOnUse" x1="11.5174" y1="740.1962" x2="12.0015" y2="743.3461" gradientTransform="matrix(4.2071 0 0 -4.2071 -9.5507 3846.1775)">
+pix/icon.svg:			<stop  offset="0" style="stop-color:#0F3060"/>
+pix/icon.svg:			<stop  offset="0.457" style="stop-color:#0575CE"/>
+pix/icon.svg:			<stop  offset="0.7383" style="stop-color:#0575CE"/>
+pix/icon.svg:			<stop  offset="1" style="stop-color:#0F3060"/>
+pix/icon.svg:		<path id="path4208" sodipodi:nodetypes="ccccsc" class="st2" d="M38,731.7c0.2,0.2,0.4,0.3,0.5,0.4c1.3,0.1,1.6-0.7,1.6-1.2
+pix/icon.svg:			c-0.1,0-0.3,0-0.4-0.2c-0.3,0.1-1.1,0.3-1.1,0.4C38.6,731.3,38.3,731.5,38,731.7L38,731.7z"/>
+pix/icon.svg:			<linearGradient id="path4210_1_" gradientUnits="userSpaceOnUse" x1="37.9296" y1="729.9293" x2="36.0301" y2="738.019" gradientTransform="matrix(1.0338 0 0 -1.0338 1.4158 1485.6854)">
+pix/icon.svg:			<stop  offset="0" style="stop-color:#FF8000"/>
+pix/icon.svg:			<stop  offset="0.6627" style="stop-color:#FFF4E1"/>
+pix/icon.svg:			<stop  offset="0.75" style="stop-color:#FFF4E1"/>
+pix/icon.svg:			<stop  offset="1" style="stop-color:#FF8400"/>
+pix/icon.svg:			<path id="path4210" inkscape:export-filename="/home/emcho/storage/images/sc_logo/sc_logo136x203.png" inkscape:export-xdpi="19.25" inkscape:export-ydpi="19.25" sodipodi:nodetypes="cssssss" class="st3" d="
+pix/icon.svg:			M40.2,731.4c0.8-0.6,0.7-1.7,0.7-1.8c0-0.2-0.2-0.7-0.4-0.6c-0.4,0.2,0.3,1,0.2,1.5c0,0.1-0.3,0.2-0.5,0.2c0,0,0,0.3-0.1,0.5
+pix/icon.svg:			<linearGradient id="path4212_1_" gradientUnits="userSpaceOnUse" x1="12.1795" y1="740.7241" x2="10.5216" y2="740.3615" gradientTransform="matrix(4.2071 0 0 -4.2071 -9.5507 3846.1775)">
+pix/icon.svg:			<stop  offset="0" style="stop-color:#FFFFFF"/>
+pix/icon.svg:			<stop  offset="1" style="stop-color:#FFFFFF;stop-opacity:0"/>
+pix/icon.svg:		<path id="path4212" sodipodi:nodetypes="ccc" class="st4" d="M40.3,731.3c1-1,0.5-2.7,0.1-2.2C40.9,729,41,730.6,40.3,731.3z"/>
+pix/icon.svg:			<linearGradient id="path4214_1_" gradientUnits="userSpaceOnUse" x1="35.5605" y1="729.9048" x2="34.3672" y2="727.97" gradientTransform="matrix(1.0338 0 0 -1.0338 1.4158 1485.6854)">
+pix/icon.svg:			<stop  offset="0" style="stop-color:#FFC768"/>
+pix/icon.svg:			<stop  offset="0.3784" style="stop-color:#FF8400"/>
+pix/icon.svg:			<stop  offset="0.7742" style="stop-color:#FF8400"/>
+pix/icon.svg:			<stop  offset="1" style="stop-color:#FFC768"/>
+pix/icon.svg:			<path id="path4214" inkscape:export-filename="/home/emcho/storage/images/sc_logo/sc_logo136x203.png" inkscape:export-xdpi="19.25" inkscape:export-ydpi="19.25" sodipodi:nodetypes="csszs" class="st5" d="
+pix/icon.svg:			M38.4,731.3c0,0-0.3-0.1-0.5-0.3c0,0,0,0.3,0,0.4c0,0.1,0.1,0.2,0.2,0.2C38,731.6,38.3,731.5,38.4,731.3z"/>
+pix/icon.svg:			<linearGradient id="path4216_1_" gradientUnits="userSpaceOnUse" x1="10.8481" y1="741.1648" x2="11.0813" y2="739.8161" gradientTransform="matrix(4.3476 0 0 -4.2653 -8.0302 3890.1628)">
+pix/icon.svg:			<stop  offset="0" style="stop-color:#FFFFFF"/>
+pix/icon.svg:			<stop  offset="1" style="stop-color:#FFFFFF;stop-opacity:0"/>
+pix/icon.svg:		<path id="path4216" sodipodi:nodetypes="ccccc" class="st6" d="M38.1,730.4c-0.1-0.6,0.1-1,1-1.1c0,0,1-0.3,1.3-0.3
+pix/icon.svg:			c-0.1,0.1,0,0.5,0.1,0.8C40.5,729.8,39.7,730,38.1,730.4L38.1,730.4z"/>
+pix/icon.svg:			<linearGradient id="path4218_1_" gradientUnits="userSpaceOnUse" x1="36.7539" y1="730.7869" x2="38.1251" y2="728.0375" gradientTransform="matrix(1.0338 0 0 -1.0338 1.4158 1485.6854)">
+pix/icon.svg:			<stop  offset="0" style="stop-color:#FF8000"/>
+pix/icon.svg:			<stop  offset="0.3414" style="stop-color:#FFC768"/>
+pix/icon.svg:			<stop  offset="0.712" style="stop-color:#FFC768"/>
+pix/icon.svg:			<stop  offset="1" style="stop-color:#FF8400"/>
+pix/icon.svg:			<path id="path4218" inkscape:export-filename="/home/emcho/storage/images/sc_logo/sc_logo136x203.png" inkscape:export-xdpi="19.25" inkscape:export-ydpi="19.25" sodipodi:nodetypes="csssss" class="st7" d="
+pix/icon.svg:			M38.6,730.3c0.1,0,0.4-0.1,0.8,0c0.2,0.1,0.4,0.3,0.5,0.4c0.2,0.2,0.7,0,0.8,0c0,0-0.6-0.6-1.1-0.6
+pix/icon.svg:			<linearGradient id="path4220_1_" gradientUnits="userSpaceOnUse" x1="37.3147" y1="732.9808" x2="38.8064" y2="733.1594" gradientTransform="matrix(1.0338 0 0 -1.0338 1.4158 1485.6854)">
+pix/icon.svg:			<stop  offset="0" style="stop-color:#FF8000"/>
+pix/icon.svg:			<stop  offset="0.5" style="stop-color:#FFF4E1"/>
+pix/icon.svg:			<stop  offset="0.75" style="stop-color:#FFF4E1"/>
+pix/icon.svg:			<stop  offset="1" style="stop-color:#FF8400"/>
+pix/icon.svg:			<path id="path4220" inkscape:export-filename="/home/emcho/storage/images/sc_logo/sc_logo136x203.png" inkscape:export-xdpi="19.25" inkscape:export-ydpi="19.25" sodipodi:nodetypes="csss" class="st8" d="
+pix/icon.svg:			M40.2,727.4c0,0.2-0.1,0.7-0.3,1c-0.1,0.1,0.3-0.2,0.4-0.5C40.3,727.8,40.2,727.3,40.2,727.4L40.2,727.4z"/>
+pix/icon.svg:			<linearGradient id="path4222_1_" gradientUnits="userSpaceOnUse" x1="37.11" y1="731.564" x2="35.3172" y2="733.9373" gradientTransform="matrix(1.0338 0 0 -1.0338 1.4158 1485.6854)">
+pix/icon.svg:			<stop  offset="0" style="stop-color:#FF8000"/>
+pix/icon.svg:			<stop  offset="0.3414" style="stop-color:#FFC768"/>
+pix/icon.svg:			<stop  offset="0.712" style="stop-color:#FFC768"/>
+pix/icon.svg:			<stop  offset="1" style="stop-color:#FF8400"/>
+pix/icon.svg:			<path id="path4222" inkscape:export-filename="/home/emcho/storage/images/sc_logo/sc_logo136x203.png" inkscape:export-xdpi="19.25" inkscape:export-ydpi="19.25" sodipodi:nodetypes="cssscsc" class="st9" d="
+pix/icon.svg:			M39.5,729.6c0.2-0.1,0.4-0.3,0.5-0.5c0,0-0.1,0-0.2-0.1c-0.1-0.1-0.1-0.3-0.2-0.3c-0.3,0-0.6,0.3-0.6,0.3s0,0.3,0.1,0.4
+pix/icon.svg:			<linearGradient id="path4224_1_" gradientUnits="userSpaceOnUse" x1="11.861" y1="740.8768" x2="11.4981" y2="741.3949" gradientTransform="matrix(4.2071 0 0 -4.2071 -9.5507 3846.1775)">
+pix/icon.svg:			<stop  offset="0" style="stop-color:#FFFFFF"/>
+pix/icon.svg:			<stop  offset="1" style="stop-color:#FFFFFF;stop-opacity:0"/>
+pix/icon.svg:		<path id="path4224" sodipodi:nodetypes="ccc" class="st10" d="M39.8,728.9c0.1,0.2,0.4,0.2,0.3-0.3
+pix/icon.svg:			<linearGradient id="path4226_1_" gradientUnits="userSpaceOnUse" x1="11.4003" y1="740.8856" x2="12.625" y2="741.2726" gradientTransform="matrix(4.2071 0 0 -4.2071 -9.5507 3846.1775)">
+pix/icon.svg:			<stop  offset="0" style="stop-color:#FFFFFF"/>
+pix/icon.svg:			<stop  offset="1" style="stop-color:#FFFFFF;stop-opacity:0"/>
+pix/icon.svg:		<path id="path4226" sodipodi:nodetypes="csccsc" class="st11" d="M39.5,729.6c-0.1-0.1-0.2-0.2-0.3-0.3c-0.1-0.1-0.1-0.7,0-0.8
+pix/icon.svg:			c0.1-0.1,0.3-0.3,0.5-0.4c-0.5,0.5-0.3,1.3,0.1,1.3C39.8,729.4,39.5,729.6,39.5,729.6L39.5,729.6z"/>
+pix/icon.svg:			<linearGradient id="path4228_1_" gradientUnits="userSpaceOnUse" x1="11.4005" y1="740.3347" x2="10.7816" y2="740.7721" gradientTransform="matrix(4.2071 0 0 -4.2071 -9.5507 3846.1775)">
+pix/icon.svg:			<stop  offset="0" style="stop-color:#FFFFFF"/>
+pix/icon.svg:			<stop  offset="1" style="stop-color:#FFFFFF;stop-opacity:0"/>
+pix/icon.svg:			<path id="path4230" inkscape:export-filename="/home/emcho/storage/images/sc_logo/sc_logo136x203.png" inkscape:export-xdpi="19.25" inkscape:export-ydpi="19.25" sodipodi:nodetypes="ccsssccssscccsssscscsccsssssccssssssccsssccssssccsscssssssssssssccsssccssssssccssssssssssssscsssscssscssc" class="st13" d="
+pix/icon.svg:			M39.5,728.3c-0.1,0.1-0.2,0.1-0.2,0.2c-0.1,0.2-0.1,0.4-0.1,0.4c0.2-0.2,0.5-0.2,0.6-0.3c0.3-0.2,0.4-0.8,0.3-0.7
+pix/icon.svg:			C39.9,728.1,39.6,728.2,39.5,728.3z M38,731.7c0,0-0.3-0.2-0.3-0.2c0-0.5,0-0.5-0.1-0.5c-0.1,0-0.3,0.2-0.4,0.7
+pix/icon.svg:			c0,0.3,0.1,0.9,0.1,0.9C37.5,732.3,37.5,732.1,38,731.7L38,731.7z M40.9,729.6c0-0.4-0.2-0.6-0.4-0.6c-0.1,0-0.1,0.2-0.1,0.3
+pix/icon.svg:			c0,0.1,0.2,0.5,0.2,0.5c0,0.1,0.2,0.5,0.1,0.7c0,0.2-0.6,0.2-0.6,0.2s0,0.2,0,0.3c0,0.1-0.1,0.2-0.1,0.2s0.1,0.1,0.1,0.1
+pix/icon.svg:			S40.9,731,40.9,729.6L40.9,729.6z M40.3,730.7c0,0,0.3-0.1,0.2-0.1c-0.1-0.1-0.2-0.1-0.3-0.2c-0.9-0.7-1.7-0.1-1.7-0.1
+pix/icon.svg:			c0.1,0,0.3-0.1,0.5-0.1c0.2,0,0.4,0.1,0.7,0.4C39.8,730.7,39.9,730.8,40.3,730.7L40.3,730.7z M39.9,729.3c0,0,0.1-0.2,0.1-0.2
+pix/icon.svg:			c-0.2-0.1-0.3-0.2-0.3-0.3c0-0.1,0-0.1-0.1-0.1c-0.4,0.1-0.5,0.2-0.5,0.2c-0.1,0.1,0,0.3,0,0.3c0,0.1,0.2,0.3,0.3,0.3
+pix/icon.svg:			C39.6,729.6,39.9,729.3,39.9,729.3L39.9,729.3z M40.2,728.6c0-0.1-0.1-0.2-0.1-0.2c0,0-0.2,0.1-0.2,0.2c-0.1,0.1,0,0.3,0.1,0.3
+pix/icon.svg:			C40.1,729.1,40.2,728.8,40.2,728.6L40.2,728.6z M40,728.3c0.1-0.1,0.2-0.2,0.2-0.4c0-0.1,0-0.1,0-0.3c0,0,0-0.1,0-0.1
+pix/icon.svg:			C40.2,727.8,40.1,728,40,728.3C39.9,728.5,39.9,728.4,40,728.3L40,728.3z M38.2,729.9c-0.1,0.4,0.2,0.9,0.4,0.9
+pix/icon.svg:			c0.2,0,0.8-0.1,1-0.2c0.1,0,0.1,0-0.1-0.2c-0.3-0.2-0.5-0.2-0.7-0.2c-0.2,0-0.4,0.1-0.4,0.1c0.1-0.1,0.3-0.3,0.7-0.3
+pix/icon.svg:			c0.2,0,0.4,0,0.7,0.1c0.4,0.1,0.6,0.4,0.7,0.4c0.1,0,0.1,0,0.1-0.1c0-0.1-0.2-0.8-0.3-1c-0.1-0.3,0-0.5,0-0.4
+pix/icon.svg:			c-0.2,0-0.3,0.1-0.4,0.2c-0.3,0.3-0.5,0.3-0.5,0.3c-0.1,0-0.2-0.1-0.3-0.2c0,0-0.7,0.1-0.8,0.2C38.4,729.6,38.2,729.7,38.2,729.9
+pix/icon.svg:			L38.2,729.9z M38,731.6c0.2-0.1,0.4-0.3,0.4-0.3c-0.1,0-0.5-0.3-0.5-0.3c0,0.1,0,0.3,0,0.4C37.8,731.5,37.9,731.6,38,731.6
+pix/icon.svg:			L38,731.6z M38.7,731c0,0.1-0.1,0.4-0.6,0.7c0,0,0.5,0.3,0.5,0.3c1.6,0.1,1.6-1.2,1.6-1.2c0,0-0.1,0-0.3-0.1c0,0-0.1,0-0.1-0.1
+pix/icon.svg:			c0,0,0,0-0.1,0C39.4,730.7,38.6,731,38.7,731L38.7,731z M38.1,730.4c-0.3-1,0.7-1.1,0.9-1.1c0.1,0,0.1,0,0.1-0.2
+pix/icon.svg:			c0-0.2,0-0.3,0-0.5c0-0.1,0-0.2,0.1-0.3c0.1-0.1,0.3-0.2,0.4-0.2c0.3-0.1,0.4-0.3,0.5-0.4c0-0.1,0.1-0.3,0-0.5c0,0,0,0,0.1,0.4
+pix/icon.svg:			c0.1,0.2,0,0.4-0.2,0.6c0,0,0,0,0,0.1c0.1,0.1,0.1,0.3,0.1,0.4c0,0.1,0,0.2,0,0.2c0,0,0.3,0,0.4,0.1c0.1,0.1,0.3,0.2,0.2,0.8
+pix/icon.svg:			c-0.1,1.3-0.7,1.6-0.7,1.6c0,0-0.1-0.1-0.1-0.1c-0.4,0.8-1.1,0.7-1.5,0.7c-0.1,0-0.4-0.3-0.5-0.3c-0.4,0.3-0.5,0.3-0.6,1
+pix/icon.svg:			c0,0-0.2-0.4-0.2-1c0-0.6,0.3-0.8,0.5-0.8c0.2,0,0.2,0.1,0.5,0.3c0,0,0.2,0.1,0.2,0.1c0.1,0,0.1-0.2,0.2-0.3c0-0.1,0-0.1-0.1-0.1
+pix/icon.svg:			<linearGradient id="path4232_1_" gradientUnits="userSpaceOnUse" x1="36.4046" y1="730.2496" x2="36.7204" y2="729.149" gradientTransform="matrix(1.0338 0 0 -1.0338 1.4158 1485.6854)">
+pix/icon.svg:			<stop  offset="0" style="stop-color:#212A3A"/>
+pix/icon.svg:			<stop  offset="1" style="stop-color:#404E67;stop-opacity:0"/>
+pix/icon.svg:			<path id="path4232" inkscape:export-filename="/home/emcho/storage/images/sc_logo/sc_logo136x203.png" inkscape:export-xdpi="19.25" inkscape:export-ydpi="19.25" sodipodi:nodetypes="czssss" class="st14" d="
+pix/icon.svg:			M38.7,731c0.2-0.1,1-0.4,1-0.4c0,0-1,0.4-1.2,0.3c0,0,0.1,0,0.1,0.1c0,0,0,0.2-0.1,0.3C38.5,731.2,38.6,731,38.7,731L38.7,731z"/>
+pix/icon.svg:			<linearGradient id="path4234_1_" gradientUnits="userSpaceOnUse" x1="14.5039" y1="614.9152" x2="17.3453" y2="616.2788" gradientTransform="matrix(0.3916 0 0 -0.7827 34.119 1209.9434)">
+pix/icon.svg:			<stop  offset="0" style="stop-color:#212A3A"/>
+pix/icon.svg:			<stop  offset="1" style="stop-color:#404E67;stop-opacity:0"/>
+pix/icon.svg:			<path id="path4234" inkscape:export-filename="/home/emcho/storage/images/sc_logo/sc_logo136x203.png" inkscape:export-xdpi="19.25" inkscape:export-ydpi="19.25" sodipodi:nodetypes="csss" class="st15" d="
+pix/icon.svg:			M40.1,728.4c-0.1,0.1-0.2,0.2-0.3,0.2c0,0,0-0.1,0.1-0.2C40,728.4,40.1,728.4,40.1,728.4z"/>
+pix/icon.svg:			<linearGradient id="path4236_1_" gradientUnits="userSpaceOnUse" x1="-66.6484" y1="790.6569" x2="-65.072" y2="790.449" gradientTransform="matrix(-0.3905 -2.961418e-02 -5.919454e-02 0.7805 60.8953 109.8207)">
+pix/icon.svg:			<stop  offset="0" style="stop-color:#212A3A"/>
+pix/icon.svg:			<stop  offset="1" style="stop-color:#404E67;stop-opacity:0"/>
+pix/icon.svg:			<path id="path4236" inkscape:export-filename="/home/emcho/storage/images/sc_logo/sc_logo136x203.png" inkscape:export-xdpi="19.25" inkscape:export-ydpi="19.25" sodipodi:nodetypes="csss" class="st16" d="
+pix/icon.svg:			M39.9,729c0.1,0,0.2,0,0.2-0.2c0,0,0,0.1-0.1,0.2C40,729,39.9,729,39.9,729z"/>
+pix/icon.svg:			<linearGradient id="path4238_1_" gradientUnits="userSpaceOnUse" x1="-24.4416" y1="654.0456" x2="-21.9208" y2="654.5331" gradientTransform="matrix(1.0338 0 0 -1.0338 65.3742 1405.2823)">
+pix/icon.svg:			<stop  offset="0" style="stop-color:#212A3A"/>
+pix/icon.svg:			<stop  offset="1" style="stop-color:#404E67;stop-opacity:0"/>
+pix/icon.svg:			<path id="path4238" inkscape:export-filename="/home/emcho/storage/images/sc_logo/sc_logo136x203.png" inkscape:export-xdpi="19.25" inkscape:export-ydpi="19.25" sodipodi:nodetypes="cscss" class="st17" d="
+pix/icon.svg:			M40.2,729.1c0.2-0.1,0.3-0.1,0.4-0.1c0.1,0-0.2-0.1-0.5-0.1c0,0-0.1,0.2-0.3,0.3C39.9,729.3,40.2,729.1,40.2,729.1z"/>
+pix/icon.svg:			<linearGradient id="path4240_1_" gradientUnits="userSpaceOnUse" x1="44.6385" y1="671.2469" x2="42.9435" y2="670.4317" gradientTransform="matrix(1.0338 0 0 -1.0338 -7.3858 1423.4155)">
+pix/icon.svg:			<stop  offset="0" style="stop-color:#212A3A"/>
+pix/icon.svg:			<stop  offset="1" style="stop-color:#404E67;stop-opacity:0"/>
+pix/icon.svg:			<path id="path4240" inkscape:export-filename="/home/emcho/storage/images/sc_logo/sc_logo136x203.png" inkscape:export-xdpi="19.25" inkscape:export-ydpi="19.25" sodipodi:nodetypes="csccscs" class="st18" d="
+pix/icon.svg:			M38.8,729.4c0.1,0,0.2,0,0.3-0.1c0.1,0,0.1,0,0.2,0c0,0-0.1-0.1-0.1-0.2c0,0.1-0.1,0.1-0.1,0.1c-0.5,0.1-0.7,0.2-0.9,0.4
+Binary file pix/icon.gif matches
+sesion.php:        <meta charset="utf-8">
+sesion.php:        <meta http-equiv="content-type" content="text/html;charset=utf-8">
+tests/behat/installed.feature:    Then the following should exist in the "plugins-control-panel" table:
+version.php:// This file is part of Moodle - http://moodle.org/
+version.php: * Defines the version and other meta-info about the plugin
+version.php: * Setting the $plugin->version to 0 prevents the plugin from being installed.
+version.php:$plugin->component = 'mod_jitsi';
+version.php:$plugin->version = 1;
+version.php:$plugin->release = 'v0.0';
+version.php:$plugin->requires = 2014051200;
+version.php:$plugin->maturity = MATURITY_ALPHA;
+version.php:$plugin->cron = 0;
+version.php:$plugin->dependencies = array();
+view.php:// This file is part of Moodle - http://moodle.org/
+view.php:$n  = optional_param('n', 0, PARAM_INT);  // ... jitsi instance ID - it should be named as the first character of the module.
+view.php:    $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+view.php:    $jitsi  = $DB->get_record('jitsi', array('id' => $cm->instance), '*', MUST_EXIST);
+view.php:    $jitsi  = $DB->get_record('jitsi', array('id' => $n), '*', MUST_EXIST);
+view.php:    $course     = $DB->get_record('course', array('id' => $jitsi->course), '*', MUST_EXIST);
+view.php:    $cm         = get_coursemodule_from_instance('jitsi', $jitsi->id, $course->id, false, MUST_EXIST);
+view.php:    'objectid' => $PAGE->cm->instance,
+view.php:    'context' => $PAGE->context,
+view.php:$event->add_record_snapshot('course', $PAGE->course);
+view.php:$event->add_record_snapshot($PAGE->cm->modname, $jitsi);
+view.php:$event->trigger();
+view.php:$PAGE->set_url('/mod/jitsi/view.php', array('id' => $cm->id));
+view.php:$PAGE->set_title(format_string($jitsi->name));
+view.php:$PAGE->set_heading(format_string($course->fullname));
+view.php: * Other things you may want to set - remove if not needed.
+view.php: * $PAGE->set_cacheable(false);
+view.php: * $PAGE->set_focuscontrol('some-html-id');
+view.php: * $PAGE->add_body_class('jitsi-'.$somevar);
+view.php:echo $OUTPUT->header();
+view.php:echo $OUTPUT->heading($jitsi->name);
+view.php:$urlparams = array('nom' => $USER->username, 'ses'=>$course->shortname."-".$jitsi->name);
+view.php:if ($jitsi->intro) {
+view.php:    echo $OUTPUT->box(format_module_intro('jitsi', $jitsi, $cm->id), 'generalbox mod_introbox', 'jitsiintro');
+view.php://echo $OUTPUT->heading('Yay! It works!');
+view.php:$nom=$USER->username;
+view.php:$ses=$course->shortname."-".$jitsi->name;
+view.php:$urlSes=$CFG->wwwroot.'/mod/jitsi/sesion.php?nom='.$nom.'&ses='.$ses;
+view.php:echo $OUTPUT->box(get_string('instruction', 'jitsi'));
+view.php:echo $OUTPUT->single_button(new moodle_url('/mod/jitsi/sesion.php', $urlparams), get_string('access', 'jitsi'), 'post');
+view.php:echo $OUTPUT->footer();
