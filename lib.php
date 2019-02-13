@@ -114,9 +114,9 @@ function jitsi_update_instance($jitsi,  $mform = null) {
  * only jitsi events belonging to the course specified are checked.
  * This is only required if the module is generating calendar events.
  *
- * @param int $courseid Course ID
+ * @param courseid $courseid Course ID
  * @param instance instance about you refresh
- * @param cm cm 
+ * @param cm cm
  * @return bool
  */
 function jitsi_refresh_events($courseid = 0, $instance = null, $cm = null) {
@@ -139,12 +139,12 @@ function jitsi_refresh_events($courseid = 0, $instance = null, $cm = null) {
     }
 
     if ($courseid) {
-      if (!is_numeric($courseid)) {
-        return false;
-      }
-      if (!$scorms = $DB->get_records('jitsi', array('jitsi' => $courseid))) {
-        return true;
-      }
+        if (!is_numeric($courseid)) {
+            return false;
+        }
+        if (!$scorms = $DB->get_records('jitsi', array('jitsi' => $courseid))) {
+            return true;
+        }
     } else {
         if (!$jitsis = $DB->get_records('jitsi', array('course' => $courseid))) {
             return true;

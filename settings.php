@@ -1,5 +1,6 @@
 <?php
 // This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -14,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Settings for Jitsi instances
  * @package   mod_jitsi
  * @copyright  2019 Sergio Comerón (sergiocomeron@icloud.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
