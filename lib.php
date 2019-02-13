@@ -114,8 +114,8 @@ function jitsi_update_instance($jitsi,  $mform = null) {
  * only jitsi events belonging to the course specified are checked.
  * This is only required if the module is generating calendar events.
  *
- * @param courseid $courseid Course ID
- * @param instance instance about you refresh
+ * @param courseid Course ID
+ * @param instance Instance about you refresh
  * @param cm cm
  * @return bool
  */

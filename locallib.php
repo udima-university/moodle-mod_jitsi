@@ -27,9 +27,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
- /*
+ /**
  * Update the calendar entries for this assignment.
  * @param stdClass $jitsi An jitsi object
+ * @param cmid
  */
 function jitsi_update_calendar(stdClass $jitsi, $cmid) {
     global $DB, $CFG;
