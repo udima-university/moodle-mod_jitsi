@@ -110,13 +110,12 @@ function jitsi_update_instance($jitsi,  $mform = null) {
 /**
  * This standard function will check all instances of this module
  * and make sure there are up-to-date events created for each of them.
- * If courseid = 0, then every jitsi event in the site is checked, else
- * only jitsi events belonging to the course specified are checked.
- * This is only required if the module is generating calendar events.
+ * If courseid = 0, then every assignment event in the site is checked, else
+ * only assignment events belonging to the course specified are checked.
  *
- * @param courseid Course ID
- * @param instance Instance about you refresh
- * @param cm cm
+ * @param int $courseid
+ * @param int|stdClass $instance Jitsi module instance or ID.
+ * @param int|stdClass $cm Course module object or ID (not used in this module).
  * @return bool
  */
 function jitsi_refresh_events($courseid = 0, $instance = null, $cm = null) {
