@@ -60,13 +60,13 @@ echo $OUTPUT->heading($jitsi->name);
 if ($jitsi->intro) {
     echo $OUTPUT->box(format_module_intro('jitsi', $jitsi, $cm->id), 'generalbox mod_introbox', 'jitsiintro');
 }
-$avatar=$CFG->wwwroot.'/user/pix.php/'.$USER->id.'/f1.jpg';
-$urlparams = array('avatar' => $avatar,'nom' => $USER->username, 'ses'=>$jitsi->name);
+$avatar = $CFG -> wwwroot.'/user/pix.php/'.$USER->id.'/f1.jpg';
+$urlparams = array('avatar' => $avatar,'nom' => $USER->username, 'ses' => $jitsi->name);
 $today = getdate();
-if ($today[0]>($jitsi->timeopen-1800)){
+if ($today[0] > ($jitsi->timeopen - 1800)){
     echo $OUTPUT->box(get_string('instruction', 'jitsi'));
     echo $OUTPUT->single_button(new moodle_url('/mod/jitsi/sesion.php', $urlparams), get_string('access', 'jitsi'), 'post');
-}else{
+} else {
     echo $OUTPUT->box(get_string('nostart', 'jitsi'));
 }
 echo $OUTPUT->footer();

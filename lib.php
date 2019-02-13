@@ -73,7 +73,6 @@ function jitsi_add_instance($jitsi,  $mform = null) {
     global $CFG, $DB;
     require_once($CFG->dirroot.'/mod/jitsi/locallib.php');
 
-
     $jitsi->timecreated = time();
     $cmid       = $jitsi->coursemodule;
 
@@ -116,6 +115,8 @@ function jitsi_update_instance($jitsi,  $mform = null) {
  * This is only required if the module is generating calendar events.
  *
  * @param int $courseid Course ID
+ * @param instance instance about you refresh
+ * @param cm cm 
  * @return bool
  */
 function jitsi_refresh_events($courseid = 0, $instance = null, $cm = null) {
@@ -139,10 +140,10 @@ function jitsi_refresh_events($courseid = 0, $instance = null, $cm = null) {
 
     if ($courseid) {
       if (!is_numeric($courseid)) {
-          return false;
+        return false;
       }
       if (!$scorms = $DB->get_records('jitsi', array('jitsi' => $courseid))) {
-          return true;
+        return true;
       }
     } else {
         if (!$jitsis = $DB->get_records('jitsi', array('course' => $courseid))) {
@@ -151,10 +152,8 @@ function jitsi_refresh_events($courseid = 0, $instance = null, $cm = null) {
     }
 
     foreach ($jitsis as $jitsi) {
-        // Create a function such as the one below to deal with updating calendar events.
         $cm = get_coursemodule_from_instance('jitsi', $jitsi->id);
         jitsi_update_calendar($jitsi, $cm->id);
-        // jitsi_update_events($jitsi);
     }
 
     return true;

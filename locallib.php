@@ -27,17 +27,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/*
- * Does something really useful with the passed things
- *
- * @param array $things
- * @return object
- *function jitsi_do_something_useful(array $things) {
- *    return new stdClass();
- *}
+ /*
+ * Update the calendar entries for this assignment.
+ * @param stdClass $jitsi An jitsi object
  */
-
-
 function jitsi_update_calendar(stdClass $jitsi, $cmid) {
     global $DB, $CFG;
 
@@ -47,7 +40,9 @@ function jitsi_update_calendar(stdClass $jitsi, $cmid) {
     $event->eventtype = 'open';
     $event->type = CALENDAR_EVENT_TYPE_STANDARD;
 
-    if ($event->id = $DB->get_field('event', 'id', array('modulename' => 'jitsi', 'instance' => $jitsi->id, 'eventtype' => $event->eventtype))) {
+    if ($event->id = $DB->get_field('event', 'id',
+            array('modulename' => 'jitsi', 'instance' => $jitsi->id,
+            'eventtype' => $event->eventtype))) {
         if ((!empty($jitsi->timeopen)) && ($jitsi->timeopen > 0)) {
             $event->name = get_string('calendarstart', 'jitsi', $jitsi->name);
             $event->timestart = $jitsi->timeopen;
@@ -57,12 +52,12 @@ function jitsi_update_calendar(stdClass $jitsi, $cmid) {
 
             $calendarevent = calendar_event::load($event->id);
             $calendarevent->update($event);
-        }else{
+        } else {
             $calendarevent = calendar_event::load($event->id);
             $calendarevent->delete();
         }
 
-    }else{
+    } else {
         if ((!empty($jitsi->timeopen)) && ($jitsi->timeopen > 0)) {
             $event->name = get_string('calendarstart', 'jitsi', $jitsi->name);
             $event->courseid = $jitsi->course;
@@ -78,4 +73,4 @@ function jitsi_update_calendar(stdClass $jitsi, $cmid) {
         }
     }
     return true;
- }
+}

@@ -35,9 +35,9 @@ $PAGE->set_title("Pruebas fechas");
 $PAGE->set_heading("Pruebas fechas");
 echo $OUTPUT->header();
 
-$nombre=$_POST['nom'];
-$sesion=str_replace(' ', '', $_POST['ses']);
-$avatar=$_POST['avatar'];
+$nombre = $_POST['nom'];
+$sesion = str_replace(' ', '', $_POST['ses']);
+$avatar = $_POST['avatar'];
 echo "<script src=\"https://meet.jit.si/external_api.js\"></script>\n";
 echo "<script>\n";
 echo "var domain = \"".$CFG->jitsi_domain."\";\n";
@@ -54,4 +54,3 @@ echo "api.executeCommand('avatarUrl', '".$avatar."');\n";
 echo "</script>\n";
 
 echo $OUTPUT->footer();
-?>

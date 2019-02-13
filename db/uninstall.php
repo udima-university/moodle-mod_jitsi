@@ -1,6 +1,5 @@
-jitsi<?php
+<?php
 // This file is part of Moodle - http://moodle.org/
-//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -20,12 +19,13 @@ jitsi<?php
  * @see uninstall_plugin()
  *
  * @package    mod_jitsi
- * @copyright  2016 Your Name <your@email.address>
+ * @copyright  2019 Sergio Comerón Sánchez-Paniagua <sergiocomeron@icloud.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
  * Custom uninstallation procedure
+ * @see upgrade_plugins_modules()
  */
 function xmldb_jitsi_uninstall() {
     return true;

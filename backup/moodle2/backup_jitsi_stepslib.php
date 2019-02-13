@@ -42,26 +42,10 @@ class backup_jitsi_activity_structure_step extends backup_activity_structure_ste
      */
     protected function define_structure() {
 
-        // Get know if we are including userinfo.
         $userinfo = $this->get_setting_value('userinfo');
-
-        // Define the root element describing the jitsi instance.
-        
-        //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!!HE METIDO TIMEOPEN POR LO DE LA PAPELERA DE RECICLAJE
         $jitsi = new backup_nested_element('jitsi', array('id'), array('name', 'intro', 'introformat', 'grade', 'timeopen'));
-
-        // If we had more elements, we would build the tree here.
-
-        // Define data sources.
         $jitsi->set_source_table('jitsi', array('id' => backup::VAR_ACTIVITYID));
-
-        // If we were referring to other tables, we would annotate the relation
-        // with the element's annotate_ids() method.
-
-        // Define file annotations (we do not use itemid in this example).
         $jitsi->annotate_files('mod_jitsi', 'intro', null);
-
-        // Return the root element (jitsi), wrapped into standard activity structure.
         return $this->prepare_activity_structure($jitsi);
     }
 }
