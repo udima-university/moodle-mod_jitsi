@@ -28,22 +28,35 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(dirname(dirname(__FILE__))).'/lib/moodlelib.php');
 require_once(dirname(__FILE__).'/lib.php');
-$PAGE->set_context(context_system::Instance());
 $PAGE->set_url($CFG->wwwroot.'/mod/jitsi/sesion.php');
-require_login();
-$PAGE->set_title("Pruebas fechas");
-$PAGE->set_heading("Pruebas fechas");
+$PAGE->set_context(context_system::Instance());
+
+$courseid = required_param('courseid', PARAM_INT);
+$nombre = required_param('nom', PARAM_TEXT);
+$sesion = required_param('ses', PARAM_TEXT);
+$sesionnorm = str_replace(' ', '', $sesion);
+$avatar = required_param('avatar', PARAM_TEXT);
+require_login($courseid);
+
+$PAGE->set_title($sesion);
+$PAGE->set_heading($sesion);
 echo $OUTPUT->header();
 
-$nombre = $_POST['nom'];
-$sesion = str_replace(' ', '', $_POST['ses']);
-$avatar = $_POST['avatar'];
+$context = context_module::instance($courseid);
+if (!has_capability('mod/jitsi:view', $context)) {
+    notice(get_string('noviewpermission', 'jitsi'));
+}
+
 echo "<script src=\"https://meet.jit.si/external_api.js\"></script>\n";
 echo "<script>\n";
 echo "var domain = \"".$CFG->jitsi_domain."\";\n";
 echo "var options = {\n";
-echo "roomName: \"".$sesion."\",\n";
-echo "parentNode: document.querySelector('#region-main .card-body'),\n";
+echo "roomName: \"".$sesionnorm."\",\n";
+if ($CFG->branch < 36){
+  echo "parentNode: document.querySelector('#region-main .card-body'),\n";
+} else {
+  echo "parentNode: document.querySelector('#region-main'),\n";
+}
 echo "width: '100%',\n";
 echo "height: 650,\n";
 echo "}\n";

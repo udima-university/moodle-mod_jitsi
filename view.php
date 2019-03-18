@@ -41,7 +41,7 @@ if ($id) {
     $course = $DB->get_record('course', array('id' => $jitsi->course), '*', MUST_EXIST);
     $cm = get_coursemodule_from_instance('jitsi', $jitsi->id, $course->id, false, MUST_EXIST);
 } else {
-    error('You must specify a course_module ID or an instance ID');
+    print_error('missingparam');
 }
 require_login($course, true, $cm);
 $event = \mod_jitsi\event\course_module_viewed::create(array(
@@ -56,11 +56,16 @@ $PAGE->set_title(format_string($jitsi->name));
 $PAGE->set_heading(format_string($course->fullname));
 echo $OUTPUT->header();
 echo $OUTPUT->heading($jitsi->name);
+$context = context_module::instance($cm->id);
+if (!has_capability('mod/jitsi:view', $context)) {
+    notice(get_string('noviewpermission', 'jitsi'));
+}
+
 if ($jitsi->intro) {
     echo $OUTPUT->box(format_module_intro('jitsi', $jitsi, $cm->id), 'generalbox mod_introbox', 'jitsiintro');
 }
 $avatar = $CFG->wwwroot.'/user/pix.php/'.$USER->id.'/f1.jpg';
-$urlparams = array('avatar' => $avatar, 'nom' => $USER->username, 'ses' => $jitsi->name);
+$urlparams = array('avatar' => $avatar, 'nom' => $USER->username, 'ses' => $jitsi->name, 'courseid' => $course->id);
 $today = getdate();
 if ($today[0] > ($jitsi->timeopen - 1800)) {
     echo $OUTPUT->box(get_string('instruction', 'jitsi'));

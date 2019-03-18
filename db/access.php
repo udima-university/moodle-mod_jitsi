@@ -40,7 +40,7 @@
  * The variable name for the capability definitions array is $capabilities
  *
  * @package    mod_jitsi
- * @copyright  2016 Your Name <your@email.address>
+ * @copyright  2019 Sergio Comerón Sánchez-Paniagua <sergiocomeron@icloud.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

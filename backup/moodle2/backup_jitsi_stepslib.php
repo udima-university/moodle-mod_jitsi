@@ -19,7 +19,7 @@
  *
  * @package   mod_jitsi
  * @category  backup
- * @copyright 2016 Your Name <your@email.address>
+ * @copyright 2019 Sergio Comerón Sánchez-Paniagua <sergiocomeron@icloud.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -42,8 +42,7 @@ class backup_jitsi_activity_structure_step extends backup_activity_structure_ste
      */
     protected function define_structure() {
 
-        $userinfo = $this->get_setting_value('userinfo');
-        $jitsi = new backup_nested_element('jitsi', array('id'), array('name', 'intro', 'introformat', 'grade', 'timeopen'));
+        $jitsi = new backup_nested_element('jitsi', array('id'), array('name', 'intro', 'introformat', 'timeopen'));
         $jitsi->set_source_table('jitsi', array('id' => backup::VAR_ACTIVITYID));
         $jitsi->annotate_files('mod_jitsi', 'intro', null);
         return $this->prepare_activity_structure($jitsi);
