@@ -35,10 +35,10 @@ class provider implements \core_privacy\local\metadata\null_provider {
     public static function get_metadata(collection $collection) : collection {
 
     $collection->add_external_location_link('jitsi', [
-            'username' => 'privacy:metadata:jitsi:username',
-            'avatar' => 'privacy:metadata:jitsi:avatar',
-        ], 'privacy:metadata:jitsi');
+                'username' => 'privacy:metadata:jitsi:username',
+                'avatar' => 'privacy:metadata:jitsi:avatar',
+                ], 'privacy:metadata:jitsi');
 
-    return $collection;
-}
+        return $collection;
+    }
 }

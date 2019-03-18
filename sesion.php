@@ -52,10 +52,10 @@ echo "<script>\n";
 echo "var domain = \"".$CFG->jitsi_domain."\";\n";
 echo "var options = {\n";
 echo "roomName: \"".$sesionnorm."\",\n";
-if ($CFG->branch < 36){
-  echo "parentNode: document.querySelector('#region-main .card-body'),\n";
+if ($CFG->branch < 36) {
+    echo "parentNode: document.querySelector('#region-main .card-body'),\n";
 } else {
-  echo "parentNode: document.querySelector('#region-main'),\n";
+    echo "parentNode: document.querySelector('#region-main'),\n";
 }
 echo "width: '100%',\n";
 echo "height: 650,\n";
