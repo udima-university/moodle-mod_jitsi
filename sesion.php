@@ -32,6 +32,7 @@ $PAGE->set_url($CFG->wwwroot.'/mod/jitsi/sesion.php');
 $PAGE->set_context(context_system::Instance());
 
 $courseid = required_param('courseid', PARAM_INT);
+$cmid = required_param('cmid', PARAM_INT);
 $nombre = required_param('nom', PARAM_TEXT);
 $sesion = required_param('ses', PARAM_TEXT);
 $sesionnorm = str_replace(' ', '', $sesion);
@@ -42,7 +43,7 @@ $PAGE->set_title($sesion);
 $PAGE->set_heading($sesion);
 echo $OUTPUT->header();
 
-$context = context_module::instance($courseid);
+$context = context_module::instance($cmid);
 if (!has_capability('mod/jitsi:view', $context)) {
     notice(get_string('noviewpermission', 'jitsi'));
 }
