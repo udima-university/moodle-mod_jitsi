@@ -65,7 +65,7 @@ if ($jitsi->intro) {
     echo $OUTPUT->box(format_module_intro('jitsi', $jitsi, $cm->id), 'generalbox mod_introbox', 'jitsiintro');
 }
 $avatar = $CFG->wwwroot.'/user/pix.php/'.$USER->id.'/f1.jpg';
-$urlparams = array('avatar' => $avatar, 'nom' => $USER->username, 'ses' => $jitsi->name, 'courseid' => $course->id);
+$urlparams = array('avatar' => $avatar, 'nom' => $USER->username, 'ses' => $jitsi->name, 'courseid' => $course->id, 'cmid' => $id);
 $today = getdate();
 if ($today[0] > ($jitsi->timeopen - 1800)) {
     echo $OUTPUT->box(get_string('instruction', 'jitsi'));
