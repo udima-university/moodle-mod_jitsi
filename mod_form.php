@@ -58,9 +58,20 @@ class mod_jitsi_mod_form extends moodleform_mod {
 
         $mform->addElement('header', 'availability', get_string('availability', 'assign'));
         $mform->setExpanded('availability', true);
+
         $name = get_string('allow', 'jitsi');
         $options = array('optional' => true);
         $mform->addElement('date_time_selector', 'timeopen', $name, $options);
+
+        $choicesminspre = array(
+          5 => 5,
+          10 => 10,
+          15 => 15,
+          20 => 20,
+          30 => 30
+        );
+        $mform->addElement('select', 'minpretime', get_string('minpretime', 'jitsi'), $choicesminspre);
+        
         $this->standard_coursemodule_elements();
         $this->add_action_buttons();
     }
