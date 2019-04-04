@@ -51,3 +51,4 @@ $string['privacy:metadata:jitsi'] = 'In order to integrate with a jitsi session,
 $string['privacy:metadata:jitsi:username'] = 'The username is sent from moodle to show to the other users of the jitsi session';
 $string['privacy:metadata:jitsi:avatar'] = 'The avatar is sent from moodle to show to the other users of the jitsi session';
 $string['noviewpermission'] = 'You do not have permission for view this jitsi session';
+$string['minpretime'] = 'Minutes to access';
