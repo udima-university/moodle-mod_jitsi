@@ -67,7 +67,7 @@ if ($jitsi->intro) {
 $avatar = $CFG->wwwroot.'/user/pix.php/'.$USER->id.'/f1.jpg';
 $urlparams = array('avatar' => $avatar, 'nom' => $USER->username, 'ses' => $jitsi->name, 'courseid' => $course->id, 'cmid' => $id);
 $today = getdate();
-if ($today[0] > (($jitsi->timeopen) - ($jitsi->minpretime*60))) {
+if ($today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))) {
     echo $OUTPUT->box(get_string('instruction', 'jitsi'));
     echo $OUTPUT->single_button(new moodle_url('/mod/jitsi/sesion.php', $urlparams), get_string('access', 'jitsi'), 'post');
 } else {
