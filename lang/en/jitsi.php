@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['modulename'] = 'Jitsi';
 $string['modulenameplural'] = 'Jitsis';
-$string['modulename_help'] = 'Use the jitsi module for videoconference ';
+$string['jitsiname_help'] = 'Use the jitsi module for videoconference ';
 $string['jitsi:addinstance'] = 'Add a new jitsi';
 $string['jitsi:submit'] = 'Submit jitsi';
 $string['jitsi:view'] = 'View jitsi';
