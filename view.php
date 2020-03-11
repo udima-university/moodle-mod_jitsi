@@ -60,6 +60,15 @@ $context = context_module::instance($cm->id);
 if (!has_capability('mod/jitsi:view', $context)) {
     notice(get_string('noviewpermission', 'jitsi'));
 }
+$courseid = $course->id;
+$context = context_course::instance($courseid);
+
+$roles = get_user_roles($context, $USER->id);
+$is_teacher=true;
+foreach ($roles as $role) {
+    $rolestr[] = $role->shortname;
+    $is_teacher=$is_teacher && ($role->shortname!='student') && ($role->shortname!='guest');
+}
 
 if ($jitsi->intro) {
     echo $OUTPUT->box(format_module_intro('jitsi', $jitsi, $cm->id), 'generalbox mod_introbox', 'jitsiintro');
@@ -67,7 +76,7 @@ if ($jitsi->intro) {
 $avatar = $CFG->wwwroot.'/user/pix.php/'.$USER->id.'/f1.jpg';
 $urlparams = array('avatar' => $avatar, 'nom' => $USER->username, 'ses' => $jitsi->name, 'courseid' => $course->id, 'cmid' => $id);
 $today = getdate();
-if ($today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))) {
+if ($today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))||(in_array('editingteacher', $rolestr)==1)) {
     echo $OUTPUT->box(get_string('instruction', 'jitsi'));
     echo $OUTPUT->single_button(new moodle_url('/mod/jitsi/sesion.php', $urlparams), get_string('access', 'jitsi'), 'post');
 } else {
