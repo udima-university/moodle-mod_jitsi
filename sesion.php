@@ -64,6 +64,7 @@ echo "}\n";
 echo "var api = new JitsiMeetExternalAPI(domain, options);\n";
 echo "api.executeCommand('displayName', '".$nombre."');\n";
 echo "api.executeCommand('toggleVideo');\n";
+echo "api.executeCommand('toggleAudio');\n";
 echo "api.executeCommand('avatarUrl', '".$avatar."');\n";
 echo "</script>\n";
 
