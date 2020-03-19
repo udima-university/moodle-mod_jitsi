@@ -67,14 +67,55 @@ $roles = get_user_roles($context, $USER->id);
 $is_teacher=true;
 foreach ($roles as $role) {
     $rolestr[] = $role->shortname;
-    $is_teacher=$is_teacher && ($role->shortname!='student') && ($role->shortname!='guest');
 }
-
 if ($jitsi->intro) {
     echo $OUTPUT->box(format_module_intro('jitsi', $jitsi, $cm->id), 'generalbox mod_introbox', 'jitsiintro');
 }
+$teacher = 'false';
+if (in_array('editingteacher', $rolestr)==1){
+  $teacher = 'true';
+}
+$nom = null;
+
+switch ($CFG->jitsi_id) {
+    case 'username':
+        $nom = $USER->username;
+        break;
+    case 'nameandsurname':
+        $nom = $USER->firstname.' '.$USER->lastname;
+        break;
+}
+$sessionoptionsparam = ['$course->shortname','$jitsi->id','$jitsi->name'];
+$fieldssesionname = $CFG->jitsi_sesionname;
+
+$allowed = explode(',', $fieldssesionname);
+$max = sizeof($allowed);
+
+$sessionNom = '';
+$sesParam = '';
+$optionsSeparator = ['.', '-', '_', ''];
+for ($i=0; $i<$max;$i++){
+  if ($i!=$max-1){
+    if ($allowed[$i]==0){
+      $sesParam .= $course->shortname.$optionsSeparator[$CFG->jitsi_separator];
+    } else if ($allowed[$i]==1){
+      $sesParam .= $jitsi->id.$optionsSeparator[$CFG->jitsi_separator];
+    } else if ($allowed[$i]==2){
+      $sesParam .= $jitsi->name.$optionsSeparator[$CFG->jitsi_separator];
+    }
+  }else{
+    if ($allowed[$i]==0){
+      $sesParam .= $course->shortname;
+    } else if ($allowed[$i]==1){
+      $sesParam .= $jitsi->id;
+    } else if ($allowed[$i]==2){
+      $sesParam .= $jitsi->name;
+    }
+  }
+}
 $avatar = $CFG->wwwroot.'/user/pix.php/'.$USER->id.'/f1.jpg';
-$urlparams = array('avatar' => $avatar, 'nom' => $USER->username, 'ses' => $course->shortname.'.'.$jitsi->name.'.'.$jitsi->id, 'courseid' => $course->id, 'cmid' => $id);
+$urlparams = array('avatar' => $avatar, 'nom' => $nom, 'ses' => $sesParam, 'courseid' => $course->id, 'cmid' => $id, 't' => $teacher);
+
 $today = getdate();
 if ($today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))||(in_array('editingteacher', $rolestr)==1)) {
     echo $OUTPUT->box(get_string('instruction', 'jitsi'));
@@ -82,4 +123,5 @@ if ($today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))||(in_array('edi
 } else {
     echo $OUTPUT->box(get_string('nostart', 'jitsi', $jitsi->minpretime));
 }
+echo $CFG->jitsi_help;
 echo $OUTPUT->footer();

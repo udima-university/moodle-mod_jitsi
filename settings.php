@@ -26,4 +26,20 @@ defined('MOODLE_INTERNAL') || die;
 if ($ADMIN->fulltree) {
     require_once($CFG->dirroot.'/mod/jitsi/lib.php');
     $settings->add(new admin_setting_configtext('jitsi_domain', 'Domain', 'Domain Jitsi Server', 'meet.jit.si'));
+    $settings->add(new admin_setting_confightmleditor('jitsi_help', get_string('help', 'jitsi'), get_string('helpex', 'jitsi'), null));
+    $options = ['username'=>get_string('username', 'jitsi'), 'nameandsurname'=>get_string('nameandsurname', 'jitsi')];
+    $settings->add(new admin_setting_configselect('jitsi_id', get_string('identification', 'jitsi'), get_string('identificationex', 'jitsi'),null,$options));
+    $sessionoptions = ['Course Shortname','Session ID','Session Name'];
+    $sessionoptionsDefault = [0,1,2];
+
+    $optionsSeparator = ['.', '-', '_', 'empty'];
+    $settings->add(new admin_setting_configselect('jitsi_separator', 'separator', 'separatorex','.',$optionsSeparator));
+    $settings->add(new admin_setting_configmultiselect('jitsi_sesionname',
+        'Session name fields', 'Fields name session',
+        $sessionoptionsDefault , $sessionoptions));
+    $settings->add(new admin_setting_heading('bookmodeditdefaults',
+        get_string('tokennconfig', 'jitsi'), get_string('tokenconfigurationex', 'jitsi')));
+    $settings->add(new admin_setting_configtext('jitsi_app_id', 'App_id', 'Token app id', ''));
+    $settings->add(new admin_setting_configpasswordunmask('jitsi_secret', 'Secret', 'Secret', ''));
+
 }
