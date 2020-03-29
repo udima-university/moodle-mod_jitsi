@@ -36,12 +36,18 @@ $nombre = required_param('nom', PARAM_TEXT);
 $sesion = required_param('ses', PARAM_TEXT);
 $sesionnorm = str_replace(' ', '', $sesion);
 $avatar = required_param('avatar', PARAM_TEXT);
-$teacher = required_param('t', PARAM_TEXT);
+$teacher = required_param('t', PARAM_BOOL);
 require_login($courseid);
 
 $PAGE->set_title($sesion);
 $PAGE->set_heading($sesion);
 echo $OUTPUT->header();
+
+if ($teacher == 1){
+  $teacher = true;
+}else {
+  $teacher = false;
+}
 
 $context = context_module::instance($cmid);
 
@@ -70,7 +76,7 @@ $payload  = json_encode([
   "iss" => $CFG->jitsi_app_id,            // Required - as JWT_APP_ID env
 
   "sub" => $CFG->jitsi_domain,            // Requied: as DOMAIN env
-  "room" => $sesionnorm,                  // restricted room name or * for all room
+  "room" => urlencode($sesionnorm),                  // restricted room name or * for all room
 
   "exp" => time()+24*3600,                // unix timestamp for expiration, for example 24 hours
   "moderator" => $teacher                // true/false for room moderator role
@@ -83,13 +89,16 @@ $signature = hash_hmac('sha256', $base64urlheader . "." . $base64urlpayload, $se
 $base64urlsignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
 
 $jwt = $base64urlheader . "." . $base64urlpayload . "." . $base64urlsignature;
-
 echo "<script src=\"https://".$CFG->jitsi_domain."/external_api.js\"></script>\n";
 
 echo "<script>\n";
 echo "var domain = \"".$CFG->jitsi_domain."\";\n";
 echo "var options = {\n";
-echo "roomName: \"".$sesionnorm."\",\n";
+echo "configOverwrite: {\n";
+echo "channelLastN: ".$CFG->jitsi_channellastcam.",\n";
+echo "},\n";
+echo "roomName: \"".urlencode($sesionnorm)."\",\n";
+
 if ($CFG->jitsi_app_id != null && $CFG->jitsi_secret != null) {
     echo "jwt: \"".$jwt."\",\n";
 }
@@ -98,19 +107,39 @@ if ($CFG->branch < 36) {
 } else {
     echo "parentNode: document.querySelector('#region-main'),\n";
 }
-if ($CFG->jitsi_showinfo==0){
-    echo "interfaceConfigOverwrite:{TOOLBAR_BUTTONS:['microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
-          'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
-          'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
-          'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
-          'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone']},\n";
-}else{
-    echo "interfaceConfigOverwrite:{TOOLBAR_BUTTONS:['microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
-        'fodeviceselection', 'hangup', 'profile', 'info', 'chat', 'recording',
-        'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
-        'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
-        'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone']},\n";
+$streamingoption = '';
+
+if ($teacher == true && $CFG->jitsi_livebutton == 1){
+  $streamingoption = 'livestreaming';
 }
+
+$youtubeoption = '';
+if ($CFG->jitsi_shareyoutube == 1){
+  $youtubeoption = 'sharedvideo';
+}
+
+$bluroption = '';
+if ($CFG->jitsi_blurbutton == 1){
+  $bluroption = 'videobackgroundblur';
+}
+
+$buttonswithshowinfo = "['microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
+    'fodeviceselection', 'hangup', 'profile', 'info', 'chat', 'recording',
+    '".$streamingoption."', 'etherpad', ".$youtubeoption.", 'settings', 'raisehand',
+    'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
+    'tileview', '".$bluroption."', 'download', 'help', 'mute-everyone']";
+$buttonswithoutshowinfo = "['microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
+      'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
+      '".$streamingoption."', 'etherpad', '".$youtubeoption."', 'settings', 'raisehand',
+      'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
+      'tileview', '".$bluroption."', 'download', 'help', 'mute-everyone']";
+echo "interfaceConfigOverwrite:{\n";
+    if ($CFG->jitsi_showinfo==0){
+        echo "TOOLBAR_BUTTONS:".$buttonswithoutshowinfo.",\n";
+    }else{
+        echo "TOOLBAR_BUTTONS:".$buttonswithshowinfo.",\n";
+    }
+echo "},\n";
 
 echo "width: '100%',\n";
 echo "height: 650,\n";

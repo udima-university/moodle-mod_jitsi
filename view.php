@@ -72,9 +72,9 @@ foreach ($roles as $role) {
 if ($jitsi->intro) {
     echo $OUTPUT->box(format_module_intro('jitsi', $jitsi, $cm->id), 'generalbox mod_introbox', 'jitsiintro');
 }
-$teacher = 'false';
+$teacher = false;
 if (in_array('editingteacher', $rolestr) == 1) {
-    $teacher = 'true';
+    $teacher = true;
 }
 $nom = null;
 

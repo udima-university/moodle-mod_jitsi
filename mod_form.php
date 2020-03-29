@@ -71,7 +71,7 @@ class mod_jitsi_mod_form extends moodleform_mod {
           30 => 30
         );
         $mform->addElement('select', 'minpretime', get_string('minpretime', 'jitsi'), $choicesminspre);
-
+        $mform->disabledIf('minpretime', 'timeopen[enabled]');
         $this->standard_coursemodule_elements();
         $this->add_action_buttons();
     }
