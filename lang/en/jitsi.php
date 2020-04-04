@@ -76,3 +76,7 @@ $string['blurbutton'] = 'Blur option';
 $string['blurbuttonex'] = 'Show blur option';
 $string['youtubebutton'] = 'Youtube sharing option';
 $string['youtubebuttonex'] = 'Show youtube sharing option';
+$string['watermarklink'] = 'Watermark Link';
+$string['watermarklinkex'] = 'Watermark Link';
+$string['finishandreturn'] = 'Finish and Return';
+$string ['finishandreturnex'] = 'Return to course when finish the session';

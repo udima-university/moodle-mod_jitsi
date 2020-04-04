@@ -43,10 +43,10 @@ $PAGE->set_title($sesion);
 $PAGE->set_heading($sesion);
 echo $OUTPUT->header();
 
-if ($teacher == 1){
-  $teacher = true;
-}else {
-  $teacher = false;
+if ($teacher == 1) {
+      $teacher = true;
+} else {
+      $teacher = false;
 }
 
 $context = context_module::instance($cmid);
@@ -58,28 +58,26 @@ if (!has_capability('mod/jitsi:view', $context)) {
 $header = json_encode([
   "kid" => "jitsi/custom_key_name",
   "typ" => "JWT",
-  "alg" => "HS256"        // Hash HMAC
-],JSON_UNESCAPED_SLASHES);
+  "alg" => "HS256"
+], JSON_UNESCAPED_SLASHES);
 $base64urlheader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
 
 $payload  = json_encode([
-  "context" =>[
-	"user" => [
+  "context" => [
+  "user" => [
       "avatar" => $avatar,
       "name" => $nombre,
       "email" => "",
-      "id" => "" // only for internal usage
+      "id" => ""
     ],
     "group" => ""
 ],
   "aud" => "jitsi",
-  "iss" => $CFG->jitsi_app_id,            // Required - as JWT_APP_ID env
-
-  "sub" => $CFG->jitsi_domain,            // Requied: as DOMAIN env
-  "room" => urlencode($sesionnorm),                  // restricted room name or * for all room
-
-  "exp" => time()+24*3600,                // unix timestamp for expiration, for example 24 hours
-  "moderator" => $teacher                // true/false for room moderator role
+  "iss" => $CFG->jitsi_app_id,
+  "sub" => $CFG->jitsi_domain,
+  "room" => urlencode($sesionnorm),
+  "exp" => time() + 24 * 3600,
+  "moderator" => $teacher
 
 ], JSON_UNESCAPED_SLASHES);
 $base64urlpayload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
@@ -109,23 +107,23 @@ if ($CFG->branch < 36) {
 }
 $streamingoption = '';
 
-if ($teacher == true && $CFG->jitsi_livebutton == 1){
-  $streamingoption = 'livestreaming';
+if ($teacher == true && $CFG->jitsi_livebutton == 1) {
+    $streamingoption = 'livestreaming';
 }
 
 $youtubeoption = '';
-if ($CFG->jitsi_shareyoutube == 1){
-  $youtubeoption = 'sharedvideo';
+if ($CFG->jitsi_shareyoutube == 1) {
+    $youtubeoption = 'sharedvideo';
 }
 
 $bluroption = '';
-if ($CFG->jitsi_blurbutton == 1){
-  $bluroption = 'videobackgroundblur';
+if ($CFG->jitsi_blurbutton == 1) {
+    $bluroption = 'videobackgroundblur';
 }
 
 $buttonswithshowinfo = "['microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
     'fodeviceselection', 'hangup', 'profile', 'info', 'chat', 'recording',
-    '".$streamingoption."', 'etherpad', ".$youtubeoption.", 'settings', 'raisehand',
+    '".$streamingoption."', 'etherpad', '".$youtubeoption."', 'settings', 'raisehand',
     'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
     'tileview', '".$bluroption."', 'download', 'help', 'mute-everyone']";
 $buttonswithoutshowinfo = "['microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
@@ -134,11 +132,13 @@ $buttonswithoutshowinfo = "['microphone', 'camera', 'closedcaptions', 'desktop',
       'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
       'tileview', '".$bluroption."', 'download', 'help', 'mute-everyone']";
 echo "interfaceConfigOverwrite:{\n";
-    if ($CFG->jitsi_showinfo==0){
+    if ($CFG->jitsi_showinfo==0) {
         echo "TOOLBAR_BUTTONS:".$buttonswithoutshowinfo.",\n";
-    }else{
+    } else {
         echo "TOOLBAR_BUTTONS:".$buttonswithshowinfo.",\n";
     }
+echo "SHOW_JITSI_WATERMARK: true,\n";
+echo "JITSI_WATERMARK_LINK: '".$CFG->jitsi_watermarklink."',\n";
 echo "},\n";
 
 echo "width: '100%',\n";
@@ -149,6 +149,14 @@ echo "api.executeCommand('displayName', '".$nombre."');\n";
 echo "api.executeCommand('toggleVideo');\n";
 echo "api.executeCommand('toggleAudio');\n";
 echo "api.executeCommand('avatarUrl', '".$avatar."');\n";
+if ($CFG->jitsi_finishandreturn == 1) {
+    echo "api.on('readyToClose', () => {\n";
+    echo      "api.dispose();\n";
+    echo      "location.href=\"".$CFG->wwwroot."/course/view.php?id=".$courseid."\";";
+    echo  "});\n";
+}
+
 echo "</script>\n";
+
 
 echo $OUTPUT->footer();

@@ -86,7 +86,7 @@ switch ($CFG->jitsi_id) {
         $nom = $USER->firstname.' '.$USER->lastname;
         break;
 }
-$sessionoptionsparam = ['$course->shortname','$jitsi->id','$jitsi->name'];
+$sessionoptionsparam = ['$course->shortname', '$jitsi->id', '$jitsi->name'];
 $fieldssesionname = $CFG->jitsi_sesionname;
 
 $allowed = explode(',', $fieldssesionname);
@@ -95,7 +95,7 @@ $max = sizeof($allowed);
 $sesparam = '';
 $optionsseparator = ['.', '-', '_', ''];
 for ($i = 0; $i < $max; $i++) {
-    if ($i != $max-1) {
+    if ($i != $max - 1) {
         if ($allowed[$i] == 0) {
             $sesparam .= $course->shortname.$optionsseparator[$CFG->jitsi_separator];
         } else if ($allowed[$i] == 1) {
@@ -119,7 +119,7 @@ $urlparams = array('avatar' => $avatar, 'nom' => $nom, 'ses' => $sesparam,
 
 $today = getdate();
 if ($today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))||
-    (in_array('editingteacher', $rolestr)==1)) {
+    (in_array('editingteacher', $rolestr) == 1)) {
     echo $OUTPUT->box(get_string('instruction', 'jitsi'));
     echo $OUTPUT->single_button(new moodle_url('/mod/jitsi/sesion.php', $urlparams), get_string('access', 'jitsi'), 'post');
 } else {
