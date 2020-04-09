@@ -72,12 +72,13 @@ foreach ($roles as $role) {
 if ($jitsi->intro) {
     echo $OUTPUT->box(format_module_intro('jitsi', $jitsi, $cm->id), 'generalbox mod_introbox', 'jitsiintro');
 }
-$teacher = false;
-if (in_array('editingteacher', $rolestr) == 1) {
-    $teacher = true;
-}
-$nom = null;
 
+$moderation = false;
+if (has_capability('mod/jitsi:moderation', $context)){
+    $moderation = true;
+}
+
+$nom = null;
 switch ($CFG->jitsi_id) {
     case 'username':
         $nom = $USER->username;
@@ -115,7 +116,7 @@ for ($i = 0; $i < $max; $i++) {
 }
 $avatar = $CFG->wwwroot.'/user/pix.php/'.$USER->id.'/f1.jpg';
 $urlparams = array('avatar' => $avatar, 'nom' => $nom, 'ses' => $sesparam,
-    'courseid' => $course->id, 'cmid' => $id, 't' => $teacher);
+    'courseid' => $course->id, 'cmid' => $id, 't' => $moderation);
 
 $today = getdate();
 if ($today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))||

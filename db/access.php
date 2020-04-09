@@ -68,12 +68,13 @@ $capabilities = array(
         )
     ),
 
-    'mod/jitsi:submit' => array(
-        'riskbitmask' => RISK_SPAM,
+    'mod/jitsi:moderation' => array(
+        'riskbitmask' => RISK_XSS,
         'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
+        'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
-            'student' => CAP_ALLOW
-        )
-    ),
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+      )
+    )
 );
