@@ -71,7 +71,7 @@ $payload  = json_encode([
       "id" => ""
     ],
     "group" => ""
-],
+  ],
   "aud" => "jitsi",
   "iss" => $CFG->jitsi_app_id,
   "sub" => $CFG->jitsi_domain,
@@ -132,11 +132,11 @@ $buttonswithoutshowinfo = "['microphone', 'camera', 'closedcaptions', 'desktop',
       'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
       'tileview', '".$bluroption."', 'download', 'help', 'mute-everyone']";
 echo "interfaceConfigOverwrite:{\n";
-    if ($CFG->jitsi_showinfo==0) {
-        echo "TOOLBAR_BUTTONS:".$buttonswithoutshowinfo.",\n";
-    } else {
-        echo "TOOLBAR_BUTTONS:".$buttonswithshowinfo.",\n";
-    }
+if ($CFG->jitsi_showinfo == 0) {
+    echo "TOOLBAR_BUTTONS:".$buttonswithoutshowinfo.",\n";
+} else {
+    echo "TOOLBAR_BUTTONS:".$buttonswithshowinfo.",\n";
+}
 echo "SHOW_JITSI_WATERMARK: true,\n";
 echo "JITSI_WATERMARK_LINK: '".$CFG->jitsi_watermarklink."',\n";
 echo "},\n";

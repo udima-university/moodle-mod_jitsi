@@ -40,16 +40,25 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configmultiselect('jitsi_sesionname',
         get_string('sessionnamefields', 'jitsi'), get_string('sessionnamefieldsex', 'jitsi'),
         $sessionoptionsdefault, $sessionoptions));
-    $settings->add(new admin_setting_configcheckbox('jitsi_showinfo', get_string('infoicon', 'jitsi'), get_string('infoiconex', 'jitsi'), 0));
-    $settings->add(new admin_setting_configtext('jitsi_channellastcam', get_string('simultaneouscameras', 'jitsi'), get_string('simultaneouscamerasex', 'jitsi'), '4', PARAM_INT, 1));
-    $settings->add(new admin_setting_configcheckbox('jitsi_livebutton', get_string('streamingbutton', 'jitsi'), get_string('streamingbuttonex', 'jitsi'), 0));
-    $settings->add(new admin_setting_configcheckbox('jitsi_blurbutton', get_string('blurbutton', 'jitsi'), get_string('blurbuttonex', 'jitsi'), 0));
-    $settings->add(new admin_setting_configcheckbox('jitsi_shareyoutube', get_string('youtubebutton', 'jitsi'), get_string('youtubebuttonex', 'jitsi'), 0));
-    $settings->add(new admin_setting_configtext('jitsi_watermarklink', get_string('watermarklink', 'jitsi'), get_string('watermarklinkex', 'jitsi'), 'https://jitsi.org'));
-    $settings->add(new admin_setting_configcheckbox('jitsi_finishandreturn', get_string('finishandreturn', 'jitsi'), get_string('finishandreturnex', 'jitsi'), 0));
+    $settings->add(new admin_setting_configcheckbox('jitsi_showinfo', get_string('infoicon', 'jitsi'),
+        get_string('infoiconex', 'jitsi'), 0));
+    $settings->add(new admin_setting_configtext('jitsi_channellastcam', get_string('simultaneouscameras', 'jitsi'),
+        get_string('simultaneouscamerasex', 'jitsi'), '4', PARAM_INT, 1));
+    $settings->add(new admin_setting_configcheckbox('jitsi_livebutton', get_string('streamingbutton', 'jitsi'),
+        get_string('streamingbuttonex', 'jitsi'), 0));
+    $settings->add(new admin_setting_configcheckbox('jitsi_blurbutton', get_string('blurbutton', 'jitsi'),
+        get_string('blurbuttonex', 'jitsi'), 0));
+    $settings->add(new admin_setting_configcheckbox('jitsi_shareyoutube', get_string('youtubebutton', 'jitsi'),
+        get_string('youtubebuttonex', 'jitsi'), 0));
+    $settings->add(new admin_setting_configtext('jitsi_watermarklink', get_string('watermarklink', 'jitsi'),
+        get_string('watermarklinkex', 'jitsi'), 'https://jitsi.org'));
+    $settings->add(new admin_setting_configcheckbox('jitsi_finishandreturn', get_string('finishandreturn', 'jitsi'),
+        get_string('finishandreturnex', 'jitsi'), 0));
 
     $settings->add(new admin_setting_heading('bookmodeditdefaults',
         get_string('tokennconfig', 'jitsi'), get_string('tokenconfigurationex', 'jitsi')));
-    $settings->add(new admin_setting_configtext('jitsi_app_id', get_string('appid', 'jitsi'), get_string('appidex', 'jitsi'), ''));
-    $settings->add(new admin_setting_configpasswordunmask('jitsi_secret', get_string('secret', 'jitsi'), get_string('secretex', 'jitsi'), ''));
+    $settings->add(new admin_setting_configtext('jitsi_app_id', get_string('appid', 'jitsi'),
+        get_string('appidex', 'jitsi'), ''));
+    $settings->add(new admin_setting_configpasswordunmask('jitsi_secret', get_string('secret', 'jitsi'),
+        get_string('secretex', 'jitsi'), ''));
 }
