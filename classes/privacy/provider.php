@@ -21,24 +21,19 @@
  * @copyright  2019 Sergio Comerón Sánchez-Paniagua <sergiocomeron@icloud.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\null_provider {
-    /**
-     * Get the language string identifier with the component's language
-     * file to explain why this plugin stores no data.
-     *
-     * @return  string
-     */
-    public static function get_reason() : string {
-        return 'privacy:metadata';
-    }
+
+namespace mod_jitsi\privacy;
+
+use core_privacy\local\metadata\collection;
+
+class provider implements \core_privacy\local\metadata\provider, \core_privacy\local\request\data_provider {
 
     public static function get_metadata(collection $collection) : collection {
-
-    $collection->add_external_location_link('jitsi', [
-                'username' => 'privacy:metadata:jitsi:username',
-                'avatar' => 'privacy:metadata:jitsi:avatar',
-                ], 'privacy:metadata:jitsi');
+        $collection->add_external_location_link('jitsi', [
+            'username' => 'privacy:metadata:jitsi:username',
+            'avatar' => 'privacy:metadata:jitsi:avatar',
+            ], 'privacy:metadata:jitsi');
 
         return $collection;
     }
-}
+ }
