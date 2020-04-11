@@ -143,6 +143,7 @@ echo "},\n";
 
 echo "width: '100%',\n";
 echo "height: 650,\n";
+echo "parentNode:document.body,";
 echo "}\n";
 echo "var api = new JitsiMeetExternalAPI(domain, options);\n";
 echo "api.executeCommand('displayName', '".$nombre."');\n";
