@@ -74,7 +74,7 @@ if ($jitsi->intro) {
 }
 
 $moderation = false;
-if (has_capability('mod/jitsi:moderation', $context)){
+if (has_capability('mod/jitsi:moderation', $context)) {
     $moderation = true;
 }
 
@@ -91,7 +91,7 @@ $sessionoptionsparam = ['$course->shortname', '$jitsi->id', '$jitsi->name'];
 $fieldssessionname = $CFG->jitsi_sesionname;
 
 $allowed = explode(',', $fieldssessionname);
-$max = sizeof($allowed);
+$max = count($allowed);
 
 $sesparam = '';
 $optionsseparator = ['.', '-', '_', ''];

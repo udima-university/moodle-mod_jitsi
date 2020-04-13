@@ -101,7 +101,11 @@ if ($CFG->jitsi_app_id != null && $CFG->jitsi_secret != null) {
     echo "jwt: \"".$jwt."\",\n";
 }
 if ($CFG->branch < 36) {
-    echo "parentNode: document.querySelector('#region-main .card-body'),\n";
+    if ($CFG->theme == 'boost') {
+        echo "parentNode: document.querySelector('#region-main .card-body'),\n";
+    } else {
+        echo "parentNode: document.querySelector('#region-main'),\n";
+    }
 } else {
     echo "parentNode: document.querySelector('#region-main'),\n";
 }
