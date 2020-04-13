@@ -94,6 +94,8 @@ echo "var domain = \"".$CFG->jitsi_domain."\";\n";
 echo "var options = {\n";
 echo "configOverwrite: {\n";
 echo "channelLastN: ".$CFG->jitsi_channellastcam.",\n";
+echo "startWithAudioMuted: true,\n";
+echo "startWithVideoMuted: true,\n";
 echo "},\n";
 echo "roomName: \"".urlencode($sesionnorm)."\",\n";
 
@@ -150,8 +152,6 @@ echo "height: 650,\n";
 echo "}\n";
 echo "var api = new JitsiMeetExternalAPI(domain, options);\n";
 echo "api.executeCommand('displayName', '".$nombre."');\n";
-echo "api.executeCommand('toggleVideo');\n";
-echo "api.executeCommand('toggleAudio');\n";
 echo "api.executeCommand('avatarUrl', '".$avatar."');\n";
 if ($CFG->jitsi_finishandreturn == 1) {
     echo "api.on('readyToClose', () => {\n";
