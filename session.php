@@ -28,19 +28,19 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(dirname(dirname(__FILE__))).'/lib/moodlelib.php');
 require_once(dirname(__FILE__).'/lib.php');
-$PAGE->set_url($CFG->wwwroot.'/mod/jitsi/sesion.php');
+$PAGE->set_url($CFG->wwwroot.'/mod/jitsi/session.php');
 
 $courseid = required_param('courseid', PARAM_INT);
 $cmid = required_param('cmid', PARAM_INT);
 $nombre = required_param('nom', PARAM_TEXT);
-$sesion = required_param('ses', PARAM_TEXT);
-$sesionnorm = str_replace(' ', '', $sesion);
+$session = required_param('ses', PARAM_TEXT);
+$sessionnorm = str_replace(' ', '', $session);
 $avatar = required_param('avatar', PARAM_TEXT);
 $teacher = required_param('t', PARAM_BOOL);
 require_login($courseid);
 
-$PAGE->set_title($sesion);
-$PAGE->set_heading($sesion);
+$PAGE->set_title($session);
+$PAGE->set_heading($session);
 echo $OUTPUT->header();
 
 if ($teacher == 1) {
@@ -75,7 +75,7 @@ $payload  = json_encode([
   "aud" => "jitsi",
   "iss" => $CFG->jitsi_app_id,
   "sub" => $CFG->jitsi_domain,
-  "room" => urlencode($sesionnorm),
+  "room" => urlencode($sessionnorm),
   "exp" => time() + 24 * 3600,
   "moderator" => $teacher
 
@@ -95,7 +95,7 @@ echo "var options = {\n";
 echo "configOverwrite: {\n";
 echo "channelLastN: ".$CFG->jitsi_channellastcam.",\n";
 echo "},\n";
-echo "roomName: \"".urlencode($sesionnorm)."\",\n";
+echo "roomName: \"".urlencode($sessionnorm)."\",\n";
 
 if ($CFG->jitsi_app_id != null && $CFG->jitsi_secret != null) {
     echo "jwt: \"".$jwt."\",\n";
