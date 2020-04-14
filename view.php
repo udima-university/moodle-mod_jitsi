@@ -88,9 +88,9 @@ switch ($CFG->jitsi_id) {
         break;
 }
 $sessionoptionsparam = ['$course->shortname', '$jitsi->id', '$jitsi->name'];
-$fieldssesionname = $CFG->jitsi_sesionname;
+$fieldssessionname = $CFG->jitsi_sesionname;
 
-$allowed = explode(',', $fieldssesionname);
+$allowed = explode(',', $fieldssessionname);
 $max = count($allowed);
 
 $sesparam = '';
@@ -122,7 +122,7 @@ $today = getdate();
 if ($today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))||
     (in_array('editingteacher', $rolestr) == 1)) {
     echo $OUTPUT->box(get_string('instruction', 'jitsi'));
-    echo $OUTPUT->single_button(new moodle_url('/mod/jitsi/sesion.php', $urlparams), get_string('access', 'jitsi'), 'post');
+    echo $OUTPUT->single_button(new moodle_url('/mod/jitsi/session.php', $urlparams), get_string('access', 'jitsi'), 'post');
 } else {
     echo $OUTPUT->box(get_string('nostart', 'jitsi', $jitsi->minpretime));
 }
