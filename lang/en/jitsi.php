@@ -33,6 +33,7 @@ $string['modulenameplural'] = 'Jitsis';
 $string['jitsiname_help'] = 'Use the Jitsi module for videoconference ';
 $string['jitsi:addinstance'] = 'Add a new Jitsi';
 $string['jitsi:moderation'] = 'Jitsi Moderation';
+$string['jitsi:sharedesktop'] = 'Share Desktop';
 $string['jitsi:view'] = 'View Jitsi';
 $string['jitsiname'] = 'Session name';
 $string['jitsi'] = 'Jitsi';

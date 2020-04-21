@@ -117,6 +117,11 @@ if ($teacher == true && $CFG->jitsi_livebutton == 1) {
     $streamingoption = 'livestreaming';
 }
 
+$desktop = '';
+if (has_capability('mod/jitsi:sharedesktop', $context)) {
+    $desktop = 'desktop';
+}
+
 $youtubeoption = '';
 if ($CFG->jitsi_shareyoutube == 1) {
     $youtubeoption = 'sharedvideo';
@@ -127,12 +132,12 @@ if ($CFG->jitsi_blurbutton == 1) {
     $bluroption = 'videobackgroundblur';
 }
 
-$buttonswithshowinfo = "['microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
+$buttonswithshowinfo = "['microphone', 'camera', 'closedcaptions', '".$desktop."', 'fullscreen',
     'fodeviceselection', 'hangup', 'profile', 'info', 'chat', 'recording',
     '".$streamingoption."', 'etherpad', '".$youtubeoption."', 'settings', 'raisehand',
     'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
     'tileview', '".$bluroption."', 'download', 'help', 'mute-everyone']";
-$buttonswithoutshowinfo = "['microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
+$buttonswithoutshowinfo = "['microphone', 'camera', 'closedcaptions', '".$desktop."', 'fullscreen',
       'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
       '".$streamingoption."', 'etherpad', '".$youtubeoption."', 'settings', 'raisehand',
       'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
