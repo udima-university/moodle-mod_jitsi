@@ -84,7 +84,8 @@ $capabilities = array(
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
+            'manager' => CAP_ALLOW,
+            'student' => CAP_ALLOW
       )
     )
 );
