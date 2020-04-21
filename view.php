@@ -98,22 +98,23 @@ $optionsseparator = ['.', '-', '_', ''];
 for ($i = 0; $i < $max; $i++) {
     if ($i != $max - 1) {
         if ($allowed[$i] == 0) {
-            $sesparam .= $course->shortname.$optionsseparator[$CFG->jitsi_separator];
+            $sesparam .= string_sanitize($course->shortname).$optionsseparator[$CFG->jitsi_separator];
         } else if ($allowed[$i] == 1) {
             $sesparam .= $jitsi->id.$optionsseparator[$CFG->jitsi_separator];
         } else if ($allowed[$i] == 2) {
-            $sesparam .= $jitsi->name.$optionsseparator[$CFG->jitsi_separator];
+            $sesparam .= string_sanitize($jitsi->name).$optionsseparator[$CFG->jitsi_separator];
         }
     } else {
         if ($allowed[$i] == 0) {
-            $sesparam .= $course->shortname;
+            $sesparam .= string_sanitize($course->shortname);
         } else if ($allowed[$i] == 1) {
             $sesparam .= $jitsi->id;
         } else if ($allowed[$i] == 2) {
-            $sesparam .= $jitsi->name;
+            $sesparam .= string_sanitize($jitsi->name);
         }
     }
 }
+
 $avatar = $CFG->wwwroot.'/user/pix.php/'.$USER->id.'/f1.jpg';
 $urlparams = array('avatar' => $avatar, 'nom' => $nom, 'ses' => $sesparam,
     'courseid' => $course->id, 'cmid' => $id, 't' => $moderation);
@@ -128,3 +129,24 @@ if ($today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))||
 }
 echo $CFG->jitsi_help;
 echo $OUTPUT->footer();
+
+/*
+ * Parameters:
+ *     $string - The string to sanitize.
+ *     $force_lowercase - Force the string to lowercase?
+ *     $anal - If set to *true*, will remove all non-alphanumeric characters.
+ */
+function string_sanitize($string, $force_lowercase = true, $anal = false) {
+    $strip = array("~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")",
+            "_", "=", "+", "[", "{", "]", "}", "\\", "|", ";", ":", "\"",
+            "'", "&#8216;", "&#8217;", "&#8220;", "&#8221;", "&#8211;", "&#8212;",
+            "â€”", "â€“", ",", "<", ".", ">", "/", "?");
+    $clean = trim(str_replace($strip, "", strip_tags($string)));
+    $clean = preg_replace('/\s+/', "-", $clean);
+    $clean = ($anal) ? preg_replace("/[^a-zA-Z0-9]/", "", $clean) : $clean ;
+    return ($force_lowercase) ?
+        (function_exists('mb_strtolower')) ?
+            mb_strtolower($clean, 'UTF-8') :
+            strtolower($clean) :
+        $clean;
+}
