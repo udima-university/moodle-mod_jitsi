@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Define all the backup steps that will be used by the backup_jitsi_activity_task
- *
- * @package   mod_jitsi
- * @category  backup
- * @copyright 2019 Sergio Comerón Sánchez-Paniagua <sergiocomeron@icloud.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 defined('MOODLE_INTERNAL') || die;
 
 /**
