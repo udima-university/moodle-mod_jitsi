@@ -30,7 +30,9 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['modulename'] = 'Jitsi';
 $string['modulenameplural'] = 'Jitsis';
-$string['jitsiname_help'] = 'Use the Jitsi module for videoconference ';
+$string['modulename_help'] = 'Use the Jitsi module for videoconference. These videoconferences will use your Moodle username by displaying your username and avatar in videoconferences.
+
+Jitsi-meet is an open-source videoconferencing solution that enables you to easily build and implement secure video conferencing solutions.';
 $string['jitsi:addinstance'] = 'Add a new Jitsi';
 $string['jitsi:moderation'] = 'Jitsi Moderation';
 $string['jitsi:sharedesktop'] = 'Share Desktop';
