@@ -59,6 +59,7 @@ $string['identification'] = 'ID User';
 $string['identificationex'] = 'ID to show in the session';
 $string['username'] = 'Username';
 $string['nameandsurname'] = 'Firstname + Lastname';
+$string['pseudonym'] = 'Pseudonym';
 $string['tokennconfig'] = 'Token configuration';
 $string['tokenconfigurationex'] = 'Empty for servers without token';
 $string['separator'] = 'Separator';
