@@ -80,14 +80,17 @@ if (has_capability('mod/jitsi:moderation', $context)) {
 
 $nom = null;
 switch ($CFG->jitsi_id) {
-    case 'username':
-        $nom = $USER->username;
+    case 'empty':
+        $nom = "";
         break;
     case 'nameandsurname':
         $nom = $USER->firstname.' '.$USER->lastname;
         break;
     case 'pseudonym':
         $nom = md5($USER->username . date('Y-m-d'));
+        break;
+    case 'username':
+        $nom = $USER->username;
         break;
 }
 $sessionoptionsparam = ['$course->shortname', '$jitsi->id', '$jitsi->name'];
