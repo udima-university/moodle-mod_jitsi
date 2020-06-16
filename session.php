@@ -99,9 +99,12 @@ echo "startWithVideoMuted: true,\n";
 echo "},\n";
 echo "roomName: \"".urlencode($sessionnorm)."\",\n";
 
-if ($CFG->jitsi_app_id != null && $CFG->jitsi_secret != null) {
-    echo "jwt: \"".$jwt."\",\n";
+if (has_capability('mod/jitsi:moderation', $context)) {
+    if ($CFG->jitsi_app_id != null && $CFG->jitsi_secret != null) {
+        echo "jwt: \"".$jwt."\",\n";
+    }
 }
+
 if ($CFG->branch < 36) {
     if ($CFG->theme == 'boost') {
         echo "parentNode: document.querySelector('#region-main .card-body'),\n";
