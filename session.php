@@ -166,6 +166,21 @@ if ($CFG->jitsi_finishandreturn == 1) {
     echo  "});\n";
 }
 
+if ($CFG->jitsi_password!=null){
+    // set new password for channel
+    echo "api.addEventListener('participantRoleChanged', function(event) {";
+    echo "    if (event.role === \"moderator\") {";
+    echo "        api.executeCommand('password', '".$CFG->jitsi_password."');";
+    echo "    }";
+    echo "});";
+    // join a protected channel
+    echo "api.on('passwordRequired', function ()";
+    echo "{";
+    echo "    api.executeCommand('password', '".$CFG->jitsi_password."');";
+    echo "});";
+}
+
+
 echo "</script>\n";
 
 

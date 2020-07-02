@@ -82,4 +82,6 @@ $string['youtubebuttonex'] = 'Show youtube sharing option';
 $string['watermarklink'] = 'Watermark Link';
 $string['watermarklinkex'] = 'Watermark Link';
 $string['finishandreturn'] = 'Finish and Return';
-$string ['finishandreturnex'] = 'Return to course when finish the session';
+$string['finishandreturnex'] = 'Return to course when finish the session';
+$string['password'] = 'Password';
+$string['passwordex'] = 'Password for protect your sessions. Recommended if you use public server';

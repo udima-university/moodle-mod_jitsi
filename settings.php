@@ -55,6 +55,9 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('jitsi_finishandreturn', get_string('finishandreturn', 'jitsi'),
         get_string('finishandreturnex', 'jitsi'), 0));
 
+    $settings->add(new admin_setting_configpasswordunmask('jitsi_password', get_string('password', 'jitsi'),
+        get_string('passwordex', 'jitsi'), ''));
+
     $settings->add(new admin_setting_heading('bookmodeditdefaults',
         get_string('tokennconfig', 'jitsi'), get_string('tokenconfigurationex', 'jitsi')));
     $settings->add(new admin_setting_configtext('jitsi_app_id', get_string('appid', 'jitsi'),
