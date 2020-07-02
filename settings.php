@@ -28,7 +28,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('jitsi_domain', 'Domain', 'Domain Jitsi Server', 'meet.jit.si'));
     $settings->add(new admin_setting_confightmleditor('jitsi_help', get_string('help', 'jitsi'),
         get_string('helpex', 'jitsi'), null));
-    $options = ['username' => get_string('username', 'jitsi'), 'nameandsurname' => get_string('nameandsurname', 'jitsi')];
+    $options = ['username' => get_string('username', 'jitsi'), 'nameandsurname' => get_string('nameandsurname', 'jitsi'), 'alias' => get_string('alias', 'jitsi')];
     $settings->add(new admin_setting_configselect('jitsi_id', get_string('identification', 'jitsi'),
         get_string('identificationex', 'jitsi'), null, $options));
     $sessionoptions = ['Course Shortname', 'Session ID', 'Session Name'];

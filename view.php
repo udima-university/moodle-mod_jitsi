@@ -86,6 +86,8 @@ switch ($CFG->jitsi_id) {
     case 'nameandsurname':
         $nom = $USER->firstname.' '.$USER->lastname;
         break;
+    case 'alias':
+        break;
 }
 $sessionoptionsparam = ['$course->shortname', '$jitsi->id', '$jitsi->name'];
 $fieldssessionname = $CFG->jitsi_sesionname;
