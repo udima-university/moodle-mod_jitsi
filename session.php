@@ -133,22 +133,41 @@ if ($CFG->jitsi_blurbutton == 1) {
     $bluroption = 'videobackgroundblur';
 }
 
-$buttonswithshowinfo = "['microphone', 'camera', 'closedcaptions', '".$desktop."', 'fullscreen',
-    'fodeviceselection', 'hangup', 'profile', 'info', 'chat', 'recording',
-    '".$streamingoption."', 'etherpad', '".$youtubeoption."', 'settings', 'raisehand',
-    'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
-    'tileview', '".$bluroption."', 'download', 'help', 'mute-everyone']";
-$buttonswithoutshowinfo = "['microphone', 'camera', 'closedcaptions', '".$desktop."', 'fullscreen',
-      'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
-      '".$streamingoption."', 'etherpad', '".$youtubeoption."', 'settings', 'raisehand',
-      'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
-      'tileview', '".$bluroption."', 'download', 'help', 'mute-everyone']";
-echo "interfaceConfigOverwrite:{\n";
-if ($CFG->jitsi_showinfo == 0) {
-    echo "TOOLBAR_BUTTONS:".$buttonswithoutshowinfo.",\n";
-} else {
-    echo "TOOLBAR_BUTTONS:".$buttonswithshowinfo.",\n";
+$security = '';
+if ($CFG->jitsi_securitybutton == 1) {
+    $security = 'security';
 }
+
+$invite = '';
+if ($CFG->jitsi_invitebuttons == 1) {
+    $invite = 'invite';
+}
+
+$buttons = "['microphone', 'camera', 'closedcaptions', '".$desktop."', 'fullscreen',
+        'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
+        '".$streamingoption."', 'etherpad', '".$youtubeoption."', 'settings', 'raisehand',
+        'videoquality', 'filmstrip', '".$invite."', 'feedback', 'stats', 'shortcuts',
+        'tileview', '".$bluroption."', 'download', 'help', 'mute-everyone', '".$security."']";
+
+// $buttonswithshowinfo = "['microphone', 'camera', 'closedcaptions', '".$desktop."', 'fullscreen',
+//     'fodeviceselection', 'hangup', 'profile', 'info', 'chat', 'recording',
+//     '".$streamingoption."', 'etherpad', '".$youtubeoption."', 'settings', 'raisehand',
+//     'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
+//     'tileview', '".$bluroption."', 'download', 'help', 'mute-everyone']";
+// $buttonswithoutshowinfo = "['microphone', 'camera', 'closedcaptions', '".$desktop."', 'fullscreen',
+//       'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
+//       '".$streamingoption."', 'etherpad', '".$youtubeoption."', 'settings', 'raisehand',
+//       'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
+//       'tileview', '".$bluroption."', 'download', 'help', 'mute-everyone']";
+echo "interfaceConfigOverwrite:{\n";
+echo "TOOLBAR_BUTTONS:".$buttons.",\n";
+
+
+// if ($CFG->jitsi_showinfo == 0) {
+//     echo "TOOLBAR_BUTTONS:".$buttonswithoutshowinfo.",\n";
+// } else {
+//     echo "TOOLBAR_BUTTONS:".$buttonswithshowinfo.",\n";
+// }
 echo "SHOW_JITSI_WATERMARK: true,\n";
 echo "JITSI_WATERMARK_LINK: '".$CFG->jitsi_watermarklink."',\n";
 echo "},\n";

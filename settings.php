@@ -40,8 +40,10 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configmultiselect('jitsi_sesionname',
         get_string('sessionnamefields', 'jitsi'), get_string('sessionnamefieldsex', 'jitsi'),
         $sessionoptionsdefault, $sessionoptions));
-    $settings->add(new admin_setting_configcheckbox('jitsi_showinfo', get_string('infoicon', 'jitsi'),
-        get_string('infoiconex', 'jitsi'), 0));
+    $settings->add(new admin_setting_configcheckbox('jitsi_securitybutton', get_string('securitybutton', 'jitsi'),
+        get_string('securitybuttonex', 'jitsi'), 0));
+    $settings->add(new admin_setting_configcheckbox('jitsi_invitebuttons', get_string('invitebutton', 'jitsi'),
+        get_string('invitebuttonex', 'jitsi'), 0));
     $settings->add(new admin_setting_configtext('jitsi_channellastcam', get_string('simultaneouscameras', 'jitsi'),
         get_string('simultaneouscamerasex', 'jitsi'), '4', PARAM_INT, 1));
     $settings->add(new admin_setting_configcheckbox('jitsi_livebutton', get_string('streamingbutton', 'jitsi'),
