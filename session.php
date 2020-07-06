@@ -149,25 +149,9 @@ $buttons = "['microphone', 'camera', 'closedcaptions', '".$desktop."', 'fullscre
         'videoquality', 'filmstrip', '".$invite."', 'feedback', 'stats', 'shortcuts',
         'tileview', '".$bluroption."', 'download', 'help', 'mute-everyone', '".$security."']";
 
-// $buttonswithshowinfo = "['microphone', 'camera', 'closedcaptions', '".$desktop."', 'fullscreen',
-//     'fodeviceselection', 'hangup', 'profile', 'info', 'chat', 'recording',
-//     '".$streamingoption."', 'etherpad', '".$youtubeoption."', 'settings', 'raisehand',
-//     'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
-//     'tileview', '".$bluroption."', 'download', 'help', 'mute-everyone']";
-// $buttonswithoutshowinfo = "['microphone', 'camera', 'closedcaptions', '".$desktop."', 'fullscreen',
-//       'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
-//       '".$streamingoption."', 'etherpad', '".$youtubeoption."', 'settings', 'raisehand',
-//       'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
-//       'tileview', '".$bluroption."', 'download', 'help', 'mute-everyone']";
 echo "interfaceConfigOverwrite:{\n";
 echo "TOOLBAR_BUTTONS:".$buttons.",\n";
 
-
-// if ($CFG->jitsi_showinfo == 0) {
-//     echo "TOOLBAR_BUTTONS:".$buttonswithoutshowinfo.",\n";
-// } else {
-//     echo "TOOLBAR_BUTTONS:".$buttonswithshowinfo.",\n";
-// }
 echo "SHOW_JITSI_WATERMARK: true,\n";
 echo "JITSI_WATERMARK_LINK: '".$CFG->jitsi_watermarklink."',\n";
 echo "},\n";
@@ -199,8 +183,6 @@ if ($CFG->jitsi_password!=null){
     echo "});";
 }
 
-
 echo "</script>\n";
-
 
 echo $OUTPUT->footer();
