@@ -104,7 +104,7 @@ if ($CFG->jitsi_app_id != null && $CFG->jitsi_secret != null) {
     echo "jwt: \"".$jwt."\",\n";
 }
 if ($CFG->branch < 36) {
-    if ($CFG->theme == 'boost' || in_array('boost',$themeconfig->parents)) {
+    if ($CFG->theme == 'boost' || in_array('boost', $themeconfig->parents)) {
         echo "parentNode: document.querySelector('#region-main .card-body'),\n";
     } else {
         echo "parentNode: document.querySelector('#region-main'),\n";
@@ -169,14 +169,12 @@ if ($CFG->jitsi_finishandreturn == 1) {
     echo  "});\n";
 }
 
-if ($CFG->jitsi_password!=null){
-    // set new password for channel
+if ($CFG->jitsi_password != null) {
     echo "api.addEventListener('participantRoleChanged', function(event) {";
     echo "    if (event.role === \"moderator\") {";
     echo "        api.executeCommand('password', '".$CFG->jitsi_password."');";
     echo "    }";
     echo "});";
-    // join a protected channel
     echo "api.on('passwordRequired', function ()";
     echo "{";
     echo "    api.executeCommand('password', '".$CFG->jitsi_password."');";
