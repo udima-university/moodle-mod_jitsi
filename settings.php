@@ -61,6 +61,8 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configpasswordunmask('jitsi_password', get_string('password', 'jitsi'),
         get_string('passwordex', 'jitsi'), ''));
+    $settings->add(new admin_setting_configcheckbox('jitsi_privatesessions', get_string('privatesessions', 'jitsi'),
+        get_string('privatesessionsex', 'jitsi'), 1));
 
     $settings->add(new admin_setting_heading('bookmodeditdefaults',
         get_string('tokennconfig', 'jitsi'), get_string('tokenconfigurationex', 'jitsi')));

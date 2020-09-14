@@ -179,3 +179,20 @@ function jitsi_delete_instance($id) {
 
     return $result;
 }
+
+function jitsi_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
+    global $DB, $CFG, $USER;
+    if ($CFG->jitsi_privatesessions==1) {
+        $urlparams = array('user'=>$user->id);
+        $url = new moodle_url('/mod/jitsi/viewpriv.php', $urlparams);
+        $category = new core_user\output\myprofile\category('jitsi', get_string('jitsi', 'jitsi'), null);
+        $tree->add_category($category);
+        if ($user == $USER){
+            $node = new core_user\output\myprofile\node('jitsi', 'jitsi', get_string('privatesession', 'jitsi', $user->firstname), null, $url);
+        } else {
+            $node = new core_user\output\myprofile\node('jitsi', 'jitsi', get_string('myprivatesession', 'jitsi'), null, $url);
+        }
+        $tree->add_node($node);
+    }
+    return true;
+}
