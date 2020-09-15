@@ -33,7 +33,7 @@ $PAGE->set_context(context_system::instance());
 $themeconfig = theme_config::load($CFG->theme);
 $nombre = required_param('nom', PARAM_TEXT);
 $session = required_param('ses', PARAM_TEXT);
-$user = $DB->get_record('user', array('username'=>$session));
+$user = $DB->get_record('user', array('username' => $session));
 $sessionnorm = str_replace(array(' ', ':', '"'), '', $user->username);
 $avatar = required_param('avatar', PARAM_TEXT);
 $teacher = required_param('t', PARAM_BOOL);

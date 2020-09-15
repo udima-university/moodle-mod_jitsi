@@ -33,7 +33,7 @@ global $USER, $DB, $PAGE;
 
 $userid = required_param('user', PARAM_INT);
 
-$user = $DB->get_record('user', array('id'=>$userid));
+$user = $DB->get_record('user', array('id' => $userid));
 
 $PAGE->set_context(context_system::instance());
 
@@ -44,7 +44,7 @@ $PAGE->set_heading(format_string($user->firstname));
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('privatesession', 'jitsi', $user->firstname));
 
-if ($USER == $user){
+if ($USER == $user) {
     $moderation = true;
 } else {
     $moderation = false;
