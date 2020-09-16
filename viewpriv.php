@@ -43,13 +43,11 @@ $PAGE->set_heading(format_string($user->firstname));
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('privatesession', 'jitsi', $user->firstname));
-
-if ($USER == $user) {
-    $moderation = true;
+if ($USER->id == $user->id) {
+    $moderation = 1;
 } else {
-    $moderation = false;
+    $moderation = 0;
 }
-
 
 $nom = null;
 switch ($CFG->jitsi_id) {
