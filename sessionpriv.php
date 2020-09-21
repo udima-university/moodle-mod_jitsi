@@ -110,7 +110,7 @@ if ($teacher == true && $CFG->jitsi_livebutton == 1) {
     $streamingoption = 'livestreaming';
 }
 
-$desktop = '';
+$desktop = 'desktop';
 
 $youtubeoption = '';
 if ($CFG->jitsi_shareyoutube == 1) {
