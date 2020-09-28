@@ -30,7 +30,6 @@ require_once(dirname(dirname(dirname(__FILE__))).'/lib/moodlelib.php');
 require_once(dirname(__FILE__).'/lib.php');
 $PAGE->set_url($CFG->wwwroot.'/mod/jitsi/session.php');
 
-$themeconfig = theme_config::load($CFG->theme);
 $courseid = required_param('courseid', PARAM_INT);
 $cmid = required_param('cmid', PARAM_INT);
 $nombre = required_param('nom', PARAM_TEXT);
