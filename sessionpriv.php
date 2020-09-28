@@ -30,7 +30,7 @@ require_once(dirname(dirname(dirname(__FILE__))).'/lib/moodlelib.php');
 require_once(dirname(__FILE__).'/lib.php');
 $PAGE->set_url($CFG->wwwroot.'/mod/jitsi/session.php');
 $PAGE->set_context(context_system::instance());
-$themeconfig = theme_config::load($CFG->theme);
+
 $nombre = required_param('nom', PARAM_TEXT);
 $session = required_param('ses', PARAM_TEXT);
 $user = $DB->get_record('user', array('username' => $session));
