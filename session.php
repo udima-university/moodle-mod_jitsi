@@ -45,8 +45,10 @@ echo $OUTPUT->header();
 
 if ($teacher == 1) {
       $teacher = true;
+      $affiliation = "owner";
 } else {
       $teacher = false;
+      $affiliation = "member";
 }
 
 $context = context_module::instance($cmid);
@@ -64,7 +66,8 @@ $base64urlheader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($h
 
 $payload  = json_encode([
   "context" => [
-  "user" => [
+    "user" => [
+      "affiliation" => $affiliation,
       "avatar" => $avatar,
       "name" => $nombre,
       "email" => "",
