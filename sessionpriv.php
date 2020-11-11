@@ -44,8 +44,10 @@ echo $OUTPUT->header();
 
 if ($teacher == 1) {
       $teacher = true;
+      $affiliation = "owner";
 } else {
       $teacher = false;
+      $affiliation = "member";
 }
 
 $header = json_encode([
@@ -57,7 +59,8 @@ $base64urlheader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($h
 
 $payload  = json_encode([
   "context" => [
-  "user" => [
+    "user" => [
+      "affiliation" => $affiliation,
       "avatar" => $avatar,
       "name" => $nombre,
       "email" => "",
