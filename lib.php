@@ -188,7 +188,7 @@ function jitsi_myprofile_navigation(core_user\output\myprofile\tree $tree, $user
         $category = new core_user\output\myprofile\category('jitsi',
             get_string('jitsi', 'jitsi'), null);
         $tree->add_category($category);
-        if ($iscurrentuser==0) {
+        if ($iscurrentuser == 0) {
             $node = new core_user\output\myprofile\node('jitsi', 'jitsi',
                 get_string('privatesession', 'jitsi', $user->firstname), null, $url);
         } else {
