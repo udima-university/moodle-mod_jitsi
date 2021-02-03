@@ -31,7 +31,7 @@ require_once(dirname(__FILE__).'/lib.php');
 $PAGE->set_url($CFG->wwwroot.'/mod/jitsi/session.php');
 $PAGE->set_context(context_system::instance());
 
-$nombre = required_param('nom', PARAM_TEXT);
+$nombre = required_param('nom', PARAM_USERNAME);
 $session = required_param('ses', PARAM_TEXT);
 $user = $DB->get_record('user', array('username' => $session));
 $sessionnorm = str_replace(array(' ', ':', '"'), '', $user->username);
