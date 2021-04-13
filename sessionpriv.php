@@ -35,7 +35,7 @@ $nombre = required_param('nom', PARAM_USERNAME);
 $session = required_param('ses', PARAM_TEXT);
 $user = $DB->get_record('user', array('username' => $session));
 $sessionnorm = str_replace(array(' ', ':', '"'), '', $user->username);
-$avatar = required_param('avatar', PARAM_TEXT);
+$avatar = $CFG->jitsi_showavatars == true ? required_param('avatar', PARAM_TEXT) : null;
 $teacher = required_param('t', PARAM_BOOL);
 
 $PAGE->set_title(get_string('privatesession', 'jitsi', $user->firstname));

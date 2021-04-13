@@ -92,3 +92,5 @@ $string['privatesession'] = '{$a} private session';
 $string['myprivatesession'] = 'My private session';
 $string['privatesessions'] = 'Private sessions';
 $string['privatesessionsex'] = 'Add private sessions to user profiles';
+$string['showavatars'] = 'Show avatars in Jitsi';
+$string['showavatarsex'] = 'Show the avatar of the user in Jitsi. If the user has no profile picture this will load the default profile picture from Moodle instead of the initials Jitsi will show when no picture is set.';
