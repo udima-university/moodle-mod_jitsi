@@ -66,6 +66,9 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configcheckbox('jitsi_showavatars', get_string('showavatars', 'jitsi'), get_string('showavatarsex', 'jitsi'), 1));
 
+    $settings->add(new admin_setting_configselect('jitsi_conferencemode', get_string('conferencemode', 'jitsi'), get_string('conferencemodeex', 'jitsi'),
+        'iframe_tab', ['iframe_tab' => get_string('conferencemode_iframe_tab', 'jitsi'), 'iframe' => get_string('conferencemode_iframe', 'jitsi'), 'tab' => get_string('conferencemode_tab', 'jitsi')]));
+
     $settings->add(new admin_setting_heading('bookmodeditdefaults',
         get_string('tokennconfig', 'jitsi'), get_string('tokenconfigurationex', 'jitsi')));
     $settings->add(new admin_setting_configtext('jitsi_app_id', get_string('appid', 'jitsi'),

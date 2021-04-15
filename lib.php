@@ -199,3 +199,101 @@ function jitsi_myprofile_navigation(core_user\output\myprofile\tree $tree, $user
     }
     return true;
 }
+
+/**
+ * Creates a string with the settings for a conference which can be
+ * appended to a conference link to set specific options like in the
+ * external api.
+ * 
+ * @param meetingId string id to join the meeting
+ * @param name Display name of the user who want's to join
+ * @param jwt string | null JWT-Token
+ */
+function jitsi_get_url_parameters($meetingId, $name, $jwt) {
+    global $CFG;
+
+    $configString = '';
+
+    $toolbarButtons = ['microphone', 'camera', 'desktop', 'fullscreen', 'hangup', 'fodeviceselection', 
+    'chat', 'profile', 'recording', 'etherpad', 'settings', 'raisehand', 'videoquality', 'stats', 'shortcuts',
+    'help', 'mute-everyone', 'mute-video-everyone'];
+
+    if ($CFG->jitsi_securitybutton) {
+        $toolbarButtons[] = 'security';
+    }
+
+    if ($CFG->jitsi_invitebuttons) {
+        $toolbarButtons[] = 'invite';
+    } else {
+        $configString = 'config.disableInviteFunctions=true&';
+    }
+
+    if ($CFG->jitsi_shareyoutube) {
+        $toolbarButtons[] = 'livestreaming';
+    }
+
+    if ($CFG->jitsi_blurbutton) {
+        $toolbarButtons[] = 'select-background';
+    }
+
+    if ($CFG->jitsi_shareyoutube) {
+        $toolbarButtons[] = 'sharevideo';
+    }
+
+    $configString .= "config.startWithAudioMuted=true&config.startWithVideoMuted=true&userInfo.displayName=%22" . $name . '%22&';
+    $configString .= "interfaceConfig.TOOLBAR_BUTTONS=" . urlencode(json_encode($toolbarButtons)) . "";
+
+    if (!$jwt) {
+        return 'https://' . $CFG->jitsi_domain . '/' . $meetingId . '#' . $configString;
+    } else {
+        return 'https://' . $CFG->jitsi_domain . '/' . $meetingId . '?jwt=' . $jwt .  '#' . $configString;
+    }
+}
+
+/**
+ * Returns a JWT-Token
+ * based on the algorythm in session.php / sessionpriv.php
+ * 
+ * @param affiliation string Role of the user owner | member
+ * @param avatar string | null URL to the user avatar
+ * @param name string (Display) name of the user
+ * @param session string Session id for the conference
+ * @param moderator boolean whether the user is moderator
+ */
+function jitsi_get_jwt_token($affiliation, $avatar, $name, $session, $moderator) {
+    global $CFG;
+
+    $header = json_encode([
+        "kid" => "jitsi/custom_key_name",
+        "typ" => "JWT",
+        "alg" => "HS256"
+      ], JSON_UNESCAPED_SLASHES);
+      $base64urlheader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
+      
+      $payload  = json_encode([
+        "context" => [
+          "user" => [
+            "affiliation" => $affiliation,
+            "avatar" => $avatar,
+            "name" => $name,
+            "email" => "",
+            "id" => ""
+          ],
+          "group" => ""
+        ],
+        "aud" => "jitsi",
+        "iss" => $CFG->jitsi_app_id,
+        "sub" => $CFG->jitsi_domain,
+        "room" => urlencode($session),
+        "exp" => time() + 24 * 3600,
+        "moderator" => $moderator
+      
+      ], JSON_UNESCAPED_SLASHES);
+      $base64urlpayload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
+      
+      $secret = $CFG->jitsi_secret;
+      $signature = hash_hmac('sha256', $base64urlheader . "." . $base64urlpayload, $secret, true);
+      $base64urlsignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
+      
+      return $base64urlheader . "." . $base64urlpayload . "." . $base64urlsignature;
+}

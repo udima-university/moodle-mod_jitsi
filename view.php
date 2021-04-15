@@ -125,7 +125,20 @@ $today = getdate();
 if ($today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))||
     (in_array('editingteacher', $rolestr) == 1)) {
     echo $OUTPUT->box(get_string('instruction', 'jitsi'));
-    echo $OUTPUT->single_button(new moodle_url('/mod/jitsi/session.php', $urlparams), get_string('access', 'jitsi'), 'post');
+    
+    if ($CFG->jitsi_conferencemode == 'iframe' || $CFG->jitsi_conferencemode == 'iframe_tab') {
+        echo $OUTPUT->single_button(new moodle_url('/mod/jitsi/session.php', $urlparams), get_string('access', 'jitsi'), 'post');
+    }
+    
+    if ($CFG->jitsi_conferencemode == 'tab' || $CFG->jitsi_conferencemode == 'iframe_tab') {
+        $jwt = null;
+        if ($CFG->jitsi_app_id != null && $CFG->jitsi_secret != null) {
+            $jwt = jitsi_get_jwt_token($moderation ? 'owner' : 'member', $CFG->jitsi_showavatars ? $avatar : null, $nom, $sesparam, $moderation);
+        }
+
+        echo '<div class="singlebutton"><a href="' . jitsi_get_url_parameters($sesparam, $nom, $jwt) . '" class="btn btn-secondary" target="_blank">' . get_string('access_tab', 'jitsi') . '</a></div>';
+    }
+
 } else {
     echo $OUTPUT->box(get_string('nostart', 'jitsi', $jitsi->minpretime));
 }
