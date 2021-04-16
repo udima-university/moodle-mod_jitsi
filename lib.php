@@ -208,13 +208,15 @@ function jitsi_myprofile_navigation(core_user\output\myprofile\tree $tree, $user
  * @param meetingId string id to join the meeting
  * @param name Display name of the user who want's to join
  * @param jwt string | null JWT-Token
+ * @param teacher boolean true if user is teacher
+ * @param desktop boolean true if user can share desktop
  */
-function jitsi_get_url_parameters($meetingId, $name, $jwt) {
+function jitsi_get_url_parameters($meetingId, $name, $jwt, $teacher, $desktop) {
     global $CFG;
 
     $configString = '';
 
-    $toolbarButtons = ['microphone', 'camera', 'desktop', 'fullscreen', 'hangup', 'fodeviceselection', 
+    $toolbarButtons = ['microphone', 'camera', 'fullscreen', 'hangup', 'fodeviceselection', 
     'chat', 'profile', 'recording', 'etherpad', 'settings', 'raisehand', 'videoquality', 'stats', 'shortcuts',
     'help', 'mute-everyone', 'mute-video-everyone', 'tileview'];
 
@@ -236,7 +238,15 @@ function jitsi_get_url_parameters($meetingId, $name, $jwt) {
         $toolbarButtons[] = 'select-background';
     }
 
-    $configString .= "config.startWithAudioMuted=true&config.startWithVideoMuted=true&userInfo.displayName=%22" . $name . '%22&';
+    if ($teacher && $CFG->jitsi_livebutton) {
+        $toolbarButtons[] = 'livestreaming';
+    }
+
+    if ($desktop) {
+        $toolbarButtons[] = 'desktop';
+    }
+    
+    $configString .= "config.startWithAudioMuted=true&config.startWithVideoMuted=true&userInfo.displayName=%22" . str_replace("+", "%20", urlencode($name)) . '%22&';
     $configString .= "interfaceConfig.TOOLBAR_BUTTONS=" . urlencode(json_encode($toolbarButtons)) . "";
 
     if (!$jwt) {

@@ -73,7 +73,14 @@ $urlparams = array('avatar' => $avatar, 'nom' => $nom, 'ses' => $sesparam,
     't' => $moderation);
 
 echo $OUTPUT->box(get_string('instruction', 'jitsi'));
-echo $OUTPUT->single_button(new moodle_url('/mod/jitsi/sessionpriv.php', $urlparams), get_string('access', 'jitsi'), 'post');
+
+if ($CFG->jitsi_conferencemode == 'iframe' || $CFG->jitsi_conferencemode == 'iframe_tab') {
+    echo $OUTPUT->single_button(new moodle_url('/mod/jitsi/sessionpriv.php', $urlparams), get_string('access', 'jitsi'), 'post');
+}
+
+if ($CFG->jitsi_conferencemode == 'tab' || $CFG->jitsi_conferencemode == 'iframe_tab') {
+    echo '<div class="singlebutton"><a href="' . jitsi_get_url_parameters($sesparam, $nom, null, $moderation, true) . '" class="btn btn-secondary" target="_blank">' . get_string('access_tab', 'jitsi') . '</a></div>';
+}
 
 echo $CFG->jitsi_help;
 echo $OUTPUT->footer();

@@ -136,7 +136,8 @@ if ($today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))||
             $jwt = jitsi_get_jwt_token($moderation ? 'owner' : 'member', $CFG->jitsi_showavatars ? $avatar : null, $nom, $sesparam, $moderation);
         }
 
-        echo '<div class="singlebutton"><a href="' . jitsi_get_url_parameters($sesparam, $nom, $jwt) . '" class="btn btn-secondary" target="_blank">' . get_string('access_tab', 'jitsi') . '</a></div>';
+        $desktop = has_capability('mod/jitsi:sharedesktop', $context);
+        echo '<div class="singlebutton"><a href="' . jitsi_get_url_parameters($sesparam, $nom, $jwt, $moderation, $desktop) . '" class="btn btn-secondary" target="_blank">' . get_string('access_tab', 'jitsi') . '</a></div>';
     }
 
 } else {
