@@ -216,7 +216,7 @@ function jitsi_get_url_parameters($meetingId, $name, $jwt) {
 
     $toolbarButtons = ['microphone', 'camera', 'desktop', 'fullscreen', 'hangup', 'fodeviceselection', 
     'chat', 'profile', 'recording', 'etherpad', 'settings', 'raisehand', 'videoquality', 'stats', 'shortcuts',
-    'help', 'mute-everyone', 'mute-video-everyone'];
+    'help', 'mute-everyone', 'mute-video-everyone', 'tileview'];
 
     if ($CFG->jitsi_securitybutton) {
         $toolbarButtons[] = 'security';
@@ -229,15 +229,11 @@ function jitsi_get_url_parameters($meetingId, $name, $jwt) {
     }
 
     if ($CFG->jitsi_shareyoutube) {
-        $toolbarButtons[] = 'livestreaming';
+        $toolbarButtons[] = 'sharevideo';
     }
 
     if ($CFG->jitsi_blurbutton) {
         $toolbarButtons[] = 'select-background';
-    }
-
-    if ($CFG->jitsi_shareyoutube) {
-        $toolbarButtons[] = 'sharevideo';
     }
 
     $configString .= "config.startWithAudioMuted=true&config.startWithVideoMuted=true&userInfo.displayName=%22" . $name . '%22&';
