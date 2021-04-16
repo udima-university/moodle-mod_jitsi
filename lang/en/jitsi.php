@@ -94,3 +94,11 @@ $string['privatesessions'] = 'Private sessions';
 $string['privatesessionsex'] = 'Add private sessions to user profiles';
 $string['showavatars'] = 'Show avatars in Jitsi';
 $string['showavatarsex'] = 'Show the avatar of the user in Jitsi. If the user has no profile picture this will load the default profile picture from Moodle instead of the initials Jitsi will show when no picture is set.';
+
+$string['buttonopeninbrowser'] = 'Open in browser';
+$string['buttonopenwithapp'] = 'Join this meeting using the app';
+$string['buttondownloadapp'] = 'Download application';
+$string['appaccessinfo'] = 'If you want to join the meeting using a mobile device, you will need the Jitsi Meet mobile application.';
+$string['desktopaccessinfo'] = 'If you want to join the meeting, click on the button below to open Jitsi in your browser.';
+$string['appinstalledtext'] = 'If you already have the app:';
+$string['appnotinstalledtext'] = "If you don't have the app yet:";
