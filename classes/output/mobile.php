@@ -35,7 +35,6 @@ class mobile {
         
         $context = \context_module::instance($cm->id);
 
-        
         if (!has_capability('mod/jitsi:view', $context)) {
             notice(get_string('noviewpermission', 'jitsi'));
         }
@@ -51,6 +50,14 @@ class mobile {
         
         if ($jitsi->intro) {
             $intro = format_module_intro('jitsi', $jitsi, $cm->id);
+
+            // Make titles more mobile friendly.
+            $intro = str_replace(array('<h2', '<h3'),'<h1', $intro);
+            $intro = str_replace(array('</h2>', '</h3>'),'</h1>', $intro);
+
+            $intro = str_replace(array('<h4', '<h5', '<h6'), '<h2', $intro);
+            $intro = str_replace(array('</h4>', '</h5>', '</h6>'), '</h2>', $intro);
+
         } else {
             $intro = "";
         }
@@ -102,10 +109,10 @@ class mobile {
         $help = "";
         // Make titles more mobile friendly.
         if($CFG->jitsi_help) {
-            $help = str_replace(array('<h2>', '<h3>'),'<h1>', $CFG->jitsi_help);
+            $help = str_replace(array('<h2', '<h3'),'<h1', $CFG->jitsi_help);
             $help = str_replace(array('</h2>', '</h3>'),'</h1>', $help);
 
-            $help = str_replace(array('<h4>', '<h5>', '<h6>'), '<h2>', $help);
+            $help = str_replace(array('<h4', '<h5', '<h6'), '<h2', $help);
             $help = str_replace(array('</h4>', '</h5>', '</h6>'), '</h2>', $help);
         }
 
