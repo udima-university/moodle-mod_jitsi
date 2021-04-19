@@ -108,11 +108,15 @@ class mobile {
             }
         }
 
+        $help = "";
         // Make titles more mobile friendly.
-        $help = str_replace(array('<h2>', '<h3>'),'<h1>', $CFG->jitsi_help);
-        $help = str_replace(array('</h2>', '</h3>'),'</h1>', $help);
-        $help = str_replace(array('<h4>', '<h5>', '<h6>'), '<h2>', $help);
-        $help = str_replace(array('</h4>', '</h5>', '</h6>'), '</h2>', $help);
+        if($CFG->jitsi_help) {
+            $help = str_replace(array('<h2>', '<h3>'),'<h1>', $CFG->jitsi_help);
+            $help = str_replace(array('</h2>', '</h3>'),'</h1>', $help);
+
+            $help = str_replace(array('<h4>', '<h5>', '<h6>'), '<h2>', $help);
+            $help = str_replace(array('</h4>', '</h5>', '</h6>'), '</h2>', $help);
+        }
 
         $avatar = $CFG->wwwroot.'/user/pix.php/'.$USER->id.'/f1.jpg';
         $data = array(
