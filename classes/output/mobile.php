@@ -35,15 +35,6 @@ class mobile {
         
         $context = \context_module::instance($cm->id);
 
-        $event = \mod_jitsi\event\course_module_viewed::create(
-            array(
-                'objectid' => $cm->instance,
-                'context' => $context,
-            )
-        );
-        $event->add_record_snapshot('course', $course);
-        $event->add_record_snapshot($cm->modname, $jitsi);
-        $event->trigger();
         
         if (!has_capability('mod/jitsi:view', $context)) {
             notice(get_string('noviewpermission', 'jitsi'));
