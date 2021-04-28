@@ -51,7 +51,6 @@ $event = \mod_jitsi\event\course_module_viewed::create(array(
 $event->add_record_snapshot('course', $PAGE->course);
 $event->add_record_snapshot($PAGE->cm->modname, $jitsi);
 $event->trigger();
-
 $PAGE->set_url('/mod/jitsi/view.php', array('id' => $cm->id));
 $PAGE->set_title(format_string($jitsi->name));
 $PAGE->set_heading(format_string($course->fullname));
