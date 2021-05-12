@@ -1,6 +1,6 @@
 <?php
 namespace mod_jitsi\output;
- 
+
 use context_module;
 use context_course;
 
@@ -32,13 +32,13 @@ class mobile {
         }
 
         require_login($course, false, $cm, true, true);
-        
+
         $context = \context_module::instance($cm->id);
 
         if (!has_capability('mod/jitsi:view', $context)) {
             notice(get_string('noviewpermission', 'jitsi'));
         }
-        
+
         $context = \context_course::instance($courseid);
 
         $roles = get_user_roles($context, $USER->id);
@@ -47,11 +47,10 @@ class mobile {
         foreach ($roles as $role) {
             $rolestr[] = $role->shortname;
         }
-        
+
         if ($jitsi->intro) {
             $intro = format_module_intro('jitsi', $jitsi, $cm->id);
 
-            // Make titles more mobile friendly.
             $intro = str_replace(array('<h2', '<h3'),'<h1', $intro);
             $intro = str_replace(array('</h2>', '</h3>'),'</h1>', $intro);
 
@@ -107,7 +106,6 @@ class mobile {
         }
 
         $help = "";
-        // Make titles more mobile friendly.
         if($CFG->jitsi_help) {
             $help = str_replace(array('<h2', '<h3'),'<h1', $CFG->jitsi_help);
             $help = str_replace(array('</h2>', '</h3>'),'</h1>', $help);
@@ -166,7 +164,7 @@ class mobile {
         $sessionnorm = str_replace(array(' ', ':', '"'), '', $session);
         $avatar = $args['avatar'];
         $teacher = $args['t'];
-        
+
         require_login($courseid);
 
         if ($teacher == 1) {
@@ -183,46 +181,39 @@ class mobile {
             notice(get_string('noviewpermission', 'jitsi'));
         }
 
-        if ($CFG->jitsi_app_id != null && $CFG->jitsi_secret != null) {
-            $header = json_encode([
-            "kid" => "jitsi/custom_key_name",
-            "typ" => "JWT",
-            "alg" => "HS256"
-            ], JSON_UNESCAPED_SLASHES);
-            $base64urlheader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
-    
-            $payload  = json_encode([
-            "context" => [
-                "user" => [
-                    "affiliation" => $affiliation,
-                    "avatar" => $avatar,
-                    "name" => $nombre,
-                    "email" => "",
-                    "id" => ""
-                ],
-                "group" => ""
-            ],
-            "aud" => "jitsi",
-            "iss" => $CFG->jitsi_app_id,
-            "sub" => $CFG->jitsi_domain,
-            "room" => urlencode($sessionnorm),
-            "exp" => time() + 24 * 3600,
-            "moderator" => $teacher
-    
-            ], JSON_UNESCAPED_SLASHES);
-            $base64urlpayload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
-    
-            $secret = $CFG->jitsi_secret;
-            $signature = hash_hmac('sha256', $base64urlheader . "." . $base64urlpayload, $secret, true);
-            $base64urlsignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
-    
-            $jwt = $base64urlheader . "." . $base64urlpayload . "." . $base64urlsignature;
-        }
+        $header = json_encode([
+        "kid" => "jitsi/custom_key_name",
+        "typ" => "JWT",
+        "alg" => "HS256"
+        ], JSON_UNESCAPED_SLASHES);
+        $base64urlheader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
 
-        $streamingoption = '';
-        if ($teacher == true && $CFG->jitsi_livebutton == 1) {
-            $streamingoption = 'livestreaming';
-        }
+        $payload  = json_encode([
+        "context" => [
+            "user" => [
+                "affiliation" => $affiliation,
+                "avatar" => $avatar,
+                "name" => $nombre,
+                "email" => "",
+                "id" => ""
+            ],
+            "group" => ""
+        ],
+        "aud" => "jitsi",
+        "iss" => $CFG->jitsi_app_id,
+        "sub" => $CFG->jitsi_domain,
+        "room" => urlencode($sessionnorm),
+        "exp" => time() + 24 * 3600,
+        "moderator" => $teacher
+
+        ], JSON_UNESCAPED_SLASHES);
+        $base64urlpayload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
+
+        $secret = $CFG->jitsi_secret;
+        $signature = hash_hmac('sha256', $base64urlheader . "." . $base64urlpayload, $secret, true);
+        $base64urlsignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
+
+        $jwt = $base64urlheader . "." . $base64urlpayload . "." . $base64urlsignature;
 
         $desktop = '';
         if (has_capability('mod/jitsi:sharedesktop', $context)) {
@@ -249,27 +240,25 @@ class mobile {
             $invite = 'invite';
         }
 
-        $buttons = "['microphone','camera','closedcaptions','".$desktop."','fullscreen','fodeviceselection','hangup','profile','chat','recording','".$streamingoption."','etherpad','".$youtubeoption."','settings','raisehand','videoquality','filmstrip','".$invite."','feedback','stats','shortcuts','tileview','".$bluroption."','download','help','mute-everyone','".$security."']";
+        $buttons = "[\"microphone\",\"camera\",\"closedcaptions\",\"".$desktop."\",\"fullscreen\",\"fodeviceselection\",\"hangup\",\"profile\",\"chat\",\"recording\",\"etherpad\",\"".$youtubeoption."\",\"settings\",\"raisehand\",\"videoquality\",\"filmstrip\",\"".$invite."\",\"feedback\",\"stats\",\"shortcuts\",\"tileview\",\"".$bluroption."\",\"download\",\"help\",\"mute-everyone\",\"".$security."\"]";
 
         $data = array();
-        $data['jwt'] = "";
-
         if ($CFG->jitsi_app_id != null && $CFG->jitsi_secret != null) {
-            $data['jwt'] = '?jwt='.$jwt;
+            $data['jwt'] = 'jwt='.$jwt;
         }
 
-        $config = 'config.channelLastN='.$CFG->jitsi_channellastcam;
+        $config = '&config.channelLastN='.$CFG->jitsi_channellastcam;
         $config .= '&config.startWithAudioMuted=true';
         $config .= '&config.startWithVideoMuted=true';
         $config .= '&config.disableDeepLinking=true';
         $data['config'] = $config;
+        $data['displayName'] = 'userInfo.displayName="'.$nombre.'"';
 
-        $interfaceConfig = 'interfaceConfig.TOOLBAR_BUTTONS='.urlencode($buttons);
-        $interfaceConfig .= '&interfaceConfig.SHOW_JITSI_WATERMARK=true';
+        $interfaceConfig = '&interfaceConfig.TOOLBAR_BUTTONS='.urlencode($buttons);
+        $interfaceConfig .= '&interfaceConfig.SHOW_JITSI_WATERMARK=false';
         $interfaceConfig .= '&interfaceConfig.JITSI_WATERMARK_LINK = '.urlencode("'".$CFG->jitsi_watermarklink."'");
         $data['interface_config']=$interfaceConfig;
 
-        $data['is_ios'] = $args['appplatform'] == 'darwin' ? true : false;
         $data['is_desktop'] = $args['appisdesktop'];
         $data['jitsi_domain'] = $CFG->jitsi_domain;
         $data['room'] = $sessionnorm;

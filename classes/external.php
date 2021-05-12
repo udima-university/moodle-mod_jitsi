@@ -42,6 +42,13 @@ class mod_jitsi_external extends external_api{
         );
     }
 
+    public static function state_record_parameters() {
+      return new external_function_parameters(
+              array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                    'state' => new external_value(PARAM_TEXT, 'State', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+      );
+    }
+
     /**
      * Trigger the course module viewed event.
      *
@@ -79,6 +86,31 @@ class mod_jitsi_external extends external_api{
         $result['status'] = true;
         $result['warnings'] = $warnings;
         return $result;
+    }
+
+    public static function state_record($jitsi, $state) {
+        global $USER, $DB;
+
+        //Parameter validation
+        //REQUIRED
+        $params = self::validate_parameters(self::state_record_parameters(),
+                array('jitsi' => $jitsi, 'state' => $state));
+        $jitsiob = $DB->get_record('jitsi', array('id'=>$jitsi));
+        if ($state == 1){
+          $jitsiob->recording = 'recording';
+        } else {
+          $jitsiob->recording = 'stop';
+        }
+        $DB->update_record('jitsi', $jitsiob);
+        return 'recording'.$jitsiob->recording;
+    }
+
+    /**
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function state_record_returns() {
+        return new external_value(PARAM_TEXT, 'State record session');
     }
 
     /**
