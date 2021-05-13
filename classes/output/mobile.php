@@ -1,4 +1,18 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 namespace mod_jitsi\output;
 
 use context_module;
@@ -51,8 +65,8 @@ class mobile {
         if ($jitsi->intro) {
             $intro = format_module_intro('jitsi', $jitsi, $cm->id);
 
-            $intro = str_replace(array('<h2', '<h3'),'<h1', $intro);
-            $intro = str_replace(array('</h2>', '</h3>'),'</h1>', $intro);
+            $intro = str_replace(array('<h2', '<h3'), '<h1', $intro);
+            $intro = str_replace(array('</h2>', '</h3>'), '</h1>', $intro);
 
             $intro = str_replace(array('<h4', '<h5', '<h6'), '<h2', $intro);
             $intro = str_replace(array('</h4>', '</h5>', '</h6>'), '</h2>', $intro);
@@ -106,9 +120,9 @@ class mobile {
         }
 
         $help = "";
-        if($CFG->jitsi_help) {
-            $help = str_replace(array('<h2', '<h3'),'<h1', $CFG->jitsi_help);
-            $help = str_replace(array('</h2>', '</h3>'),'</h1>', $help);
+        if ($CFG->jitsi_help) {
+            $help = str_replace(array('<h2', '<h3'), '<h1', $CFG->jitsi_help);
+            $help = str_replace(array('</h2>', '</h3>'), '</h1>', $help);
 
             $help = str_replace(array('<h4', '<h5', '<h6'), '<h2', $help);
             $help = str_replace(array('</h4>', '</h5>', '</h6>'), '</h2>', $help);
@@ -240,7 +254,11 @@ class mobile {
             $invite = 'invite';
         }
 
-        $buttons = "[\"microphone\",\"camera\",\"closedcaptions\",\"".$desktop."\",\"fullscreen\",\"fodeviceselection\",\"hangup\",\"profile\",\"chat\",\"recording\",\"etherpad\",\"".$youtubeoption."\",\"settings\",\"raisehand\",\"videoquality\",\"filmstrip\",\"".$invite."\",\"feedback\",\"stats\",\"shortcuts\",\"tileview\",\"".$bluroption."\",\"download\",\"help\",\"mute-everyone\",\"".$security."\"]";
+        $buttons = "[\"microphone\",\"camera\",\"closedcaptions\",\"".$desktop."\",\"fullscreen\",
+            \"fodeviceselection\",\"hangup\",\"profile\",\"chat\",\"recording\",\"etherpad\",
+            \"".$youtubeoption."\",\"settings\",\"raisehand\",\"videoquality\",\"filmstrip\",
+            \"".$invite."\",\"feedback\",\"stats\",\"shortcuts\",\"tileview\",\"".$bluroption."\",
+            \"download\",\"help\",\"mute-everyone\",\"".$security."\"]";
 
         $data = array();
         if ($CFG->jitsi_app_id != null && $CFG->jitsi_secret != null) {
@@ -254,10 +272,10 @@ class mobile {
         $data['config'] = $config;
         $data['displayName'] = 'userInfo.displayName="'.$nombre.'"';
 
-        $interfaceConfig = '&interfaceConfig.TOOLBAR_BUTTONS='.urlencode($buttons);
-        $interfaceConfig .= '&interfaceConfig.SHOW_JITSI_WATERMARK=false';
-        $interfaceConfig .= '&interfaceConfig.JITSI_WATERMARK_LINK = '.urlencode("'".$CFG->jitsi_watermarklink."'");
-        $data['interface_config']=$interfaceConfig;
+        $interfaceconfig = '&interfaceConfig.TOOLBAR_BUTTONS='.urlencode($buttons);
+        $interfaceconfig .= '&interfaceConfig.SHOW_JITSI_WATERMARK=false';
+        $interfaceconfig .= '&interfaceConfig.JITSI_WATERMARK_LINK = '.urlencode("'".$CFG->jitsi_watermarklink."'");
+        $data['interface_config'] = $interfaceconfig;
 
         $data['is_desktop'] = $args['appisdesktop'];
         $data['jitsi_domain'] = $CFG->jitsi_domain;

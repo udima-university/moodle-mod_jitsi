@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -43,10 +42,10 @@ class mod_jitsi_external extends external_api{
     }
 
     public static function state_record_parameters() {
-      return new external_function_parameters(
-              array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
-                    'state' => new external_value(PARAM_TEXT, 'State', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
-      );
+        return new external_function_parameters(
+            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                  'state' => new external_value(PARAM_TEXT, 'State', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+        );
     }
 
     /**
@@ -91,15 +90,15 @@ class mod_jitsi_external extends external_api{
     public static function state_record($jitsi, $state) {
         global $USER, $DB;
 
-        //Parameter validation
-        //REQUIRED
+        // Parameter validation.
+        // REQUIRED.
         $params = self::validate_parameters(self::state_record_parameters(),
                 array('jitsi' => $jitsi, 'state' => $state));
-        $jitsiob = $DB->get_record('jitsi', array('id'=>$jitsi));
-        if ($state == 1){
-          $jitsiob->recording = 'recording';
+        $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
+        if ($state == 1) {
+            $jitsiob->recording = 'recording';
         } else {
-          $jitsiob->recording = 'stop';
+            $jitsiob->recording = 'stop';
         }
         $DB->update_record('jitsi', $jitsiob);
         return 'recording'.$jitsiob->recording;
