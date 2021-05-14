@@ -254,11 +254,11 @@ class mobile {
             $invite = 'invite';
         }
 
-        $buttons = "[\"microphone\",\"camera\",\"closedcaptions\",\"".$desktop."\",\"fullscreen\",
-            \"fodeviceselection\",\"hangup\",\"profile\",\"chat\",\"recording\",\"etherpad\",
-            \"".$youtubeoption."\",\"settings\",\"raisehand\",\"videoquality\",\"filmstrip\",
-            \"".$invite."\",\"feedback\",\"stats\",\"shortcuts\",\"tileview\",\"".$bluroption."\",
-            \"download\",\"help\",\"mute-everyone\",\"".$security."\"]";
+        $buttons = "[\"microphone\",\"camera\",\"closedcaptions\",\"".$desktop."\",\"fullscreen\",";
+        $buttons .= "\"fodeviceselection\",\"hangup\",\"profile\",\"chat\",\"recording\",\"etherpad\",";
+        $buttons .= "\"".$youtubeoption."\",\"settings\",\"raisehand\",\"videoquality\",\"filmstrip\",";
+        $buttons .= "\"".$invite."\",\"feedback\",\"stats\",\"shortcuts\",\"tileview\",\"".$bluroption."\",";
+        $buttons .= "\"download\",\"help\",\"mute-everyone\",\"".$security."\"]";
 
         $data = array();
         if ($CFG->jitsi_app_id != null && $CFG->jitsi_secret != null) {
