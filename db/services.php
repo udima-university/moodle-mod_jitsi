@@ -15,20 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the version and other meta-info about the plugin
- *
- * Setting the $plugin->version to 0 prevents the plugin from being installed.
- * See https://docs.moodle.org/dev/version.php for more info.
+ * Jitsi external functions and service definitions.
  *
  * @package    mod_jitsi
- * @copyright  2019 Sergio Comerón Sánchez-Paniagua <sergiocomeron@icloud.com>
+ * @category   external
+ * @copyright  2021 Arnes
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->component = 'mod_jitsi';
-$plugin->version = 2021041700;
-$plugin->release = 'v2.8.4';
-$plugin->requires = 2014051200;
-$plugin->maturity = MATURITY_STABLE;
+$functions = array(
+    'mod_jitsi_view_jitsi' => array(
+        'classname'     => 'mod_jitsi_external',
+        'methodname'    => 'view_jitsi',
+        'description'   => 'Trigger the course module viewed event.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/jitsi:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'),
+    ),
+);
