@@ -94,7 +94,12 @@ $string['privatesessions'] = 'Private sessions';
 $string['privatesessionsex'] = 'Add private sessions to user profiles';
 $string['showavatars'] = 'Show avatars in Jitsi';
 $string['showavatarsex'] = 'Show the avatar of the user in Jitsi. If the user has no profile picture this will load the default profile picture from Moodle instead of the initials Jitsi will show when no picture is set.';
-
+$string['conferencemode'] = 'Conference Mode';
+$string['conferencemodeex'] = 'Controls how the user joins the conference, either via the iframe embedded into moodle or via a new tab.';
+$string['conferencemode_iframe_tab'] = 'Iframe and new tab';
+$string['conferencemode_iframe'] = 'Iframe';
+$string['conferencemode_tab'] = 'New tab';
+$string['access_tab'] = 'Open in new tab';
 $string['buttonopeninbrowser'] = 'Open in browser';
 $string['buttonopenwithapp'] = 'Join this meeting using the app';
 $string['buttondownloadapp'] = 'Download application';
