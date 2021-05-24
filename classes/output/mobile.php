@@ -269,6 +269,7 @@ class mobile {
         $config .= '&config.startWithAudioMuted=true';
         $config .= '&config.startWithVideoMuted=true';
         $config .= '&config.disableDeepLinking=true';
+        $config .= '&config.disableProfile=true';
         $data['config'] = $config;
         $data['displayName'] = 'userInfo.displayName="'.$nombre.'"';
 
