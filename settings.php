@@ -64,7 +64,8 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('jitsi_privatesessions', get_string('privatesessions', 'jitsi'),
         get_string('privatesessionsex', 'jitsi'), 1));
 
-    $settings->add(new admin_setting_configcheckbox('jitsi_showavatars', get_string('showavatars', 'jitsi'), get_string('showavatarsex', 'jitsi'), 1));
+    $settings->add(new admin_setting_configcheckbox('jitsi_showavatars', get_string('showavatars', 'jitsi'),
+        get_string('showavatarsex', 'jitsi'), 1));
 
     $settings->add(new admin_setting_heading('bookmodeditdefaults',
         get_string('tokennconfig', 'jitsi'), get_string('tokenconfigurationex', 'jitsi')));

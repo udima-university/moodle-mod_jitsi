@@ -90,30 +90,7 @@ $signature = hash_hmac('sha256', $base64urlheader . "." . $base64urlpayload, $se
 $base64urlsignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
 
 $jwt = $base64urlheader . "." . $base64urlpayload . "." . $base64urlsignature;
-echo "<script src=\"https://".$CFG->jitsi_domain."/external_api.js\"></script>\n";
 
-echo "<script>\n";
-echo "var domain = \"".$CFG->jitsi_domain."\";\n";
-echo "var options = {\n";
-echo "configOverwrite: {\n";
-echo "channelLastN: ".$CFG->jitsi_channellastcam.",\n";
-echo "startWithAudioMuted: true,\n";
-echo "startWithVideoMuted: true,\n";
-echo "},\n";
-echo "roomName: \"".urlencode($sessionnorm)."\",\n";
-
-if ($CFG->jitsi_app_id != null && $CFG->jitsi_secret != null) {
-    echo "jwt: \"".$jwt."\",\n";
-}
-if ($CFG->branch < 36) {
-    if ($CFG->theme == 'boost' || in_array('boost', $themeconfig->parents)) {
-        echo "parentNode: document.querySelector('#region-main .card-body'),\n";
-    } else {
-        echo "parentNode: document.querySelector('#region-main'),\n";
-    }
-} else {
-    echo "parentNode: document.querySelector('#region-main'),\n";
-}
 $streamingoption = '';
 
 if ($teacher == true && $CFG->jitsi_livebutton == 1) {
@@ -150,6 +127,36 @@ $buttons = "['microphone', 'camera', 'closedcaptions', '".$desktop."', 'fullscre
         '".$streamingoption."', 'etherpad', '".$youtubeoption."', 'settings', 'raisehand',
         'videoquality', 'filmstrip', '".$invite."', 'feedback', 'stats', 'shortcuts',
         'tileview', '".$bluroption."', 'download', 'help', 'mute-everyone', '".$security."']";
+
+
+echo "<script src=\"https://".$CFG->jitsi_domain."/external_api.js\"></script>\n";
+
+echo "<script>\n";
+echo "const domain = \"".$CFG->jitsi_domain."\";\n";
+echo "const options = {\n";
+echo "configOverwrite: {\n";
+echo "disableDeepLinking: true,\n";
+echo "toolbarButtons: ".$buttons.",\n";
+echo "disableProfile: true,\n";
+echo "prejoinPageEnabled: false,";
+echo "channelLastN: ".$CFG->jitsi_channellastcam.",\n";
+echo "startWithAudioMuted: true,\n";
+echo "startWithVideoMuted: true,\n";
+echo "},\n";
+echo "roomName: \"".urlencode($sessionnorm)."\",\n";
+
+if ($CFG->jitsi_app_id != null && $CFG->jitsi_secret != null) {
+    echo "jwt: \"".$jwt."\",\n";
+}
+if ($CFG->branch < 36) {
+    if ($CFG->theme == 'boost' || in_array('boost', $themeconfig->parents)) {
+        echo "parentNode: document.querySelector('#region-main .card-body'),\n";
+    } else {
+        echo "parentNode: document.querySelector('#region-main'),\n";
+    }
+} else {
+    echo "parentNode: document.querySelector('#region-main'),\n";
+}
 
 echo "interfaceConfigOverwrite:{\n";
 echo "TOOLBAR_BUTTONS:".$buttons.",\n";
