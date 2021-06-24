@@ -43,6 +43,7 @@ $addons = [
             ['instruction', 'jitsi'],
             ['access', 'jitsi'],
             ['nostart', 'jitsi'],
+            ['finish', 'jitsi'],
             ['buttonopeninbrowser', 'jitsi'],
             ['buttonopenwithapp', 'jitsi'],
             ['buttondownloadapp', 'jitsi'],

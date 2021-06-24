@@ -35,6 +35,13 @@ class mobile {
         global $CFG, $DB, $OUTPUT, $USER;
 
         $id = $args['cmid'];
+
+        if ($args['appversioncode'] >= 3950) {
+            $foldername = 'ionic5';
+        } else {
+            $foldername = 'ionic3';
+        }
+
         $courseid = $args['courseid'];
 
         if ($id) {
@@ -124,11 +131,13 @@ class mobile {
             $help = str_replace(array('<h2', '<h3'), '<h1', $CFG->jitsi_help);
             $help = str_replace(array('</h2>', '</h3>'), '</h1>', $help);
 
-            $help = str_replace(array('<h4', '<h5', '<h6'), '<h2', $help);
+            $help = str_replace(array('<h4', '<h5', '<h6'), '<h2>', $help);
             $help = str_replace(array('</h4>', '</h5>', '</h6>'), '</h2>', $help);
         }
 
-        $avatar = $CFG->wwwroot.'/user/pix.php/'.$USER->id.'/f1.jpg';
+        $contextuserpic = $DB->get_record('context', array('instanceid' => $USER->id, 'contextlevel' => 30));
+        $avatar = $CFG->wwwroot.'/pluginfile.php/'.$contextuserpic->id.'/user/icon/boost/f1';
+
         $data = array(
             'avatar' => $avatar,
             'nom' => $nom,
@@ -144,18 +153,23 @@ class mobile {
         );
 
         $today = getdate();
-        if ($today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))||
-            (in_array('editingteacher', $rolestr) == 1)) {
+        if ($today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))) {
                 $data['nostart_show'] = false;
         } else {
             $data['nostart_show'] = true;
+        }
+
+        if ($today[0] < $jitsi->timeclose || $jitsi->timeclose == 0) {
+            $data['finish_show'] = false;
+        } else {
+            $data['finish_show'] = true;
         }
 
         return [
             'templates' => [
                 [
                     'id' => 'main',
-                    'html' => $OUTPUT->render_from_template('mod_jitsi/mobile_presession_view_page', $data),
+                    'html' => $OUTPUT->render_from_template("mod_jitsi/mobile_presession_view_page_$foldername", $data),
                 ],
             ],
             'javascript' => '',
@@ -170,6 +184,12 @@ class mobile {
      */
     public static function mobile_session_view($args) {
         global $OUTPUT, $CFG;
+
+        if ($args['appversioncode'] >= 3950) {
+            $foldername = 'ionic5';
+        } else {
+            $foldername = 'ionic3';
+        }
 
         $courseid = $args['courseid'];
         $cmid = $args['cmid'];
@@ -253,12 +273,18 @@ class mobile {
         if ($CFG->jitsi_invitebuttons == 1) {
             $invite = 'invite';
         }
+        $muteeveryone = '';
+        $mutevideoeveryone = '';
+        if ($teacher){
+            $muteeveryone = 'mute-everyone';
+            $mutevideoeveryone = 'mute-video-everyone';
+        }
 
         $buttons = "[\"microphone\",\"camera\",\"closedcaptions\",\"".$desktop."\",\"fullscreen\",";
         $buttons .= "\"fodeviceselection\",\"hangup\",\"profile\",\"chat\",\"recording\",\"etherpad\",";
         $buttons .= "\"".$youtubeoption."\",\"settings\",\"raisehand\",\"videoquality\",\"filmstrip\",";
         $buttons .= "\"".$invite."\",\"feedback\",\"stats\",\"shortcuts\",\"tileview\",\"".$bluroption."\",";
-        $buttons .= "\"download\",\"help\",\"mute-everyone\",\"".$security."\"]";
+        $buttons .= "\"download\",\"help\",\"".$muteeveryone."\",\"".$mutevideoeveryone."\",\"".$security."\"]";
 
         $data = array();
         if ($CFG->jitsi_app_id != null && $CFG->jitsi_secret != null) {
@@ -268,14 +294,16 @@ class mobile {
         $config = '&config.channelLastN='.$CFG->jitsi_channellastcam;
         $config .= '&config.startWithAudioMuted=true';
         $config .= '&config.startWithVideoMuted=true';
-        $config .= '&config.disableDeepLinking=true';
+        if ($CFG->jitsi_deeplink == 0) {
+            $config .= '&config.disableDeepLinking=true';
+        }
         $config .= '&config.disableProfile=true';
+        $config .= '&config.toolbarButtons='.urlencode($buttons);
         $data['config'] = $config;
         $data['displayName'] = 'userInfo.displayName="'.$nombre.'"';
 
-        $interfaceconfig = '&interfaceConfig.TOOLBAR_BUTTONS='.urlencode($buttons);
         $interfaceconfig .= '&interfaceConfig.SHOW_JITSI_WATERMARK=false';
-        $interfaceconfig .= '&interfaceConfig.JITSI_WATERMARK_LINK = '.urlencode("'".$CFG->jitsi_watermarklink."'");
+        $interfaceconfig .= '&interfaceConfig.JITSI_WATERMARK_LINK='.urlencode("'".$CFG->jitsi_watermarklink."'");
         $data['interface_config'] = $interfaceconfig;
 
         $data['is_desktop'] = $args['appisdesktop'];
@@ -286,7 +314,7 @@ class mobile {
             'templates' => [
                 [
                     'id' => 'main',
-                    'html' => $OUTPUT->render_from_template('mod_jitsi/mobile_session_view_page', $data),
+                    'html' => $OUTPUT->render_from_template("mod_jitsi/mobile_session_view_page_$foldername", $data),
                 ],
             ],
             'javascript' => '',

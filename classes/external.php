@@ -48,6 +48,19 @@ class mod_jitsi_external extends external_api{
         );
     }
 
+    public static function create_stream_parameters() {
+        return new external_function_parameters(
+            array('session' => new external_value(PARAM_TEXT, 'Session object from google', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                  'jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+        );
+    }
+
+    public static function create_link_parameters() {
+        return new external_function_parameters(
+            array('jitsi' => new external_value(PARAM_INT, 'jitsi'))
+        );
+    }
+
     /**
      * Trigger the course module viewed event.
      *
@@ -87,11 +100,35 @@ class mod_jitsi_external extends external_api{
         return $result;
     }
 
+    public static function create_link($jitsiid) {
+        global $CFG, $DB;
+        $link = $CFG->wwwroot.'/mod/jitsi/formuniversal.php?ses='.$jitsiid;
+
+        $fromuser = $DB->get_record('user', array('id' => $from));
+
+        $user = $DB->get_record('user', array('email' => $mail));
+        if ($user == null) {
+            $user = new stdClass();
+            $user->nombre = $nombre;
+            $user->email = $mail;
+            $subject = "Tienes una invitación a una sesión Jitsi de Udima";
+            $message = $fromuser->firstname.' '.$fromuser->lastname.
+                " te ha invitado a unirte a esta sesión. Pulsa <a href=".$link.">aquí</a> para acceder.";
+            $messagehtml = "";
+            email_to_user($user, $fromuser, $subject, $message, $messagehtml);
+        } else {
+            $subject = "Tienes una invitación a una sesión Jitsi de Udima";
+            $message = '';
+            $message = $fromuser->firstname.' '.$fromuser->lastname.
+                " te ha invitado a unirte a esta sesión. Pulsa <a href=".$link.">aquí</a> para acceder.";
+            email_to_user($user, $fromuser, $subject, $message, $messagehtml);
+        }
+        return $link;
+    }
+
     public static function state_record($jitsi, $state) {
         global $USER, $DB;
 
-        // Parameter validation.
-        // REQUIRED.
         $params = self::validate_parameters(self::state_record_parameters(),
                 array('jitsi' => $jitsi, 'state' => $state));
         $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
@@ -102,6 +139,97 @@ class mod_jitsi_external extends external_api{
         }
         $DB->update_record('jitsi', $jitsiob);
         return 'recording'.$jitsiob->recording;
+    }
+
+    public static function create_stream($session, $jitsi) {
+        global $CFG, $DB;
+
+        $params = self::validate_parameters(self::create_stream_parameters(),
+                array('session' => $session, 'jitsi' => $jitsi));
+
+        if (!file_exists(__DIR__ . '/../api/vendor/autoload.php')) {
+            throw new \Exception('Api client not found on '.$CFG->wwwroot.'/mod/jitsi/api/vendor/autoload.php');
+        }
+
+        require_once(__DIR__ . '/../api/vendor/autoload.php');
+
+        $client = new Google_Client();
+        $client->setClientId($CFG->jitsi_oauth_id);
+        $client->setClientSecret($CFG->jitsi_oauth_secret);
+
+        $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
+        $_SESSION[$tokensessionkey] = get_config('mod_jitsi', 'jitsi_clientaccesstoken');
+
+        $client->setAccessToken($_SESSION[$tokensessionkey]);
+
+        $t = time();
+        $timediff = $t - get_config('mod_jitsi', 'jitsi_tokencreated');
+
+        if ($timediff > 3599) {
+            $newaccesstoken = $client->fetchAccessTokenWithRefreshToken(get_config('mod_jitsi', 'jitsi_clientrefreshtoken'));
+            set_config('jitsi_clientaccesstoken', $newaccesstoken["access_token"] , 'mod_jitsi');
+            $newrefreshaccesstoken = $client->getRefreshToken();
+            set_config('jitsi_clientrefreshtoken', $newrefreshaccesstoken, 'mod_jitsi');
+            set_config('jitsi_tokencreated', time(), 'mod_jitsi');
+        }
+        $youtube = new Google_Service_YouTube($client);
+
+        if ($client->getAccessToken()) {
+            try {
+                $broadcastsnippet = new Google_Service_YouTube_LiveBroadcastSnippet();
+                $testdate = time();
+                $broadcastsnippet->setTitle("Record: ".$session." (".date('l jS \of F', $testdate).")");
+                $broadcastsnippet->setScheduledStartTime(date('Y-m-d\TH:i:s', $testdate));
+
+                $status = new Google_Service_YouTube_LiveBroadcastStatus();
+                $status->setPrivacyStatus('unlisted');
+                $status->setSelfDeclaredMadeForKids('false');
+                $contentdetails = new Google_Service_YouTube_LiveBroadcastContentDetails();
+                $contentdetails->setEnableAutoStart(true);
+                $contentdetails->setEnableAutoStop(true);
+                $contentdetails->setEnableEmbed(true);
+
+                $broadcastinsert = new Google_Service_YouTube_LiveBroadcast();
+                $broadcastinsert->setSnippet($broadcastsnippet);
+                $broadcastinsert->setStatus($status);
+                $broadcastinsert->setKind('youtube#liveBroadcast');
+                $broadcastinsert->setContentDetails($contentdetails);
+
+                $broadcastsresponse = $youtube->liveBroadcasts->insert('snippet,status,contentDetails', $broadcastinsert, array());
+
+                $streamsnippet = new Google_Service_YouTube_LiveStreamSnippet();
+                $streamsnippet->setTitle($session);
+
+                $cdn = new Google_Service_YouTube_CdnSettings();
+                $cdn->setIngestionType('rtmp');
+                $cdn->setResolution("variable");
+                $cdn->setFrameRate("variable");
+
+                $streaminsert = new Google_Service_YouTube_LiveStream();
+                $streaminsert->setSnippet($streamsnippet);
+                $streaminsert->setCdn($cdn);
+                $streaminsert->setKind('youtube#liveStream');
+
+                $streamsresponse = $youtube->liveStreams->insert('snippet,cdn', $streaminsert, array());
+
+                $bindbroadcastresponse = $youtube->liveBroadcasts->bind($broadcastsresponse['id'], 'id,contentDetails',
+                    array('streamId' => $streamsresponse['id'], ));
+            } catch (Google_Service_Exception $e) {
+                throw new \Exception("exception".$e->getMessage());
+            } catch (Google_Exception $e) {
+                throw new \Exception("exception".$e->getMessage());
+            }
+        }
+        $record = new stdClass();
+        $record->jitsi = $jitsi;
+        $record->link = $broadcastsresponse['id'];
+        $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
+        $jitsiob->recording = 'pre';
+
+        $DB->insert_record('jitsi_record', $record);
+        $DB->update_record('jitsi', $jitsiob);
+
+        return $streamsresponse['cdn']['ingestionInfo']['streamName'];
     }
 
     /**
@@ -124,5 +252,23 @@ class mod_jitsi_external extends external_api{
                 'warnings' => new external_warnings()
             )
         );
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     */
+    public static function create_link_returns() {
+        return new external_value(PARAM_TEXT, 'link');
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     */
+    public static function create_stream_returns() {
+        return new external_value(PARAM_TEXT, 'stream');
     }
 }

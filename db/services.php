@@ -36,12 +36,34 @@ $functions = array(
                 'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'],
         ),
 
+        'mod_jitsi_create_stream' => array(
+                'classname'   => 'mod_jitsi_external',
+                'methodname'  => 'create_stream',
+                'classpath'   => 'mod/jitsi/classes/external.php',
+                'description' => 'Create a stream',
+                'type'        => 'write',
+                'ajax'        => true,
+                'loginrequired' => false,
+                'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'],
+        ),
+
         'mod_jitsi_view_jitsi' => array(
                 'classname'     => 'mod_jitsi_external',
                 'methodname'    => 'view_jitsi',
                 'description'   => 'Trigger the course module viewed event.',
                 'type'          => 'write',
                 'capabilities'  => 'mod/jitsi:view',
+                'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'),
+        ),
+
+        'mod_jitsi_create_link' => array(
+                'classname'     => 'mod_jitsi_external',
+                'methodname'    => 'create_link',
+                'classpath'     => 'mod/jitsi/classes/external.php',
+                'description'   => 'Create a link for external user',
+                'type'          => 'read',
+                'ajax'          => true,
+                'loginrequired' => false,
                 'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'),
         ),
 );

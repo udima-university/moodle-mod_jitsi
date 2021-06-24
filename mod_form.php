@@ -54,6 +54,7 @@ class mod_jitsi_mod_form extends moodleform_mod {
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('name', 'modulename', 'jitsi');
+
         $this->standard_intro_elements();
 
         $mform->addElement('header', 'availability', get_string('availability', 'assign'));
@@ -63,12 +64,16 @@ class mod_jitsi_mod_form extends moodleform_mod {
         $options = array('optional' => true);
         $mform->addElement('date_time_selector', 'timeopen', $name, $options);
 
+        $name = get_string('close', 'jitsi');
+        $options = array('optional' => true);
+        $mform->addElement('date_time_selector', 'timeclose', $name, $options);
+
         $choicesminspre = array(
-          5 => 5,
-          10 => 10,
-          15 => 15,
-          20 => 20,
-          30 => 30
+            5 => 5,
+            10 => 10,
+            15 => 15,
+            20 => 20,
+            30 => 30
         );
         $mform->addElement('select', 'minpretime', get_string('minpretime', 'jitsi'), $choicesminspre);
         $mform->disabledIf('minpretime', 'timeopen[enabled]');

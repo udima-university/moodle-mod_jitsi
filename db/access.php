@@ -78,6 +78,26 @@ $capabilities = array(
       )
     ),
 
+    'mod/jitsi:record' => array(
+        'riskbitmask' => RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+      )
+    ),
+
+    'mod/jitsi:createlink' => array(
+        'riskbitmask' => RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+      )
+    ),
+
     'mod/jitsi:sharedesktop' => array(
         'riskbitmask' => RISK_XSS,
         'captype' => 'write',

@@ -150,6 +150,44 @@ function xmldb_jitsi_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2007040200, 'jitsi');
     }
 
+    if ($oldversion < 2021060300) {
+
+        // Define table jitsi_record to be created.
+        $table = new xmldb_table('jitsi_record');
+
+        // Adding fields to table jitsi_record.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('jitsi', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('link', XMLDB_TYPE_TEXT, null, null, null, null, null);
+
+        // Adding keys to table jitsi_record.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+        // Adding indexes to table jitsi_record.
+        $table->add_index('jitsi', XMLDB_INDEX_NOTUNIQUE, ['jitsi']);
+
+        // Conditionally launch create table for jitsi_record.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Jitsi savepoint reached.
+        upgrade_mod_savepoint(true, 2021060300, 'jitsi');
+    }
+
+    if ($oldversion < 2021061802) {
+        $table = new xmldb_table('jitsi');
+        $field = new xmldb_field('timeclose', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0',
+            'timeopen');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Jitsi savepoint reached.
+        upgrade_mod_savepoint(true, 2021061802, 'jitsi');
+    }
+
     /*
      * And that's all. Please, examine and understand the 3 example blocks above. Also
      * it's interesting to look how other modules are using this script. Remember that
