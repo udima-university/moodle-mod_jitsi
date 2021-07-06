@@ -209,42 +209,56 @@ if ($today[0] < $jitsi->timeclose || $jitsi->timeclose == 0) {
 }
 
 
+
+
+$records  = $DB->get_records('jitsi_record', array('jitsi' => $jitsi->id));
+
+if ($records) {
+    echo " ";
+    echo "<button class=\"btn btn-secondary\" type=\"button\" data-toggle=\"collapse\" data-target=\"#collapseExample\" aria-expanded=\"false\" aria-controls=\"collapseExample\">";
+    echo get_string('records', 'jitsi');
+    echo "</button>";
+
+    echo "<div class=\"collapse\" id=\"collapseExample\">";
+    echo "<div class=\"card card-body\">";
+
+    echo "<div class=\"row\">";
+    foreach ($records as $record) {
+        // Para borrar grabaciones.
+        $deleteurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&deletejitsirecordid=' . $record->id . '&sesskey=' . sesskey());
+        $deleteicon = new pix_icon('t/delete', get_string('delete'));
+        $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon, new confirm_action('Delete?'));
+
+        echo "<div class=\"col-sm-6\">";
+        echo "<div class=\"card\">";
+        echo "<div class=\"card-body\">";
+        echo "<div class=\"embed-responsive embed-responsive-16by9\">";
+        echo "<iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/".$record->link."\" allowfullscreen></iframe>";
+        echo "</div>";
+        echo "<div class=\"row\">";
+        echo "<div class=\"col-sm\">";
+        echo "<a href=\"".$record->link."\" class=\"btn btn-primary\">".get_string('fullscreen', 'jitsi')."</a>";
+        echo "</div>";
+        echo "  <div class=\"col-sm\">";
+        if (has_capability('mod/jitsi:record', $context)) {
+            echo "<span class=\"align-middle text-right\"><p>".$deleteaction."</p></span>";
+        }
+        echo "</div>";
+        echo "</div>";
+        echo "</div>";
+        echo "</div>";
+        echo "</div>";
+    }
+    echo "</div>";
+
+    echo "</div>";
+    echo "</div>";
+}
 if ($jitsi->intro) {
     echo $OUTPUT->box(format_module_intro('jitsi', $jitsi, $cm->id), 'generalbox mod_introbox', 'jitsiintro');
 }
-
 echo $CFG->jitsi_help;
 echo "<hr>";
-$records  = $DB->get_records('jitsi_record', array('jitsi' => $jitsi->id));
-
-echo "<div class=\"row\">";
-foreach ($records as $record) {
-    // Para borrar grabaciones.
-    $deleteurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&deletejitsirecordid=' . $record->id . '&sesskey=' . sesskey());
-    $deleteicon = new pix_icon('t/delete', get_string('delete'));
-    $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon, new confirm_action('Delete?'));
-
-    echo "  <div class=\"col-sm-6\">";
-    echo "    <div class=\"card\">";
-    echo "      <div class=\"card-body\">";
-    echo "<div class=\"embed-responsive embed-responsive-16by9\">";
-    echo "  <iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/".$record->link."\" allowfullscreen></iframe>";
-    echo "</div>";
-    echo "<div class=\"row\">";
-    echo "  <div class=\"col-sm\">";
-    echo "        <a href=\"".$record->link."\" class=\"btn btn-primary\">".get_string('fullscreen', 'jitsi')."</a>";
-    echo "</div>";
-    echo "  <div class=\"col-sm\">";
-    if (has_capability('mod/jitsi:record', $context)) {
-        echo "<span class=\"align-middle text-right\"><p>".$deleteaction."</p></span>";
-    }
-    echo "</div>";
-    echo "</div>";
-    echo "      </div>";
-    echo "    </div>";
-    echo "  </div>";
-}
-echo "</div>";
 echo $OUTPUT->footer();
 
 /**

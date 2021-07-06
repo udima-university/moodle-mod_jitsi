@@ -84,13 +84,14 @@ if ($ADMIN->fulltree) {
             get_string('oauthidex', 'jitsi'), ''));
     $settings->add(new admin_setting_configpasswordunmask('jitsi_oauth_secret', get_string('oauthsecret', 'jitsi'),
             get_string('oauthsecretex', 'jitsi'), ''));
-    $link = '<a href="'.$CFG->wwwroot.'/mod/jitsi/auth.php" target="_blank">'.get_string('loginyoutube', 'jitsi').'</a>';
-    $settings->add(new admin_setting_heading('jitsi_loginyoutube', '', $link));
+    if ($CFG->jitsi_oauth_id && $CFG->jitsi_oauth_secret) {
+        $link = '<a href="'.$CFG->wwwroot.'/mod/jitsi/auth.php" target="_blank">'.get_string('loginyoutube', 'jitsi').'</a>';
+        $settings->add(new admin_setting_heading('jitsi_loginyoutube', '', $link));
 
-    $link = '<a href="'.$CFG->wwwroot.'/mod/jitsi/out.php" target="_blank">'.get_string('logoutyoutube', 'jitsi').'</a>';
-    $settings->add(new admin_setting_heading('jitsi_loginoutyoutube', '', $link));
-
-
+        $link = '<a href="'.$CFG->wwwroot.'/mod/jitsi/out.php" target="_blank">'.get_string('logoutyoutube', 'jitsi').'</a>';
+        $settings->add(new admin_setting_heading('jitsi_loginoutyoutube', '', $link));
+    }
+    
     $settings->add(new admin_setting_heading('bookmodeditdefaults',
         get_string('tokennconfig', 'jitsi'), get_string('tokenconfigurationex', 'jitsi')));
     $settings->add(new admin_setting_configtext('jitsi_app_id', get_string('appid', 'jitsi'),
