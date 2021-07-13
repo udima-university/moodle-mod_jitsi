@@ -30,8 +30,9 @@ require_once(dirname(dirname(dirname(__FILE__))).'/lib/moodlelib.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once("$CFG->libdir/formslib.php");
 
-$sessionid = required_param('ses', PARAM_INT);
 $id = required_param('id', PARAM_INT);
+$cm = get_coursemodule_from_id('jitsi', $id, 0, false, MUST_EXIST);
+$sessionid = $cm->instance;
 
 global $DB;
 
@@ -42,7 +43,8 @@ class name_form extends moodleform {
         $mform = $this->_form;
         $mform->addElement('text', 'name', get_string('name'));
         $mform->addElement('text', 'mail', get_string('email'));
-
+        $mform->setType('name', PARAM_TEXT);
+        $mform->setType('mail', PARAM_EMAIL);
         $mform->addRule('name', get_string('required'), 'required', '', 'client', false, false);
         $mform->addRule('mail', get_string('missingemail'), 'email', null, 'client');
 
@@ -57,23 +59,23 @@ class name_form extends moodleform {
 
 $PAGE->set_url($CFG->wwwroot.'/mod/jitsi/formuniversal.php');
 $sesion = $DB->get_record('jitsi', array('id' => $sessionid));
-$cm = get_coursemodule_from_id('jitsi', $id, 0, false, MUST_EXIST);
+$PAGE->set_cm($cm);
+$PAGE->set_context(context_module::instance($id));
 
 $PAGE->set_title(get_string('accesstotitle', 'jitsi', $sesion->name));
 $PAGE->set_heading(get_string('accesstotitle', 'jitsi', $sesion->name));
 
 echo $OUTPUT->header();
 
-$PAGE->set_context(context_module::instance($cm->id));
 
 $event = \mod_jitsi\event\jitsi_session_guest_form::create(array(
   'objectid' => $PAGE->cm->instance,
   'context' => $PAGE->context,
 ));
 $event->add_record_snapshot('course', $PAGE->course);
-$event->add_record_snapshot($PAGE->cm->modname, $jitsi);
-$event->trigger();
+$event->add_record_snapshot($PAGE->cm->modname, $sesion);
 
+$event->trigger();
 
 if ($CFG->jitsi_invitebuttons == 1) {
     if (!isloggedin()) {
@@ -102,7 +104,7 @@ if ($CFG->jitsi_invitebuttons == 1) {
     } else {
         echo get_string('accesstowithlogin', 'jitsi', $sesion->name);
         $today = getdate();
-        if ($today[0] > (($session->timeopen) - ($session->minpretime * 60))||
+        if ($today[0] > (($sesion->timeopen) - ($sesion->minpretime * 60))||
             (in_array('editingteacher', $rolestr) == 1)) {
             $nom = null;
             switch ($CFG->jitsi_id) {
@@ -116,13 +118,14 @@ if ($CFG->jitsi_invitebuttons == 1) {
                     break;
             }
             $avatar = $CFG->wwwroot.'/user/pix.php/'.$USER->id.'/f1.jpg';
-
+            $mail = '';
             $urlparams = array('avatar' => $avatar, 'name' => $nom, 'ses' => $sessionid, 'mail' => $mail, 'id' => $id);
             echo $OUTPUT->box(get_string('instruction', 'jitsi'));
             echo $OUTPUT->single_button(new moodle_url('/mod/jitsi/universal.php', $urlparams),
                 get_string('access', 'jitsi'), 'post');
         } else {
-            echo $OUTPUT->box(get_string('nostart', 'jitsi', $session->minpretime));
+            echo $OUTPUT->box(get_string('nostart', 'jitsi', $sesion->minpretime));
+
         }
     }
 } else {

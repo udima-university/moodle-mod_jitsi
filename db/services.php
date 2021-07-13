@@ -13,7 +13,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-/**
 
 /**
  * Web service local plugin template external functions and service definitions.
@@ -24,6 +23,8 @@
  */
 
 // We defined the web service functions to install.
+defined('MOODLE_INTERNAL') || die();
+
 $functions = array(
         'mod_jitsi_state_record' => array(
                 'classname'   => 'mod_jitsi_external',

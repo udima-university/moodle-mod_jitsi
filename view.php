@@ -208,14 +208,12 @@ if ($today[0] < $jitsi->timeclose || $jitsi->timeclose == 0) {
     echo $OUTPUT->box(get_string('finish', 'jitsi'));
 }
 
-
-
-
 $records  = $DB->get_records('jitsi_record', array('jitsi' => $jitsi->id));
 
 if ($records) {
     echo " ";
-    echo "<button class=\"btn btn-secondary\" type=\"button\" data-toggle=\"collapse\" data-target=\"#collapseExample\" aria-expanded=\"false\" aria-controls=\"collapseExample\">";
+    echo "<button class=\"btn btn-secondary\" type=\"button\" data-toggle=\"collapse\" data-target=\"#collapseExample\"
+         aria-expanded=\"false\" aria-controls=\"collapseExample\">";
     echo get_string('records', 'jitsi');
     echo "</button>";
 
@@ -225,7 +223,8 @@ if ($records) {
     echo "<div class=\"row\">";
     foreach ($records as $record) {
         // Para borrar grabaciones.
-        $deleteurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&deletejitsirecordid=' . $record->id . '&sesskey=' . sesskey());
+        $deleteurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&deletejitsirecordid=' .
+                 $record->id . '&sesskey=' . sesskey());
         $deleteicon = new pix_icon('t/delete', get_string('delete'));
         $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon, new confirm_action('Delete?'));
 
@@ -233,7 +232,8 @@ if ($records) {
         echo "<div class=\"card\">";
         echo "<div class=\"card-body\">";
         echo "<div class=\"embed-responsive embed-responsive-16by9\">";
-        echo "<iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/".$record->link."\" allowfullscreen></iframe>";
+        echo "<iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/".$record->link."\"
+             allowfullscreen></iframe>";
         echo "</div>";
         echo "<div class=\"row\">";
         echo "<div class=\"col-sm\">";
@@ -262,47 +262,10 @@ echo "<hr>";
 echo $OUTPUT->footer();
 
 /**
- * Sanitize strings
- * @param $string - The string to sanitize.
- * @param $forcelowercase - Force the string to lowercase?
- * @param $anal - If set to *true*, will remove all non-alphanumeric characters.
- */
-function string_sanitize($string, $forcelowercase = true, $anal = false) {
-    $strip = array("~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")",
-            "_", "=", "+", "[", "{", "]", "}", "\\", "|", ";", ":", "\"",
-            "'", "&#8216;", "&#8217;", "&#8220;", "&#8221;", "&#8211;", "&#8212;",
-            "â€”", "â€“", ",", "<", ".", ">", "/", "?");
-    $clean = trim(str_replace($strip, "", strip_tags($string)));
-    $clean = preg_replace('/\s+/', "-", $clean);
-    $clean = ($anal) ? preg_replace("/[^a-zA-Z0-9]/", "", $clean) : $clean;
-    return ($forcelowercase) ?
-        (function_exists('mb_strtolower')) ?
-            mb_strtolower($clean, 'UTF-8') :
-            strtolower($clean) :
-        $clean;
-}
-
-/**
  * Delete Jitsi record
  * @param $idjitsi - Jitsi record to delete
  */
 function delete_jitsi_record($idjitsi) {
     global $DB;
     $DB->delete_records('jitsi_record', array('id' => $idjitsi));
-}
-
-/**
- * Base 64 encode
- * @param $inputstr - Input to encode
- */
-function base64urlencode($inputstr) {
-    return strtr(base64_encode($inputstr), '+/=', '-_,');
-}
-
-/**
- * Base 64 decode
- * @param $inputstr - Input to decode
- */
-function base64urldecode($inputstr) {
-    return base64_decode(strtr($inputstr, '-_,', '+/='));
 }

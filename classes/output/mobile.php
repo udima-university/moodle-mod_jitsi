@@ -275,7 +275,7 @@ class mobile {
         }
         $muteeveryone = '';
         $mutevideoeveryone = '';
-        if ($teacher){
+        if ($teacher) {
             $muteeveryone = 'mute-everyone';
             $mutevideoeveryone = 'mute-video-everyone';
         }

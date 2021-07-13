@@ -77,24 +77,3 @@ echo $OUTPUT->single_button(new moodle_url('/mod/jitsi/sessionpriv.php', $urlpar
 
 echo $CFG->jitsi_help;
 echo $OUTPUT->footer();
-
-/**
- * Sanitize strings
- * @param $string - The string to sanitize.
- * @param $forcelowercase - Force the string to lowercase?
- * @param $anal - If set to *true*, will remove all non-alphanumeric characters.
- */
-function string_sanitize($string, $forcelowercase = true, $anal = false) {
-    $strip = array("~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")",
-            "_", "=", "+", "[", "{", "]", "}", "\\", "|", ";", ":", "\"",
-            "'", "&#8216;", "&#8217;", "&#8220;", "&#8221;", "&#8211;", "&#8212;",
-            "â€”", "â€“", ",", "<", ".", ">", "/", "?");
-    $clean = trim(str_replace($strip, "", strip_tags($string)));
-    $clean = preg_replace('/\s+/', "-", $clean);
-    $clean = ($anal) ? preg_replace("/[^a-zA-Z0-9]/", "", $clean) : $clean;
-    return ($forcelowercase) ?
-        (function_exists('mb_strtolower')) ?
-            mb_strtolower($clean, 'UTF-8') :
-            strtolower($clean) :
-        $clean;
-}
