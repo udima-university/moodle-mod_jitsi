@@ -84,49 +84,8 @@ $PAGE->set_title(format_string($jitsi->name));
 $PAGE->set_heading(format_string($course->fullname));
 
 if ($deletejitsirecordid && confirm_sesskey($sesskey)) {
-    // Api google.
-    if (!file_exists(__DIR__ . '/api/vendor/autoload.php')) {
-        throw new \Exception('please run "composer require google/apiclient:~2.0" in "' . __DIR__ .'"');
-    }
-    require_once(__DIR__ . '/api/vendor/autoload.php');
-
-    $client = new Google_Client();
-
-    $client->setClientId($CFG->jitsi_oauth_id);
-    $client->setClientSecret($CFG->jitsi_oauth_secret);
-
-    $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
-    $_SESSION[$tokensessionkey] = get_config('mod_jitsi', 'jitsi_clientaccesstoken');
-
-    $client->setAccessToken($_SESSION[$tokensessionkey]);
-
-    $t = time();
-    $timediff = $t - get_config('mod_jitsi', 'jitsi_tokencreated');
-    echo get_config('jitsi_tokencreated', 'mod_jitsi');
-    echo get_config('jitsi_clientaccesstoken', 'mod_jitsi');
-    echo get_config('jitsi_clientrefreshtoken', 'mod_jitsi');
-    if ($timediff > 3599) {
-          $newaccesstoken = $client->fetchAccessTokenWithRefreshToken(get_config('mod_jitsi', 'jitsi_clientrefreshtoken'));
-          set_config('jitsi_clientaccesstoken', $newaccesstoken["access_token"] , 'mod_jitsi');
-          $newrefreshaccesstoken = $client->getRefreshToken();
-          set_config('jitsi_clientrefreshtoken', $newrefreshaccesstoken, 'mod_jitsi');
-          set_config('jitsi_tokencreated', time(), 'mod_jitsi');
-    }
-
-    $youtube = new Google_Service_YouTube($client);
-
-    if ($client->getAccessToken()) {
-        try {
-            $jitsirecord = $DB->get_record('jitsi_record', array('id' => $deletejitsirecordid));
-            $youtube->videos->delete($jitsirecord->link);
-            delete_jitsi_record($deletejitsirecordid);
-            redirect($PAGE->url, get_string('deleted'));
-        } catch (Google_Service_Exception $e) {
-            throw new \Exception("exception".$e->getMessage());
-        } catch (Google_Exception $e) {
-            throw new \Exception("exception".$e->getMessage());
-        }
-    }
+    deleterecordyoutube($deletejitsirecordid);
+    redirect($PAGE->url, get_string('deleted'));
 }
 
 $context = context_module::instance($cm->id);
@@ -260,12 +219,3 @@ if ($jitsi->intro) {
 echo $CFG->jitsi_help;
 echo "<hr>";
 echo $OUTPUT->footer();
-
-/**
- * Delete Jitsi record
- * @param $idjitsi - Jitsi record to delete
- */
-function delete_jitsi_record($idjitsi) {
-    global $DB;
-    $DB->delete_records('jitsi_record', array('id' => $idjitsi));
-}

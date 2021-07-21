@@ -19,7 +19,7 @@
  *
  * @package    mod_jitsi
  * @category   external
- * @copyright  2021 Arnes
+ * @copyright  2019 Sergio Comerón Sánchez-Paniagua <sergiocomeron@icloud.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -52,12 +52,6 @@ class mod_jitsi_external extends external_api{
         return new external_function_parameters(
             array('session' => new external_value(PARAM_TEXT, 'Session object from google', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
                   'jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
-        );
-    }
-
-    public static function create_link_parameters() {
-        return new external_function_parameters(
-            array('jitsi' => new external_value(PARAM_INT, 'jitsi'))
         );
     }
 
@@ -98,32 +92,6 @@ class mod_jitsi_external extends external_api{
         $result['status'] = true;
         $result['warnings'] = $warnings;
         return $result;
-    }
-
-    public static function create_link($jitsiid) {
-        global $CFG, $DB;
-        $link = $CFG->wwwroot.'/mod/jitsi/formuniversal.php?ses='.$jitsiid;
-
-        $fromuser = $DB->get_record('user', array('id' => $from));
-
-        $user = $DB->get_record('user', array('email' => $mail));
-        if ($user == null) {
-            $user = new stdClass();
-            $user->nombre = $nombre;
-            $user->email = $mail;
-            $subject = "Tienes una invitación a una sesión Jitsi de Udima";
-            $message = $fromuser->firstname.' '.$fromuser->lastname.
-                " te ha invitado a unirte a esta sesión. Pulsa <a href=".$link.">aquí</a> para acceder.";
-            $messagehtml = "";
-            email_to_user($user, $fromuser, $subject, $message, $messagehtml);
-        } else {
-            $subject = "Tienes una invitación a una sesión Jitsi de Udima";
-            $message = '';
-            $message = $fromuser->firstname.' '.$fromuser->lastname.
-                " te ha invitado a unirte a esta sesión. Pulsa <a href=".$link.">aquí</a> para acceder.";
-            email_to_user($user, $fromuser, $subject, $message, $messagehtml);
-        }
-        return $link;
     }
 
     public static function state_record($jitsi, $state) {
@@ -252,15 +220,6 @@ class mod_jitsi_external extends external_api{
                 'warnings' => new external_warnings()
             )
         );
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     */
-    public static function create_link_returns() {
-        return new external_value(PARAM_TEXT, 'link');
     }
 
     /**

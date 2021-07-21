@@ -15,20 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the version and other meta-info about the plugin
- *
- * Setting the $plugin->version to 0 prevents the plugin from being installed.
- * See https://docs.moodle.org/dev/version.php for more info.
+ * Defines message providers (types of messages being sent)
  *
  * @package    mod_jitsi
- * @copyright  2019 Sergio Comerón Sánchez-Paniagua <sergiocomeron@icloud.com>
+ * @copyright  2021 Sergio Comerón <sergiocomeron@icloud.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
-
-$plugin->component = 'mod_jitsi';
-$plugin->version = 2021072100;
-$plugin->release = 'v3.1.1';
-$plugin->requires = 2014051200;
-$plugin->maturity = MATURITY_STABLE;
+$messageproviders = array (
+    'onprivatesession' => array (
+        'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDIN + MESSAGE_DEFAULT_LOGGEDOFF,
+        'email' => MESSAGE_PERMITTED,
+        'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDIN + MESSAGE_DEFAULT_LOGGEDOFF
+    )
+);

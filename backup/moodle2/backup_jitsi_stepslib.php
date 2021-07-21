@@ -32,9 +32,11 @@ class backup_jitsi_activity_structure_step extends backup_activity_structure_ste
      * @return backup_nested_element
      */
     protected function define_structure() {
+        $jitsi = new backup_nested_element('jitsi', array('id'), array('name', 'intro', 'introformat',
+            'timeopen', 'timeclose', 'minpretime'));
 
-        $jitsi = new backup_nested_element('jitsi', array('id'), array('name', 'intro', 'introformat', 'timeopen'));
         $jitsi->set_source_table('jitsi', array('id' => backup::VAR_ACTIVITYID));
+
         $jitsi->annotate_files('mod_jitsi', 'intro', null);
         return $this->prepare_activity_structure($jitsi);
     }

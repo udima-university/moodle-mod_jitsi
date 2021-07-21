@@ -29,51 +29,56 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 
 
-global $USER, $DB, $PAGE;
+global $USER, $DB, $PAGE, $CFG;
 
 $userid = required_param('user', PARAM_INT);
-
 $user = $DB->get_record('user', array('id' => $userid));
-
 $PAGE->set_context(context_system::instance());
-
 $PAGE->set_url('/mod/jitsi/viewpriv.php', array('user' => $user->id));
+require_login();
 $PAGE->set_title(format_string($user->firstname));
 $PAGE->set_heading(format_string($user->firstname));
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('privatesession', 'jitsi', $user->firstname));
-if ($USER->id == $user->id) {
-    $moderation = 1;
+
+if ($CFG->jitsi_privatesessions) {
+
+    if ($USER->id == $user->id) {
+        $moderation = 1;
+    } else {
+        $moderation = 0;
+    }
+
+    $nom = null;
+    switch ($CFG->jitsi_id) {
+        case 'username':
+            $nom = $USER->username;
+            break;
+        case 'nameandsurname':
+            $nom = $USER->firstname.' '.$USER->lastname;
+            break;
+        case 'alias':
+            break;
+    }
+    $sessionoptionsparam = ['$course->shortname', '$jitsi->id', '$jitsi->name'];
+    $fieldssessionname = $CFG->jitsi_sesionname;
+
+    $allowed = explode(',', $fieldssessionname);
+    $max = count($allowed);
+
+    $sesparam = $user->username;
+    $avatar = $CFG->wwwroot.'/user/pix.php/'.$USER->id.'/f1.jpg';
+
+    $urlparams = array('avatar' => $avatar, 'nom' => $nom, 'ses' => $sesparam,
+        't' => $moderation);
+
+    echo $OUTPUT->box(get_string('instruction', 'jitsi'));
+    echo $OUTPUT->single_button(new moodle_url('/mod/jitsi/sessionpriv.php', $urlparams), get_string('access', 'jitsi'), 'post');
+
+    echo $CFG->jitsi_help;
 } else {
-    $moderation = 0;
+    echo get_string('privatesessiondisabled', 'jitsi');
 }
 
-$nom = null;
-switch ($CFG->jitsi_id) {
-    case 'username':
-        $nom = $USER->username;
-        break;
-    case 'nameandsurname':
-        $nom = $USER->firstname.' '.$USER->lastname;
-        break;
-    case 'alias':
-        break;
-}
-$sessionoptionsparam = ['$course->shortname', '$jitsi->id', '$jitsi->name'];
-$fieldssessionname = $CFG->jitsi_sesionname;
-
-$allowed = explode(',', $fieldssessionname);
-$max = count($allowed);
-
-$sesparam = $user->username;
-$avatar = $CFG->wwwroot.'/user/pix.php/'.$USER->id.'/f1.jpg';
-
-$urlparams = array('avatar' => $avatar, 'nom' => $nom, 'ses' => $sesparam,
-    't' => $moderation);
-
-echo $OUTPUT->box(get_string('instruction', 'jitsi'));
-echo $OUTPUT->single_button(new moodle_url('/mod/jitsi/sessionpriv.php', $urlparams), get_string('access', 'jitsi'), 'post');
-
-echo $CFG->jitsi_help;
 echo $OUTPUT->footer();

@@ -172,6 +172,10 @@ function jitsi_delete_instance($id) {
     }
 
     $result = true;
+    $records = $DB->get_records('jitsi_record', array('jitsi' => $jitsi->id));
+    foreach ($records as $record) {
+        deleterecordyoutube($record->id);
+    }
 
     if (! $DB->delete_records('jitsi', array('id' => $jitsi->id))) {
         $result = false;
@@ -180,6 +184,13 @@ function jitsi_delete_instance($id) {
     return $result;
 }
 
+/**
+ * Jitsi private sessions on profile user
+ * @param $tree tree
+ * @param $user user
+ * @param $iscurrentuser iscurrentuser
+ * @param $course course
+ */
 function jitsi_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
     global $DB, $CFG, $USER;
     if ($CFG->jitsi_privatesessions == 1) {
@@ -247,7 +258,7 @@ function string_sanitize($string, $forcelowercase = true, $anal = false) {
  * @param $mail - mail
  * @param $jitsi - Jitsi session
  */
-function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jitsi, $universal = false) {
+function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jitsi, $universal = false, $user = null) {
     global $CFG, $DB, $PAGE, $USER;
     $sessionnorm = str_replace(array(' ', ':', '"'), '', $session);
     if ($teacher == 1) {
@@ -257,7 +268,11 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         $teacher = false;
         $affiliation = "member";
     }
-    $context = context_module::instance($cmid);
+    if ($user != null) {
+        $context = context_system::instance();
+    } else {
+        $context = context_module::instance($cmid);
+    }
 
     if ($universal == false) {
         if (!has_capability('mod/jitsi:view', $context)) {
@@ -337,56 +352,27 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
 
     echo "<div class=\"row\">";
     echo "<div class=\"col-sm\">";
-    if ($CFG->jitsi_livebutton == 1 && has_capability('mod/jitsi:record', $PAGE->context)
-        && get_config('mod_jitsi', 'jitsi_clientrefreshtoken') != null && get_config('mod_jitsi', 'jitsi_clientaccesstoken') != null
-        && ($CFG->jitsi_streamingoption == 1)) {
-        echo "<button onclick=\"stream()\" type=\"button\" class=\"btn btn-secondary\" id=\"startstream\">".
-            get_string('startstream', 'jitsi')."</button>";
-        echo " ";
-        echo "<button onclick=\"stopStream()\" type=\"button\" class=\"btn btn-secondary\"
-              id=\"stopstream\" disabled=\"true\">".get_string('stopstream', 'jitsi')."</button>";
-    }
-    if ($CFG->jitsi_invitebuttons == 1 && has_capability('mod/jitsi:createlink', $PAGE->context)) {
-        echo " ";
-        echo "<button onclick=\"copyurl()\" type=\"button\" class=\"btn btn-secondary\" id=\"copyurl\">";
-        echo get_string('URLguest', 'jitsi');
-        echo "</button>";
+    if ($user == null) {
+        if ($CFG->jitsi_livebutton == 1 && has_capability('mod/jitsi:record', $PAGE->context)
+            && get_config('mod_jitsi', 'jitsi_clientrefreshtoken') != null
+            && get_config('mod_jitsi', 'jitsi_clientaccesstoken') != null
+            && ($CFG->jitsi_streamingoption == 1)) {
+                echo "<button onclick=\"stream()\" type=\"button\" class=\"btn btn-secondary\" id=\"startstream\">".
+                    get_string('startstream', 'jitsi')."</button>";
+                echo " ";
+                echo "<button onclick=\"stopStream()\" type=\"button\" class=\"btn btn-secondary\"
+                    id=\"stopstream\" disabled=\"true\">".get_string('stopstream', 'jitsi')."</button>";
+        }
+        if ($CFG->jitsi_invitebuttons == 1 && has_capability('mod/jitsi:createlink', $PAGE->context)) {
+            echo " ";
+            echo "<button onclick=\"copyurl()\" type=\"button\" class=\"btn btn-secondary\" id=\"copyurl\">";
+            echo get_string('URLguest', 'jitsi');
+            echo "</button>";
+        }
     }
 
     echo "</div></div>";
     echo "<hr>";
-
-    echo "<div class=\"modal fade\" id=\"exampleModal\" tabindex=\"-1\" role=\"dialog\"
-          aria-labelledby=\"exampleModalLabel\" aria-hidden=\"true\">";
-    echo "    <div class=\"modal-dialog\" role=\"document\">";
-    echo "        <div class=\"modal-content\">";
-    echo "            <div class=\"modal-header\">";
-    echo "                <h5 class=\"modal-title\" id=\"exampleModalLabel\">Link</h5>";
-    echo "                <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">";
-    echo "                    <span aria-hidden=\"true\">&times;</span>";
-    echo "                </button>";
-    echo "            </div>";
-    echo "            <div class=\"modal-body\">";
-    echo "                <form>";
-    echo "                    <div class=\"form-group\">";
-    echo "                        <label for=\"formGroupExampleInput\">Nombre</label>";
-    echo "                        <input type=\"text\" class=\"form-control\" id=\"nombrelink\" placeholder=\"Enter name\">";
-    echo "                    </div>";
-    echo "                    <div class=\"form-group\">";
-    echo "                        <label for=\"exampleInputEmail1\">Email address</label>";
-    echo "                        <input type=\"email\" class=\"form-control\" id=\"maillink\"
-                                    aria-describedby=\"emailHelp\" placeholder=\"Enter email\">";
-    echo "                        <small id=\"emailHelp\" class=\"form-text text-muted\">
-                                    We'll never share your email with anyone else.</small>";
-    echo "                    </div>";
-    echo "                    <div class=\"form-group\">";
-    echo "                        <button onclick=\"sendlink()\" type=\"button\" class=\"btn btn-primary\">Send</button>";
-    echo "                    </div>";
-    echo "                </form>";
-    echo "            </div>";
-    echo "        </div>";
-    echo "    </div>";
-    echo "</div>";
 
     echo "<script>\n";
     echo "const domain = \"".$CFG->jitsi_domain."\";\n";
@@ -426,13 +412,16 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "const api = new JitsiMeetExternalAPI(domain, options);\n";
     echo "api.executeCommand('displayName', '".$nombre."');\n";
     echo "api.executeCommand('avatarUrl', '".$avatar."');\n";
+
     if ($CFG->jitsi_finishandreturn == 1) {
         echo "api.on('readyToClose', () => {\n";
         echo "    api.dispose();\n";
-        if ($universal == false) {
+        if ($universal == false && $user == null) {
             echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/view.php?id=".$cmid."\";";
-        } else {
+        } else if ($universal == true && $user == null) {
             echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/formuniversal.php?id=".$cmid."\";";
+        } else if ($user != null) {
+            echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/viewpriv.php?user=".$user."\";";
         }
         echo  "});\n";
     }
@@ -448,73 +437,162 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "});";
     }
 
-    echo "api.addEventListener('recordingStatusChanged', function(event) {\n";
-    echo "    if (event['on']){\n";
-    echo "        document.getElementById(\"startstream\").disabled = true;\n";
-    echo "        document.getElementById(\"stopstream\").disabled = false;\n";
-    echo "    } else if (!event['on']){\n";
-    echo "        document.getElementById(\"stopstream\").disabled = true;\n";
-    echo "        document.getElementById(\"startstream\").disabled = false;\n";
-    echo "    }\n";
-    echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
-    echo "        ajax.call([{\n";
-    echo "            methodname: 'mod_jitsi_state_record',\n";
-    echo "            args: {jitsi:".$jitsi->id.", state: event['on']},\n";
+    if ($user == null) {
+        echo "api.addEventListener('recordingStatusChanged', function(event) {\n";
+        echo "    if (event['on']){\n";
+        echo "        document.getElementById(\"startstream\").disabled = true;\n";
+        echo "        document.getElementById(\"stopstream\").disabled = false;\n";
+        echo "    } else if (!event['on']){\n";
+        echo "        document.getElementById(\"stopstream\").disabled = true;\n";
+        echo "        document.getElementById(\"startstream\").disabled = false;\n";
+        echo "    }\n";
+        echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+        echo "        ajax.call([{\n";
+        echo "            methodname: 'mod_jitsi_state_record',\n";
+        echo "            args: {jitsi:".$jitsi->id.", state: event['on']},\n";
 
-    echo "            done: console.log(\"Cambio grabación\"),\n";
-    echo "            fail: notification.exception\n";
-    echo "        }]);\n";
-    echo "        console.log(event['on']);\n";
-    echo "    })\n";
-    echo "});\n";
+        echo "            done: console.log(\"Cambio grabación\"),\n";
+        echo "            fail: notification.exception\n";
+        echo "        }]);\n";
+        echo "        console.log(event['on']);\n";
+        echo "    })\n";
+        echo "});\n";
 
-    echo "function stream(){\n";
-    echo "document.getElementById(\"startstream\").disabled = true;\n";
-    echo "document.getElementById(\"stopstream\").disabled = false;\n";
-    echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
-    echo "       var respuesta = ajax.call([{\n";
-    echo "            methodname: 'mod_jitsi_create_stream',\n";
-    echo "            args: {session:'".$session."', jitsi:'".$jitsi->id."'},\n";
+        echo "function stream(){\n";
+        echo "document.getElementById(\"startstream\").disabled = true;\n";
+        echo "document.getElementById(\"stopstream\").disabled = false;\n";
+        echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+        echo "       var respuesta = ajax.call([{\n";
+        echo "            methodname: 'mod_jitsi_create_stream',\n";
+        echo "            args: {session:'".$session."', jitsi:'".$jitsi->id."'},\n";
 
-    echo "       }]);\n";
-    echo "       respuesta[0].done(function(response) {\n";
-    echo "          api.executeCommand('startRecording', {\n";
-    echo "              mode: 'stream',\n";
-    echo "              youtubeStreamKey: response \n";
-    echo "          })\n";
-    echo "            console.log(response);";
-    echo ";})";
-    echo  ".fail(function(ex) {console.log(ex);});";
-    echo "    })\n";
-    echo "}\n";
+        echo "       }]);\n";
+        echo "       respuesta[0].done(function(response) {\n";
+        echo "          api.executeCommand('startRecording', {\n";
+        echo "              mode: 'stream',\n";
+        echo "              youtubeStreamKey: response \n";
+        echo "          })\n";
+        echo "            console.log(response);";
+        echo ";})";
+        echo  ".fail(function(ex) {console.log(ex);});";
+        echo "    })\n";
+        echo "}\n";
 
-    echo "function stopStream(){\n";
-    echo "document.getElementById(\"startstream\").disabled = false;\n";
-    echo "document.getElementById(\"stopstream\").disabled = true;\n";
-    echo "api.executeCommand('stopRecording', 'stream');\n";
-    echo "}\n";
+        echo "function stopStream(){\n";
+        echo "document.getElementById(\"startstream\").disabled = false;\n";
+        echo "document.getElementById(\"stopstream\").disabled = true;\n";
+        echo "api.executeCommand('stopRecording', 'stream');\n";
+        echo "}\n";
 
-    echo "function sendlink(){\n";
-    echo "        var nombreform = document.getElementById(\"nombrelink\").value;";
-    echo "        var mailform = document.getElementById(\"maillink\").value;";
-    echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
-    echo "       var respuesta = ajax.call([{\n";
-    echo "            methodname: 'mod_jitsi_create_link',\n";
-    echo "            args: {jitsi: ".$jitsi->id."},\n";
-    echo "       }]);\n";
-    echo "       respuesta[0].done(function(response) {\n";
-    echo "            alert(\"Enviado\");";
-    echo ";})";
-    echo  ".fail(function(ex) {console.log(ex);});";
-    echo "    })\n";
-    echo "}\n";
+        echo "function sendlink(){\n";
+        echo "        var nombreform = document.getElementById(\"nombrelink\").value;";
+        echo "        var mailform = document.getElementById(\"maillink\").value;";
+        echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+        echo "       var respuesta = ajax.call([{\n";
+        echo "            methodname: 'mod_jitsi_create_link',\n";
+        echo "            args: {jitsi: ".$jitsi->id."},\n";
+        echo "       }]);\n";
+        echo "       respuesta[0].done(function(response) {\n";
+        echo "            alert(\"Enviado\");";
+        echo ";})";
+        echo  ".fail(function(ex) {console.log(ex);});";
+        echo "    })\n";
+        echo "}\n";
 
-    echo "function copyurl() {\n";
-    echo "            var copyText = '".$CFG->wwwroot.'/mod/jitsi/formuniversal.php?id='.$cmid."';";
+        echo "function copyurl() {\n";
+        echo "            var copyText = '".$CFG->wwwroot.'/mod/jitsi/formuniversal.php?id='.$cmid."';";
 
-    echo "            navigator.clipboard.writeText(copyText);";
-    echo "            alert(\"".get_string('copied', 'jitsi')."\");";
-    echo "}\n";
-
+        echo "            navigator.clipboard.writeText(copyText);";
+        echo "            alert(\"".get_string('copied', 'jitsi')."\");";
+        echo "}\n";
+    }
     echo "</script>\n";
+}
+
+/**
+ * Send notification when user enter on private session
+ * @param $fromuser - User entering the private session
+ * @param $touser - User session owner
+ */
+function sendnotificationprivatesession($fromuser, $touser) {
+    global $CFG;
+    $message = new \core\message\message();
+    $message->component = 'mod_jitsi';
+    $message->name = 'onprivatesession';
+    $message->userfrom = core_user::get_noreply_user();
+    $message->userto = $touser;
+    $message->subject = get_string('userenter', 'jitsi', $fromuser->firstname);
+    $message->fullmessage = get_string('userenter', 'jitsi', $fromuser->firstname .' '. $fromuser->lastname);
+    $message->fullmessageformat = FORMAT_MARKDOWN;
+    $message->fullmessagehtml = get_string('user').' <a href='.$CFG->wwwroot.'/user/profile.php?id='.$fromuser->id.'> '
+    . $fromuser->firstname .' '. $fromuser->lastname
+    . '</a> '.get_string('hasentered', 'jitsi').'. '.get_string('click', 'jitsi').'<a href='
+    . new moodle_url('/mod/jitsi/viewpriv.php', array('user' => $touser->id))
+    .'> '.get_string('here', 'jitsi').'</a> '.get_string('toenter', 'jitsi');
+    $message->smallmessage = get_string('userenter', 'jitsi', $fromuser->firstname .' '. $fromuser->lastname);
+    $message->notification = 1;
+    $message->contexturl = new moodle_url('/mod/jitsi/viewpriv.php', array('user' => $touser->id));
+    $message->contexturlname = 'Private session';
+    $content = array('*' => array('header' => '', 'footer' => ''));
+    $message->set_additional_content('email', $content);
+    $messageid = message_send($message);
+}
+
+/**
+ * Delete Jitsi record
+ * @param $idjitsi - Jitsi record to delete
+ */
+function delete_jitsi_record($idrecord) {
+    global $DB;
+    $DB->delete_records('jitsi_record', array('id' => $idrecord));
+}
+
+/**
+ * Delete Record from youtube
+ * @param $idrecord - Jitsi record to delete
+ */
+function deleterecordyoutube($idrecord) {
+    global $CFG, $DB, $PAGE;
+    // Api google.
+    if (!file_exists(__DIR__ . '/api/vendor/autoload.php')) {
+        throw new \Exception('please run "composer require google/apiclient:~2.0" in "' . __DIR__ .'"');
+    }
+    require_once(__DIR__ . '/api/vendor/autoload.php');
+
+    $client = new Google_Client();
+
+    $client->setClientId($CFG->jitsi_oauth_id);
+    $client->setClientSecret($CFG->jitsi_oauth_secret);
+
+    $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
+    $_SESSION[$tokensessionkey] = get_config('mod_jitsi', 'jitsi_clientaccesstoken');
+
+    $client->setAccessToken($_SESSION[$tokensessionkey]);
+
+    $t = time();
+    $timediff = $t - get_config('mod_jitsi', 'jitsi_tokencreated');
+    echo get_config('jitsi_tokencreated', 'mod_jitsi');
+    echo get_config('jitsi_clientaccesstoken', 'mod_jitsi');
+    echo get_config('jitsi_clientrefreshtoken', 'mod_jitsi');
+    if ($timediff > 3599) {
+          $newaccesstoken = $client->fetchAccessTokenWithRefreshToken(get_config('mod_jitsi', 'jitsi_clientrefreshtoken'));
+          set_config('jitsi_clientaccesstoken', $newaccesstoken["access_token"] , 'mod_jitsi');
+          $newrefreshaccesstoken = $client->getRefreshToken();
+          set_config('jitsi_clientrefreshtoken', $newrefreshaccesstoken, 'mod_jitsi');
+          set_config('jitsi_tokencreated', time(), 'mod_jitsi');
+    }
+
+    $youtube = new Google_Service_YouTube($client);
+
+    if ($client->getAccessToken($idrecord)) {
+        try {
+            $jitsirecord = $DB->get_record('jitsi_record', array('id' => $idrecord));
+            $youtube->videos->delete($jitsirecord->link);
+            delete_jitsi_record($idrecord);
+        } catch (Google_Service_Exception $e) {
+            throw new \Exception("exception".$e->getMessage());
+        } catch (Google_Exception $e) {
+            throw new \Exception("exception".$e->getMessage());
+        }
+    }
 }
