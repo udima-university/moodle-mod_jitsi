@@ -27,7 +27,7 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(dirname(dirname(__FILE__))).'/lib/moodlelib.php');
 require_once(dirname(__FILE__).'/lib.php');
-
+require_login();
 if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
     echo "Los parametros están vacios";
 } else {
@@ -44,7 +44,7 @@ if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
     $client->setClientSecret($oauth2clientsecret);
     $client->setScopes('https://www.googleapis.com/auth/youtube');
     $client->setAccessType("offline");
-    $redirect = filter_var('http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'],
+    $redirect = filter_var('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'],
               FILTER_SANITIZE_URL);
     $client->setRedirectUri($redirect);
 
