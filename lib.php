@@ -186,12 +186,12 @@ function jitsi_delete_instance($id) {
 
 /**
  * Jitsi private sessions on profile user
- * @param $tree tree
- * @param $user user
- * @param $iscurrentuser iscurrentuser
- * @param $course course
+ * 
+ * @param tree $tree tree
+ * @param stdClass $user user
+ * @param int $iscurrentuser iscurrentuser
  */
-function jitsi_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
+function jitsi_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser) {
     global $DB, $CFG, $USER;
     if ($CFG->jitsi_privatesessions == 1) {
         $urlparams = array('user' => $user->id);
@@ -213,7 +213,7 @@ function jitsi_myprofile_navigation(core_user\output\myprofile\tree $tree, $user
 
 /**
  * Base 64 encode
- * @param $inputstr - Input to encode
+ * @param string $inputstr - Input to encode
  */
 function base64urlencode($inputstr) {
     return strtr(base64_encode($inputstr), '+/=', '-_,');
@@ -221,7 +221,7 @@ function base64urlencode($inputstr) {
 
 /**
  * Base 64 decode
- * @param $inputstr - Input to decode
+ * @param string $inputstr - Input to decode
  */
 function base64urldecode($inputstr) {
     return base64_decode(strtr($inputstr, '-_,', '+/='));
@@ -229,9 +229,9 @@ function base64urldecode($inputstr) {
 
 /**
  * Sanitize strings
- * @param $string - The string to sanitize.
- * @param $forcelowercase - Force the string to lowercase?
- * @param $anal - If set to *true*, will remove all non-alphanumeric characters.
+ * @param string $string - The string to sanitize.
+ * @param boolean $forcelowercase - Force the string to lowercase?
+ * @param boolean $anal - If set to *true*, will remove all non-alphanumeric characters.
  */
 function string_sanitize($string, $forcelowercase = true, $anal = false) {
     $strip = array("~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")",
@@ -250,13 +250,13 @@ function string_sanitize($string, $forcelowercase = true, $anal = false) {
 
 /**
  * Create session
- * @param $teacher - Moderation
- * @param $cmid - Course module
- * @param $avatar - Avatar
- * @param $nombre - Name
- * @param $session - sesssion name
- * @param $mail - mail
- * @param $jitsi - Jitsi session
+ * @param int $teacher - Moderation
+ * @param int $cmid - Course module
+ * @param string $avatar - Avatar
+ * @param string $nombre - Name
+ * @param string $session - sesssion name
+ * @param string $mail - mail
+ * @param stdClass $jitsi - Jitsi session
  */
 function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jitsi, $universal = false, $user = null) {
     global $CFG, $DB, $PAGE, $USER;
@@ -511,8 +511,8 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
 
 /**
  * Send notification when user enter on private session
- * @param $fromuser - User entering the private session
- * @param $touser - User session owner
+ * @param stdClass $fromuser - User entering the private session
+ * @param stdClass $touser - User session owner
  */
 function sendnotificationprivatesession($fromuser, $touser) {
     global $CFG;
@@ -540,7 +540,7 @@ function sendnotificationprivatesession($fromuser, $touser) {
 
 /**
  * Delete Jitsi record
- * @param $idjitsi - Jitsi record to delete
+ * @param int $idjitsi - Jitsi record to delete
  */
 function delete_jitsi_record($idrecord) {
     global $DB;
@@ -549,7 +549,7 @@ function delete_jitsi_record($idrecord) {
 
 /**
  * Delete Record from youtube
- * @param $idrecord - Jitsi record to delete
+ * @param int $idrecord - Jitsi record to delete
  */
 function deleterecordyoutube($idrecord) {
     global $CFG, $DB, $PAGE;
