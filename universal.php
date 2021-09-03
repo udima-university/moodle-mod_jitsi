@@ -34,6 +34,8 @@ $name = required_param('name', PARAM_TEXT);
 $mail = required_param('mail', PARAM_TEXT);
 $avatar = optional_param('avatar', null, PARAM_TEXT);
 $id = required_param('id', PARAM_INT);
+$timestamp = required_param('t', PARAM_INT);
+$codet = required_param('c', PARAM_INT);
 
 global $DB, $CFG;
 $PAGE->set_url($CFG->wwwroot.'/mod/jitsi/universal.php');
@@ -83,7 +85,10 @@ $PAGE->set_title($sesion->name);
 $PAGE->set_heading($sesion->name);
 
 echo $OUTPUT->header();
-
-createsession(0, $id,  $avatar, $name, $sesparam, $mail, $sesion, true);
+if (!istimedout($timestamp, $sesion)) {
+    createsession(0, $id,  $avatar, $name, $sesparam, $mail, $sesion, true, null, $timestamp, $codet);
+} else {
+    echo "Link expired";
+}
 
 echo $OUTPUT->footer();

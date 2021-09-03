@@ -31,9 +31,14 @@ require_once(dirname(__FILE__).'/lib.php');
 require_once("$CFG->libdir/formslib.php");
 
 $id = required_param('id', PARAM_INT);
+
+$timestamp = required_param('t', PARAM_INT);
+$codet = required_param('c', PARAM_INT);
+
 $cm = get_coursemodule_from_id('jitsi', $id, 0, false, MUST_EXIST);
 $sessionid = $cm->instance;
 
+$code = $codet - $timestamp;
 global $DB;
 
 class name_form extends moodleform {
@@ -67,7 +72,6 @@ $PAGE->set_heading(get_string('accesstotitle', 'jitsi', $sesion->name));
 
 echo $OUTPUT->header();
 
-
 $event = \mod_jitsi\event\jitsi_session_guest_form::create(array(
   'objectid' => $PAGE->cm->instance,
   'context' => $PAGE->context,
@@ -77,59 +81,70 @@ $event->add_record_snapshot($PAGE->cm->modname, $sesion);
 
 $event->trigger();
 
-if ($CFG->jitsi_invitebuttons == 1) {
-    if (!isloggedin()) {
-        echo get_string('accessto', 'jitsi', $sesion->name);
-        $today = getdate();
+if (isoriginal($code, $sesion)) {
+    if (!istimedout($timestamp, $sesion)) {
+        if ($CFG->jitsi_invitebuttons == 1) {
+            if (!isloggedin()) {
+                echo get_string('accessto', 'jitsi', $sesion->name);
+                $today = getdate();
+                if ($today[0] < $sesion->timeclose || $sesion->timeclose == 0) {
+                    if ($today[0] > (($sesion->timeopen) - ($sesion->minpretime * 60))||
+                        (in_array('editingteacher', $rolestr) == 1)) {
+                        $mform = new name_form($CFG->wwwroot.'/mod/jitsi/universal.php?ses='.
+                                            $sessionid.'&id='.$id.'&t='.$timestamp.'&c='.$codet);
 
-        if ($today[0] < $sesion->timeclose || $sesion->timeclose == 0) {
-            if ($today[0] > (($sesion->timeopen) - ($sesion->minpretime * 60))||
-                (in_array('editingteacher', $rolestr) == 1)) {
-                $mform = new name_form($CFG->wwwroot.'/mod/jitsi/universal.php?ses='.$sessionid.'&id='.$id);
-
-                if ($mform->is_cancelled()) {
-                    echo "";
-                } else if ($fromform = $mform->get_data()) {
-                    echo "";
+                        if ($mform->is_cancelled()) {
+                            echo "";
+                        } else if ($fromform = $mform->get_data()) {
+                            echo "";
+                        } else {
+                            $mform->display();
+                        }
+                        echo get_string('mailprivacy', 'jitsi');
+                    } else {
+                        echo $OUTPUT->box(get_string('nostart', 'jitsi', $session->minpretime));
+                    }
                 } else {
-                    $mform->display();
+                    echo $OUTPUT->box(get_string('finish', 'jitsi'));
                 }
-                echo get_string('mailprivacy', 'jitsi');
             } else {
-                echo $OUTPUT->box(get_string('nostart', 'jitsi', $session->minpretime));
+                echo get_string('accesstowithlogin', 'jitsi', $sesion->name);
+                $today = getdate();
+                if ($today[0] > (($sesion->timeopen) - ($sesion->minpretime * 60))||
+                    (in_array('editingteacher', $rolestr) == 1)) {
+                    $nom = null;
+                    switch ($CFG->jitsi_id) {
+                        case 'username':
+                            $nom = $USER->username;
+                            break;
+                        case 'nameandsurname':
+                            $nom = $USER->firstname.' '.$USER->lastname;
+                            break;
+                        case 'alias':
+                            break;
+                    }
+                    $avatar = $CFG->wwwroot.'/user/pix.php/'.$USER->id.'/f1.jpg';
+                    $mail = '';
+                    $urlparams = array('avatar' => $avatar, 'name' => $nom, 'ses' => $sessionid,
+                                    'mail' => $mail, 'id' => $id, 't' => $timestamp, 'c' => $codet);
+                    echo $OUTPUT->box(get_string('instruction', 'jitsi'));
+                    echo $OUTPUT->single_button(new moodle_url('/mod/jitsi/universal.php', $urlparams),
+                        get_string('access', 'jitsi'), 'post');
+                } else {
+                    echo $OUTPUT->box(get_string('nostart', 'jitsi', $sesion->minpretime));
+                }
             }
         } else {
-            echo $OUTPUT->box(get_string('finish', 'jitsi'));
+            echo get_string('noinviteaccess', 'jitsi');
         }
     } else {
-        echo get_string('accesstowithlogin', 'jitsi', $sesion->name);
-        $today = getdate();
-        if ($today[0] > (($sesion->timeopen) - ($sesion->minpretime * 60))||
-            (in_array('editingteacher', $rolestr) == 1)) {
-            $nom = null;
-            switch ($CFG->jitsi_id) {
-                case 'username':
-                    $nom = $USER->username;
-                    break;
-                case 'nameandsurname':
-                    $nom = $USER->firstname.' '.$USER->lastname;
-                    break;
-                case 'alias':
-                    break;
-            }
-            $avatar = $CFG->wwwroot.'/user/pix.php/'.$USER->id.'/f1.jpg';
-            $mail = '';
-            $urlparams = array('avatar' => $avatar, 'name' => $nom, 'ses' => $sessionid, 'mail' => $mail, 'id' => $id);
-            echo $OUTPUT->box(get_string('instruction', 'jitsi'));
-            echo $OUTPUT->single_button(new moodle_url('/mod/jitsi/universal.php', $urlparams),
-                get_string('access', 'jitsi'), 'post');
-        } else {
-            echo $OUTPUT->box(get_string('nostart', 'jitsi', $sesion->minpretime));
-
-        }
+        $time = $sesion->validitytime;
+        echo "This link expired on ";
+        $limit = $timestamp + $time;
+        echo userdate($limit);
     }
 } else {
-    echo get_string('noinviteaccess', 'jitsi');
+    echo "Invalid URL";
 }
 
 echo $OUTPUT->footer();

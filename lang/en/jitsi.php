@@ -140,3 +140,5 @@ $string['here'] = 'here';
 $string['toenter'] = 'to enter';
 $string['click'] = 'Click';
 $string['privatesessiondisabled'] = 'Private sessions are disabled';
+$string['validitytime'] = 'Validity time';
+$string['validitytime_help'] = 'Link validity time';

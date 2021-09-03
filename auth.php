@@ -29,7 +29,7 @@ require_once(dirname(dirname(dirname(__FILE__))).'/lib/moodlelib.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_login();
 if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
-    echo "Los parametros están vacios";
+    echo "Empty parameters 'jitsi_oauth_id' & 'jitsi_oauth_secret'";
 } else {
     if (!file_exists(__DIR__ . '/api/vendor/autoload.php')) {
         throw new \Exception('please run "composer require google/apiclient:~2.0" in "' . __DIR__ .'"');

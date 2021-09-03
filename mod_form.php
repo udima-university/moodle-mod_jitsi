@@ -57,6 +57,14 @@ class mod_jitsi_mod_form extends moodleform_mod {
 
         $this->standard_intro_elements();
 
+        if ($CFG->jitsi_invitebuttons == 1) {
+            $mform->addElement('header', 'Share', "Share");
+            $mform->addElement('duration', 'validitytime', get_string('validitytime', 'jitsi'), array('optional' => false,
+                    'defaultunit' => MINSECS, 'units' => array(DAYSECS, HOURSECS, MINSECS)));
+            $mform->setDefault('validitytime', 1);
+            $mform->addHelpButton('validitytime', 'validitytime', 'jitsi');
+        }
+
         $mform->addElement('header', 'availability', get_string('availability', 'assign'));
         $mform->setExpanded('availability', true);
 
@@ -77,6 +85,7 @@ class mod_jitsi_mod_form extends moodleform_mod {
         );
         $mform->addElement('select', 'minpretime', get_string('minpretime', 'jitsi'), $choicesminspre);
         $mform->disabledIf('minpretime', 'timeopen[enabled]');
+
         $this->standard_coursemodule_elements();
         $this->add_action_buttons();
     }

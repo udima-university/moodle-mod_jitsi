@@ -186,7 +186,7 @@ function jitsi_delete_instance($id) {
 
 /**
  * Jitsi private sessions on profile user
- * 
+ *
  * @param tree $tree tree
  * @param stdClass $user user
  * @param int $iscurrentuser iscurrentuser
@@ -258,7 +258,8 @@ function string_sanitize($string, $forcelowercase = true, $anal = false) {
  * @param string $mail - mail
  * @param stdClass $jitsi - Jitsi session
  */
-function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jitsi, $universal = false, $user = null) {
+function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jitsi, $universal = false,
+        $user = null, $timestamp = null, $codet = null) {
     global $CFG, $DB, $PAGE, $USER;
     $sessionnorm = str_replace(array(' ', ':', '"'), '', $session);
     if ($teacher == 1) {
@@ -316,10 +317,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         && ($CFG->jitsi_streamingoption == 0)) {
         $streamingoption = 'livestreaming';
     }
-    $desktop = '';
-    if (has_capability('mod/jitsi:sharedesktop', $context)) {
-        $desktop = 'desktop';
-    }
+
     $youtubeoption = '';
     if ($CFG->jitsi_shareyoutube == 1) {
         $youtubeoption = 'sharedvideo';
@@ -344,7 +342,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         $mutevideoeveryone = 'mute-video-everyone';
     }
 
-    $buttons = "['microphone', 'camera', 'closedcaptions', '".$desktop."', 'fullscreen',
+    $buttons = "['microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
         'fodeviceselection', 'hangup', 'chat', '".$record."', 'etherpad', '".$youtubeoption."',
         'settings', 'raisehand', 'videoquality', '".$streamingoption."','filmstrip', '".$invite."', 'stats',
         'shortcuts', 'tileview', '".$bluroption."', 'download', 'help', '".$muteeveryone."',
@@ -368,6 +366,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             echo "<button onclick=\"copyurl()\" type=\"button\" class=\"btn btn-secondary\" id=\"copyurl\">";
             echo get_string('URLguest', 'jitsi');
             echo "</button>";
+            echo "<br>";
         }
     }
 
@@ -419,8 +418,8 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         if ($universal == false && $user == null) {
             echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/view.php?id=".$cmid."\";";
         } else if ($universal == true && $user == null) {
-            echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/formuniversal.php?id=".$cmid."\";";
-        } else if ($user != null) {
+            echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/formuniversal.php?id=".$cmid."&c=".$codet."&t=".$timestamp."\";";
+        } else if ($user != null && !$timestamp && !$codet) {
             echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/viewpriv.php?user=".$user."\";";
         }
         echo  "});\n";
@@ -500,13 +499,38 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "}\n";
 
         echo "function copyurl() {\n";
-        echo "            var copyText = '".$CFG->wwwroot.'/mod/jitsi/formuniversal.php?id='.$cmid."';";
-
-        echo "            navigator.clipboard.writeText(copyText);";
-        echo "            alert(\"".get_string('copied', 'jitsi')."\");";
+        echo "var d = new Date();\n";
+        echo "var t = Math.round(d.getTime()/1000);\n";
+        echo "var time = ".generatecode($jitsi)."+t;\n";
+        echo "var copyText = \"".$CFG->wwwroot.'/mod/jitsi/formuniversal.php?id='.$cmid."&c=\"+time+\"&t=\"+t;\n";
+        echo "navigator.clipboard.writeText(copyText);\n";
+        echo "alert(\"".get_string('copied', 'jitsi')."\");\n";
         echo "}\n";
     }
     echo "</script>\n";
+}
+
+function istimedout($timestamp, $jitsi) {
+    $time = $jitsi->validitytime;
+    $limit = $timestamp + $time;
+    if (time() > $limit) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function isoriginal($code, $jitsi) {
+    if ($code == $jitsi->timecreated + $jitsi->id) {
+        $original = true;
+    } else {
+        $original = false;
+    }
+    return $original;
+}
+
+function generatecode($jitsi) {
+    return $jitsi->timecreated + $jitsi->id;
 }
 
 /**
@@ -595,4 +619,13 @@ function deleterecordyoutube($idrecord) {
             throw new \Exception("exception".$e->getMessage());
         }
     }
+}
+
+ /**
+  * Get icon mapping for font-awesome.
+  */
+function mod_jitsi_get_fontawesome_icon_map() {
+    return [
+        'mod_forum:t/add' => 'share-alt-square',
+    ];
 }
