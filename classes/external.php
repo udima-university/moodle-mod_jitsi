@@ -19,7 +19,7 @@
  *
  * @package    mod_jitsi
  * @category   external
- * @copyright  2019 Sergio Comerón Sánchez-Paniagua <sergiocomeron@icloud.com>
+ * @copyright  2021 Sergio Comerón Sánchez-Paniagua <sergiocomeron@icloud.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,6 +27,14 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/externallib.php');
 
+/**
+ * Jitsi module external API
+ *
+ * @package    mod_jitsi
+ * @category   external
+ * @copyright  2021 Sergio Comerón Sánchez-Paniagua <sergiocomeron@icloud.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class mod_jitsi_external extends external_api{
     /**
      * Returns description of method parameters
@@ -41,6 +49,11 @@ class mod_jitsi_external extends external_api{
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     */
     public static function state_record_parameters() {
         return new external_function_parameters(
             array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
@@ -48,6 +61,11 @@ class mod_jitsi_external extends external_api{
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     */
     public static function create_stream_parameters() {
         return new external_function_parameters(
             array('session' => new external_value(PARAM_TEXT, 'Session object from google', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),

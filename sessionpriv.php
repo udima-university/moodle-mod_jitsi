@@ -32,8 +32,9 @@ $PAGE->set_url($CFG->wwwroot.'/mod/jitsi/session.php');
 $PAGE->set_context(context_system::instance());
 require_login();
 $nombre = required_param('nom', PARAM_USERNAME);
+$userid = required_param('u', PARAM_INT);
 $session = required_param('ses', PARAM_TEXT);
-$user = $DB->get_record('user', array('username' => $session));
+$user = $DB->get_record('user', array('id' => $userid));
 $sessionnorm = str_replace(array(' ', ':', '"'), '', $user->username);
 $avatar = $CFG->jitsi_showavatars == true ? required_param('avatar', PARAM_TEXT) : null;
 
@@ -45,7 +46,6 @@ if ($CFG->jitsi_privatesessions == 1) {
     if ($USER->id == $user->id) {
         $teacher = 1;
     }
-
     if ($USER->id != $user->id) {
         sendnotificationprivatesession($USER, $user);
     }

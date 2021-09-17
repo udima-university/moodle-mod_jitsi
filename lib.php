@@ -257,6 +257,10 @@ function string_sanitize($string, $forcelowercase = true, $anal = false) {
  * @param string $session - sesssion name
  * @param string $mail - mail
  * @param stdClass $jitsi - Jitsi session
+ * @param bool $universal - 
+ * @param stdClass $user - 
+ * @param int $timetsamp - 
+ * @param int $codet - 
  */
 function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jitsi, $universal = false,
         $user = null, $timestamp = null, $codet = null) {
@@ -510,6 +514,11 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "</script>\n";
 }
 
+/**
+ * Check if a date is out of time
+ * @param int $timestamp date
+ * @param stdClass $jitsi jitsi instance
+ */
 function istimedout($timestamp, $jitsi) {
     $time = $jitsi->validitytime;
     $limit = $timestamp + $time;
@@ -520,6 +529,11 @@ function istimedout($timestamp, $jitsi) {
     }
 }
 
+/**
+ * Check if a code is original
+ * @param int $code code to check
+ * @param stdClass $jitsi jitsi instance
+ */
 function isoriginal($code, $jitsi) {
     if ($code == $jitsi->timecreated + $jitsi->id) {
         $original = true;
@@ -529,6 +543,10 @@ function isoriginal($code, $jitsi) {
     return $original;
 }
 
+/**
+ * Generate code from a jitsi
+ * @param stdClass $jitsi jitsi instance
+ */
 function generatecode($jitsi) {
     return $jitsi->timecreated + $jitsi->id;
 }
@@ -563,8 +581,37 @@ function sendnotificationprivatesession($fromuser, $touser) {
 }
 
 /**
+ * Send notification when user enter on private session
+ * @param stdClass $fromuser - User entering the private session
+ * @param stdClass $touser - User session owner
+ */
+function sendcallprivatesession($fromuser, $touser) {
+    global $CFG;
+    $message = new \core\message\message();
+    $message->component = 'mod_jitsi';
+    $message->name = 'callprivatesession';
+    $message->userfrom = core_user::get_noreply_user();
+    $message->userto = $touser;
+    $message->subject = get_string('usercall', 'jitsi', $fromuser->firstname);
+    $message->fullmessage = get_string('usercall', 'jitsi', $fromuser->firstname .' '. $fromuser->lastname);
+    $message->fullmessageformat = FORMAT_MARKDOWN;
+    $message->fullmessagehtml = get_string('user').' <a href='.$CFG->wwwroot.'/user/profile.php?id='.$fromuser->id.'> '
+    . $fromuser->firstname .' '. $fromuser->lastname
+    . '</a> '.get_string('iscalling', 'jitsi').'. '.get_string('click', 'jitsi').'<a href='
+    . new moodle_url('/mod/jitsi/viewpriv.php', array('user' => $fromuser->id))
+    .'> '.get_string('here', 'jitsi').'</a> '.get_string('toenter', 'jitsi');
+    $message->smallmessage = get_string('usercall', 'jitsi', $fromuser->firstname .' '. $fromuser->lastname);
+    $message->notification = 1;
+    $message->contexturl = new moodle_url('/mod/jitsi/viewpriv.php', array('user' => $fromuser->id));
+    $message->contexturlname = 'Private session';
+    $content = array('*' => array('header' => '', 'footer' => ''));
+    $message->set_additional_content('email', $content);
+    $messageid = message_send($message);
+}
+
+/**
  * Delete Jitsi record
- * @param int $idjitsi - Jitsi record to delete
+ * @param int $idrecord - Jitsi record to delete
  */
 function delete_jitsi_record($idrecord) {
     global $DB;

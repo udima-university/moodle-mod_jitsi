@@ -26,6 +26,13 @@ namespace mod_jitsi\privacy;
 
 use core_privacy\local\metadata\collection;
 
+/**
+ * Privacy Subsystem implementation for block_common_courses.
+ *
+ * @package    mod_jitsi
+ * @copyright  2019 Sergio Comerón Sánchez-Paniagua <sergiocomeron@icloud.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class provider implements \core_privacy\local\metadata\provider, \core_privacy\local\request\data_provider {
 
     public static function get_metadata(collection $collection) : collection {

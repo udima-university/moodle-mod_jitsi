@@ -27,17 +27,50 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
+require_once("$CFG->libdir/formslib.php");
 
+class userstocall_form extends moodleform {
+    //Add elements to form
+    public function definition() {
+        global $CFG;
+        $mform = $this->_form; // Don't forget the underscore!
+
+        $options = array(
+            'ajax' => 'core_user/form_user_selector',
+            'multiple' => true
+        );
+        $mform->addElement('autocomplete', 'userstocall', 'Users', array(), $options);
+        $buttonarray=array();
+        $buttonarray[] = $mform->createElement('submit', 'submitbutton', 'Call');
+        $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
+    }
+    //Custom validation should be added here
+    function validation($data, $files) {
+        return array();
+    }
+}
 
 global $USER, $DB, $PAGE, $CFG;
 
 $userid = required_param('user', PARAM_INT);
+$userstocall = optional_param_array('userstocall', null, PARAM_RAW);
+
 $user = $DB->get_record('user', array('id' => $userid));
+
 $PAGE->set_context(context_system::instance());
+require_login();
 $PAGE->set_url('/mod/jitsi/viewpriv.php', array('user' => $user->id));
 require_login();
 $PAGE->set_title(format_string($user->firstname));
 $PAGE->set_heading(format_string($user->firstname));
+
+
+if ($userstocall != null) {
+    foreach ($userstocall as $usertocall) {
+        $usertocallob = $DB->get_record('user', array('id' => $usertocall));
+        sendcallprivatesession($user, $usertocallob);
+    }
+}
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('privatesession', 'jitsi', $user->firstname));
@@ -49,7 +82,7 @@ if ($CFG->jitsi_privatesessions) {
     } else {
         $moderation = 0;
     }
-
+  
     $nom = null;
     switch ($CFG->jitsi_id) {
         case 'username':
@@ -67,16 +100,59 @@ if ($CFG->jitsi_privatesessions) {
     $allowed = explode(',', $fieldssessionname);
     $max = count($allowed);
 
-    $sesparam = $user->username;
+    $sesparam = $SITE->shortname.'-'.$user->username;
     $avatar = $CFG->wwwroot.'/user/pix.php/'.$USER->id.'/f1.jpg';
 
     $urlparams = array('avatar' => $avatar, 'nom' => $nom, 'ses' => $sesparam,
-        't' => $moderation);
+        't' => $moderation, 'u' => $userid);
+
+    if ($USER->id != $user->id) {
+        echo "<div class=\"alert alert-warning\" role=\"alert\">";
+        echo get_string('warningprivate', 'jitsi', $user->firstname);
+        echo "</div>";
+    }
 
     echo $OUTPUT->box(get_string('instruction', 'jitsi'));
     echo $OUTPUT->single_button(new moodle_url('/mod/jitsi/sessionpriv.php', $urlparams), get_string('access', 'jitsi'), 'post');
 
+    if ($USER->id == $user->id && has_capability('moodle/user:viewalldetails', context_system::instance(), $USER)) {
+        echo " <button type=\"button\" class=\"btn btn-secondary\" data-toggle=\"modal\" data-target=\"#exampleModal\">";
+        echo "Call";
+        echo " </button>";
+
+        echo "<div class=\"modal fade\" id=\"exampleModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"exampleModalLabel\" aria-hidden=\"true\">";
+        echo "<div class=\"modal-dialog\" role=\"document\">";
+        echo "<div class=\"modal-content\">";
+        echo "<div class=\"modal-header\">";
+        echo "<h5 class=\"modal-title\">Call to user</h5>";
+        echo "<button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">";
+        echo "<span aria-hidden=\"true\">&times;</span>";
+        echo "</button>";
+        echo "</div>";
+        echo "<div class=\"modal-body\">";
+        echo "<p>Call another user to join your private session</p>";
+        $mform = new userstocall_form($PAGE->url);
+
+        if ($mform->is_cancelled()) {
+            //Handle form cancel operation, if cancel button is present on for
+        } else if ($fromform = $mform->get_data()) {
+            $userstocall = [];
+            $mform->display();
+            //In this case you process validated data. $mform->get_data() returns data posted in form.
+        } else {
+            $mform->display();
+        }
+        echo "</div>";
+        echo "<div class=\"modal-footer\">";
+        echo "<button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Close</button>";
+        echo "</div>";
+        echo "</div>";
+        echo "</div>";
+        echo "</div>";
+    }
+    echo "<p></p>";
     echo $CFG->jitsi_help;
+    
 } else {
     echo get_string('privatesessiondisabled', 'jitsi');
 }
