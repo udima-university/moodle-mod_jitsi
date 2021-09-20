@@ -201,6 +201,24 @@ function xmldb_jitsi_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2021090100, 'jitsi');
     }
 
+    if ($oldversion < 2021092003) {
+        $onprivatesessionloggedin = $DB->get_record('config_plugins', array('name' => 'message_provider_mod_jitsi_onprivatesession_loggedin'));
+        $onprivatesessionloggedoff = $DB->get_record('config_plugins', array('name' => 'message_provider_mod_jitsi_onprivatesession_loggedoff'));
+        $onprivatesessionloggedin->value = 'airnotifier,email,popup';
+        $onprivatesessionloggedoff->value = 'airnotifier,email';
+        $DB->update_record('config_plugins', $onprivatesessionloggedin);
+        $DB->update_record('config_plugins', $onprivatesessionloggedoff);
+
+        $callprivatesessionloggedin = $DB->get_record('config_plugins', array('name' => 'message_provider_mod_jitsi_callprivatesession_loggedin'));
+        $callprivatesessionloggedoff = $DB->get_record('config_plugins', array('name' => 'message_provider_mod_jitsi_callprivatesession_loggedoff'));
+        $callprivatesessionloggedin->value = 'airnotifier,email,popup';
+        $callprivatesessionloggedoff->value = 'airnotifier,email';
+        $DB->update_record('config_plugins', $callprivatesessionloggedin);
+        $DB->update_record('config_plugins', $callprivatesessionloggedoff);
+        upgrade_mod_savepoint(true, 2021092003, 'jitsi');
+    }
+
+
     /*
      * And that's all. Please, examine and understand the 3 example blocks above. Also
      * it's interesting to look how other modules are using this script. Remember that
