@@ -154,7 +154,9 @@ if (!$deletejitsirecordid) {
     echo $OUTPUT->header();
     echo $OUTPUT->heading($jitsi->name);
 }
-
+if ($jitsi->intro) {
+    echo $OUTPUT->box(format_module_intro('jitsi', $jitsi, $cm->id), 'generalbox mod_introbox', 'jitsiintro');
+}
 if ($today[0] < $jitsi->timeclose || $jitsi->timeclose == 0) {
     if ($today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))||
         (in_array('editingteacher', $rolestr) == 1)) {
@@ -166,6 +168,14 @@ if ($today[0] < $jitsi->timeclose || $jitsi->timeclose == 0) {
 } else {
     echo $OUTPUT->box(get_string('finish', 'jitsi'));
 }
+if ($CFG->jitsi_invitebuttons == 1 && has_capability('mod/jitsi:createlink', $PAGE->context) && $jitsi->validitytime != 0){
+    echo " ";
+    echo "<button class=\"btn btn-secondary\" type=\"button\" 
+         data-toggle=\"collapse\" data-target=\"#collapseInvitaciones\"
+         aria-expanded=\"false\" aria-controls=\"collapseExample\">";
+    echo get_string('invitations', 'jitsi');
+     echo "</button>";
+} 
 
 $records  = $DB->get_records('jitsi_record', array('jitsi' => $jitsi->id));
 
@@ -175,7 +185,46 @@ if ($records) {
          aria-expanded=\"false\" aria-controls=\"collapseExample\">";
     echo get_string('records', 'jitsi');
     echo "</button>";
+} 
+if ($CFG->jitsi_invitebuttons == 1 && has_capability('mod/jitsi:createlink', $PAGE->context) && $jitsi->validitytime != 0){
+    echo "<div class=\"collapse\" id=\"collapseInvitaciones\">";
+    echo "<div class=\"card card-body\">";
+    $urlinvitacion = $CFG->wwwroot.'/mod/jitsi/formuniversal.php?id='.$id.'&c='.generatecode($jitsi);
+    echo "<div class=\"container\">";
+    echo "<div class=\"row\">";
+    echo "<div class=\"col-11\">";
+    echo get_string('sharetoinvite', 'jitsi');
+    echo "</div>";
+    echo "</div>";
+    echo "<div class=\"row\">";
+    echo "<div class=\"col-11\">";
 
+    echo "<input class=\"form-control\" type=\"text\" placeholder=\"".$urlinvitacion."\" 
+            aria-label=\"Disabled input example\" disabled>";
+    echo "</div>";
+    echo "<div class=\"col-1\">";
+    echo "<button onclick=\"copyurl()\" type=\"button\" class=\"btn btn-secondary\" id=\"copyurl\">";
+    echo "Copy";
+    echo "</button>";
+    echo "</div>";
+    echo "</div>";
+    echo "</div>";
+
+    echo "</div>";
+    echo "</div>";
+
+    echo "<p></p>";
+    echo "<script>";
+    echo "function copyurl() {\n";
+        echo "var time = ".generatecode($jitsi).";\n";
+        echo "var copyText = \"".$urlinvitacion."\";\n";
+        echo "navigator.clipboard.writeText(copyText);\n";
+        echo "alert(\"".get_string('copied', 'jitsi')."\");\n";
+        echo "}\n";
+    echo "</script>";
+}
+
+if ($records) {
     echo "<div class=\"collapse\" id=\"collapseExample\">";
     echo "<div class=\"card card-body\">";
 
@@ -213,9 +262,7 @@ if ($records) {
     echo "</div>";
     echo "</div>";
 }
-if ($jitsi->intro) {
-    echo $OUTPUT->box(format_module_intro('jitsi', $jitsi, $cm->id), 'generalbox mod_introbox', 'jitsiintro');
-}
+
 echo $CFG->jitsi_help;
 echo "<hr>";
 echo $OUTPUT->footer();

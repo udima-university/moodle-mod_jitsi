@@ -263,7 +263,7 @@ function string_sanitize($string, $forcelowercase = true, $anal = false) {
  * @param int $codet - 
  */
 function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jitsi, $universal = false,
-        $user = null, $timestamp = null, $codet = null) {
+        $user = null, $code = null) {
     global $CFG, $DB, $PAGE, $USER;
     $sessionnorm = str_replace(array(' ', ':', '"'), '', $session);
     if ($teacher == 1) {
@@ -359,18 +359,17 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             && get_config('mod_jitsi', 'jitsi_clientrefreshtoken') != null
             && get_config('mod_jitsi', 'jitsi_clientaccesstoken') != null
             && ($CFG->jitsi_streamingoption == 1)) {
-                echo "<button onclick=\"stream()\" type=\"button\" class=\"btn btn-secondary\" id=\"startstream\">".
-                    get_string('startstream', 'jitsi')."</button>";
-                echo " ";
-                echo "<button onclick=\"stopStream()\" type=\"button\" class=\"btn btn-secondary\"
-                    id=\"stopstream\" disabled=\"true\">".get_string('stopstream', 'jitsi')."</button>";
-        }
-        if ($CFG->jitsi_invitebuttons == 1 && has_capability('mod/jitsi:createlink', $PAGE->context)) {
-            echo " ";
-            echo "<button onclick=\"copyurl()\" type=\"button\" class=\"btn btn-secondary\" id=\"copyurl\">";
-            echo get_string('URLguest', 'jitsi');
-            echo "</button>";
-            echo "<br>";
+                // echo "<button onclick=\"stream()\" type=\"button\" class=\"btn btn-secondary\" id=\"startstream\">".
+                    // get_string('startstream', 'jitsi')."</button>";
+                // echo " ";
+                // echo "<button onclick=\"stopStream()\" type=\"button\" class=\"btn btn-secondary\"
+                    // id=\"stopstream\" disabled=\"true\">".get_string('stopstream', 'jitsi')."</button>";
+                echo "<div class=\"text-right\">";
+                echo "<div class=\"custom-control custom-switch\">";
+                echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\" onClick=\"mostrarLog($(this));\">";
+                echo "  <label class=\"custom-control-label\" for=\"recordSwitch\">Record</label>";
+                echo "</div>";
+                echo "</div>";
         }
     }
 
@@ -422,12 +421,23 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         if ($universal == false && $user == null) {
             echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/view.php?id=".$cmid."\";";
         } else if ($universal == true && $user == null) {
-            echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/formuniversal.php?id=".$cmid."&c=".$codet."&t=".$timestamp."\";";
-        } else if ($user != null && !$timestamp && !$codet) {
+            echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/formuniversal.php?id=".$cmid."&c=".$code."\";";
+        // } else if ($user != null && !$timestamp && !$code) {
+        } else if ($user != null && !$code) {
             echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/viewpriv.php?user=".$user."\";";
         }
         echo  "});\n";
     }
+    echo "function mostrarLog(e){";
+    echo "if (e.is(':checked')) {";
+    echo "console.log(\"Switch cambiado a activado\");";
+    echo "stream();";
+    echo "} else {";
+    echo "console.log(\"Switch cambiado a desactivado\");";
+    echo "stopStream();";
+    echo "}";
+    echo "}";
+
     if ($CFG->jitsi_password != null) {
         echo "api.addEventListener('participantRoleChanged', function(event) {";
         echo "    if (event.role === \"moderator\") {";
@@ -443,11 +453,15 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     if ($user == null) {
         echo "api.addEventListener('recordingStatusChanged', function(event) {\n";
         echo "    if (event['on']){\n";
-        echo "        document.getElementById(\"startstream\").disabled = true;\n";
-        echo "        document.getElementById(\"stopstream\").disabled = false;\n";
+        // echo "        document.getElementById(\"startstream\").disabled = true;\n";
+        // echo "        document.getElementById(\"stopstream\").disabled = false;\n";
+        echo "document.getElementById(\"recordSwitch\").checked = true;\n";
+
         echo "    } else if (!event['on']){\n";
-        echo "        document.getElementById(\"stopstream\").disabled = true;\n";
-        echo "        document.getElementById(\"startstream\").disabled = false;\n";
+        // echo "        document.getElementById(\"stopstream\").disabled = true;\n";
+        // echo "        document.getElementById(\"startstream\").disabled = false;\n";
+        echo "document.getElementById(\"recordSwitch\").checked = false;\n";
+
         echo "    }\n";
         echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "        ajax.call([{\n";
@@ -462,8 +476,9 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "});\n";
 
         echo "function stream(){\n";
-        echo "document.getElementById(\"startstream\").disabled = true;\n";
-        echo "document.getElementById(\"stopstream\").disabled = false;\n";
+        // echo "document.getElementById(\"startstream\").disabled = true;\n";
+        // echo "document.getElementById(\"stopstream\").disabled = false;\n";
+
         echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "       var respuesta = ajax.call([{\n";
         echo "            methodname: 'mod_jitsi_create_stream',\n";
@@ -482,8 +497,8 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "}\n";
 
         echo "function stopStream(){\n";
-        echo "document.getElementById(\"startstream\").disabled = false;\n";
-        echo "document.getElementById(\"stopstream\").disabled = true;\n";
+        // echo "document.getElementById(\"startstream\").disabled = false;\n";
+        // echo "document.getElementById(\"stopstream\").disabled = true;\n";
         echo "api.executeCommand('stopRecording', 'stream');\n";
         echo "}\n";
 
@@ -501,15 +516,6 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo  ".fail(function(ex) {console.log(ex);});";
         echo "    })\n";
         echo "}\n";
-
-        echo "function copyurl() {\n";
-        echo "var d = new Date();\n";
-        echo "var t = Math.round(d.getTime()/1000);\n";
-        echo "var time = ".generatecode($jitsi)."+t;\n";
-        echo "var copyText = \"".$CFG->wwwroot.'/mod/jitsi/formuniversal.php?id='.$cmid."&c=\"+time+\"&t=\"+t;\n";
-        echo "navigator.clipboard.writeText(copyText);\n";
-        echo "alert(\"".get_string('copied', 'jitsi')."\");\n";
-        echo "}\n";
     }
     echo "</script>\n";
 }
@@ -519,13 +525,24 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
  * @param int $timestamp date
  * @param stdClass $jitsi jitsi instance
  */
-function istimedout($timestamp, $jitsi) {
-    $time = $jitsi->validitytime;
-    $limit = $timestamp + $time;
-    if (time() > $limit) {
+function istimedout($jitsi) {
+    if (time() > $jitsi->validitytime) {
         return true;
     } else {
         return false;
+    }
+}
+
+/**
+ * Generate the time error
+ * @param stdClass $jitsi jitsi instance
+ */
+function generateErrotTime($jitsi) {
+    global $CFG;
+    if ($jitsi->validitytime == 0 || $CFG->jitsi_invitebuttons == 0){
+        return get_string('invitationsnotactivated', 'jitsi');
+    } else {
+        return get_string('linkexpiredon', 'jitsi', userdate($jitsi->validitytime));
     }
 }
 
@@ -535,7 +552,8 @@ function istimedout($timestamp, $jitsi) {
  * @param stdClass $jitsi jitsi instance
  */
 function isoriginal($code, $jitsi) {
-    if ($code == $jitsi->timecreated + $jitsi->id) {
+    // if ($code == $jitsi->timecreated + $jitsi->id) {
+    if ($code == ($jitsi->timecreated + $jitsi->id)) {
         $original = true;
     } else {
         $original = false;
