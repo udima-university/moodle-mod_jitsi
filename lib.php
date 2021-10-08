@@ -359,11 +359,6 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             && get_config('mod_jitsi', 'jitsi_clientrefreshtoken') != null
             && get_config('mod_jitsi', 'jitsi_clientaccesstoken') != null
             && ($CFG->jitsi_streamingoption == 1)) {
-                // echo "<button onclick=\"stream()\" type=\"button\" class=\"btn btn-secondary\" id=\"startstream\">".
-                    // get_string('startstream', 'jitsi')."</button>";
-                // echo " ";
-                // echo "<button onclick=\"stopStream()\" type=\"button\" class=\"btn btn-secondary\"
-                    // id=\"stopstream\" disabled=\"true\">".get_string('stopstream', 'jitsi')."</button>";
                 echo "<div class=\"text-right\">";
                 echo "<div class=\"custom-control custom-switch\">";
                 echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\" onClick=\"mostrarLog($(this));\">";
@@ -383,6 +378,15 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     if ($CFG->jitsi_deeplink == 0) {
         echo "disableDeepLinking: true,\n";
     }
+
+    if ($CFG->jitsi_reactions == 0) {
+        echo "disableReactions: true,\n";
+    }
+
+    if ($CFG->jitsi_livebutton == 0) {
+        echo "liveStreamingEnabled: false,\n";
+    }
+
     echo "toolbarButtons: ".$buttons.",\n";
     echo "disableProfile: true,\n";
     echo "prejoinPageEnabled: false,";
@@ -422,7 +426,6 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/view.php?id=".$cmid."\";";
         } else if ($universal == true && $user == null) {
             echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/formuniversal.php?id=".$cmid."&c=".$code."\";";
-        // } else if ($user != null && !$timestamp && !$code) {
         } else if ($user != null && !$code) {
             echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/viewpriv.php?user=".$user."\";";
         }
@@ -453,21 +456,14 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     if ($user == null) {
         echo "api.addEventListener('recordingStatusChanged', function(event) {\n";
         echo "    if (event['on']){\n";
-        // echo "        document.getElementById(\"startstream\").disabled = true;\n";
-        // echo "        document.getElementById(\"stopstream\").disabled = false;\n";
         echo "document.getElementById(\"recordSwitch\").checked = true;\n";
-
         echo "    } else if (!event['on']){\n";
-        // echo "        document.getElementById(\"stopstream\").disabled = true;\n";
-        // echo "        document.getElementById(\"startstream\").disabled = false;\n";
         echo "document.getElementById(\"recordSwitch\").checked = false;\n";
-
         echo "    }\n";
         echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "        ajax.call([{\n";
         echo "            methodname: 'mod_jitsi_state_record',\n";
         echo "            args: {jitsi:".$jitsi->id.", state: event['on']},\n";
-
         echo "            done: console.log(\"Cambio grabación\"),\n";
         echo "            fail: notification.exception\n";
         echo "        }]);\n";
@@ -476,8 +472,6 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "});\n";
 
         echo "function stream(){\n";
-        // echo "document.getElementById(\"startstream\").disabled = true;\n";
-        // echo "document.getElementById(\"stopstream\").disabled = false;\n";
 
         echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "       var respuesta = ajax.call([{\n";
@@ -497,8 +491,6 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "}\n";
 
         echo "function stopStream(){\n";
-        // echo "document.getElementById(\"startstream\").disabled = false;\n";
-        // echo "document.getElementById(\"stopstream\").disabled = true;\n";
         echo "api.executeCommand('stopRecording', 'stream');\n";
         echo "}\n";
 

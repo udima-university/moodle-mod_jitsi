@@ -245,7 +245,6 @@ if ($records) {
         echo "</div>";
         echo "<div class=\"row\">";
         echo "<div class=\"col-sm\">";
-        echo "<a href=\"".$record->link."\" class=\"btn btn-primary\">".get_string('fullscreen', 'jitsi')."</a>";
         echo "</div>";
         echo "  <div class=\"col-sm\">";
         if (has_capability('mod/jitsi:record', $context)) {

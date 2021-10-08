@@ -151,3 +151,5 @@ $string['invitations'] = 'Invitations';
 $string['finishinvitation'] = 'Finish of invitation';
 $string['linkexpiredon'] = 'This link expired on {$a}';
 $string['invitationsnotactivated'] = 'The invitations is not activated';
+$string['reactions'] = 'Reactions';
+$string['reactionsex'] = 'Shows sound emoticons of applause, surprise, etc ...';
