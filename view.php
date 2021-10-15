@@ -174,7 +174,7 @@ if ($CFG->jitsi_invitebuttons == 1 && has_capability('mod/jitsi:createlink', $PA
          data-toggle=\"collapse\" data-target=\"#collapseInvitaciones\"
          aria-expanded=\"false\" aria-controls=\"collapseExample\">";
     echo get_string('invitations', 'jitsi');
-     echo "</button>";
+    echo "</button>";
 } 
 
 $records  = $DB->get_records('jitsi_record', array('jitsi' => $jitsi->id));
@@ -189,7 +189,8 @@ if ($records) {
 if ($CFG->jitsi_invitebuttons == 1 && has_capability('mod/jitsi:createlink', $PAGE->context) && $jitsi->validitytime != 0){
     echo "<div class=\"collapse\" id=\"collapseInvitaciones\">";
     echo "<div class=\"card card-body\">";
-    $urlinvitacion = $CFG->wwwroot.'/mod/jitsi/formuniversal.php?id='.$id.'&c='.generatecode($jitsi);
+    // $urlinvitacion = $CFG->wwwroot.'/mod/jitsi/formuniversal.php?id='.$id.'&c='.generatecode($jitsi);
+    $urlinvitacion = $CFG->wwwroot.'/mod/jitsi/formuniversal.php?t='.$jitsi->token;
     echo "<div class=\"container\">";
     echo "<div class=\"row\">";
     echo "<div class=\"col-11\">";

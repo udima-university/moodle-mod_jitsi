@@ -34,7 +34,7 @@ $name = required_param('name', PARAM_TEXT);
 $mail = required_param('mail', PARAM_TEXT);
 $avatar = optional_param('avatar', null, PARAM_TEXT);
 $id = required_param('id', PARAM_INT);
-$code = required_param('c', PARAM_INT);
+// $code = required_param('c', PARAM_INT);
 
 global $DB, $CFG;
 $PAGE->set_url($CFG->wwwroot.'/mod/jitsi/universal.php');
@@ -85,7 +85,9 @@ $PAGE->set_heading($sesion->name);
 
 echo $OUTPUT->header();
 if (!istimedout($sesion)) {
-    createsession(0, $id,  $avatar, $name, $sesparam, $mail, $sesion, true, null, $code);
+    // createsession(0, $id,  $avatar, $name, $sesparam, $mail, $sesion, true, null, $code);
+    createsession(0, $id,  $avatar, $name, $sesparam, $mail, $sesion, true, null);
+
 } else {
     echo generateErrotTime($sesion);
 }

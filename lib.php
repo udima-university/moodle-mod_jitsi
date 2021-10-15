@@ -70,10 +70,10 @@ function jitsi_supports($feature) {
 function jitsi_add_instance($jitsi,  $mform = null) {
     global $CFG, $DB;
     require_once($CFG->dirroot.'/mod/jitsi/locallib.php');
-
-    $jitsi->timecreated = time();
+    $time = time();
+    $jitsi->timecreated = $time;
     $cmid       = $jitsi->coursemodule;
-
+    $jitsi->sha = bin2hex(random_bytes(32));
     $jitsi->id = $DB->insert_record('jitsi', $jitsi);
     jitsi_update_calendar($jitsi, $cmid);
 
@@ -263,7 +263,7 @@ function string_sanitize($string, $forcelowercase = true, $anal = false) {
  * @param int $codet - 
  */
 function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jitsi, $universal = false,
-        $user = null, $code = null) {
+        $user = null) {
     global $CFG, $DB, $PAGE, $USER;
     $sessionnorm = str_replace(array(' ', ':', '"'), '', $session);
     if ($teacher == 1) {
@@ -425,8 +425,11 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         if ($universal == false && $user == null) {
             echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/view.php?id=".$cmid."\";";
         } else if ($universal == true && $user == null) {
-            echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/formuniversal.php?id=".$cmid."&c=".$code."\";";
-        } else if ($user != null && !$code) {
+            // echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/formuniversal.php?id=".$cmid."&c=".$code."\";";
+            echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/formuniversal.php?t=".$jitsi->token."\";";
+
+        // } else if ($user != null && !$code) {
+        } else if ($user != null) {
             echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/viewpriv.php?user=".$user."\";";
         }
         echo  "});\n";
