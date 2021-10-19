@@ -84,7 +84,7 @@ $PAGE->set_title(format_string($jitsi->name));
 $PAGE->set_heading(format_string($course->fullname));
 
 if ($deletejitsirecordid && confirm_sesskey($sesskey)) {
-    deleterecordyoutube($deletejitsirecordid);
+    marktodelete($deletejitsirecordid, 1);
     redirect($PAGE->url, get_string('deleted'));
 }
 
@@ -177,7 +177,9 @@ if ($CFG->jitsi_invitebuttons == 1 && has_capability('mod/jitsi:createlink', $PA
     echo "</button>";
 } 
 
-$records  = $DB->get_records('jitsi_record', array('jitsi' => $jitsi->id));
+$sql = 'select * from {jitsi_record} where jitsi = '.$jitsi->id.' and deleted = 0';
+// $records  = $DB->get_records('jitsi_record', array('jitsi' => $jitsi->id));
+$records = $DB->get_records_sql($sql);
 
 if ($records) {
     echo " ";

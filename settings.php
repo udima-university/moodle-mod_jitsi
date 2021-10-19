@@ -91,6 +91,11 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_heading('jitsi_loginyoutube', '', $link));
     $link = '<a href="'.$CFG->wwwroot.'/mod/jitsi/out.php" target="_blank">'.get_string('logoutyoutube', 'jitsi').'</a>';
     $settings->add(new admin_setting_heading('jitsi_loginoutyoutube', '', $link));
+
+    $settings->add(new admin_setting_heading('jitsi_records_admin', 'Tablas', ''));
+    $link = new moodle_url('/mod/jitsi/adminrecord.php');
+    $settings->add(new admin_setting_heading('jitsi_records_admin', '', '<a href='.$link.' >Enlace</a>'));
+
     $settings->add(new admin_setting_heading('bookmodeditdefaults',
         get_string('tokennconfig', 'jitsi'), get_string('tokenconfigurationex', 'jitsi')));
     $settings->add(new admin_setting_configtext('jitsi_app_id', get_string('appid', 'jitsi'),

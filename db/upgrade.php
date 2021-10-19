@@ -233,6 +233,43 @@ function xmldb_jitsi_upgrade($oldversion) {
         }
         upgrade_mod_savepoint(true, 2021101502, 'jitsi');
     }
+
+    if ($oldversion < 2021101503) {
+
+        // Define table jitsi_record to be created.
+        $table = new xmldb_table('jitsi_record_acount');
+
+        // Adding fields to table jitsi_record.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('clientaccesstoken', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('clientrefreshtoken', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('tokencreated', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+
+        // Adding keys to table jitsi_record.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+        // Adding indexes to table jitsi_record.
+        // $table->add_index('clientaccesstoken', XMLDB_INDEX_NOTUNIQUE, ['clientaccesstoken']);
+
+        // Conditionally launch create table for jitsi_record.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Jitsi savepoint reached.
+        upgrade_mod_savepoint(true, 2021101503, 'jitsi');
+    }
+
+    if ($oldversion < 2021101504) {
+        $table = new xmldb_table('jitsi_record');
+        $field = new xmldb_field('deleted', XMLDB_TYPE_INTEGER, '1', null, null, null, null);
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint(true, 2021101504, 'jitsi');
+    }
     /*
      * And that's all. Please, examine and understand the 3 example blocks above. Also
      * it's interesting to look how other modules are using this script. Remember that

@@ -144,19 +144,34 @@ class mod_jitsi_external extends external_api{
         $client->setClientSecret($CFG->jitsi_oauth_secret);
 
         $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
-        $_SESSION[$tokensessionkey] = get_config('mod_jitsi', 'jitsi_clientaccesstoken');
+
+        //-------------->>>>>!!!!!!Hay que elegir que cuenta usar, de momento le meto a pelo el primero!!!!!!!<<<<<<--------------
+        $acount = $DB->get_record('jitsi_record_acount', array('name'=>'Google'));
+
+        // $_SESSION[$tokensessionkey] = get_config('mod_jitsi', 'jitsi_clientaccesstoken');
+        $_SESSION[$tokensessionkey] = $acount->clientaccesstoken;
+
 
         $client->setAccessToken($_SESSION[$tokensessionkey]);
 
         $t = time();
-        $timediff = $t - get_config('mod_jitsi', 'jitsi_tokencreated');
+        // $timediff = $t - get_config('mod_jitsi', 'jitsi_tokencreated');
+        $timediff = $t - $token->tokencreated;
+
 
         if ($timediff > 3599) {
-            $newaccesstoken = $client->fetchAccessTokenWithRefreshToken(get_config('mod_jitsi', 'jitsi_clientrefreshtoken'));
-            set_config('jitsi_clientaccesstoken', $newaccesstoken["access_token"] , 'mod_jitsi');
+            // $newaccesstoken = $client->fetchAccessTokenWithRefreshToken(get_config('mod_jitsi', 'jitsi_clientrefreshtoken'));
+            $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($acount->clientrefreshtoken);
+
+            // set_config('jitsi_clientaccesstoken', $newaccesstoken["access_token"] , 'mod_jitsi');
+            $acount->clientaccesstoken = $newaccesstoken["access_token"];
             $newrefreshaccesstoken = $client->getRefreshToken();
-            set_config('jitsi_clientrefreshtoken', $newrefreshaccesstoken, 'mod_jitsi');
-            set_config('jitsi_tokencreated', time(), 'mod_jitsi');
+            // set_config('jitsi_clientrefreshtoken', $newrefreshaccesstoken, 'mod_jitsi');
+            $acount->clientrefreshtoken = $newrefreshaccesstoken;
+
+            // set_config('jitsi_tokencreated', time(), 'mod_jitsi');
+            $acount->tokencreated = $t;
+            $DB->update_record('jitsi_record_acount', $acount);
         }
         $youtube = new Google_Service_YouTube($client);
 
@@ -209,6 +224,7 @@ class mod_jitsi_external extends external_api{
         $record = new stdClass();
         $record->jitsi = $jitsi;
         $record->link = $broadcastsresponse['id'];
+        $record->deleted = 0;
         $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
         $jitsiob->recording = 'pre';
 

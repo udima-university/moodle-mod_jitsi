@@ -33,9 +33,20 @@ class backup_jitsi_activity_structure_step extends backup_activity_structure_ste
      */
     protected function define_structure() {
         $jitsi = new backup_nested_element('jitsi', array('id'), array('name', 'intro', 'introformat',
-            'timeopen', 'timeclose', 'minpretime'));
+            'timeopen', 'timeclose', 'validitytime', 'minpretime', 'token'));
+
+        $records = new backup_nested_element('records');
+        $record = new backup_nested_element('record', array('id'), array('jitsi', 'link', 'deleted'));
+
+        // Build the tree
+        $jitsi->add_child($records);
+        $records->add_child($record);
 
         $jitsi->set_source_table('jitsi', array('id' => backup::VAR_ACTIVITYID));
+
+        $record->set_source_table('jitsi_record', array('jitsi' => '../../id'));
+        // $record->set_source_table('jitsi_record', array(backup::VAR_PARENTID));
+
 
         $jitsi->annotate_files('mod_jitsi', 'intro', null);
         return $this->prepare_activity_structure($jitsi);

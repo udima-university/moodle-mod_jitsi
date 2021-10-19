@@ -73,7 +73,7 @@ function jitsi_add_instance($jitsi,  $mform = null) {
     $time = time();
     $jitsi->timecreated = $time;
     $cmid       = $jitsi->coursemodule;
-    $jitsi->sha = bin2hex(random_bytes(32));
+    $jitsi->token = bin2hex(random_bytes(32));
     $jitsi->id = $DB->insert_record('jitsi', $jitsi);
     jitsi_update_calendar($jitsi, $cmid);
 
@@ -174,7 +174,12 @@ function jitsi_delete_instance($id) {
     $result = true;
     $records = $DB->get_records('jitsi_record', array('jitsi' => $jitsi->id));
     foreach ($records as $record) {
-        deleterecordyoutube($record->id);
+        // deleterecordyoutube($record->id);
+        if ($record->deleted !=1) {
+            marktodelete($record->id, 2);
+        } else {
+            marktodelete($record->id, 1);
+        }
     }
 
     if (! $DB->delete_records('jitsi', array('id' => $jitsi->id))) {
@@ -354,10 +359,13 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
 
     echo "<div class=\"row\">";
     echo "<div class=\"col-sm\">";
+    //-------------->>>>>!!!!!!Hay que elegir que cuenta usar, de momento le meto a pelo el primero!!!!!!!<<<<<<--------------
+    $acount = $DB->get_record('jitsi_record_acount', array('name'=>'Google'));
     if ($user == null) {
         if ($CFG->jitsi_livebutton == 1 && has_capability('mod/jitsi:record', $PAGE->context)
-            && get_config('mod_jitsi', 'jitsi_clientrefreshtoken') != null
-            && get_config('mod_jitsi', 'jitsi_clientaccesstoken') != null
+            // && get_config('mod_jitsi', 'jitsi_clientrefreshtoken') != null
+            && $acount != null
+            // && get_config('mod_jitsi', 'jitsi_clientaccesstoken') != null
             && ($CFG->jitsi_streamingoption == 1)) {
                 echo "<div class=\"text-right\">";
                 echo "<div class=\"custom-control custom-switch\">";
@@ -623,12 +631,49 @@ function sendcallprivatesession($fromuser, $touser) {
 }
 
 /**
+ * Mark Jitsi record to delete
+ * @param int $idrecord - Jitsi record to delete
+ */
+function marktodelete($idrecord, $option) {
+    global $DB;
+    $record = $DB->get_record('jitsi_record', array('id' => $idrecord));
+    if ($option == 1) {
+        $record->deleted = 1;
+    } else if ($option == 2) {
+        $record->deleted = 2;
+    }
+    $DB->update_record('jitsi_record', $record);
+    // $DB->delete_records('jitsi_record', array('id' => $idrecord));
+}
+
+// function delete_jitsi_record($idrecord) {
+
+// }
+
+/**
  * Delete Jitsi record
  * @param int $idrecord - Jitsi record to delete
  */
-function delete_jitsi_record($idrecord) {
+// function delete_jitsi_record($idrecord) {
+function delete_jitsi_record($link) {
+        global $DB;
+    
+    // $DB->delete_records('jitsi_record', array('id' => $idrecord));
+    $DB->delete_records('jitsi_record', array('link' => $link));
+
+    
+}
+
+function isDeletable($linkrecord) {
+    $res = true;
     global $DB;
-    $DB->delete_records('jitsi_record', array('id' => $idrecord));
+    $records = $DB->get_records('jitsi_record', array('link'=>$linkrecord));
+    foreach ($records as $record) {
+        if ($record->deleted == 0) {
+            $res = false;
+        }
+    }
+    return $res;
 }
 
 /**
@@ -638,45 +683,50 @@ function delete_jitsi_record($idrecord) {
 function deleterecordyoutube($idrecord) {
     global $CFG, $DB, $PAGE;
     // Api google.
-    if (!file_exists(__DIR__ . '/api/vendor/autoload.php')) {
-        throw new \Exception('please run "composer require google/apiclient:~2.0" in "' . __DIR__ .'"');
-    }
-    require_once(__DIR__ . '/api/vendor/autoload.php');
+    $jitsirecord = $DB->get_record('jitsi_record', array('id' => $idrecord));
+    if (isDeletable($jitsirecord->link)) {
+        if (!file_exists(__DIR__ . '/api/vendor/autoload.php')) {
+            throw new \Exception('please run "composer require google/apiclient:~2.0" in "' . __DIR__ .'"');
+        }
+        require_once(__DIR__ . '/api/vendor/autoload.php');
 
-    $client = new Google_Client();
+        $client = new Google_Client();
 
-    $client->setClientId($CFG->jitsi_oauth_id);
-    $client->setClientSecret($CFG->jitsi_oauth_secret);
+        $client->setClientId($CFG->jitsi_oauth_id);
+        $client->setClientSecret($CFG->jitsi_oauth_secret);
 
-    $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
-    $_SESSION[$tokensessionkey] = get_config('mod_jitsi', 'jitsi_clientaccesstoken');
+        $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
 
-    $client->setAccessToken($_SESSION[$tokensessionkey]);
+        //-------------->>>>>!!!!!!Hay que elegir que cuenta usar, de momento le meto a pelo el primero!!!!!!!<<<<<<--------------
+        $acount = $DB->get_record('jitsi_record_acount', array('name'=>'Google'));
 
-    $t = time();
-    $timediff = $t - get_config('mod_jitsi', 'jitsi_tokencreated');
-    echo get_config('jitsi_tokencreated', 'mod_jitsi');
-    echo get_config('jitsi_clientaccesstoken', 'mod_jitsi');
-    echo get_config('jitsi_clientrefreshtoken', 'mod_jitsi');
-    if ($timediff > 3599) {
-          $newaccesstoken = $client->fetchAccessTokenWithRefreshToken(get_config('mod_jitsi', 'jitsi_clientrefreshtoken'));
-          set_config('jitsi_clientaccesstoken', $newaccesstoken["access_token"] , 'mod_jitsi');
-          $newrefreshaccesstoken = $client->getRefreshToken();
-          set_config('jitsi_clientrefreshtoken', $newrefreshaccesstoken, 'mod_jitsi');
-          set_config('jitsi_tokencreated', time(), 'mod_jitsi');
-    }
+        $_SESSION[$tokensessionkey] = $acount->clientaccesstoken;
+        $client->setAccessToken($_SESSION[$tokensessionkey]);
+        $t = time();
+        $timediff = $t - $acount->tokencreated;
 
-    $youtube = new Google_Service_YouTube($client);
+        if ($timediff > 3599) {
+            $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($acount->clientrefreshtoken);
+            $acount->clientaccesstoken = $newaccesstoken["access_token"];
+            $newrefreshaccesstoken = $client->getRefreshToken();
+            $acount->clientrefreshtoken = $newrefreshaccesstoken;
+            $acount->tokencreated = time();
+        }
 
-    if ($client->getAccessToken($idrecord)) {
-        try {
-            $jitsirecord = $DB->get_record('jitsi_record', array('id' => $idrecord));
-            $youtube->videos->delete($jitsirecord->link);
-            delete_jitsi_record($idrecord);
-        } catch (Google_Service_Exception $e) {
-            throw new \Exception("exception".$e->getMessage());
-        } catch (Google_Exception $e) {
-            throw new \Exception("exception".$e->getMessage());
+        $youtube = new Google_Service_YouTube($client);
+
+        if ($client->getAccessToken($idrecord)) {
+            try {
+                // $jitsirecord = $DB->get_record('jitsi_record', array('id' => $idrecord));
+                $youtube->videos->delete($jitsirecord->link);
+                // delete_jitsi_record($idrecord);
+                delete_jitsi_record($jitsirecord->link);
+
+            } catch (Google_Service_Exception $e) {
+                throw new \Exception("exception".$e->getMessage());
+            } catch (Google_Exception $e) {
+                throw new \Exception("exception".$e->getMessage());
+            }
         }
     }
 }

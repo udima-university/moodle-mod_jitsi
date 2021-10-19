@@ -44,7 +44,7 @@ if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
     $client->setClientSecret($oauth2clientsecret);
     $client->setScopes('https://www.googleapis.com/auth/youtube');
     $client->setAccessType("offline");
-    $redirect = filter_var('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'],
+    $redirect = filter_var('http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'],
               FILTER_SANITIZE_URL);
     $client->setRedirectUri($redirect);
 
@@ -62,12 +62,14 @@ if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
         $client->setAccessToken($_SESSION[$tokensessionkey]);
     }
 
+    $accesstoken = '';
+    $clientrefreshtoken = '';
+
     if ($client->getAccessToken()) {
         try {
-            set_config('jitsi_tokencreated', time(), 'mod_jitsi');
-            set_config('jitsi_clientaccesstoken', $client->getAccessToken()["access_token"], 'mod_jitsi');
-            set_config('jitsi_clientrefreshtoken', $client->getRefreshToken(), 'mod_jitsi');
-
+            $time = time();
+            $accesstoken = $client->getAccessToken()["access_token"];
+            $clientrefreshtoken = $client->getRefreshToken();
             echo "Log OK. You can close this page";
 
         } catch (Google_Service_Exception $e) {
@@ -78,6 +80,7 @@ if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
                         htmlspecialchars($e->getMessage()));
         }
         $_SESSION[$tokensessionkey] = $client->getAccessToken();
+
     } else if ($oauth2clientid == 'REPLACE_ME') {
         echo "<h3>Client Credentials Required</h3>";
         echo "<p>You need to set <code>\$OAUTH2_CLIENT_ID</code> and";
@@ -92,4 +95,21 @@ if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
         echo "<h3>Authorization Required</h3>";
         echo "<p>You need to <a href=\"$authurl\">authorize access</a> before proceeding.<p>";
     }
+    $acount = $DB->get_record('jitsi_record_acount', array('name'=>'Google'));
+    if ($acount == null){
+        $acount = new stdClass();
+        $time = time();
+        // --------->> Esto esta a pelo, habria que cambiarlo para la gstión de distintas cuentas <-----------
+        $acount->name = 'Google';
+        $acount->clientaccesstoken = $accesstoken;
+        $acount->clientrefreshtoken = $clientrefreshtoken;
+        $acount->tokencreated = $time;
+        $DB->insert_record('jitsi_record_acount', $acount);
+    } else {
+        $acount->clientaccesstoken = $accesstoken;
+        $acount->clientrefreshtoken = $clientrefreshtoken;
+        $acount->tokencreated = $time;
+        $DB->update_record('jitsi_record_acount', $acount);
+    }
+   
 }

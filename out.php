@@ -28,12 +28,14 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(dirname(dirname(__FILE__))).'/lib/moodlelib.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_login();
-global $CFG;
+global $CFG, $DB;
+$acount = $DB->get_record('jitsi_record_acount', array('name'=>'Google'));
 
 if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
     echo "Empty parameters 'jitsi_oauth_id' & 'jitsi_oauth_secret'";
 } else {
-    if (get_config('jitsi_clientaccesstoken', 'mod_jitsi') == null) {
+    // if (get_config('jitsi_clientaccesstoken', 'mod_jitsi') == null) {
+    if ($acount == null) { 
         echo "First log in";
     } else {
         if (!file_exists(__DIR__ . '/api/vendor/autoload.php')) {
@@ -49,21 +51,36 @@ if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
         $client->setAccessToken($_SESSION[$tokensessionkey]);
         unset($_SESSION[$tokensessionkey]);
 
+
         $t = time();
-        $timediff = $t - get_config('mod_jitsi', 'jitsi_tokencreated');
+        // $timediff = $t - get_config('mod_jitsi', 'jitsi_tokencreated');
+        $timediff = $t - $acount->tokencreated;
+
 
         if ($timediff > 3599) {
-            $newaccesstoken = $client->fetchAccessTokenWithRefreshToken(get_config('mod_jitsi', 'jitsi_clientrefreshtoken'));
-            set_config('jitsi_clientaccesstoken', $newaccesstoken['access_token'] , 'mod_jitsi');
+            // $newaccesstoken = $client->fetchAccessTokenWithRefreshToken(get_config('mod_jitsi', 'jitsi_clientrefreshtoken'));
+            $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($acount->clientrefreshtoken);
+
+            // set_config('jitsi_clientaccesstoken', $newaccesstoken['access_token'] , 'mod_jitsi');
+            $token -> $accesstoken = $newaccesstoken['access_token'];
             $newrefreshaccesstoken = $client->getRefreshToken();
-            set_config('jitsi_clientrefreshtoken', $newrefreshaccesstoken, 'mod_jitsi');
-            set_config('jitsi_tokencreated', time(), 'mod_jitsi');
+            // set_config('jitsi_clientrefreshtoken', $newrefreshaccesstoken, 'mod_jitsi');
+            $acount -> refreshtoken = $newrefreshaccesstoken;
+            // set_config('jitsi_tokencreated', time(), 'mod_jitsi');
+            $acount->tokencreated = time();
+            $DB->update_record('jitsi_record_acount', $acount);
         }
 
-        $client->revokeToken(get_config('jitsi_clientaccesstoken', 'mod_jitsi'));
-        set_config('jitsi_clientaccesstoken', '' , 'mod_jitsi');
-        set_config('jitsi_clientrefreshtoken', '' , 'mod_jitsi');
-        set_config('jitsi_tokencreated', time(), 'mod_jitsi');
+        // $client->revokeToken(get_config('jitsi_clientaccesstoken', 'mod_jitsi'));
+        $client->revokeToken($acount -> clientaccesstoken);
+
+        // set_config('jitsi_clientaccesstoken', '' , 'mod_jitsi');
+        // set_config('jitsi_clientrefreshtoken', '' , 'mod_jitsi');
+        // set_config('jitsi_tokencreated', time(), 'mod_jitsi');
+
+
+        /////----->>>>>Esto esta a pelo, habra que cmabiarlo para la gestión de distintas cuentas <-----------
+        $DB->delete_records('jitsi_record_acount', array('name'=>'Google'));
         echo "Log Out OK. You can close this page";
     }
 
