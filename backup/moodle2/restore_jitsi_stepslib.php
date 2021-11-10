@@ -61,44 +61,19 @@ class restore_jitsi_activity_structure_step extends restore_activity_structure_s
 
         $data->token = bin2hex(random_bytes(32));
         
-
-        
-
         // Create the jitsi instance.
         $newitemid = $DB->insert_record('jitsi', $data);
-        
-        $records = $DB->get_records('jitsi_record', array('jitsi'=>$data->id));
-        foreach ($records as $record) {
-            if ($record->deleted == 1) {
-                $record->deleted = 1;
-            } else {
-                $record->deleted = 0;
-            }
-            $record->jitsi = $newitemid;
-            // if ($DB->record_exists('jitsi_record', $conditions_array) {
-                
-            // }
-            // $DB->update_record('jitsi_record', $record);
-            $DB->insert_record('jitsi_record', $record);
-        }
-        
-        
         $this->apply_activity_instance($newitemid);
-
-
-
     }
 
     protected function process_jitsi_record($data) {
         global $DB;
 
         $data = (object)$data;
-        // $data->course = $this->get_courseid();
 
-        $data->jitsi = $this->get_new_parentid('record');
-        if ($data->deleted=0) {
-            $newitemid = $DB->insert_record('jitsi_record', $data);
-        }
+        $data->jitsi = $this->get_new_parentid('jitsi');
+        $newitemid = $DB->insert_record('jitsi_record', $data);
+
         // No need to save this mapping as far as nothing depend on it
         // (child paths, file areas nor links decoder)
     }

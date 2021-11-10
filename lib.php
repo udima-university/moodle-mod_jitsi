@@ -72,7 +72,7 @@ function jitsi_add_instance($jitsi,  $mform = null) {
     require_once($CFG->dirroot.'/mod/jitsi/locallib.php');
     $time = time();
     $jitsi->timecreated = $time;
-    $cmid       = $jitsi->coursemodule;
+    $cmid = $jitsi->coursemodule;
     $jitsi->token = bin2hex(random_bytes(32));
     $jitsi->id = $DB->insert_record('jitsi', $jitsi);
     jitsi_update_calendar($jitsi, $cmid);
@@ -172,15 +172,7 @@ function jitsi_delete_instance($id) {
     }
 
     $result = true;
-    $records = $DB->get_records('jitsi_record', array('jitsi' => $jitsi->id));
-    foreach ($records as $record) {
-        // deleterecordyoutube($record->id);
-        if ($record->deleted !=1) {
-            marktodelete($record->id, 2);
-        } else {
-            marktodelete($record->id, 1);
-        }
-    }
+    $DB->delete_records('jitsi_record', array('jitsi' => $jitsi->id));
 
     if (! $DB->delete_records('jitsi', array('id' => $jitsi->id))) {
         $result = false;
@@ -359,22 +351,35 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
 
     echo "<div class=\"row\">";
     echo "<div class=\"col-sm\">";
-    //-------------->>>>>!!!!!!Hay que elegir que cuenta usar, de momento le meto a pelo el primero!!!!!!!<<<<<<--------------
-    $acount = $DB->get_record('jitsi_record_acount', array('name'=>'Google'));
+
+    $acount = $DB->get_record('jitsi_record_acount', array('inuse'=>1));
+
+    echo "<div class=\"row\">";
+    echo "<div class=\"col-sm-9\">";
+    echo "<div id=\"state\"><div class=\"alert alert-light\" role=\"alert\"></div></div>";
+    echo "</div>";
+    echo "<div class=\"col-sm-3 text-right\">";
     if ($user == null) {
         if ($CFG->jitsi_livebutton == 1 && has_capability('mod/jitsi:record', $PAGE->context)
-            // && get_config('mod_jitsi', 'jitsi_clientrefreshtoken') != null
             && $acount != null
-            // && get_config('mod_jitsi', 'jitsi_clientaccesstoken') != null
             && ($CFG->jitsi_streamingoption == 1)) {
-                echo "<div class=\"text-right\">";
-                echo "<div class=\"custom-control custom-switch\">";
-                echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\" onClick=\"mostrarLog($(this));\">";
-                echo "  <label class=\"custom-control-label\" for=\"recordSwitch\">Record</label>";
-                echo "</div>";
-                echo "</div>";
+            echo "<div class=\"text-right\">";
+            echo "<div class=\"custom-control custom-switch\">";
+            echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\" onClick=\"activaGrab($(this));\">";
+            echo "  <label class=\"custom-control-label\" for=\"recordSwitch\">Record & Streaming</label>";
+            echo "</div>";
+            echo "</div>";
+        } else if ($CFG->jitsi_livebutton == 1 && $acount != null && $CFG->jitsi_streamingoption == 1) {
+            echo "<div class=\"text-right\">";
+            echo "<div class=\"custom-control custom-switch\">";
+            echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\" onClick=\"activaGrab($(this));\" disabled>";
+            echo "  <label class=\"custom-control-label\" for=\"recordSwitch\">Record & Streaming</label>";
+            echo "</div>";
+            echo "</div>";
         }
     }
+    echo "</div>";
+    echo "</div>";
 
     echo "</div></div>";
     echo "<hr>";
@@ -433,23 +438,22 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         if ($universal == false && $user == null) {
             echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/view.php?id=".$cmid."\";";
         } else if ($universal == true && $user == null) {
-            // echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/formuniversal.php?id=".$cmid."&c=".$code."\";";
             echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/formuniversal.php?t=".$jitsi->token."\";";
-
-        // } else if ($user != null && !$code) {
         } else if ($user != null) {
             echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/viewpriv.php?user=".$user."\";";
         }
         echo  "});\n";
     }
-    echo "function mostrarLog(e){";
-    echo "if (e.is(':checked')) {";
-    echo "console.log(\"Switch cambiado a activado\");";
-    echo "stream();";
-    echo "} else {";
-    echo "console.log(\"Switch cambiado a desactivado\");";
-    echo "stopStream();";
-    echo "}";
+    echo "function activaGrab(e){";
+    echo "    if (e.is(':checked')) {";
+    echo "      console.log(\"Switch cambiado a activado\");";
+    echo "      document.getElementById('state').innerHTML = '<div class=\"alert alert-light\" role=\"alert\">Preparing. Please wait.</div>';";
+    echo "      stream();";
+    echo "    } else {";
+    echo "      console.log(\"Switch cambiado a desactivado\");";
+    echo "      document.getElementById('state').innerHTML = '';";
+    echo "      stopStream();";
+    echo "    }";
     echo "}";
 
     if ($CFG->jitsi_password != null) {
@@ -467,9 +471,16 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     if ($user == null) {
         echo "api.addEventListener('recordingStatusChanged', function(event) {\n";
         echo "    if (event['on']){\n";
-        echo "document.getElementById(\"recordSwitch\").checked = true;\n";
+        echo "      document.getElementById(\"recordSwitch\").checked = true;\n";
+        echo "      document.getElementById('state').innerHTML = '<div class=\"alert alert-primary\" role=\"alert\">";
+        echo "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" fill=\"currentColor\" class=\"bi bi-exclamation-triangle-fill flex-shrink-0 me-2\" viewBox=\"0 0 16 16\" role=\"img\" aria-label=\"Warning:\">";
+        echo "<path d=\"M0 5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 4.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 13H2a2 2 0 0 1-2-2V5zm11.5 5.175 3.5 1.556V4.269l-3.5 1.556v4.35zM2 4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H2z\"/>";
+        echo "</svg>";
+        echo " Session is being recorded";
+        echo "</div>';";
         echo "    } else if (!event['on']){\n";
-        echo "document.getElementById(\"recordSwitch\").checked = false;\n";
+        echo "      document.getElementById(\"recordSwitch\").checked = false;\n";
+        echo "      document.getElementById('state').innerHTML = '';";
         echo "    }\n";
         echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "        ajax.call([{\n";
@@ -483,7 +494,6 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "});\n";
 
         echo "function stream(){\n";
-
         echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "       var respuesta = ajax.call([{\n";
         echo "            methodname: 'mod_jitsi_create_stream',\n";
@@ -555,7 +565,6 @@ function generateErrotTime($jitsi) {
  * @param stdClass $jitsi jitsi instance
  */
 function isoriginal($code, $jitsi) {
-    // if ($code == $jitsi->timecreated + $jitsi->id) {
     if ($code == ($jitsi->timecreated + $jitsi->id)) {
         $original = true;
     } else {
@@ -643,35 +652,28 @@ function marktodelete($idrecord, $option) {
         $record->deleted = 2;
     }
     $DB->update_record('jitsi_record', $record);
-    // $DB->delete_records('jitsi_record', array('id' => $idrecord));
 }
-
-// function delete_jitsi_record($idrecord) {
-
-// }
 
 /**
  * Delete Jitsi record
  * @param int $idrecord - Jitsi record to delete
  */
-// function delete_jitsi_record($idrecord) {
-function delete_jitsi_record($link) {
-        global $DB;
-    
-    // $DB->delete_records('jitsi_record', array('id' => $idrecord));
-    $DB->delete_records('jitsi_record', array('link' => $link));
-
-    
+function delete_jitsi_record($source) {
+    global $DB;
+    $DB->delete_records('jitsi_record', array('source' => $source));
+    $DB->delete_records('jitsi_source_record', array('id'=>$source));
 }
 
-function isDeletable($linkrecord) {
+/**
+ * Return if Jitsi record source is deletable
+ * @param int $sourcerecord - Jitsi source record id
+ */
+function isDeletable($sourcerecord) {
     $res = true;
     global $DB;
-    $records = $DB->get_records('jitsi_record', array('link'=>$linkrecord));
-    foreach ($records as $record) {
-        if ($record->deleted == 0) {
-            $res = false;
-        }
+    $records = $DB->get_records('jitsi_record', array('source'=>$sourcerecord, 'deleted'=>0));
+    if (!$records == null) {
+        $res = false;
     }
     return $res;
 }
@@ -680,11 +682,10 @@ function isDeletable($linkrecord) {
  * Delete Record from youtube
  * @param int $idrecord - Jitsi record to delete
  */
-function deleterecordyoutube($idrecord) {
+function deleterecordyoutube($idsource) {
     global $CFG, $DB, $PAGE;
     // Api google.
-    $jitsirecord = $DB->get_record('jitsi_record', array('id' => $idrecord));
-    if (isDeletable($jitsirecord->link)) {
+    if (isDeletable($idsource)) {
         if (!file_exists(__DIR__ . '/api/vendor/autoload.php')) {
             throw new \Exception('please run "composer require google/apiclient:~2.0" in "' . __DIR__ .'"');
         }
@@ -697,8 +698,7 @@ function deleterecordyoutube($idrecord) {
 
         $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
 
-        //-------------->>>>>!!!!!!Hay que elegir que cuenta usar, de momento le meto a pelo el primero!!!!!!!<<<<<<--------------
-        $acount = $DB->get_record('jitsi_record_acount', array('name'=>'Google'));
+        $acount = $DB->get_record('jitsi_record_acount', array('inuse'=>1));
 
         $_SESSION[$tokensessionkey] = $acount->clientaccesstoken;
         $client->setAccessToken($_SESSION[$tokensessionkey]);
@@ -715,13 +715,11 @@ function deleterecordyoutube($idrecord) {
 
         $youtube = new Google_Service_YouTube($client);
 
-        if ($client->getAccessToken($idrecord)) {
+        if ($client->getAccessToken($idsource)) {
             try {
-                // $jitsirecord = $DB->get_record('jitsi_record', array('id' => $idrecord));
-                $youtube->videos->delete($jitsirecord->link);
-                // delete_jitsi_record($idrecord);
-                delete_jitsi_record($jitsirecord->link);
-
+                $source = $DB->get_record('jitsi_source_record', array('id' => $idsource));
+                $youtube->videos->delete($source->link);
+                delete_jitsi_record($idsource);
             } catch (Google_Service_Exception $e) {
                 throw new \Exception("exception".$e->getMessage());
             } catch (Google_Exception $e) {
@@ -738,4 +736,29 @@ function mod_jitsi_get_fontawesome_icon_map() {
     return [
         'mod_forum:t/add' => 'share-alt-square',
     ];
+}
+
+/**
+ * For edit record name
+ * @param stdClass $itemtype - Type item
+ * @param int $itemid - item id
+ * @param string $newvalue - new value
+ */
+function mod_jitsi_inplace_editable($itemtype, $itemid, $newvalue) {
+    if ($itemtype === 'recordname') {
+        global $DB;
+        $record = $DB->get_record('jitsi_record', array('id' => $itemid), '*', MUST_EXIST);
+        // Must call validate_context for either system, or course or course module context. 
+        // This will both check access and set current context.
+        \external_api::validate_context(context_system::instance());
+        // Check permission of the user to update this item. 
+        require_capability('mod/jitsi:record', context_system::instance());
+        // Clean input and update the record.
+        $newvalue = clean_param($newvalue, PARAM_NOTAGS);
+        $DB->update_record('jitsi_record', array('id' => $itemid, 'name' => $newvalue));
+        // Prepare the element for the output:
+        $record->name = $newvalue;
+        return new \core\output\inplace_editable('mod_jitsi', 'recordname', $record->id, true,
+            format_string($record->name), $record->name, get_string('editrecordname', 'jitsi'),  get_string('newvaluefor', 'jitsi') . format_string($record->name));
+    }
 }

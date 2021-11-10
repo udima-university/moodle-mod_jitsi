@@ -23,6 +23,32 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+// require_once("$CFG->libdir/formslib.php");
+
+global $DB;
+
+// class addacount_form extends moodleform {
+//     //Add elements to form
+//     public function definition() {
+//         global $CFG;
+//         $mform = $this->_form; // Don't forget the underscore!
+
+//         $options = array(
+//             'ajax' => 'core_user/form_user_selector',
+//             'multiple' => true
+//         );
+//         $mform->addElement('text', 'nameacount', 'Name Acount');
+//         $buttonarray=array();
+//         $buttonarray[] = $mform->createElement('submit', 'submitbutton', 'Add');
+//         $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
+//     }
+//     //Custom validation should be added here
+//     function validation($data, $files) {
+//         return array();
+//     }
+// }
+
+
 if ($ADMIN->fulltree) {
     require_once($CFG->dirroot.'/mod/jitsi/lib.php');
     $settings->add(new admin_setting_configtext('jitsi_domain', 'Domain', 'Domain Jitsi Server', 'meet.jit.si'));
@@ -87,17 +113,17 @@ if ($ADMIN->fulltree) {
             get_string('oauthidex', 'jitsi'), ''));
     $settings->add(new admin_setting_configpasswordunmask('jitsi_oauth_secret', get_string('oauthsecret', 'jitsi'),
             get_string('oauthsecretex', 'jitsi'), ''));
-    $link = '<a href="'.$CFG->wwwroot.'/mod/jitsi/auth.php" target="_blank">'.get_string('loginyoutube', 'jitsi').'</a>';
-    $settings->add(new admin_setting_heading('jitsi_loginyoutube', '', $link));
-    $link = '<a href="'.$CFG->wwwroot.'/mod/jitsi/out.php" target="_blank">'.get_string('logoutyoutube', 'jitsi').'</a>';
+
+    $link = '<a href="'.$CFG->wwwroot.'/mod/jitsi/adminacounts.php" target="_blank">'.get_string('acounts', 'jitsi').'</a>';
     $settings->add(new admin_setting_heading('jitsi_loginoutyoutube', '', $link));
 
     $settings->add(new admin_setting_heading('jitsi_records_admin', 'Tablas', ''));
     $link = new moodle_url('/mod/jitsi/adminrecord.php');
-    $settings->add(new admin_setting_heading('jitsi_records_admin', '', '<a href='.$link.' >Enlace</a>'));
+    $settings->add(new admin_setting_heading('jitsi_records_admin', '', '<a href='.$link.' >'.get_string('deletesources', 'jitsi').'</a>'));
 
-    $settings->add(new admin_setting_heading('bookmodeditdefaults',
+    $settings->add(new admin_setting_heading('jitsitoken',
         get_string('tokennconfig', 'jitsi'), get_string('tokenconfigurationex', 'jitsi')));
+
     $settings->add(new admin_setting_configtext('jitsi_app_id', get_string('appid', 'jitsi'),
         get_string('appidex', 'jitsi'), ''));
     $settings->add(new admin_setting_configpasswordunmask('jitsi_secret', get_string('secret', 'jitsi'),

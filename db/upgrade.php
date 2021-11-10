@@ -213,8 +213,9 @@ function xmldb_jitsi_upgrade($oldversion) {
         $callprivatesessionloggedoff = $DB->get_record('config_plugins', array('name' => 'message_provider_mod_jitsi_callprivatesession_loggedoff'));
         $callprivatesessionloggedin->value = 'airnotifier,email,popup';
         $callprivatesessionloggedoff->value = 'airnotifier,email';
-        $DB->update_record('config_plugins', $callprivatesessionloggedin);
-        $DB->update_record('config_plugins', $callprivatesessionloggedoff);
+
+        // $DB->update_record('config_plugins', $callprivatesessionloggedin);
+        // $DB->update_record('config_plugins', $callprivatesessionloggedoff);
         upgrade_mod_savepoint(true, 2021092003, 'jitsi');
     }
 
@@ -250,7 +251,6 @@ function xmldb_jitsi_upgrade($oldversion) {
         $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Adding indexes to table jitsi_record.
-        // $table->add_index('clientaccesstoken', XMLDB_INDEX_NOTUNIQUE, ['clientaccesstoken']);
 
         // Conditionally launch create table for jitsi_record.
         if (!$dbman->table_exists($table)) {
@@ -263,13 +263,110 @@ function xmldb_jitsi_upgrade($oldversion) {
 
     if ($oldversion < 2021101504) {
         $table = new xmldb_table('jitsi_record');
-        $field = new xmldb_field('deleted', XMLDB_TYPE_INTEGER, '1', null, null, null, null);
+        $field = new xmldb_field('deleted', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
 
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
         upgrade_mod_savepoint(true, 2021101504, 'jitsi');
     }
+
+    if ($oldversion < 2021101900) {
+
+        // Define table jitsi_record to be created.
+        $table = new xmldb_table('jitsi_source_record');
+
+        // Adding fields to table jitsi_record.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('link', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('acount', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        
+        // Adding keys to table jitsi_record.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+        // Adding indexes to table jitsi_record.
+
+        // Conditionally launch create table for jitsi_record.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        $tablerecord = new xmldb_table('jitsi_record');  
+        $fieldsource = new xmldb_field('source', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+
+        if (!$dbman->field_exists($tablerecord, $fieldsource)) {
+            $dbman->add_field($tablerecord, $fieldsource);
+        }
+      
+
+        $records = $DB->get_records('jitsi_record', array());
+        
+        foreach ($records as $record) {
+            $source = new stdClass();
+            $source->link = $record->link;
+            $source->acount = 0;
+            
+            $sourceid = $DB->insert_record('jitsi_source_record', $source);
+            $record->source = $sourceid;
+
+            $DB->update_record('jitsi_record', $record);
+
+        }
+        $fieldlink = new xmldb_field('link');
+
+        $dbman->drop_field($tablerecord, $fieldlink);
+
+        // Jitsi savepoint reached.
+        upgrade_mod_savepoint(true, 2021101900, 'jitsi');
+    }
+
+    if ($oldversion < 2021102100) {
+        $table = new xmldb_table('jitsi_source_record');
+        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, '0',
+            'acount');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Jitsi savepoint reached.
+        upgrade_mod_savepoint(true, 2021102100, 'jitsi');
+    }
+
+    if ($oldversion < 2021102401) {
+        $table = new xmldb_table('jitsi_record');
+        $field = new xmldb_field('visible', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, null, null, '1');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint(true, 2021102401, 'jitsi');
+    }
+
+    if ($oldversion < 2021102500) {
+        $table = new xmldb_table('jitsi_record');
+        $field = new xmldb_field('name', XMLDB_TYPE_TEXT, '50', null, null, null, null);
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint(true, 2021102500, 'jitsi');
+    }
+
+    if ($oldversion < 2021110400) {
+        $table = new xmldb_table('jitsi_record_acount');
+        $field = new xmldb_field('inuse', XMLDB_TYPE_INTEGER, '1', true, '0', null, null);
+        $field = new xmldb_field('inuse', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'tokencreated');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint(true, 2021110400, 'jitsi');
+    }
+
+
+
     /*
      * And that's all. Please, examine and understand the 3 example blocks above. Also
      * it's interesting to look how other modules are using this script. Remember that

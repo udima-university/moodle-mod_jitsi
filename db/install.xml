@@ -31,7 +31,10 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true"/>
         <FIELD NAME="jitsi" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Jitsi session id"/>
         <FIELD NAME="link" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="link of the record"/>
-        <FIELD NAME="deleted" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Record to delete"/>
+        <FIELD NAME="deleted" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" UNSIGNED="true" SEQUENCE="false" COMMENT="Record to delete"/>
+        <FIELD NAME="source" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Source record"/>
+        <FIELD NAME="visible" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Record to delete"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" COMMENT="name field for moodle instances"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -47,22 +50,22 @@
         <FIELD NAME="clientaccesstoken" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Access Token "/>
         <FIELD NAME="clientrefreshtoken" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Refresh Token "/>
         <FIELD NAME="tokencreated" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
+        <FIELD NAME="inuse" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" UNSIGNED="true" SEQUENCE="false" COMMENT="Acount in use"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-  <!-- <TABLE NAME="jitsi_source_records" COMMENT="Acounts to records or streaming">
+    <TABLE NAME="jitsi_source_record" COMMENT="Acounts to records or streaming">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true"/>
         <FIELD NAME="link" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="link of the record"/>
         <FIELD NAME="acount" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Acount"/>
-
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
-    </TABLE> -->
-
+    </TABLE>
   </TABLES>
 </XMLDB>

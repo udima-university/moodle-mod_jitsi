@@ -27,7 +27,34 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(dirname(dirname(__FILE__))).'/lib/moodlelib.php');
 require_once(dirname(__FILE__).'/lib.php');
+
 require_login();
+global $DB, $CFG;
+$name = optional_param('name', null, PARAM_TEXT);
+
+$PAGE->set_context(context_system::instance());
+$PAGE->set_url('/mod/jitsi/auth.php');
+$PAGE->set_title(format_string(get_string('acounts', 'jitsi')));
+$PAGE->set_heading(format_string(get_string('acounts', 'jitsi')));
+echo $OUTPUT->header();
+
+$tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
+if ($name) {
+    unset($_SESSION[$tokensessionkey]);
+    $acountinuse = $DB->get_record('jitsi_record_acount', array('inuse' => 1));
+    if ($acountinuse) {
+        $acountinuse->inuse = 0;
+        $DB->update_record('jitsi_record_acount', $acountinuse);
+    }
+
+    $_SESSION['name'] = $name;
+}
+
+$acounttab = $DB->get_record('jitsi_record_acount', array('name'=>$_SESSION['name']));
+if (!$acounttab) {
+    $_SESSION[$tokensessionkey] = null;
+}
+
 if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
     echo "Empty parameters 'jitsi_oauth_id' & 'jitsi_oauth_secret'";
 } else {
@@ -36,6 +63,7 @@ if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
     }
 
     require_once(__DIR__ . '/api/vendor/autoload.php');
+
     $oauth2clientid = $CFG->jitsi_oauth_id;
     $oauth2clientsecret = $CFG->jitsi_oauth_secret;
 
@@ -44,17 +72,32 @@ if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
     $client->setClientSecret($oauth2clientsecret);
     $client->setScopes('https://www.googleapis.com/auth/youtube');
     $client->setAccessType("offline");
-    $redirect = filter_var('http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'],
+
+    $httparray = explode(":", $CFG->wwwroot);
+    $principiohttp = $httparray[0].'://';
+
+    $redirect = filter_var($principiohttp . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'],
               FILTER_SANITIZE_URL);
     $client->setRedirectUri($redirect);
 
     $tokensessionkey = 'token-' . $client->prepareScopes();
+
     if (isset($_GET['code'])) {
-        if (strval($_SESSION['state']) !== strval($_GET['state'])) {
+        $paramstring = base64UrlDecode($_GET['state']);
+        $paramarray = explode("&", $paramstring);
+        $randstring = $paramarray[1];
+        $namestring = $paramarray[0];
+        $randarray = explode("=", $randstring);
+        $namearray = explode("=", $namestring);
+        $rand = $randarray[1];
+        $name = $namearray[1];
+        
+        if (strval($_SESSION['rand']) !== strval($rand)) {
             die('The session state did not match.');
         }
         $client->authenticate($_GET['code']);
         $_SESSION[$tokensessionkey] = $client->getAccessToken();
+        
         header('Location: ' . $redirect);
     }
 
@@ -62,16 +105,33 @@ if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
         $client->setAccessToken($_SESSION[$tokensessionkey]);
     }
 
-    $accesstoken = '';
-    $clientrefreshtoken = '';
-
     if ($client->getAccessToken()) {
         try {
-            $time = time();
             $accesstoken = $client->getAccessToken()["access_token"];
             $clientrefreshtoken = $client->getRefreshToken();
-            echo "Log OK. You can close this page";
+            echo $OUTPUT->box(get_string('acountconnected', 'jitsi'));
+            $acount = $DB->get_record('jitsi_record_acount', array('name'=>$_SESSION['name']));
 
+            if ($acount == null){
+                $acount = new stdClass();
+
+                $time = time();
+
+                $acount->name = $_SESSION['name'];
+                $acount->clientaccesstoken = $accesstoken;
+                $acount->clientrefreshtoken = $clientrefreshtoken;
+                $acount->tokencreated = $time;
+                $acount->inuse = 1;
+                $DB->insert_record('jitsi_record_acount', $acount); 
+            } else {
+                $time = time();
+                $acount->clientaccesstoken = $accesstoken;
+                $acount->clientrefreshtoken = $clientrefreshtoken;
+                $acount->tokencreated = $time;
+                $acount->inuse = 1;
+                $DB->update_record('jitsi_record_acount', $acount);
+            }
+            
         } catch (Google_Service_Exception $e) {
             $htmlbody = sprintf('<p>A service error occurred: <code>%s</code></p>',
                         htmlspecialchars($e->getMessage()));
@@ -87,29 +147,17 @@ if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
         echo   "<code>\$OAUTH2_CLIENT_ID</code> before proceeding.";
         echo "<p>";
     } else {
-        $state = mt_rand();
+        $rand = mt_rand();
+        $stateparameters = 'name='.$name.'&rand='.$rand;
+        $state = base64UrlEncode($stateparameters);
         $client->setState($state);
-        $_SESSION['state'] = $state;
+        $_SESSION['rand'] = $rand;
 
         $authurl = $client->createAuthUrl();
         echo "<h3>Authorization Required</h3>";
         echo "<p>You need to <a href=\"$authurl\">authorize access</a> before proceeding.<p>";
     }
-    $acount = $DB->get_record('jitsi_record_acount', array('name'=>'Google'));
-    if ($acount == null){
-        $acount = new stdClass();
-        $time = time();
-        // --------->> Esto esta a pelo, habria que cambiarlo para la gstión de distintas cuentas <-----------
-        $acount->name = 'Google';
-        $acount->clientaccesstoken = $accesstoken;
-        $acount->clientrefreshtoken = $clientrefreshtoken;
-        $acount->tokencreated = $time;
-        $DB->insert_record('jitsi_record_acount', $acount);
-    } else {
-        $acount->clientaccesstoken = $accesstoken;
-        $acount->clientrefreshtoken = $clientrefreshtoken;
-        $acount->tokencreated = $time;
-        $DB->update_record('jitsi_record_acount', $acount);
-    }
    
 }
+echo $OUTPUT->footer();
+
