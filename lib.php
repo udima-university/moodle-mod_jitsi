@@ -254,10 +254,10 @@ function string_sanitize($string, $forcelowercase = true, $anal = false) {
  * @param string $session - sesssion name
  * @param string $mail - mail
  * @param stdClass $jitsi - Jitsi session
- * @param bool $universal - 
- * @param stdClass $user - 
- * @param int $timetsamp - 
- * @param int $codet - 
+ * @param bool $universal - Say if is universal session
+ * @param stdClass $user - User object
+ * @param int $timetsamp - Date
+ * @param int $codet - Code
  */
 function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jitsi, $universal = false,
         $user = null) {
@@ -352,7 +352,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "<div class=\"row\">";
     echo "<div class=\"col-sm\">";
 
-    $acount = $DB->get_record('jitsi_record_acount', array('inuse'=>1));
+    $acount = $DB->get_record('jitsi_record_acount', array('inuse' => 1));
 
     echo "<div class=\"row\">";
     echo "<div class=\"col-sm-9\">";
@@ -365,14 +365,16 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             && ($CFG->jitsi_streamingoption == 1)) {
             echo "<div class=\"text-right\">";
             echo "<div class=\"custom-control custom-switch\">";
-            echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\" onClick=\"activaGrab($(this));\">";
+            echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\" ";
+            echo "onClick=\"activaGrab($(this));\">";
             echo "  <label class=\"custom-control-label\" for=\"recordSwitch\">Record & Streaming</label>";
             echo "</div>";
             echo "</div>";
         } else if ($CFG->jitsi_livebutton == 1 && $acount != null && $CFG->jitsi_streamingoption == 1) {
             echo "<div class=\"text-right\">";
             echo "<div class=\"custom-control custom-switch\">";
-            echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\" onClick=\"activaGrab($(this));\" disabled>";
+            echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\" ";
+            echo "onClick=\"activaGrab($(this));\" disabled>";
             echo "  <label class=\"custom-control-label\" for=\"recordSwitch\">Record & Streaming</label>";
             echo "</div>";
             echo "</div>";
@@ -447,7 +449,8 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "function activaGrab(e){";
     echo "    if (e.is(':checked')) {";
     echo "      console.log(\"Switch cambiado a activado\");";
-    echo "      document.getElementById('state').innerHTML = '<div class=\"alert alert-light\" role=\"alert\">Preparing. Please wait.</div>';";
+    echo "      document.getElementById('state').innerHTML = ";
+    echo "      '<div class=\"alert alert-light\" role=\"alert\">Preparing. Please wait.</div>';";
     echo "      stream();";
     echo "    } else {";
     echo "      console.log(\"Switch cambiado a desactivado\");";
@@ -472,9 +475,15 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "api.addEventListener('recordingStatusChanged', function(event) {\n";
         echo "    if (event['on']){\n";
         echo "      document.getElementById(\"recordSwitch\").checked = true;\n";
-        echo "      document.getElementById('state').innerHTML = '<div class=\"alert alert-primary\" role=\"alert\">";
-        echo "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" fill=\"currentColor\" class=\"bi bi-exclamation-triangle-fill flex-shrink-0 me-2\" viewBox=\"0 0 16 16\" role=\"img\" aria-label=\"Warning:\">";
-        echo "<path d=\"M0 5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 4.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 13H2a2 2 0 0 1-2-2V5zm11.5 5.175 3.5 1.556V4.269l-3.5 1.556v4.35zM2 4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H2z\"/>";
+        echo "      document.getElementById('state').innerHTML = ";
+        echo "      '<div class=\"alert alert-primary\" role=\"alert\">";
+        echo "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" fill=\"currentColor\" ";
+        echo "class=\"bi bi-exclamation-triangle-fill flex-shrink-0 me-2\" viewBox=\"0 0 16 16\" ";
+        echo "role=\"img\" aria-label=\"Warning:\">";
+        echo "<path d=\"M0 5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 ";
+        echo "16 4.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 ";
+        echo "2 0 0 1 9.5 13H2a2 2 0 0 1-2-2V5zm11.5 5.175 3.5 1.556V4.269l-3.5 1.556v4.35zM2 4a1 1 0 0 ";
+        echo "0-1 1v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H2z\"/>";
         echo "</svg>";
         echo " Session is being recorded";
         echo "</div>';";
@@ -550,9 +559,9 @@ function istimedout($jitsi) {
  * Generate the time error
  * @param stdClass $jitsi jitsi instance
  */
-function generateErrotTime($jitsi) {
+function generateerrortime($jitsi) {
     global $CFG;
-    if ($jitsi->validitytime == 0 || $CFG->jitsi_invitebuttons == 0){
+    if ($jitsi->validitytime == 0 || $CFG->jitsi_invitebuttons == 0) {
         return get_string('invitationsnotactivated', 'jitsi');
     } else {
         return get_string('linkexpiredon', 'jitsi', userdate($jitsi->validitytime));
@@ -661,17 +670,17 @@ function marktodelete($idrecord, $option) {
 function delete_jitsi_record($source) {
     global $DB;
     $DB->delete_records('jitsi_record', array('source' => $source));
-    $DB->delete_records('jitsi_source_record', array('id'=>$source));
+    $DB->delete_records('jitsi_source_record', array('id' => $source));
 }
 
 /**
  * Return if Jitsi record source is deletable
  * @param int $sourcerecord - Jitsi source record id
  */
-function isDeletable($sourcerecord) {
+function isdeletable($sourcerecord) {
     $res = true;
     global $DB;
-    $records = $DB->get_records('jitsi_record', array('source'=>$sourcerecord, 'deleted'=>0));
+    $records = $DB->get_records('jitsi_record', array('source' => $sourcerecord, 'deleted' => 0));
     if (!$records == null) {
         $res = false;
     }
@@ -685,7 +694,7 @@ function isDeletable($sourcerecord) {
 function deleterecordyoutube($idsource) {
     global $CFG, $DB, $PAGE;
     // Api google.
-    if (isDeletable($idsource)) {
+    if (isdeletable($idsource)) {
         if (!file_exists(__DIR__ . '/api/vendor/autoload.php')) {
             throw new \Exception('please run "composer require google/apiclient:~2.0" in "' . __DIR__ .'"');
         }
@@ -698,7 +707,7 @@ function deleterecordyoutube($idsource) {
 
         $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
 
-        $acount = $DB->get_record('jitsi_record_acount', array('inuse'=>1));
+        $acount = $DB->get_record('jitsi_record_acount', array('inuse' => 1));
 
         $_SESSION[$tokensessionkey] = $acount->clientaccesstoken;
         $client->setAccessToken($_SESSION[$tokensessionkey]);
@@ -748,17 +757,18 @@ function mod_jitsi_inplace_editable($itemtype, $itemid, $newvalue) {
     if ($itemtype === 'recordname') {
         global $DB;
         $record = $DB->get_record('jitsi_record', array('id' => $itemid), '*', MUST_EXIST);
-        // Must call validate_context for either system, or course or course module context. 
+        // Must call validate_context for either system, or course or course module context.
         // This will both check access and set current context.
         \external_api::validate_context(context_system::instance());
-        // Check permission of the user to update this item. 
+        // Check permission of the user to update this item.
         require_capability('mod/jitsi:record', context_system::instance());
         // Clean input and update the record.
         $newvalue = clean_param($newvalue, PARAM_NOTAGS);
         $DB->update_record('jitsi_record', array('id' => $itemid, 'name' => $newvalue));
-        // Prepare the element for the output:
+        // Prepare the element for the output.
         $record->name = $newvalue;
         return new \core\output\inplace_editable('mod_jitsi', 'recordname', $record->id, true,
-            format_string($record->name), $record->name, get_string('editrecordname', 'jitsi'),  get_string('newvaluefor', 'jitsi') . format_string($record->name));
+            format_string($record->name), $record->name, get_string('editrecordname', 'jitsi'),
+                get_string('newvaluefor', 'jitsi') . format_string($record->name));
     }
 }

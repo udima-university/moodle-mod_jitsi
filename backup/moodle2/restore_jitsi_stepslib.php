@@ -60,7 +60,7 @@ class restore_jitsi_activity_structure_step extends restore_activity_structure_s
         }
 
         $data->token = bin2hex(random_bytes(32));
-        
+
         // Create the jitsi instance.
         $newitemid = $DB->insert_record('jitsi', $data);
         $this->apply_activity_instance($newitemid);
@@ -75,7 +75,7 @@ class restore_jitsi_activity_structure_step extends restore_activity_structure_s
         $newitemid = $DB->insert_record('jitsi_record', $data);
 
         // No need to save this mapping as far as nothing depend on it
-        // (child paths, file areas nor links decoder)
+        // (child paths, file areas nor links decoder).
     }
 
     /**

@@ -35,8 +35,8 @@ $token = required_param('t', PARAM_TEXT);
 
 $sql = "select * from {jitsi} where token = '".$token."'";
 $jitsi = $DB->get_record_sql($sql);
-$module = $DB->get_record ('modules', array('name'=>'jitsi'));
-$cm = $DB->get_record ('course_modules', array('instance'=>$jitsi->id, 'module'=>$module->id));
+$module = $DB->get_record ('modules', array('name' => 'jitsi'));
+$cm = $DB->get_record ('course_modules', array('instance' => $jitsi->id, 'module' => $module->id));
 $id = $cm->id;
 
 $sessionid = $cm->instance;
@@ -88,7 +88,7 @@ if (!istimedout($sesion)) {
             if ($today[0] < $sesion->timeclose || $sesion->timeclose == 0) {
                 if ($today[0] > (($sesion->timeopen) - ($sesion->minpretime * 60))||
                     (in_array('editingteacher', $rolestr) == 1)) {
-                    $urlparamsform = array('ses'=>$sessionid, 'id'=>$id);
+                    $urlparamsform = array('ses' => $sessionid, 'id' => $id);
                     $urlform = new moodle_url('/mod/jitsi/universal.php', $urlparamsform);
                     $mform = new name_form($urlform);
                     if ($mform->is_cancelled()) {
@@ -136,7 +136,7 @@ if (!istimedout($sesion)) {
         echo get_string('noinviteaccess', 'jitsi');
     }
 } else {
-    echo generateErrotTime($sesion);
+    echo generateerrortime($sesion);
 }
 
 echo $OUTPUT->footer();

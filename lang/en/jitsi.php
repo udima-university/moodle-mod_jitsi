@@ -64,8 +64,7 @@ $string['identificationex'] = 'ID to show in the session';
 $string['username'] = 'Username';
 $string['nameandsurname'] = 'Firstname + Lastname';
 $string['tokennconfig'] = 'Token configuration';
-$string['tokenconfigurationex'] = 'If you have a jitsi server with your own configuration (for example token configuration) you can use this by setting the following parameters. 
-Empty for servers without token.';
+$string['tokenconfigurationex'] = 'If you have a jitsi server with your own configuration (for example token configuration) you can use this by setting the following parameters. Empty for servers without token.';
 $string['separator'] = 'Separator';
 $string['separatorex'] = 'Define the field separator for the session name';
 $string['sessionnamefields'] = 'Session name fields';
@@ -166,3 +165,6 @@ $string['deletesources'] = 'Delete record sources';
 $string['(inuse)'] = ' (in use)';
 $string['delete?'] = 'Delete and disconect?';
 $string['login?'] = 'Log in?';
+$string['tablelistjitsis'] = 'This table lists all videos to deleted stored in your streaming provider. Those that are not linked to any Jitsi are available to remove.';
+$string['deletesource?'] = 'Delete? All jitsi records with this video record will be deleted';
+$string['otheracount'] = 'Other acount';

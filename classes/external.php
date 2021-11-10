@@ -145,10 +145,7 @@ class mod_jitsi_external extends external_api{
 
         $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
 
-        // $sql = 'select * from {jitsi_record_acount} limit 1';
-        // $acount = $DB->get_record_sql($sql);
-        $acount = $DB->get_record('jitsi_record_acount', array('inuse'=>1));
-
+        $acount = $DB->get_record('jitsi_record_acount', array('inuse' => 1));
 
         $_SESSION[$tokensessionkey] = $acount->clientaccesstoken;
 
@@ -215,10 +212,7 @@ class mod_jitsi_external extends external_api{
                 throw new \Exception("exception".$e->getMessage());
             }
         }
-        // $sql = 'select * from {jitsi_record_acount} limit 1';
-        // $acount = $DB->get_record_sql($sql);
-        $acount = $DB->get_record('jitsi_record_acount', array('inuse'=>1));
-
+        $acount = $DB->get_record('jitsi_record_acount', array('inuse' => 1));
 
         $source = new stdClass();
         $source->link = $broadcastsresponse['id'];

@@ -38,7 +38,7 @@ class backup_jitsi_activity_structure_step extends backup_activity_structure_ste
         $records = new backup_nested_element('records');
         $record = new backup_nested_element('record', array('id'), array('jitsi', 'deleted', 'source', 'visible', 'name'));
 
-        // Build the tree
+        // Build the tree.
         $jitsi->add_child($records);
         $records->add_child($record);
 

@@ -202,20 +202,22 @@ function xmldb_jitsi_upgrade($oldversion) {
     }
 
     if ($oldversion < 2021092003) {
-        $onprivatesessionloggedin = $DB->get_record('config_plugins', array('name' => 'message_provider_mod_jitsi_onprivatesession_loggedin'));
-        $onprivatesessionloggedoff = $DB->get_record('config_plugins', array('name' => 'message_provider_mod_jitsi_onprivatesession_loggedoff'));
+        $onprivatesessionloggedin = $DB->get_record('config_plugins', array('name' =>
+            'message_provider_mod_jitsi_onprivatesession_loggedin'));
+        $onprivatesessionloggedoff = $DB->get_record('config_plugins', array('name' =>
+            'message_provider_mod_jitsi_onprivatesession_loggedoff'));
         $onprivatesessionloggedin->value = 'airnotifier,email,popup';
         $onprivatesessionloggedoff->value = 'airnotifier,email';
         $DB->update_record('config_plugins', $onprivatesessionloggedin);
         $DB->update_record('config_plugins', $onprivatesessionloggedoff);
 
-        $callprivatesessionloggedin = $DB->get_record('config_plugins', array('name' => 'message_provider_mod_jitsi_callprivatesession_loggedin'));
-        $callprivatesessionloggedoff = $DB->get_record('config_plugins', array('name' => 'message_provider_mod_jitsi_callprivatesession_loggedoff'));
+        $callprivatesessionloggedin = $DB->get_record('config_plugins', array('name' =>
+            'message_provider_mod_jitsi_callprivatesession_loggedin'));
+        $callprivatesessionloggedoff = $DB->get_record('config_plugins', array('name' =>
+            'message_provider_mod_jitsi_callprivatesession_loggedoff'));
         $callprivatesessionloggedin->value = 'airnotifier,email,popup';
         $callprivatesessionloggedoff->value = 'airnotifier,email';
 
-        // $DB->update_record('config_plugins', $callprivatesessionloggedin);
-        // $DB->update_record('config_plugins', $callprivatesessionloggedoff);
         upgrade_mod_savepoint(true, 2021092003, 'jitsi');
     }
 
@@ -281,7 +283,6 @@ function xmldb_jitsi_upgrade($oldversion) {
         $table->add_field('link', XMLDB_TYPE_TEXT, null, null, null, null, null);
         $table->add_field('acount', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 
-        
         // Adding keys to table jitsi_record.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
@@ -292,21 +293,20 @@ function xmldb_jitsi_upgrade($oldversion) {
             $dbman->create_table($table);
         }
 
-        $tablerecord = new xmldb_table('jitsi_record');  
+        $tablerecord = new xmldb_table('jitsi_record');
         $fieldsource = new xmldb_field('source', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
 
         if (!$dbman->field_exists($tablerecord, $fieldsource)) {
             $dbman->add_field($tablerecord, $fieldsource);
         }
-      
 
         $records = $DB->get_records('jitsi_record', array());
-        
+
         foreach ($records as $record) {
             $source = new stdClass();
             $source->link = $record->link;
             $source->acount = 0;
-            
+
             $sourceid = $DB->insert_record('jitsi_source_record', $source);
             $record->source = $sourceid;
 
@@ -364,8 +364,6 @@ function xmldb_jitsi_upgrade($oldversion) {
         }
         upgrade_mod_savepoint(true, 2021110400, 'jitsi');
     }
-
-
 
     /*
      * And that's all. Please, examine and understand the 3 example blocks above. Also

@@ -50,7 +50,7 @@ if ($name) {
     $_SESSION['name'] = $name;
 }
 
-$acounttab = $DB->get_record('jitsi_record_acount', array('name'=>$_SESSION['name']));
+$acounttab = $DB->get_record('jitsi_record_acount', array('name' => $_SESSION['name']));
 if (!$acounttab) {
     $_SESSION[$tokensessionkey] = null;
 }
@@ -91,13 +91,13 @@ if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
         $namearray = explode("=", $namestring);
         $rand = $randarray[1];
         $name = $namearray[1];
-        
+
         if (strval($_SESSION['rand']) !== strval($rand)) {
             die('The session state did not match.');
         }
         $client->authenticate($_GET['code']);
         $_SESSION[$tokensessionkey] = $client->getAccessToken();
-        
+
         header('Location: ' . $redirect);
     }
 
@@ -110,9 +110,9 @@ if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
             $accesstoken = $client->getAccessToken()["access_token"];
             $clientrefreshtoken = $client->getRefreshToken();
             echo $OUTPUT->box(get_string('acountconnected', 'jitsi'));
-            $acount = $DB->get_record('jitsi_record_acount', array('name'=>$_SESSION['name']));
+            $acount = $DB->get_record('jitsi_record_acount', array('name' => $_SESSION['name']));
 
-            if ($acount == null){
+            if ($acount == null) {
                 $acount = new stdClass();
 
                 $time = time();
@@ -122,7 +122,7 @@ if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
                 $acount->clientrefreshtoken = $clientrefreshtoken;
                 $acount->tokencreated = $time;
                 $acount->inuse = 1;
-                $DB->insert_record('jitsi_record_acount', $acount); 
+                $DB->insert_record('jitsi_record_acount', $acount);
             } else {
                 $time = time();
                 $acount->clientaccesstoken = $accesstoken;
@@ -131,7 +131,7 @@ if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
                 $acount->inuse = 1;
                 $DB->update_record('jitsi_record_acount', $acount);
             }
-            
+
         } catch (Google_Service_Exception $e) {
             $htmlbody = sprintf('<p>A service error occurred: <code>%s</code></p>',
                         htmlspecialchars($e->getMessage()));
@@ -157,7 +157,7 @@ if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
         echo "<h3>Authorization Required</h3>";
         echo "<p>You need to <a href=\"$authurl\">authorize access</a> before proceeding.<p>";
     }
-   
+
 }
 echo $OUTPUT->footer();
 
