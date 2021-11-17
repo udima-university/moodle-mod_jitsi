@@ -73,6 +73,94 @@ class mod_jitsi_external extends external_api{
         );
     }
 
+
+
+
+
+
+    
+
+
+
+    public static function enter_session_parameters() {
+        return new external_function_parameters(
+            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                    'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+        );
+    }
+
+    public static function enter_session($jitsi, $user) {
+        global $DB;
+        $event = \mod_jitsi\event\jitsi_session_enter::create(array(
+            'objectid' => $PAGE->cm->instance,
+            'context' => $PAGE->context,
+          ));
+          $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
+          $event->add_record_snapshot('course', $jitsi->course);
+          $event->add_record_snapshot('jitsi', $jitsiob);
+          $event->trigger();
+    }
+
+    /**
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function enter_session_returns() {
+        return new external_value(PARAM_TEXT, 'Enter session');
+    }
+
+
+
+
+
+
+
+
+    
+    public static function participating_session_parameters() {
+        return new external_function_parameters(
+            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                    'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+        );
+    }
+
+    public static function participating_session($jitsi, $user) {
+        global $DB;
+
+        $context = context_module::instance($jitsi);
+
+        $event = \mod_jitsi\event\jitsi_session_participating::create(array(
+            // 'objectid' => $PAGE->cm->instance,
+            // 'context' => $PAGE->context,
+            'objectid' => $jitsi,
+            'context' => $context,
+          ));
+          $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
+        //   $jitsi->intro = 'hola';
+        //   $DB->update_record('jitsi', $jitsiob)
+          $event->add_record_snapshot('course', $jitsi->course);
+          $event->add_record_snapshot('jitsi', $jitsiob);
+          $event->trigger();
+    }
+
+    /**
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function participating_session_returns() {
+        return new external_value(PARAM_TEXT, 'Participating session');
+    }
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Trigger the course module viewed event.
      *

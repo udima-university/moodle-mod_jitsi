@@ -89,6 +89,33 @@ $event->add_record_snapshot('course', $PAGE->course);
 $event->add_record_snapshot($PAGE->cm->modname, $jitsi);
 $event->trigger();
 
+echo "<script>";
+// echo "function participating () { console.log(\"RUNNING\"); }";
+// echo "setInterval(participating, 1000);";
+
+
+echo "function participating () {";
+echo "  console.log(\"RUNNING\");";
+echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+echo "       var respuesta = ajax.call([{\n";
+echo "            methodname: 'mod_jitsi_participating_session',\n";
+echo "            args: {jitsi:'".$jitsi->id."', user:'".$USER->id."'},\n";
+echo "       }]);\n";
+echo "        console.log(respuesta[0]);";
+echo "})\n";
+echo "}";
+echo "setInterval(participating, 5000);\n";
+
+
+  // echo "require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+  //   echo "       var respuesta = ajax.call([{\n";
+  //   echo "            methodname: 'mod_jitsi_session_enter',\n";
+  //   echo "            args: {jitsi:'".$jitsi->id."', user:'".$USER->id."'},\n";
+  //   echo "       }]);\n";
+
+echo "</script>";
+
+
 createsession($teacher, $cmid, $avatar, $nombre, $session, null, $jitsi);
 
 echo $OUTPUT->footer();
