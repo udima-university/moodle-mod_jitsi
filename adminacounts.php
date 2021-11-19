@@ -122,17 +122,18 @@ if (is_siteadmin()) {
     foreach ($acounts as $acount) {
         $deleteurl = new moodle_url('/mod/jitsi/adminacounts.php?&dacountid=' . $acount->id. '&sesskey=' . sesskey());
         $deleteicon = new pix_icon('t/delete', get_string('delete'));
-        $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon, new confirm_action(get_string('delete?', 'jitsi')));
+        $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon, new confirm_action(get_string('deleteq', 'jitsi')));
 
         $loginurl = new moodle_url('/mod/jitsi/auth.php?&name=' . $acount->name);
         $loginicon = new pix_icon('i/publish', get_string('login'));
-        $loginaction = $OUTPUT->action_icon($loginurl, $loginicon, new confirm_action(get_string('login?', 'jitsi')));
+        $loginaction = $OUTPUT->action_icon($loginurl, $loginicon, new confirm_action(get_string('loginq', 'jitsi')));
+
         $numrecords = $DB->count_records('jitsi_source_record', array('acount' => $acount->id));
         if ($acount->inuse == 1) {
             if ($numrecords == 0) {
-                $table->data[] = array($acount->name.get_string('(inuse)', 'jitsi'), $deleteaction, $numrecords);
+                $table->data[] = array($acount->name.get_string('inuse', 'jitsi'), $deleteaction, $numrecords);
             } else {
-                $table->data[] = array($acount->name.get_string('(inuse)', 'jitsi'), null, $numrecords);
+                $table->data[] = array($acount->name.get_string('inuse', 'jitsi'), null, $numrecords);
             }
         } else {
             if ($numrecords == 0) {
