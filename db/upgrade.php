@@ -211,13 +211,6 @@ function xmldb_jitsi_upgrade($oldversion) {
         $DB->update_record('config_plugins', $onprivatesessionloggedin);
         $DB->update_record('config_plugins', $onprivatesessionloggedoff);
 
-        $callprivatesessionloggedin = $DB->get_record('config_plugins', array('name' =>
-            'message_provider_mod_jitsi_callprivatesession_loggedin'));
-        $callprivatesessionloggedoff = $DB->get_record('config_plugins', array('name' =>
-            'message_provider_mod_jitsi_callprivatesession_loggedoff'));
-        $callprivatesessionloggedin->value = 'airnotifier,email,popup';
-        $callprivatesessionloggedoff->value = 'airnotifier,email';
-
         upgrade_mod_savepoint(true, 2021092003, 'jitsi');
     }
 
