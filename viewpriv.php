@@ -45,7 +45,7 @@ class userstocall_form extends moodleform {
         $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
     }
     // Custom validation should be added here.
-    private function validation($data, $files) {
+    public function validation($data, $files) {
         return array();
     }
 }
