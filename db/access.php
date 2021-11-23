@@ -88,6 +88,16 @@ $capabilities = array(
       )
     ),
 
+    'mod/jitsi:viewusersonsession' => array(
+        'riskbitmask' => RISK_XSS,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+      )
+    ),
+
     'mod/jitsi:hide' => array(
         'riskbitmask' => RISK_XSS,
         'captype' => 'write',

@@ -172,10 +172,25 @@ $urlparams = array('avatar' => $avatar, 'nom' => $nom, 'ses' => $sesparam,
     'courseid' => $course->id, 'cmid' => $id, 't' => $moderation);
 
 $today = getdate();
+
+
+
+
 if (!$deletejitsirecordid) {
     echo $OUTPUT->header();
     echo $OUTPUT->heading($jitsi->name);
 }
+$logs = $DB->get_records_select('logstore_standard_log', 'component = ? and action = ? and objectid = ? and courseid = ? and timecreated >= ? and timecreated < ?', array('mod_jitsi', 'participating', $jitsi->id, $course->id, $today[0]-60, $today[0]));
+echo " ";
+echo "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-person-workspace\" viewBox=\"0 0 16 16\">";
+echo "<path d=\"M4 16s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H4Zm4-5.95a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z\"/>";
+echo "<path d=\"M2 1a2 2 0 0 0-2 2v9.5A1.5 1.5 0 0 0 1.5 14h.653a5.373 5.373 0 0 1 1.066-2H1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v9h-2.219c.554.654.89 1.373 1.066 2h.653a1.5 1.5 0 0 0 1.5-1.5V3a2 2 0 0 0-2-2H2Z\"/>";
+echo "</svg>";
+echo (" ".count($logs).' participantes');
+
+
+
+
 if ($jitsi->intro) {
     echo $OUTPUT->box(format_module_intro('jitsi', $jitsi, $cm->id), 'generalbox mod_introbox', 'jitsiintro');
 }
@@ -209,6 +224,40 @@ if ($records) {
     echo get_string('records', 'jitsi');
     echo "</button>";
 }
+
+
+
+
+//Tabla de asistentes en la sesion        
+        if ($logs && has_capability('mod/jitsi:viewusersonsession', $PAGE->context)) {
+            echo " ";
+            echo "<button class=\"btn btn-secondary\" type=\"button\" data-toggle=\"collapse\" data-target=\"#collapseAsistentes\"
+            aria-expanded=\"false\" aria-controls=\"collapseExample\">";
+            echo "Participantes";
+            echo "</button>";
+
+            echo "<div class=\"collapse\" id=\"collapseAsistentes\">";
+            echo "<div class=\"card card-body\">";
+            $table = new html_table();
+            $table->head = array(get_string('name'), get_string('time'));
+            $table->data = array();
+            foreach ($logs as $log) {
+                $user = $DB->get_record('user', array('id' => $log->userid));
+                $time = getminutes($jitsi, $course, $user);
+                $table->data[] = array(fullname($user), round($time).' min');
+            }
+            echo html_writer::table($table);
+            echo "</div>";
+            echo "</div>";
+        }
+        
+
+// Fin tabla de asistentes  en la sesion
+
+
+
+
+
 if ($CFG->jitsi_invitebuttons == 1 && has_capability('mod/jitsi:createlink', $PAGE->context) && $jitsi->validitytime != 0) {
     echo "<div class=\"collapse\" id=\"collapseInvitaciones\">";
     echo "<div class=\"card card-body\">";

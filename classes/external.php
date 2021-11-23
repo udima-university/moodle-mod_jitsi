@@ -120,18 +120,18 @@ class mod_jitsi_external extends external_api{
     public static function participating_session_parameters() {
         return new external_function_parameters(
             array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
-                    'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+                    'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED), 
+                    'cmid' => new external_value(PARAM_INT, 'Course Module id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
         );
     }
 
-    public static function participating_session($jitsi, $user) {
+    public static function participating_session($jitsi, $user, $cmid) {
         global $DB;
 
-        $context = context_module::instance($jitsi);
+        // $context = context_module::instance($jitsi);
+        $context = context_module::instance($cmid);
 
         $event = \mod_jitsi\event\jitsi_session_participating::create(array(
-            // 'objectid' => $PAGE->cm->instance,
-            // 'context' => $PAGE->context,
             'objectid' => $jitsi,
             'context' => $context,
           ));
