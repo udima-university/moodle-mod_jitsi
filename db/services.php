@@ -37,6 +37,17 @@ $functions = array(
                 'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'],
         ),
 
+        'mod_jitsi_participating_session' => array(
+                'classname'   => 'mod_jitsi_external',
+                'methodname'  => 'participating_session',
+                'classpath'   => 'mod/jitsi/classes/external.php',
+                'description' => 'State session recording',
+                'type'        => 'write',
+                'ajax'        => true,
+                'loginrequired' => false,
+                'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'],
+        ),
+
         'mod_jitsi_create_stream' => array(
                 'classname'   => 'mod_jitsi_external',
                 'methodname'  => 'create_stream',

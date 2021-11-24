@@ -36,13 +36,13 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2019 Sergio Comerón Sánchez-Paniagua <sergiocomeron@icloud.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class jitsi_session_enter extends \core\event\base  {
+class jitsi_session_exit extends \core\event\base  {
 
     /**
      * Init method.
      */
     protected function init() {
-        $this->data['crud'] = 'r';
+        $this->data['crud'] = 'u';
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
         $this->data['objecttable'] = 'jitsi';
     }
@@ -53,7 +53,7 @@ class jitsi_session_enter extends \core\event\base  {
      * @return string
      */
     public static function get_name() {
-        return get_string('entersession', 'jitsi');
+        return get_string('exitsession', 'jitsi');
     }
 
     /**
@@ -63,9 +63,9 @@ class jitsi_session_enter extends \core\event\base  {
      */
     public function get_description() {
         if ($this->userid != 0) {
-            return "The user with id '$this->userid' enter to session with coursemodule id '$this->contextinstanceid'.";
+            return "The user with id '$this->userid' exit session with coursemodule id '$this->contextinstanceid'.";
         } else {
-            return "Guest user enter to session with coursemodule id '$this->contextinstanceid'.";
+            return "Guest user exit session with coursemodule id '$this->contextinstanceid'.";
         }
     }
 

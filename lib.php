@@ -772,3 +772,21 @@ function mod_jitsi_inplace_editable($itemtype, $itemid, $newvalue) {
                 get_string('newvaluefor', 'jitsi') . format_string($record->name));
     }
 }
+
+/**
+ * Counts the minutes of a user in the current session
+ * @param stdClass $jitsi - current session object
+ * @param stdClass $course - session object
+ * @param stdClass $user - course object
+ */
+function getminutes($jitsi, $course, $user){
+    global $DB;
+    $sqllastlog = 'select * from {logstore_standard_log} where component = ? and action = ? and objectid = ? and courseid = ? and userid = ? order by timecreated desc limit 1';
+    $sqllfirstlog = 'select * from {logstore_standard_log} where component = ? and action = ? and objectid = ? and courseid = ? and userid = ? order by timecreated desc limit 1';
+    $lastlog = $DB->get_record_sql($sqllastlog, array('mod_jitsi', 'participating', $jitsi->id, $course->id, $user->id));
+    $firstlog = $DB->get_record_sql($sqllastlog, array('mod_jitsi', 'enter', $jitsi->id, $course->id, $user->id));
+    $timein = $firstlog->timecreated;
+    $timeout = $lastlog->timecreated;
+    $diferencia = $timeout-$timein;
+    return round($diferencia/60);
+}
