@@ -141,6 +141,9 @@ if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
             $accesstoken = $client->getAccessToken()["access_token"];
             $clientrefreshtoken = $client->getRefreshToken();
             echo $OUTPUT->box(get_string('acountconnected', 'jitsi'));
+            $link = new moodle_url('/mod/jitsi/adminaccounts.php');
+            echo '<a href='.$link.'>'.get_string('back').'</a>';
+
             $acount = $DB->get_record('jitsi_record_acount', array('name' => $_SESSION['name']));
 
             if ($acount == null) {

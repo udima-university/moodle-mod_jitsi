@@ -59,7 +59,7 @@ class acountname_form extends moodleform {
 
 $PAGE->set_context(context_system::instance());
 
-$PAGE->set_url('/mod/jitsi/adminacounts.php');
+$PAGE->set_url('/mod/jitsi/adminaccounts.php');
 require_login();
 
 if ($dacountid && confirm_sesskey($sesskey)) {
@@ -120,7 +120,7 @@ if (is_siteadmin()) {
     $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
 
     foreach ($acounts as $acount) {
-        $deleteurl = new moodle_url('/mod/jitsi/adminacounts.php?&dacountid=' . $acount->id. '&sesskey=' . sesskey());
+        $deleteurl = new moodle_url('/mod/jitsi/adminaccounts.php?&dacountid=' . $acount->id. '&sesskey=' . sesskey());
         $deleteicon = new pix_icon('t/delete', get_string('delete'));
         $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon, new confirm_action(get_string('deleteq', 'jitsi')));
 

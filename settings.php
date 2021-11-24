@@ -90,10 +90,13 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configpasswordunmask('jitsi_oauth_secret', get_string('oauthsecret', 'jitsi'),
             get_string('oauthsecretex', 'jitsi'), ''));
 
-    $link = '<a href="'.$CFG->wwwroot.'/mod/jitsi/adminacounts.php" target="_blank">'.get_string('acounts', 'jitsi').'</a>';
-    $settings->add(new admin_setting_heading('jitsi_loginoutyoutube', '', $link));
+    // $link = '<a href="'.$CFG->wwwroot.'/mod/jitsi/adminacounts.php" target="_blank">'.get_string('acounts', 'jitsi').'</a>';
+    $link = new moodle_url('/mod/jitsi/adminaccounts.php');
+    // $settings->add(new admin_setting_heading('jitsi_loginoutyoutube', '', $link));
+    $settings->add(new admin_setting_heading('jitsi_loginoutyoutube', '', '<a href='.$link.' >'.
+    get_string('acounts', 'jitsi').'</a>'));
 
-    $settings->add(new admin_setting_heading('jitsi_records_admin', 'Tablas', ''));
+    // $settings->add(new admin_setting_heading('jitsi_records_admin', 'Tablas', ''));
     $link = new moodle_url('/mod/jitsi/adminrecord.php');
     $settings->add(new admin_setting_heading('jitsi_records_admin', '', '<a href='.$link.' >'.
             get_string('deletesources', 'jitsi').'</a>'));
