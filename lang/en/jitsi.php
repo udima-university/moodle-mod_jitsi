@@ -168,6 +168,6 @@ $string['inuse'] = ' (in use)';
 $string['deleteq'] = 'Delete and disconect?';
 $string['loginq'] = 'Log in?';
 $string['tablelistjitsis'] = 'This table lists all videos to deleted stored in your streaming provider. Those that are not linked to any Jitsi are available to remove.';
-$string['deletesource?'] = 'Delete? All jitsi records with this video record will be deleted';
+$string['deletesourceq'] = 'Delete? All jitsi records with this video record will be deleted';
 $string['otheracount'] = 'Other acount';
 $string['participatingsession'] = 'Participating in session';

@@ -69,7 +69,7 @@ if (is_siteadmin()) {
                 $deleteicon = new pix_icon('t/delete', get_string('delete'));
                 $acount = $DB->get_record('jitsi_record_acount', array('id' => $source->acount));
                 $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon,
-                    new confirm_action(get_string('deletesource?', 'jitsi')));
+                    new confirm_action(get_string('deletesourceq', 'jitsi')));
                 $table->data[] = array($source->id, $source->link, $acount->name, userdate($source->timecreated), $deleteaction);
             } else {
                 $acount = $DB->get_record('jitsi_record_acount', array('id' => $source->acount));

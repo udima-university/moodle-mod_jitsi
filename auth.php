@@ -27,22 +27,47 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(dirname(dirname(__FILE__))).'/lib/moodlelib.php');
 require_once(dirname(__FILE__).'/lib.php');
+require_once(__DIR__ . '/api/vendor/autoload.php');
 
 require_login();
 global $DB, $CFG;
 $name = optional_param('name', null, PARAM_TEXT);
 
 $PAGE->set_context(context_system::instance());
-$PAGE->set_url('/mod/jitsi/auth.php');
-$PAGE->set_title(format_string(get_string('acounts', 'jitsi')));
-$PAGE->set_heading(format_string(get_string('acounts', 'jitsi')));
-echo $OUTPUT->header();
 
 $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
 if ($name) {
-    unset($_SESSION[$tokensessionkey]);
+    if (!file_exists(__DIR__ . '/api/vendor/autoload.php')) {
+        throw new \Exception('Api client not found on '.$CFG->wwwroot.'/mod/jitsi/api/vendor/autoload.php');
+    }
+
     $acountinuse = $DB->get_record('jitsi_record_acount', array('inuse' => 1));
+   
     if ($acountinuse) {
+        $client = new Google_Client();
+        $client->setClientId($CFG->jitsi_oauth_id);
+        $client->setClientSecret($CFG->jitsi_oauth_secret);
+    
+        $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
+        $client->setAccessToken($acountinuse->clientaccesstoken);
+        unset($_SESSION[$tokensessionkey]);
+    
+        $t = time();
+        $timediff = $t - $acountinuse->tokencreated;
+    
+        if ($timediff > 3599) {
+            $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($acount->clientrefreshtoken);
+    
+            $acountinuse->clientaccesstoken = $newaccesstoken['access_token'];
+            $newrefreshaccesstoken = $client->getRefreshToken();
+            $acountinuse->refreshtoken = $newrefreshaccesstoken;
+            $acountinuse->tokencreated = time();
+            $DB->update_record('jitsi_record_acount', $acountinuse);
+        }
+    
+        $client->revokeToken($acountinuse->clientaccesstoken);
+
+
         $acountinuse->inuse = 0;
         $DB->update_record('jitsi_record_acount', $acountinuse);
     }
@@ -107,6 +132,12 @@ if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
 
     if ($client->getAccessToken()) {
         try {
+            $PAGE->set_url('/mod/jitsi/auth.php');
+            $PAGE->set_title(format_string(get_string('acounts', 'jitsi')));
+            $PAGE->set_heading(format_string(get_string('acounts', 'jitsi')));
+            echo $OUTPUT->header();
+
+
             $accesstoken = $client->getAccessToken()["access_token"];
             $clientrefreshtoken = $client->getRefreshToken();
             echo $OUTPUT->box(get_string('acountconnected', 'jitsi'));
@@ -141,12 +172,20 @@ if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
         }
         $_SESSION[$tokensessionkey] = $client->getAccessToken();
 
+        echo $OUTPUT->footer();
+
     } else if ($oauth2clientid == 'REPLACE_ME') {
         echo "<h3>Client Credentials Required</h3>";
         echo "<p>You need to set <code>\$OAUTH2_CLIENT_ID</code> and";
         echo   "<code>\$OAUTH2_CLIENT_ID</code> before proceeding.";
         echo "<p>";
     } else {
+        $PAGE->set_url('/mod/jitsi/auth.php');
+        $PAGE->set_title(format_string(get_string('acounts', 'jitsi')));
+        $PAGE->set_heading(format_string(get_string('acounts', 'jitsi')));
+        echo $OUTPUT->header();
+
+
         $rand = mt_rand();
         $stateparameters = 'name='.$name.'&rand='.$rand;
         $state = base64UrlEncode($stateparameters);
@@ -156,8 +195,8 @@ if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
         $authurl = $client->createAuthUrl();
         echo "<h3>Authorization Required</h3>";
         echo "<p>You need to <a href=\"$authurl\">authorize access</a> before proceeding.<p>";
+
+        echo $OUTPUT->footer();
     }
 
 }
-echo $OUTPUT->footer();
-
