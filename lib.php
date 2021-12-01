@@ -608,7 +608,7 @@ function sendnotificationprivatesession($fromuser, $touser) {
     $message->fullmessagehtml = get_string('user').' <a href='.$CFG->wwwroot.'/user/profile.php?id='.$fromuser->id.'> '
     . $fromuser->firstname .' '. $fromuser->lastname
     . '</a> '.get_string('hasentered', 'jitsi').'. '.get_string('click', 'jitsi').'<a href='
-    . new moodle_url('/mod/jitsi/viewpriv.php', array('user' => $touser->id))
+    . new moodle_url('/mod/jitsi/viewpriv.php', array('user' => $touser->id, 'fromuser' => $fromuser->id))
     .'> '.get_string('here', 'jitsi').'</a> '.get_string('toenter', 'jitsi');
     $message->smallmessage = get_string('userenter', 'jitsi', $fromuser->firstname .' '. $fromuser->lastname);
     $message->notification = 1;

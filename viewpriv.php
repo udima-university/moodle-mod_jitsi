@@ -53,6 +53,7 @@ class userstocall_form extends moodleform {
 global $USER, $DB, $PAGE, $CFG;
 
 $userid = required_param('user', PARAM_INT);
+$fromuserid = optional_param('fromuser', null, PARAM_INT);
 $userstocall = optional_param_array('userstocall', null, PARAM_RAW);
 
 $user = $DB->get_record('user', array('id' => $userid));
@@ -99,7 +100,11 @@ if ($CFG->jitsi_privatesessions) {
     $allowed = explode(',', $fieldssessionname);
     $max = count($allowed);
 
-    $sesparam = $SITE->shortname.'-'.$user->username;
+    if ($fromuserid) {
+        $sesparam = $SITE->shortname.'-'.$user->username.'-'.$fromuserid;
+    } else {
+        $sesparam = $SITE->shortname.'-'.$user->username.'-'.$USER->id;
+    }
     $avatar = $CFG->wwwroot.'/user/pix.php/'.$USER->id.'/f1.jpg';
 
     $urlparams = array('avatar' => $avatar, 'nom' => $nom, 'ses' => $sesparam,
