@@ -128,19 +128,25 @@ class mod_jitsi_external extends external_api{
     public static function participating_session($jitsi, $user, $cmid) {
         global $DB;
 
-        // $context = context_module::instance($jitsi);
         $context = context_module::instance($cmid);
-
+        $cm = get_coursemodule_from_id('jitsi', $cmid, 0, false, MUST_EXIST);
         $event = \mod_jitsi\event\jitsi_session_participating::create(array(
             'objectid' => $jitsi,
             'context' => $context,
-          ));
-          $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
-        //   $jitsi->intro = 'hola';
-        //   $DB->update_record('jitsi', $jitsiob)
-          $event->add_record_snapshot('course', $jitsi->course);
-          $event->add_record_snapshot('jitsi', $jitsiob);
-          $event->trigger();
+        ));
+        $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
+        $event->add_record_snapshot('course', $jitsi->course);
+        $event->add_record_snapshot('jitsi', $jitsiob);
+        $event->trigger();
+        // Update completion state
+        $course = $DB->get_record('course', array('id' => $jitsiob->course));
+        $completion=new completion_info($course);
+        // if ($completion->is_enabled($cmid) && $jitsi->completionminutes) {
+        //     $completion->update_state($cmid,COMPLETION_COMPLETE);
+        // }
+        if ($completion->is_enabled($cm) == COMPLETION_TRACKING_AUTOMATIC && $jitsiob->completionminutes) {
+            $completion->update_state($cm, COMPLETION_COMPLETE, $user);
+        }
     }
 
     /**

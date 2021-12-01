@@ -358,6 +358,16 @@ function xmldb_jitsi_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2021110400, 'jitsi');
     }
 
+    if ($oldversion < 2021112501) {
+        $table = new xmldb_table('jitsi');
+        $field = new xmldb_field('completionminutes', XMLDB_TYPE_INTEGER, '3', null, null, null, null);
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint(true, 2021112501, 'jitsi');
+    }
+
     /*
      * And that's all. Please, examine and understand the 3 example blocks above. Also
      * it's interesting to look how other modules are using this script. Remember that

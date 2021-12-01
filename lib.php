@@ -50,6 +50,8 @@ function jitsi_supports($feature) {
             return true;
         case FEATURE_BACKUP_MOODLE2:
             return true;
+        case FEATURE_COMPLETION_HAS_RULES:
+            return true;
         default:
             return null;
     }
@@ -784,14 +786,153 @@ function mod_jitsi_inplace_editable($itemtype, $itemid, $newvalue) {
  * @param stdClass $course - session object
  * @param stdClass $user - course object
  */
-function getminutes($jitsi, $course, $user){
+function getminutes($jitsi){
+    global $DB, $USER;
+    $sqllastlog = 'select * from {logstore_standard_log} where component = ? and action = ? and objectid = ? and userid = ? order by timecreated desc limit 1';
+    $sqllfirstlog = 'select * from {logstore_standard_log} where component = ? and action = ? and objectid = ? and userid = ? order by timecreated desc limit 1';
+    $lastlog = $DB->get_record_sql($sqllastlog, array('mod_jitsi', 'participating', $jitsi->id, $USER->id));
+    $firstlog = $DB->get_record_sql($sqllastlog, array('mod_jitsi', 'enter', $jitsi->id, $USER->id));
+    if ($lastlog) {
+        $timeout = $lastlog->timecreated;
+    }
+    if ($firstlog) {
+        $timein = $firstlog->timecreated;
+    }
+    if ($lastlog && $firstlog) {
+        $diferencia = $timeout-$timein;
+        return round($diferencia/60);
+    } else {
+        $diferencia = 0;
+        return $diferencia;
+    }
+}
+
+/**
+ * Add a get_coursemodule_info function in case any jitsi type wants to add 'extra' information
+ * for the course (see resource).
+ *
+ * Given a course_module object, this function returns any "extra" information that may be needed
+ * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
+ *
+ * @param stdClass $coursemodule The coursemodule object (record).
+ * @return cached_cm_info An object on information that the courses
+ *                        will know about (most noticeably, an icon).
+ */
+function jitsi_get_coursemodule_info($coursemodule) {
     global $DB;
-    $sqllastlog = 'select * from {logstore_standard_log} where component = ? and action = ? and objectid = ? and courseid = ? and userid = ? order by timecreated desc limit 1';
-    $sqllfirstlog = 'select * from {logstore_standard_log} where component = ? and action = ? and objectid = ? and courseid = ? and userid = ? order by timecreated desc limit 1';
-    $lastlog = $DB->get_record_sql($sqllastlog, array('mod_jitsi', 'participating', $jitsi->id, $course->id, $user->id));
-    $firstlog = $DB->get_record_sql($sqllastlog, array('mod_jitsi', 'enter', $jitsi->id, $course->id, $user->id));
-    $timein = $firstlog->timecreated;
-    $timeout = $lastlog->timecreated;
-    $diferencia = $timeout-$timein;
-    return round($diferencia/60);
+
+    $dbparams = ['id' => $coursemodule->instance];
+    $fields = 'id, name, intro, introformat, completionminutes, timeopen, timeclose';
+    if (!$jitsi = $DB->get_record('jitsi', $dbparams, $fields)) {
+        return false;
+    }
+
+    $result = new cached_cm_info();
+    $result->name = $jitsi->name;
+
+    if ($coursemodule->showdescription) {
+        // Convert intro to html. Do not filter cached version, filters run at display time.
+        $result->content = format_module_intro('jitsi', $jitsi, $coursemodule->id, false);
+    }
+
+    // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
+    if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
+        $result->customdata['customcompletionrules']['completionminutes'] = $jitsi->completionminutes;
+    }
+    // Populate some other values that can be used in calendar or on dashboard.
+    if ($jitsi->timeopen) {
+        $result->customdata['timeopen'] = $jitsi->timeopen;
+    }
+    if ($jitsi->timeclose) {
+        $result->customdata['timeclose'] = $jitsi->timeclose;
+    }
+
+    return $result;
+}
+
+/**
+ * Callback which returns human-readable strings describing the active completion custom rules for the module instance.
+ *
+ * @param cm_info|stdClass $cm object with fields ->completion and ->customdata['customcompletionrules']
+ * @return array $descriptions the array of descriptions for the custom rules.
+ */
+function mod_jitsi_get_completion_active_rule_descriptions($cm) {
+    // Values will be present in cm_info, and we assume these are up to date.
+    if (empty($cm->customdata['customcompletionrules'])
+        || $cm->completion != COMPLETION_TRACKING_AUTOMATIC) {
+        return [];
+    }
+
+    $descriptions = [];
+    foreach ($cm->customdata['customcompletionrules'] as $key => $val) {
+        switch ($key) {
+            case 'completionminutes':
+                if (!empty($val)) {
+                    $descriptions[] = get_string('completionminutes', 'jitsi');
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    return $descriptions;
+}
+
+/**
+ * This function receives a calendar event and returns the action associated with it, or null if there is none.
+ *
+ * This is used by block_myoverview in order to display the event appropriately. If null is returned then the event
+ * is not displayed on the block.
+ *
+ * @param calendar_event $event
+ * @param \core_calendar\action_factory $factory
+ * @param int $userid User id to use for all capability checks, etc. Set to 0 for current user (default).
+ * @return \core_calendar\local\event\entities\action_interface|null
+ */
+function mod_jitsi_core_calendar_provide_event_action(calendar_event $event,
+                                                       \core_calendar\action_factory $factory,
+                                                       int $userid = 0) {
+    global $USER;
+
+    if (!$userid) {
+        $userid = $USER->id;
+    }
+
+    $cm = get_fast_modinfo($event->courseid, $userid)->instances['jitsi'][$event->instance];
+
+    if (!$cm->uservisible) {
+        // The module is not visible to the user for any reason.
+        return null;
+    }
+
+    $completion = new \completion_info($cm->get_course());
+
+    $completiondata = $completion->get_data($cm, false, $userid);
+
+    if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
+        return null;
+    }
+
+    $now = time();
+
+    if (!empty($cm->customdata['timeclose']) && $cm->customdata['timeclose'] < $now) {
+        // The jitsi has closed so the user can no longer submit anything.
+        return null;
+    }
+
+    // The jitsi is actionable if we don't have a start time or the start time is
+    // in the past.
+    $actionable = (empty($cm->customdata['timeopen']) || $cm->customdata['timeopen'] <= $now);
+
+    if ($actionable && jitsi_get_user_response((object)['id' => $event->instance], $userid)) {
+        // There is no action if the user has already submitted their jitsi.
+        return null;
+    }
+
+    return $factory->create_instance(
+        get_string('viewjitsis', 'jitsi'),
+        new \moodle_url('/mod/jitsi/view.php', array('id' => $cm->id)),
+        1,
+        $actionable
+    );
 }

@@ -91,6 +91,8 @@ $PAGE->set_url('/mod/jitsi/view.php', array('id' => $cm->id));
 $PAGE->set_title(format_string($jitsi->name));
 $PAGE->set_heading(format_string($course->fullname));
 
+
+
 if ($deletejitsirecordid && confirm_sesskey($sesskey)) {
     marktodelete($deletejitsirecordid, 1);
     redirect($PAGE->url, get_string('deleted'));
@@ -111,6 +113,12 @@ if ($showjitsirecordid && confirm_sesskey($sesskey)) {
 }
 
 $context = context_module::instance($cm->id);
+// print_r($cm);
+
+$cm = get_coursemodule_from_id('jitsi', $id);
+$cminfo = \cm_info::create($cm);
+// $cminfo = get_fast_modinfo($course);
+// print_r($cminfo);
 if (!has_capability('mod/jitsi:view', $context)) {
     notice(get_string('noviewpermission', 'jitsi'));
 }
@@ -173,13 +181,15 @@ $urlparams = array('avatar' => $avatar, 'nom' => $nom, 'ses' => $sesparam,
 
 $today = getdate();
 
-
-
-
 if (!$deletejitsirecordid) {
     echo $OUTPUT->header();
     echo $OUTPUT->heading($jitsi->name);
 }
+
+$completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
+$activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
+echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
+
 $logs = $DB->get_records_select('logstore_standard_log', 'component = ? and action = ? and objectid = ? and courseid = ? and timecreated >= ? and timecreated < ?', array('mod_jitsi', 'participating', $jitsi->id, $course->id, $today[0]-60, $today[0]));
 echo " ";
 echo "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-person-workspace\" viewBox=\"0 0 16 16\">";
@@ -187,6 +197,8 @@ echo "<path d=\"M4 16s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H4Zm4-5.95a2.5 2.5 0 1 0 0
 echo "<path d=\"M2 1a2 2 0 0 0-2 2v9.5A1.5 1.5 0 0 0 1.5 14h.653a5.373 5.373 0 0 1 1.066-2H1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v9h-2.219c.554.654.89 1.373 1.066 2h.653a1.5 1.5 0 0 0 1.5-1.5V3a2 2 0 0 0-2-2H2Z\"/>";
 echo "</svg>";
 echo (" ".count($logs).' participantes');
+echo "<p></p>";
+echo "llevas ".getminutes($jitsi, $course, $USER)."minutos";
 
 
 

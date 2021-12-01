@@ -33,7 +33,7 @@ class backup_jitsi_activity_structure_step extends backup_activity_structure_ste
      */
     protected function define_structure() {
         $jitsi = new backup_nested_element('jitsi', array('id'), array('name', 'intro', 'introformat',
-            'timeopen', 'timeclose', 'validitytime', 'minpretime', 'token'));
+            'timeopen', 'timeclose', 'validitytime', 'minpretime', 'token', 'completionminutes'));
 
         $records = new backup_nested_element('records');
         $record = new backup_nested_element('record', array('id'), array('jitsi', 'deleted', 'source', 'visible', 'name'));
