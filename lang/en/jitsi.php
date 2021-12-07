@@ -172,3 +172,5 @@ $string['tablelistjitsis'] = 'This table lists all videos to deleted stored in y
 $string['deletesourceq'] = 'Delete? All jitsi records with this video record will be deleted';
 $string['otheracount'] = 'Other acount';
 $string['participatingsession'] = 'Participating in session';
+$string['participantspane'] = 'Participants panel';
+$string['participantspaneex'] = 'Show the participants panel to users with moderation permissions';

@@ -343,11 +343,16 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         $mutevideoeveryone = 'mute-video-everyone';
     }
 
+    $participantspane = '';
+    if (($CFG->jitsi_participantspane == 1) && (has_capability('mod/jitsi:moderation', $PAGE->context))) {
+        $streamingoption = 'participants-pane';
+    }
+
     $buttons = "['microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
         'fodeviceselection', 'hangup', 'chat', '".$record."', 'etherpad', '".$youtubeoption."',
         'settings', 'raisehand', 'videoquality', '".$streamingoption."','filmstrip', '".$invite."', 'stats',
         'shortcuts', 'tileview', '".$bluroption."', 'download', 'help', '".$muteeveryone."',
-        '".$mutevideoeveryone."', '".$security."']";
+        '".$mutevideoeveryone."', '".$security."', '".$participantspane."']";
 
     echo "<div class=\"row\">";
     echo "<div class=\"col-sm\">";

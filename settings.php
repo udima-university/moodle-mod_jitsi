@@ -76,6 +76,9 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('jitsi_reactions', get_string('reactions', 'jitsi'),
         get_string('reactionsex', 'jitsi'), 0));
 
+    $settings->add(new admin_setting_configcheckbox('jitsi_participantspane', get_string('participantspane', 'jitsi'),
+        get_string('participantspaneex', 'jitsi'), 0));    
+
     $settings->add(new admin_setting_heading('jitsistreaming',
             get_string('streamingconfig', 'jitsi'), get_string('streamingconfigex', 'jitsi', $CFG->wwwroot.'/mod/jitsi/auth.php')));
     $settings->add(new admin_setting_configcheckbox('jitsi_livebutton', get_string('streamingbutton', 'jitsi'),
