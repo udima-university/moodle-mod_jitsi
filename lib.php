@@ -839,13 +839,13 @@ function jitsi_get_coursemodule_info($coursemodule) {
     if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
         $result->customdata['customcompletionrules']['completionminutes'] = $jitsi->completionminutes;
     }
-    // Populate some other values that can be used in calendar or on dashboard.
-    if ($jitsi->timeopen) {
-        $result->customdata['timeopen'] = $jitsi->timeopen;
-    }
-    if ($jitsi->timeclose) {
-        $result->customdata['timeclose'] = $jitsi->timeclose;
-    }
+    // // Populate some other values that can be used in calendar or on dashboard.
+    // if ($jitsi->timeopen) {
+    //     $result->customdata['timeopen'] = $jitsi->timeopen;
+    // }
+    // if ($jitsi->timeclose) {
+    //     $result->customdata['timeclose'] = $jitsi->timeclose;
+    // }
 
     return $result;
 }
@@ -857,6 +857,7 @@ function jitsi_get_coursemodule_info($coursemodule) {
  * @return array $descriptions the array of descriptions for the custom rules.
  */
 function mod_jitsi_get_completion_active_rule_descriptions($cm) {
+    // $cm = cm_info::create($cm);
     // Values will be present in cm_info, and we assume these are up to date.
     if (empty($cm->customdata['customcompletionrules'])
         || $cm->completion != COMPLETION_TRACKING_AUTOMATIC) {
@@ -868,7 +869,7 @@ function mod_jitsi_get_completion_active_rule_descriptions($cm) {
         switch ($key) {
             case 'completionminutes':
                 if (!empty($val)) {
-                    $descriptions[] = get_string('completionminutes', 'jitsi');
+                    $descriptions[] = get_string('completionminutes', 'jitsi', $val);
                 }
                 break;
             default:
@@ -878,61 +879,61 @@ function mod_jitsi_get_completion_active_rule_descriptions($cm) {
     return $descriptions;
 }
 
-/**
- * This function receives a calendar event and returns the action associated with it, or null if there is none.
- *
- * This is used by block_myoverview in order to display the event appropriately. If null is returned then the event
- * is not displayed on the block.
- *
- * @param calendar_event $event
- * @param \core_calendar\action_factory $factory
- * @param int $userid User id to use for all capability checks, etc. Set to 0 for current user (default).
- * @return \core_calendar\local\event\entities\action_interface|null
- */
-function mod_jitsi_core_calendar_provide_event_action(calendar_event $event,
-                                                       \core_calendar\action_factory $factory,
-                                                       int $userid = 0) {
-    global $USER;
+// /**
+//  * This function receives a calendar event and returns the action associated with it, or null if there is none.
+//  *
+//  * This is used by block_myoverview in order to display the event appropriately. If null is returned then the event
+//  * is not displayed on the block.
+//  *
+//  * @param calendar_event $event
+//  * @param \core_calendar\action_factory $factory
+//  * @param int $userid User id to use for all capability checks, etc. Set to 0 for current user (default).
+//  * @return \core_calendar\local\event\entities\action_interface|null
+//  */
+// function mod_jitsi_core_calendar_provide_event_action(calendar_event $event,
+//                                                        \core_calendar\action_factory $factory,
+//                                                        int $userid = 0) {
+//     global $USER;
 
-    if (!$userid) {
-        $userid = $USER->id;
-    }
+//     if (!$userid) {
+//         $userid = $USER->id;
+//     }
 
-    $cm = get_fast_modinfo($event->courseid, $userid)->instances['jitsi'][$event->instance];
+//     $cm = get_fast_modinfo($event->courseid, $userid)->instances['jitsi'][$event->instance];
 
-    if (!$cm->uservisible) {
-        // The module is not visible to the user for any reason.
-        return null;
-    }
+//     if (!$cm->uservisible) {
+//         // The module is not visible to the user for any reason.
+//         return null;
+//     }
 
-    $completion = new \completion_info($cm->get_course());
+//     $completion = new \completion_info($cm->get_course());
 
-    $completiondata = $completion->get_data($cm, false, $userid);
+//     $completiondata = $completion->get_data($cm, false, $userid);
 
-    if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
-        return null;
-    }
+//     if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
+//         return null;
+//     }
 
-    $now = time();
+//     $now = time();
 
-    if (!empty($cm->customdata['timeclose']) && $cm->customdata['timeclose'] < $now) {
-        // The jitsi has closed so the user can no longer submit anything.
-        return null;
-    }
+//     if (!empty($cm->customdata['timeclose']) && $cm->customdata['timeclose'] < $now) {
+//         // The jitsi has closed so the user can no longer submit anything.
+//         return null;
+//     }
 
-    // The jitsi is actionable if we don't have a start time or the start time is
-    // in the past.
-    $actionable = (empty($cm->customdata['timeopen']) || $cm->customdata['timeopen'] <= $now);
+//     // The jitsi is actionable if we don't have a start time or the start time is
+//     // in the past.
+//     $actionable = (empty($cm->customdata['timeopen']) || $cm->customdata['timeopen'] <= $now);
 
-    if ($actionable && jitsi_get_user_response((object)['id' => $event->instance], $userid)) {
-        // There is no action if the user has already submitted their jitsi.
-        return null;
-    }
+//     if ($actionable && jitsi_get_user_response((object)['id' => $event->instance], $userid)) {
+//         // There is no action if the user has already submitted their jitsi.
+//         return null;
+//     }
 
-    return $factory->create_instance(
-        get_string('viewjitsis', 'jitsi'),
-        new \moodle_url('/mod/jitsi/view.php', array('id' => $cm->id)),
-        1,
-        $actionable
-    );
-}
+//     return $factory->create_instance(
+//         get_string('viewjitsis', 'jitsi'),
+//         new \moodle_url('/mod/jitsi/view.php', array('id' => $cm->id)),
+//         1,
+//         $actionable
+//     );
+// }

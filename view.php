@@ -113,12 +113,10 @@ if ($showjitsirecordid && confirm_sesskey($sesskey)) {
 }
 
 $context = context_module::instance($cm->id);
-// print_r($cm);
 
 $cm = get_coursemodule_from_id('jitsi', $id);
 $cminfo = \cm_info::create($cm);
-// $cminfo = get_fast_modinfo($course);
-// print_r($cminfo);
+
 if (!has_capability('mod/jitsi:view', $context)) {
     notice(get_string('noviewpermission', 'jitsi'));
 }

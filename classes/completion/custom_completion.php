@@ -49,10 +49,13 @@ class custom_completion extends activity_custom_completion {
         if (!$jitsi = $DB->get_record('jitsi', ['id' => $this->cm->instance])) {
             throw new \moodle_exception('Unable to find jitsi with id ' . $this->cm->instance);
         }
+        $completionminutes = $this->cm->customdata['customcompletionrules']['completionminutes'];
+        $userminutes = getminutes($jitsi);
+        // if ($rule == 'completionminutes') {
+            // $status = $jitsi->completionminutes <= getminutes($jitsi);
+            $status = $completionminutes <= $userminutes;
 
-        if ($rule == 'completionminutes') {
-            $status = $jitsi->completionminutes <= getminutes($jitsi);
-        }
+        // }
 
         return $status ? COMPLETION_COMPLETE : COMPLETION_INCOMPLETE;
     }

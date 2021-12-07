@@ -138,14 +138,13 @@ class mod_jitsi_external extends external_api{
         $event->add_record_snapshot('course', $jitsi->course);
         $event->add_record_snapshot('jitsi', $jitsiob);
         $event->trigger();
-        // Update completion state
-        $course = $DB->get_record('course', array('id' => $jitsiob->course));
+        if (! $course = $DB->get_record("course", array("id" => $jitsiob->course))) {
+            print_error('coursemisconf');
+        }
         $completion=new completion_info($course);
-        // if ($completion->is_enabled($cmid) && $jitsi->completionminutes) {
-        //     $completion->update_state($cmid,COMPLETION_COMPLETE);
-        // }
+
         if ($completion->is_enabled($cm) == COMPLETION_TRACKING_AUTOMATIC && $jitsiob->completionminutes) {
-            $completion->update_state($cm, COMPLETION_COMPLETE, $user);
+            $completion->update_state($cm, COMPLETION_COMPLETE);
         }
     }
 
