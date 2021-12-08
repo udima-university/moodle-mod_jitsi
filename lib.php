@@ -338,7 +338,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     $invite = '';
     $muteeveryone = '';
     $mutevideoeveryone = '';
-    if ($teacher) {
+    if (has_capability('mod/jitsi:moderation', $PAGE->context)) {
         $muteeveryone = 'mute-everyone';
         $mutevideoeveryone = 'mute-video-everyone';
     }
@@ -346,6 +346,14 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     $participantspane = '';
     if (($CFG->jitsi_participantspane == 1) && (has_capability('mod/jitsi:moderation', $PAGE->context))) {
         $participantspane = 'participants-pane';
+    }
+
+    if (!has_capability('mod/jitsi:moderation', $PAGE->context)){
+        echo "remoteVideoMenu: {\n";
+        echo "    disableKick: true,\n";
+        echo "    disableGrantModerator: true\n";
+        echo "},\n";
+        echo "disableRemoteMute: true,\n";
     }
 
     $buttons = "['microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
