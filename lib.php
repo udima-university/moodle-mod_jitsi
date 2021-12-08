@@ -345,7 +345,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
 
     $participantspane = '';
     if (($CFG->jitsi_participantspane == 1) && (has_capability('mod/jitsi:moderation', $PAGE->context))) {
-        $streamingoption = 'participants-pane';
+        $participantspane = 'participants-pane';
     }
 
     $buttons = "['microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
