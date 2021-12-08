@@ -340,7 +340,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     $invite = '';
     $muteeveryone = '';
     $mutevideoeveryone = '';
-    if ($teacher) {
+    if (has_capability('mod/jitsi:moderation', $PAGE->context)) {
         $muteeveryone = 'mute-everyone';
         $mutevideoeveryone = 'mute-video-everyone';
     }
@@ -399,6 +399,14 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "configOverwrite: {\n";
     if ($CFG->jitsi_deeplink == 0) {
         echo "disableDeepLinking: true,\n";
+    }
+
+    if (!has_capability('mod/jitsi:moderation', $PAGE->context)){
+        echo "remoteVideoMenu: {\n";
+        echo "    disableKick: true,\n";
+        echo "    disableGrantModerator: true\n";
+        echo "},\n";
+        echo "disableRemoteMute: true,\n";
     }
 
     if ($CFG->jitsi_reactions == 0) {
@@ -786,12 +794,12 @@ function mod_jitsi_inplace_editable($itemtype, $itemid, $newvalue) {
  * @param stdClass $course - session object
  * @param stdClass $user - course object
  */
-function getminutes($jitsi){
+function getminutes($jitsi, $userid) {
     global $DB, $USER;
     $sqllastlog = 'select * from {logstore_standard_log} where component = ? and action = ? and objectid = ? and userid = ? order by timecreated desc limit 1';
     $sqllfirstlog = 'select * from {logstore_standard_log} where component = ? and action = ? and objectid = ? and userid = ? order by timecreated desc limit 1';
-    $lastlog = $DB->get_record_sql($sqllastlog, array('mod_jitsi', 'participating', $jitsi->id, $USER->id));
-    $firstlog = $DB->get_record_sql($sqllastlog, array('mod_jitsi', 'enter', $jitsi->id, $USER->id));
+    $lastlog = $DB->get_record_sql($sqllastlog, array('mod_jitsi', 'participating', $jitsi->id, $userid));
+    $firstlog = $DB->get_record_sql($sqllastlog, array('mod_jitsi', 'enter', $jitsi->id, $userid));
     if ($lastlog) {
         $timeout = $lastlog->timecreated;
     }

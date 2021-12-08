@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace mod_jitsi\completion;
 
@@ -42,6 +42,7 @@ class custom_completion extends activity_custom_completion {
         global $DB;
 
         $this->validate_rule($rule);
+        
 
         $userid = $this->userid;
         $jitsi = $this->cm->instance;
@@ -50,7 +51,14 @@ class custom_completion extends activity_custom_completion {
             throw new \moodle_exception('Unable to find jitsi with id ' . $this->cm->instance);
         }
         $completionminutes = $this->cm->customdata['customcompletionrules']['completionminutes'];
-        $userminutes = getminutes($jitsi);
+        $userminutes = getminutes($jitsi, $userid);
+        // if ($userid) {
+
+        //     $userminutes = 99;
+        // }
+        $jitsi->intro = 'el userid es: '.$userid.'y el jitsiid es:'.$jitsi->id.' y llevas: '.$userminutes.' minutos y el minimo es: '.$completionminutes;
+        $DB->update_record('jitsi', $jitsi);
+
         // if ($rule == 'completionminutes') {
             // $status = $jitsi->completionminutes <= getminutes($jitsi);
             $status = $completionminutes <= $userminutes;
@@ -80,7 +88,6 @@ class custom_completion extends activity_custom_completion {
         $completionminutes = $this->cm->customdata['customcompletionrules']['completionminutes'] ?? 0;
 
         return [
-            // 'completionminutes' => get_string('completiondetail:submit', 'choice'),
             'completionminutes' => get_string('completiondetail:minutes', 'jitsi', $completionminutes)
 
         ];
