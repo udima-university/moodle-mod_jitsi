@@ -196,7 +196,7 @@ echo "<path d=\"M2 1a2 2 0 0 0-2 2v9.5A1.5 1.5 0 0 0 1.5 14h.653a5.373 5.373 0 0
 echo "</svg>";
 echo (" ".count($logs).' participantes');
 echo "<p></p>";
-echo "llevas ".getminutes($jitsi, $course, $USER)."minutos";
+echo "llevas ".getminutes($jitsi, $course, $USER)." minutos";
 
 
 
