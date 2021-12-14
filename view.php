@@ -184,6 +184,9 @@ if (!$deletejitsirecordid) {
     echo $OUTPUT->heading($jitsi->name);
 }
 
+$cm = get_coursemodule_from_id('jitsi', $id, 0, false, MUST_EXIST);
+update_completition($cm);
+
 $completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
 $activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
 echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
@@ -196,10 +199,7 @@ echo "<path d=\"M2 1a2 2 0 0 0-2 2v9.5A1.5 1.5 0 0 0 1.5 14h.653a5.373 5.373 0 0
 echo "</svg>";
 echo (" ".count($logs).' participantes');
 echo "<p></p>";
-echo "llevas ".getminutes($jitsi, $USER->id)." minutos";
-
-
-
+echo "Has estado ".getminutes($jitsi, $USER->id)." minutos";
 
 if ($jitsi->intro) {
     echo $OUTPUT->box(format_module_intro('jitsi', $jitsi, $cm->id), 'generalbox mod_introbox', 'jitsiintro');
@@ -234,40 +234,27 @@ if ($records) {
     echo get_string('records', 'jitsi');
     echo "</button>";
 }
-
-
-
-
-//Tabla de asistentes en la sesion        
-        if ($logs && has_capability('mod/jitsi:viewusersonsession', $PAGE->context)) {
-            echo " ";
-            echo "<button class=\"btn btn-secondary\" type=\"button\" data-toggle=\"collapse\" data-target=\"#collapseAsistentes\"
-            aria-expanded=\"false\" aria-controls=\"collapseExample\">";
-            echo "Participantes";
-            echo "</button>";
-
-            echo "<div class=\"collapse\" id=\"collapseAsistentes\">";
-            echo "<div class=\"card card-body\">";
-            $table = new html_table();
-            $table->head = array(get_string('name'), get_string('time'));
-            $table->data = array();
-            foreach ($logs as $log) {
-                $user = $DB->get_record('user', array('id' => $log->userid));
-                $time = getminutes($jitsi, $course, $user);
-                $table->data[] = array(fullname($user), round($time).' min');
-            }
-            echo html_writer::table($table);
-            echo "</div>";
-            echo "</div>";
-        }
+if ($logs && has_capability('mod/jitsi:viewusersonsession', $PAGE->context)) {
+    echo " ";
+    echo "<button class=\"btn btn-secondary\" type=\"button\" data-toggle=\"collapse\" data-target=\"#collapseAsistentes\"
+    aria-expanded=\"false\" aria-controls=\"collapseExample\">";
+    echo "Participantes";
+    echo "</button>";
+    echo "<div class=\"collapse\" id=\"collapseAsistentes\">";
+    echo "<div class=\"card card-body\">";
+    $table = new html_table();
+    $table->head = array(get_string('name'), get_string('time'));
+    $table->data = array();
+    foreach ($logs as $log) {
+        $user = $DB->get_record('user', array('id' => $log->userid));
+        $time = getminutes($jitsi, $user->id);
+        $table->data[] = array(fullname($user), round($time).' min');
+    }
+    echo html_writer::table($table);
+    echo "</div>";
+    echo "</div>";
+}
         
-
-// Fin tabla de asistentes  en la sesion
-
-
-
-
-
 if ($CFG->jitsi_invitebuttons == 1 && has_capability('mod/jitsi:createlink', $PAGE->context) && $jitsi->validitytime != 0) {
     echo "<div class=\"collapse\" id=\"collapseInvitaciones\">";
     echo "<div class=\"card card-body\">";
@@ -351,6 +338,7 @@ if ($records) {
             echo "<h6 class=\"card-subtitle mb-2 text-muted\">".userdate($sourcerecord->timecreated)."</h6>";
 
             echo "<div class=\"embed-responsive embed-responsive-16by9\">";
+            doembedable($sourcerecord->link);
             echo "<iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/".$sourcerecord->link."\"
                 allowfullscreen></iframe>";
             echo "</div>";

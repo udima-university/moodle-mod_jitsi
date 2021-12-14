@@ -67,15 +67,4 @@ $functions = array(
                 'capabilities'  => 'mod/jitsi:view',
                 'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'),
         ),
-
-        'mod_jitsi_create_link' => array(
-                'classname'     => 'mod_jitsi_external',
-                'methodname'    => 'create_link',
-                'classpath'     => 'mod/jitsi/classes/external.php',
-                'description'   => 'Create a link for external user',
-                'type'          => 'read',
-                'ajax'          => true,
-                'loginrequired' => false,
-                'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'),
-        ),
 );

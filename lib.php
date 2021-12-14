@@ -791,7 +791,6 @@ function mod_jitsi_inplace_editable($itemtype, $itemid, $newvalue) {
 /**
  * Counts the minutes of a user in the current session
  * @param stdClass $jitsi - current session object
- * @param stdClass $course - session object
  * @param stdClass $user - course object
  */
 function getminutes($jitsi, $userid) {
@@ -847,13 +846,6 @@ function jitsi_get_coursemodule_info($coursemodule) {
     if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
         $result->customdata['customcompletionrules']['completionminutes'] = $jitsi->completionminutes;
     }
-    // // Populate some other values that can be used in calendar or on dashboard.
-    // if ($jitsi->timeopen) {
-    //     $result->customdata['timeopen'] = $jitsi->timeopen;
-    // }
-    // if ($jitsi->timeclose) {
-    //     $result->customdata['timeclose'] = $jitsi->timeclose;
-    // }
 
     return $result;
 }
@@ -885,6 +877,49 @@ function mod_jitsi_get_completion_active_rule_descriptions($cm) {
         }
     }
     return $descriptions;
+}
+
+function update_completition($cm) {
+    global $DB;
+    // $cm = get_coursemodule_from_id('jitsi', $id, 0, false, MUST_EXIST);
+    $jitsi = $DB->get_record('jitsi', array('id' => $cm->instance), '*', MUST_EXIST);
+    if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
+        print_error('coursemisconf');
+    }
+    $completion=new completion_info($course);
+
+    if ($completion->is_enabled($cm) == COMPLETION_TRACKING_AUTOMATIC && $jitsi->completionminutes) {
+        $completion->update_state($cm, COMPLETION_COMPLETE);
+    }
+
+
+
+    // ¿Y si meto aqui todo lo que hay en el metodo de completitionlib.php?
+    // // For manual tracking, or if overriding the completion state, we set the state directly.
+    // if ($cm->completion == COMPLETION_TRACKING_MANUAL || $override) {
+    //     switch($possibleresult) {
+    //         case COMPLETION_COMPLETE:
+    //         case COMPLETION_INCOMPLETE:
+    //             $newstate = $possibleresult;
+    //             break;
+    //         default:
+    //             $this->internal_systemerror("Unexpected manual completion state for {$cm->id}: $possibleresult");
+    //     }
+
+    // } else {
+    //     $newstate = $this->internal_get_state($cm, $userid, $current);
+    // }
+
+    // // If the overall completion state has changed, update it in the cache.
+    // if ($newstate != $current->completionstate) {
+    //     $current->completionstate = $newstate;
+    //     $current->timemodified    = time();
+    //     $current->overrideby      = $override ? $USER->id : null;
+    //     $this->internal_set_data($cm, $current);
+    // }
+
+
+
 }
 
 // /**
@@ -945,3 +980,46 @@ function mod_jitsi_get_completion_active_rule_descriptions($cm) {
 //         $actionable
 //     );
 // }
+
+
+
+
+function doembedable($idvideo){
+    global $CFG, $DB;
+    if (!file_exists(__DIR__ . '/api/vendor/autoload.php')) {
+        throw new \Exception('please run "composer require google/apiclient:~2.0" in "' . __DIR__ .'"');
+    }
+    require_once(__DIR__ . '/api/vendor/autoload.php');
+
+    $client = new Google_Client();
+
+    $client->setClientId($CFG->jitsi_oauth_id);
+    $client->setClientSecret($CFG->jitsi_oauth_secret);
+
+    $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
+
+    $acount = $DB->get_record('jitsi_record_acount', array('inuse' => 1));
+
+    $_SESSION[$tokensessionkey] = $acount->clientaccesstoken;
+    $client->setAccessToken($_SESSION[$tokensessionkey]);
+    $t = time();
+    $timediff = $t - $acount->tokencreated;
+
+    if ($timediff > 3599) {
+        $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($acount->clientrefreshtoken);
+        $acount->clientaccesstoken = $newaccesstoken["access_token"];
+        $newrefreshaccesstoken = $client->getRefreshToken();
+        $acount->clientrefreshtoken = $newrefreshaccesstoken;
+        $acount->tokencreated = time();
+    }
+
+    $youtube = new Google_Service_YouTube($client);
+
+    $listResponse = $youtube->videos->listVideos("status", array('id' => $idvideo));
+    $video = $listResponse[0];
+    $videoStatus = $video['status'];
+    if ($videoStatus['embeddable'] != true) {
+        $videoStatus['embeddable'] = 'true';
+        $updateResponse = $youtube->videos->update("status", $video);
+    } 
+}

@@ -52,18 +52,8 @@ class custom_completion extends activity_custom_completion {
         }
         $completionminutes = $this->cm->customdata['customcompletionrules']['completionminutes'];
         $userminutes = getminutes($jitsi, $userid);
-        // if ($userid) {
 
-        //     $userminutes = 99;
-        // }
-        $jitsi->intro = 'el userid es: '.$userid.'y el jitsiid es:'.$jitsi->id.' y llevas: '.$userminutes.' minutos y el minimo es: '.$completionminutes;
-        $DB->update_record('jitsi', $jitsi);
-
-        // if ($rule == 'completionminutes') {
-            // $status = $jitsi->completionminutes <= getminutes($jitsi);
-            $status = $completionminutes <= $userminutes;
-
-        // }
+        $status = $completionminutes <= $userminutes;
 
         return $status ? COMPLETION_COMPLETE : COMPLETION_INCOMPLETE;
     }

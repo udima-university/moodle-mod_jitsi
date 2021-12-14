@@ -73,15 +73,6 @@ class mod_jitsi_external extends external_api{
         );
     }
 
-
-
-
-
-
-    
-
-
-
     public static function enter_session_parameters() {
         return new external_function_parameters(
             array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
@@ -109,14 +100,6 @@ class mod_jitsi_external extends external_api{
         return new external_value(PARAM_TEXT, 'Enter session');
     }
 
-
-
-
-
-
-
-
-    
     public static function participating_session_parameters() {
         return new external_function_parameters(
             array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
@@ -129,24 +112,18 @@ class mod_jitsi_external extends external_api{
         global $DB;
 
         $context = context_module::instance($cmid);
-        $cm = get_coursemodule_from_id('jitsi', $cmid, 0, false, MUST_EXIST);
+        
         $event = \mod_jitsi\event\jitsi_session_participating::create(array(
             'objectid' => $jitsi,
             'context' => $context,
         ));
-        $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
         $event->add_record_snapshot('course', $jitsi->course);
         $event->add_record_snapshot('jitsi', $jitsiob);
         $event->trigger();
-        if (! $course = $DB->get_record("course", array("id" => $jitsiob->course))) {
-            print_error('coursemisconf');
-        }
-        $completion=new completion_info($course);
 
-        if ($completion->is_enabled($cm) == COMPLETION_TRACKING_AUTOMATIC && $jitsiob->completionminutes) {
-            $completion->update_state($cm, COMPLETION_COMPLETE);
-        }
+        update_completition(get_coursemodule_from_id('jitsi', $cmid, 0, false, MUST_EXIST));
     }
+
 
     /**
      * Returns description of method result value
@@ -155,16 +132,6 @@ class mod_jitsi_external extends external_api{
     public static function participating_session_returns() {
         return new external_value(PARAM_TEXT, 'Participating session');
     }
-
-
-
-
-
-
-
-
-
-
 
     /**
      * Trigger the course module viewed event.
@@ -272,7 +239,8 @@ class mod_jitsi_external extends external_api{
                 $contentdetails = new Google_Service_YouTube_LiveBroadcastContentDetails();
                 $contentdetails->setEnableAutoStart(true);
                 $contentdetails->setEnableAutoStop(true);
-                $contentdetails->setEnableEmbed(true);
+
+                $contentdetails->setEnableEmbed(false);
 
                 $broadcastinsert = new Google_Service_YouTube_LiveBroadcast();
                 $broadcastinsert->setSnippet($broadcastsnippet);
@@ -299,6 +267,7 @@ class mod_jitsi_external extends external_api{
 
                 $bindbroadcastresponse = $youtube->liveBroadcasts->bind($broadcastsresponse['id'], 'id,contentDetails',
                     array('streamId' => $streamsresponse['id'], ));
+                    
             } catch (Google_Service_Exception $e) {
                 throw new \Exception("exception".$e->getMessage());
             } catch (Google_Exception $e) {

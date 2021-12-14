@@ -94,11 +94,9 @@ $event = \mod_jitsi\event\jitsi_session_participating::create(array(
   'context' => $PAGE->context,
 ));
 
-
 $event->add_record_snapshot('course', $PAGE->course);
 $event->add_record_snapshot($PAGE->cm->modname, $jitsi);
 $event->trigger();
-
 
 echo "<script>";
 echo "function participating () {";
@@ -113,7 +111,6 @@ echo "})\n";
 echo "}";
 echo "setInterval(participating, 60000);\n";
 echo "</script>";
-
 
 createsession($teacher, $cmid, $avatar, $nombre, $session, null, $jitsi);
 
