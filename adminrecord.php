@@ -70,7 +70,7 @@ if (is_siteadmin()) {
                 $acount = $DB->get_record('jitsi_record_acount', array('id' => $source->acount));
                 $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon,
                     new confirm_action(get_string('deletesourceq', 'jitsi')));
-                $table->data[] = array($source->id, $source->link, $acount->name, userdate($source->timecreated), $deleteaction);
+                $table->data[] = array($source->id, '<a href="https://youtu.be/'.$source->link.'" target=_blank">'.$source->link.'</a>', $acount->name, userdate($source->timecreated), $deleteaction);
             } else {
                 $acount = $DB->get_record('jitsi_record_acount', array('id' => $source->acount));
                 $table->data[] = array($source->id, $source->link, $acount->name, userdate($source->timecreated),
