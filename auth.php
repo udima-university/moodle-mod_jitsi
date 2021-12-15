@@ -42,31 +42,30 @@ if ($name) {
     }
 
     $acountinuse = $DB->get_record('jitsi_record_acount', array('inuse' => 1));
-   
+
     if ($acountinuse) {
         $client = new Google_Client();
         $client->setClientId($CFG->jitsi_oauth_id);
         $client->setClientSecret($CFG->jitsi_oauth_secret);
-    
+
         $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
         $client->setAccessToken($acountinuse->clientaccesstoken);
         unset($_SESSION[$tokensessionkey]);
-    
+
         $t = time();
         $timediff = $t - $acountinuse->tokencreated;
-    
+
         if ($timediff > 3599) {
             $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($acount->clientrefreshtoken);
-    
+
             $acountinuse->clientaccesstoken = $newaccesstoken['access_token'];
             $newrefreshaccesstoken = $client->getRefreshToken();
             $acountinuse->refreshtoken = $newrefreshaccesstoken;
             $acountinuse->tokencreated = time();
             $DB->update_record('jitsi_record_acount', $acountinuse);
         }
-    
-        $client->revokeToken($acountinuse->clientaccesstoken);
 
+        $client->revokeToken($acountinuse->clientaccesstoken);
 
         $acountinuse->inuse = 0;
         $DB->update_record('jitsi_record_acount', $acountinuse);

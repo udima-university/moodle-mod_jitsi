@@ -179,3 +179,5 @@ $string['completionminutesex'] = 'Minutes to attend ';
 $string['completionminutes_help'] = 'Number of minutes that student must attend to give the activity as completed';
 $string['completiondetail:minutes'] = 'Attend {$a} minutes';
 $string['viewjitsis'] = 'View jitsis';
+$string['participants'] = 'Participants';
+$string['minutesinlastconnection'] = 'In the last connection you have been {$a} minutes';

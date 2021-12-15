@@ -42,7 +42,6 @@ class custom_completion extends activity_custom_completion {
         global $DB;
 
         $this->validate_rule($rule);
-        
 
         $userid = $this->userid;
         $jitsi = $this->cm->instance;
@@ -81,7 +80,6 @@ class custom_completion extends activity_custom_completion {
             'completionminutes' => get_string('completiondetail:minutes', 'jitsi', $completionminutes)
 
         ];
-        
     }
 
     /**

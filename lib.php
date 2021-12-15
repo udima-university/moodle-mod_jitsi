@@ -401,7 +401,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "disableDeepLinking: true,\n";
     }
 
-    if (!has_capability('mod/jitsi:moderation', $PAGE->context)){
+    if (!has_capability('mod/jitsi:moderation', $PAGE->context)) {
         echo "remoteVideoMenu: {\n";
         echo "    disableKick: true,\n";
         echo "    disableGrantModerator: true\n";
@@ -795,8 +795,10 @@ function mod_jitsi_inplace_editable($itemtype, $itemid, $newvalue) {
  */
 function getminutes($jitsi, $userid) {
     global $DB, $USER;
-    $sqllastlog = 'select * from {logstore_standard_log} where component = ? and action = ? and objectid = ? and userid = ? order by timecreated desc limit 1';
-    $sqllfirstlog = 'select * from {logstore_standard_log} where component = ? and action = ? and objectid = ? and userid = ? order by timecreated desc limit 1';
+    $sqllastlog = 'select * from {logstore_standard_log} where component = ? and action = ? and
+         objectid = ? and userid = ? order by timecreated desc limit 1';
+    $sqllfirstlog = 'select * from {logstore_standard_log} where component = ? and action = ? and
+         objectid = ? and userid = ? order by timecreated desc limit 1';
     $lastlog = $DB->get_record_sql($sqllastlog, array('mod_jitsi', 'participating', $jitsi->id, $userid));
     $firstlog = $DB->get_record_sql($sqllastlog, array('mod_jitsi', 'enter', $jitsi->id, $userid));
     if ($lastlog) {
@@ -806,8 +808,8 @@ function getminutes($jitsi, $userid) {
         $timein = $firstlog->timecreated;
     }
     if ($lastlog && $firstlog) {
-        $diferencia = $timeout-$timein;
-        return round($diferencia/60);
+        $diferencia = $timeout - $timein;
+        return round($diferencia / 60);
     } else {
         $diferencia = 0;
         return $diferencia;
@@ -857,7 +859,6 @@ function jitsi_get_coursemodule_info($coursemodule) {
  * @return array $descriptions the array of descriptions for the custom rules.
  */
 function mod_jitsi_get_completion_active_rule_descriptions($cm) {
-    // $cm = cm_info::create($cm);
     // Values will be present in cm_info, and we assume these are up to date.
     if (empty($cm->customdata['customcompletionrules'])
         || $cm->completion != COMPLETION_TRACKING_AUTOMATIC) {
@@ -879,112 +880,28 @@ function mod_jitsi_get_completion_active_rule_descriptions($cm) {
     return $descriptions;
 }
 
+/**
+ * Update completion.
+ * @param stdClass $cm - course module object
+ */
 function update_completition($cm) {
     global $DB;
-    // $cm = get_coursemodule_from_id('jitsi', $id, 0, false, MUST_EXIST);
     $jitsi = $DB->get_record('jitsi', array('id' => $cm->instance), '*', MUST_EXIST);
     if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
         print_error('coursemisconf');
     }
-    $completion=new completion_info($course);
+    $completion = new completion_info($course);
 
     if ($completion->is_enabled($cm) == COMPLETION_TRACKING_AUTOMATIC && $jitsi->completionminutes) {
         $completion->update_state($cm, COMPLETION_COMPLETE);
     }
-
-
-
-    // ¿Y si meto aqui todo lo que hay en el metodo de completitionlib.php?
-    // // For manual tracking, or if overriding the completion state, we set the state directly.
-    // if ($cm->completion == COMPLETION_TRACKING_MANUAL || $override) {
-    //     switch($possibleresult) {
-    //         case COMPLETION_COMPLETE:
-    //         case COMPLETION_INCOMPLETE:
-    //             $newstate = $possibleresult;
-    //             break;
-    //         default:
-    //             $this->internal_systemerror("Unexpected manual completion state for {$cm->id}: $possibleresult");
-    //     }
-
-    // } else {
-    //     $newstate = $this->internal_get_state($cm, $userid, $current);
-    // }
-
-    // // If the overall completion state has changed, update it in the cache.
-    // if ($newstate != $current->completionstate) {
-    //     $current->completionstate = $newstate;
-    //     $current->timemodified    = time();
-    //     $current->overrideby      = $override ? $USER->id : null;
-    //     $this->internal_set_data($cm, $current);
-    // }
-
-
-
 }
 
-// /**
-//  * This function receives a calendar event and returns the action associated with it, or null if there is none.
-//  *
-//  * This is used by block_myoverview in order to display the event appropriately. If null is returned then the event
-//  * is not displayed on the block.
-//  *
-//  * @param calendar_event $event
-//  * @param \core_calendar\action_factory $factory
-//  * @param int $userid User id to use for all capability checks, etc. Set to 0 for current user (default).
-//  * @return \core_calendar\local\event\entities\action_interface|null
-//  */
-// function mod_jitsi_core_calendar_provide_event_action(calendar_event $event,
-//                                                        \core_calendar\action_factory $factory,
-//                                                        int $userid = 0) {
-//     global $USER;
-
-//     if (!$userid) {
-//         $userid = $USER->id;
-//     }
-
-//     $cm = get_fast_modinfo($event->courseid, $userid)->instances['jitsi'][$event->instance];
-
-//     if (!$cm->uservisible) {
-//         // The module is not visible to the user for any reason.
-//         return null;
-//     }
-
-//     $completion = new \completion_info($cm->get_course());
-
-//     $completiondata = $completion->get_data($cm, false, $userid);
-
-//     if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
-//         return null;
-//     }
-
-//     $now = time();
-
-//     if (!empty($cm->customdata['timeclose']) && $cm->customdata['timeclose'] < $now) {
-//         // The jitsi has closed so the user can no longer submit anything.
-//         return null;
-//     }
-
-//     // The jitsi is actionable if we don't have a start time or the start time is
-//     // in the past.
-//     $actionable = (empty($cm->customdata['timeopen']) || $cm->customdata['timeopen'] <= $now);
-
-//     if ($actionable && jitsi_get_user_response((object)['id' => $event->instance], $userid)) {
-//         // There is no action if the user has already submitted their jitsi.
-//         return null;
-//     }
-
-//     return $factory->create_instance(
-//         get_string('viewjitsis', 'jitsi'),
-//         new \moodle_url('/mod/jitsi/view.php', array('id' => $cm->id)),
-//         1,
-//         $actionable
-//     );
-// }
-
-
-
-
-function doembedable($idvideo){
+/**
+ * Set embedable a video
+ * @param int @idvideo - id of the video
+ */
+function doembedable($idvideo) {
     global $CFG, $DB;
     if (!file_exists(__DIR__ . '/api/vendor/autoload.php')) {
         throw new \Exception('please run "composer require google/apiclient:~2.0" in "' . __DIR__ .'"');
@@ -1015,11 +932,11 @@ function doembedable($idvideo){
 
     $youtube = new Google_Service_YouTube($client);
 
-    $listResponse = $youtube->videos->listVideos("status", array('id' => $idvideo));
-    $video = $listResponse[0];
-    $videoStatus = $video['status'];
-    if ($videoStatus['embeddable'] != true) {
-        $videoStatus['embeddable'] = 'true';
-        $updateResponse = $youtube->videos->update("status", $video);
-    } 
+    $listresponse = $youtube->videos->listVideos("status", array('id' => $idvideo));
+    $video = $listresponse[0];
+    $videostatus = $video['status'];
+    if ($videostatus['embeddable'] != true) {
+        $videostatus['embeddable'] = 'true';
+        $updateresponse = $youtube->videos->update("status", $video);
+    }
 }

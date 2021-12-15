@@ -61,7 +61,6 @@ class mod_jitsi_mod_form extends moodleform_mod {
             $mform->addElement('header', 'invitations', get_string('invitations', 'jitsi'));
             $options = array('optional' => true);
             $mform->addElement('date_time_selector', 'validitytime', get_string('finishinvitation', 'jitsi'), $options);
-
         }
 
         $mform->addElement('header', 'availability', get_string('availability', 'assign'));
@@ -90,7 +89,7 @@ class mod_jitsi_mod_form extends moodleform_mod {
 
     /**
      * Add elements for setting the custom completion rules.
-     *  
+     *
      * @category completion
      * @return array List of added element names, or names of wrapping group elements.
      */
@@ -103,7 +102,7 @@ class mod_jitsi_mod_form extends moodleform_mod {
             $mform->createElement('text', 'completionminutes', ' ', ['size' => 3]),
         ];
         $mform->setType('completionminutes', PARAM_INT);
-        $mform->addGroup($group, 'completionminutesgroup', get_string('completionminutes','jitsi'), [' '], false);
+        $mform->addGroup($group, 'completionminutesgroup', get_string('completionminutes', 'jitsi'), [' '], false);
         $mform->addHelpButton('completionminutesgroup', 'completionminutes', 'jitsi');
         $mform->disabledIf('completionminutes', 'completionminutesenabled', 'notchecked');
 
@@ -120,31 +119,25 @@ class mod_jitsi_mod_form extends moodleform_mod {
         return (!empty($data['completionminutesenabled']) && $data['completionminutes'] != 0);
     }
 
-    function get_data() {
+    public function get_data() {
         $data = parent::get_data();
         if (!$data) {
             return $data;
         }
         if (!empty($data->completionunlocked)) {
-            // Turn off completion settings if the checkboxes aren't ticked
-            $autocompletion = !empty($data->completion) && $data->completion==COMPLETION_TRACKING_AUTOMATIC;
+            $autocompletion = !empty($data->completion) && $data->completion == COMPLETION_TRACKING_AUTOMATIC;
             if (empty($data->completionminutesenabled) || !$autocompletion) {
-               $data->completionminutes = 0;
+                $data->completionminutes = 0;
             }
         }
         return $data;
     }
 
-    function data_preprocessing(&$default_values){
-        // [Existing code, not shown]
-    
-        // Set up the completion checkboxes which aren't part of standard data.
-        // We also make the default value (if you turn on the checkbox) for those
-        // numbers to be 1, this will not apply unless checkbox is ticked.
-        $default_values['completionminutesenabled']=
-            !empty($default_values['completionminutes']) ? 1 : 0;
-        if(empty($default_values['completionminutes'])) {
-            $default_values['completionminutes']=1;
+    public function data_preprocessing(&$defaultvalues) {
+        $defaultvalues['completionminutesenabled'] =
+            !empty($defaultvalues['completionminutes']) ? 1 : 0;
+        if (empty($defaultvalues['completionminutes'])) {
+            $defaultvalues['completionminutes'] = 1;
         }
     }
 }

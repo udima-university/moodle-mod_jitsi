@@ -73,6 +73,11 @@ class mod_jitsi_external extends external_api{
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     */
     public static function enter_session_parameters() {
         return new external_function_parameters(
             array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
@@ -80,6 +85,12 @@ class mod_jitsi_external extends external_api{
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @param int $jitsi Jitsi session id
+     * @param int $user User id
+     */
     public static function enter_session($jitsi, $user) {
         global $DB;
         $event = \mod_jitsi\event\jitsi_session_enter::create(array(
@@ -100,19 +111,27 @@ class mod_jitsi_external extends external_api{
         return new external_value(PARAM_TEXT, 'Enter session');
     }
 
+    /**
+     * Returns description of method result value
+     * @return external_description
+     */
     public static function participating_session_parameters() {
         return new external_function_parameters(
             array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
-                    'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED), 
+                    'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
                     'cmid' => new external_value(PARAM_INT, 'Course Module id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
         );
     }
 
+    /**
+     * Register a participation in a Jitsi session
+     * @param int $jitsi Jitsi session id
+     * @param int $user User id
+     * @param int $cmid Course Module id
+     */
     public static function participating_session($jitsi, $user, $cmid) {
         global $DB;
-
         $context = context_module::instance($cmid);
-        
         $event = \mod_jitsi\event\jitsi_session_participating::create(array(
             'objectid' => $jitsi,
             'context' => $context,
@@ -120,10 +139,8 @@ class mod_jitsi_external extends external_api{
         $event->add_record_snapshot('course', $jitsi->course);
         $event->add_record_snapshot('jitsi', $jitsiob);
         $event->trigger();
-
         update_completition(get_coursemodule_from_id('jitsi', $cmid, 0, false, MUST_EXIST));
     }
-
 
     /**
      * Returns description of method result value
@@ -267,7 +284,7 @@ class mod_jitsi_external extends external_api{
 
                 $bindbroadcastresponse = $youtube->liveBroadcasts->bind($broadcastsresponse['id'], 'id,contentDetails',
                     array('streamId' => $streamsresponse['id'], ));
-                    
+
             } catch (Google_Service_Exception $e) {
                 throw new \Exception("exception".$e->getMessage());
             } catch (Google_Exception $e) {
