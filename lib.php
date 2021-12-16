@@ -521,7 +521,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "       var respuesta = ajax.call([{\n";
         echo "            methodname: 'mod_jitsi_create_stream',\n";
-        echo "            args: {session:'".$session."', jitsi:'".$jitsi->id."'},\n";
+        echo "            args: {session:'".$session."', jitsi:'".$jitsi->id."', userid: '".$USER->id."'},\n";
 
         echo "       }]);\n";
         echo "       respuesta[0].done(function(response) {\n";

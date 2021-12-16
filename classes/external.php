@@ -69,7 +69,8 @@ class mod_jitsi_external extends external_api{
     public static function create_stream_parameters() {
         return new external_function_parameters(
             array('session' => new external_value(PARAM_TEXT, 'Session object from google', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
-                  'jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+                  'jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED), 
+                  'userid' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
         );
     }
 
@@ -204,11 +205,11 @@ class mod_jitsi_external extends external_api{
         return 'recording'.$jitsiob->recording;
     }
 
-    public static function create_stream($session, $jitsi) {
+    public static function create_stream($session, $jitsi, $userid) {
         global $CFG, $DB;
 
         $params = self::validate_parameters(self::create_stream_parameters(),
-                array('session' => $session, 'jitsi' => $jitsi));
+                array('session' => $session, 'jitsi' => $jitsi, 'userid' => $userid));
 
         if (!file_exists(__DIR__ . '/../api/vendor/autoload.php')) {
             throw new \Exception('Api client not found on '.$CFG->wwwroot.'/mod/jitsi/api/vendor/autoload.php');
@@ -297,6 +298,7 @@ class mod_jitsi_external extends external_api{
         $source->link = $broadcastsresponse['id'];
         $source->account = $account->id;
         $source->timecreated = time();
+        $source->userid = $userid;
         $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
 
         $record = new stdClass();
