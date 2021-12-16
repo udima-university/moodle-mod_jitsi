@@ -82,7 +82,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_heading('jitsistreaming',
             get_string('streamingconfig', 'jitsi'), get_string('streamingconfigex', 'jitsi', $CFG->wwwroot.'/mod/jitsi/auth.php')));
     $settings->add(new admin_setting_configcheckbox('jitsi_livebutton', get_string('streamingbutton', 'jitsi'),
-            get_string('streamingbuttonex', 'jitsi'), 0));
+            get_string('streamingbuttonex', 'jitsi'), 1));
 
     $streamingoptions = ['Jitsi interface', 'Integrate'];
     $settings->add(new admin_setting_configselect('jitsi_streamingoption', get_string('streamingoption', 'jitsi'),
