@@ -227,7 +227,7 @@ if ($CFG->jitsi_invitebuttons == 1 && has_capability('mod/jitsi:createlink', $PA
     echo "</button>";
 }
 
-$sql = 'select * from {jitsi_record} where jitsi = '.$jitsi->id.' and deleted = 0 order by id';
+$sql = 'select * from {jitsi_record} where jitsi = '.$jitsi->id.' and deleted = 0 order by id desc';
 $records = $DB->get_records_sql($sql);
 
 if ($records) {
@@ -338,12 +338,23 @@ if ($records) {
                 echo $record->name;
             }
             echo "</h5>";
-            echo "<h6 class=\"card-subtitle mb-2 text-muted\">".userdate($sourcerecord->timecreated)."</h6>";
+            if ($sourcerecord) { 
+                echo "<h6 class=\"card-subtitle mb-2 text-muted\">".userdate($sourcerecord->timecreated)."</h6>";
+            } else {
+                echo "<h6 class=\"card-subtitle mb-2 text-muted\">".get_string('error')."</h6>";
+
+            }
 
             echo "<div class=\"embed-responsive embed-responsive-16by9\">";
-            doembedable($sourcerecord->link);
-            echo "<iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/".$sourcerecord->link."\"
-                allowfullscreen></iframe>";
+            if ($sourcerecord) {
+                doembedable($sourcerecord->link);
+                echo "<iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/".$sourcerecord->link."\"
+                    allowfullscreen></iframe>";
+            } else {
+                echo "<iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/\"
+                    allowfullscreen></iframe>";
+            }
+
             echo "</div>";
             echo "<div class=\"row\">";
             echo "<div class=\"col-sm\">";
