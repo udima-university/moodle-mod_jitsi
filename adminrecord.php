@@ -57,25 +57,25 @@ echo $OUTPUT->box(get_string('tablelistjitsis', 'jitsi'));
 
 if (is_siteadmin()) {
     $table = new html_table();
-    $table->head = array('Id', 'Link', get_string('acount', 'jitsi'), get_string('date'), get_string('delete'));
+    $table->head = array('Id', 'Link', get_string('account', 'jitsi'), get_string('date'), get_string('delete'));
     $sources = $DB->get_records('jitsi_source_record', array());
-    $acountinuse = $DB->get_record('jitsi_record_acount', array('inuse' => 1));
+    $accountinuse = $DB->get_record('jitsi_record_account', array('inuse' => 1));
 
     foreach ($sources as $source) {
         if (isDeletable($source->id)) {
-            if ($source->acount == $acountinuse->id) {
+            if ($source->account == $accountinuse->id) {
                 $deleteurl = new moodle_url('/mod/jitsi/adminrecord.php?&deletejitsisourceid='.
                     $source->id. '&sesskey=' . sesskey());
                 $deleteicon = new pix_icon('t/delete', get_string('delete'));
-                $acount = $DB->get_record('jitsi_record_acount', array('id' => $source->acount));
+                $account = $DB->get_record('jitsi_record_account', array('id' => $source->account));
                 $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon,
                     new confirm_action(get_string('deletesourceq', 'jitsi')));
                 $table->data[] = array($source->id, '<a href="https://youtu.be/'.$source->link.'" target=_blank">'
-                    .$source->link.'</a>', $acount->name, userdate($source->timecreated), $deleteaction);
+                    .$source->link.'</a>', $account->name, userdate($source->timecreated), $deleteaction);
             } else {
-                $acount = $DB->get_record('jitsi_record_acount', array('id' => $source->acount));
-                $table->data[] = array($source->id, $source->link, $acount->name, userdate($source->timecreated),
-                    get_string('otheracount', 'jitsi'));
+                $account = $DB->get_record('jitsi_record_account', array('id' => $source->account));
+                $table->data[] = array($source->id, $source->link, $account->name, userdate($source->timecreated),
+                    get_string('otheraccount', 'jitsi'));
             }
         }
     }

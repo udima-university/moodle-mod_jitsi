@@ -233,7 +233,7 @@ function xmldb_jitsi_upgrade($oldversion) {
     if ($oldversion < 2021101503) {
 
         // Define table jitsi_record to be created.
-        $table = new xmldb_table('jitsi_record_acount');
+        $table = new xmldb_table('jitsi_record_account');
 
         // Adding fields to table jitsi_record.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
@@ -274,7 +274,7 @@ function xmldb_jitsi_upgrade($oldversion) {
         // Adding fields to table jitsi_record.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('link', XMLDB_TYPE_TEXT, null, null, null, null, null);
-        $table->add_field('acount', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('account', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 
         // Adding keys to table jitsi_record.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
@@ -298,7 +298,7 @@ function xmldb_jitsi_upgrade($oldversion) {
         foreach ($records as $record) {
             $source = new stdClass();
             $source->link = $record->link;
-            $source->acount = 0;
+            $source->account = 0;
 
             $sourceid = $DB->insert_record('jitsi_source_record', $source);
             $record->source = $sourceid;
@@ -317,7 +317,7 @@ function xmldb_jitsi_upgrade($oldversion) {
     if ($oldversion < 2021102100) {
         $table = new xmldb_table('jitsi_source_record');
         $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, '0',
-            'acount');
+            'account');
 
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
@@ -348,7 +348,7 @@ function xmldb_jitsi_upgrade($oldversion) {
     }
 
     if ($oldversion < 2021110400) {
-        $table = new xmldb_table('jitsi_record_acount');
+        $table = new xmldb_table('jitsi_record_account');
         $field = new xmldb_field('inuse', XMLDB_TYPE_INTEGER, '1', true, '0', null, null);
         $field = new xmldb_field('inuse', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'tokencreated');
 

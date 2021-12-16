@@ -95,7 +95,7 @@ if ($ADMIN->fulltree) {
 
     $link = new moodle_url('/mod/jitsi/adminaccounts.php');
     $settings->add(new admin_setting_heading('jitsi_loginoutyoutube', '', '<a href='.$link.' >'.
-    get_string('acounts', 'jitsi').'</a>'));
+    get_string('accounts', 'jitsi').'</a>'));
 
     $link = new moodle_url('/mod/jitsi/adminrecord.php');
     $settings->add(new admin_setting_heading('jitsi_records_admin', '', '<a href='.$link.' >'.

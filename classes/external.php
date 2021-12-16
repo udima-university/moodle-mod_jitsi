@@ -222,9 +222,9 @@ class mod_jitsi_external extends external_api{
 
         $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
 
-        $acount = $DB->get_record('jitsi_record_acount', array('inuse' => 1));
+        $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
 
-        $_SESSION[$tokensessionkey] = $acount->clientaccesstoken;
+        $_SESSION[$tokensessionkey] = $account->clientaccesstoken;
 
         $client->setAccessToken($_SESSION[$tokensessionkey]);
 
@@ -232,14 +232,14 @@ class mod_jitsi_external extends external_api{
         $timediff = $t - $token->tokencreated;
 
         if ($timediff > 3599) {
-            $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($acount->clientrefreshtoken);
+            $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
 
-            $acount->clientaccesstoken = $newaccesstoken["access_token"];
+            $account->clientaccesstoken = $newaccesstoken["access_token"];
             $newrefreshaccesstoken = $client->getRefreshToken();
-            $acount->clientrefreshtoken = $newrefreshaccesstoken;
+            $account->clientrefreshtoken = $newrefreshaccesstoken;
 
-            $acount->tokencreated = $t;
-            $DB->update_record('jitsi_record_acount', $acount);
+            $account->tokencreated = $t;
+            $DB->update_record('jitsi_record_account', $account);
         }
         $youtube = new Google_Service_YouTube($client);
 
@@ -291,11 +291,11 @@ class mod_jitsi_external extends external_api{
                 throw new \Exception("exception".$e->getMessage());
             }
         }
-        $acount = $DB->get_record('jitsi_record_acount', array('inuse' => 1));
+        $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
 
         $source = new stdClass();
         $source->link = $broadcastsresponse['id'];
-        $source->acount = $acount->id;
+        $source->account = $account->id;
         $source->timecreated = time();
         $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
 

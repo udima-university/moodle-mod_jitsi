@@ -359,7 +359,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "<div class=\"row\">";
     echo "<div class=\"col-sm\">";
 
-    $acount = $DB->get_record('jitsi_record_acount', array('inuse' => 1));
+    $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
 
     echo "<div class=\"row\">";
     echo "<div class=\"col-sm-9\">";
@@ -368,7 +368,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "<div class=\"col-sm-3 text-right\">";
     if ($user == null) {
         if ($CFG->jitsi_livebutton == 1 && has_capability('mod/jitsi:record', $PAGE->context)
-            && $acount != null
+            && $account != null
             && ($CFG->jitsi_streamingoption == 1)) {
             echo "<div class=\"text-right\">";
             echo "<div class=\"custom-control custom-switch\">";
@@ -377,7 +377,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             echo "  <label class=\"custom-control-label\" for=\"recordSwitch\">Record & Streaming</label>";
             echo "</div>";
             echo "</div>";
-        } else if ($CFG->jitsi_livebutton == 1 && $acount != null && $CFG->jitsi_streamingoption == 1) {
+        } else if ($CFG->jitsi_livebutton == 1 && $account != null && $CFG->jitsi_streamingoption == 1) {
             echo "<div class=\"text-right\">";
             echo "<div class=\"custom-control custom-switch\">";
             echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\" ";
@@ -722,19 +722,19 @@ function deleterecordyoutube($idsource) {
 
         $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
 
-        $acount = $DB->get_record('jitsi_record_acount', array('inuse' => 1));
+        $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
 
-        $_SESSION[$tokensessionkey] = $acount->clientaccesstoken;
+        $_SESSION[$tokensessionkey] = $account->clientaccesstoken;
         $client->setAccessToken($_SESSION[$tokensessionkey]);
         $t = time();
-        $timediff = $t - $acount->tokencreated;
+        $timediff = $t - $account->tokencreated;
 
         if ($timediff > 3599) {
-            $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($acount->clientrefreshtoken);
-            $acount->clientaccesstoken = $newaccesstoken["access_token"];
+            $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
+            $account->clientaccesstoken = $newaccesstoken["access_token"];
             $newrefreshaccesstoken = $client->getRefreshToken();
-            $acount->clientrefreshtoken = $newrefreshaccesstoken;
-            $acount->tokencreated = time();
+            $account->clientrefreshtoken = $newrefreshaccesstoken;
+            $account->tokencreated = time();
         }
 
         $youtube = new Google_Service_YouTube($client);
@@ -915,19 +915,19 @@ function doembedable($idvideo) {
 
     $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
 
-    $acount = $DB->get_record('jitsi_record_acount', array('inuse' => 1));
+    $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
 
-    $_SESSION[$tokensessionkey] = $acount->clientaccesstoken;
+    $_SESSION[$tokensessionkey] = $account->clientaccesstoken;
     $client->setAccessToken($_SESSION[$tokensessionkey]);
     $t = time();
-    $timediff = $t - $acount->tokencreated;
+    $timediff = $t - $account->tokencreated;
 
     if ($timediff > 3599) {
-        $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($acount->clientrefreshtoken);
-        $acount->clientaccesstoken = $newaccesstoken["access_token"];
+        $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
+        $account->clientaccesstoken = $newaccesstoken["access_token"];
         $newrefreshaccesstoken = $client->getRefreshToken();
-        $acount->clientrefreshtoken = $newrefreshaccesstoken;
-        $acount->tokencreated = time();
+        $account->clientrefreshtoken = $newrefreshaccesstoken;
+        $account->tokencreated = time();
     }
 
     $youtube = new Google_Service_YouTube($client);
