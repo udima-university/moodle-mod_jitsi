@@ -37,6 +37,7 @@ global $DB, $CFG;
 
 
 $daccountid = optional_param('daccountid', 0, PARAM_INT);
+$change = optional_param('change', 0, PARAM_INT);
 $sesskey = optional_param('sesskey', null, PARAM_TEXT);
 
 class accountname_form extends moodleform {
@@ -61,6 +62,15 @@ $PAGE->set_context(context_system::instance());
 
 $PAGE->set_url('/mod/jitsi/adminaccounts.php');
 require_login();
+if ($change && confirm_sesskey($sesskey)) {
+    $accounttouse = $DB->get_record('jitsi_record_account', array('id' => $change));
+    $accounttouse->inuse = 1;
+    $accountinuse = $DB->get_record('jitsi_record_account', array('inuse' => 1));
+    $accountinuse->inuse = 0;
+    $DB->update_record('jitsi_record_account', $accounttouse);
+    $DB->update_record('jitsi_record_account', $accountinuse);
+    redirect($PAGE->url, get_string('accountconnected', 'jitsi'));
+}
 
 if ($daccountid && confirm_sesskey($sesskey)) {
     $account = $DB->get_record('jitsi_record_account', array('id' => $daccountid));
@@ -124,7 +134,7 @@ if (is_siteadmin()) {
         $deleteicon = new pix_icon('t/delete', get_string('delete'));
         $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon, new confirm_action(get_string('deleteq', 'jitsi')));
 
-        $loginurl = new moodle_url('/mod/jitsi/auth.php?&name=' . $account->name);
+        $loginurl = new moodle_url('/mod/jitsi/adminaccounts.php?&change=' . $account->id. '&sesskey=' . sesskey());
         $loginicon = new pix_icon('i/publish', get_string('login'));
         $loginaction = $OUTPUT->action_icon($loginurl, $loginicon, new confirm_action(get_string('loginq', 'jitsi')));
 

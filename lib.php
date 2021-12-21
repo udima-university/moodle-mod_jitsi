@@ -531,7 +531,13 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "          })\n";
         echo "            console.log(response);";
         echo ";})";
-        echo  ".fail(function(ex) {console.log(ex);});";
+        echo  ".fail(function(ex) {";
+        echo "    console.log(ex);";
+        echo "      document.getElementById('state').innerHTML = ";
+
+        echo "    '<div class=\"alert alert-light\" role=\"alert\">The streaming account set up has insufficient privileges. Please contact your administrator.</div>';";
+        echo "      document.getElementById(\"recordSwitch\").checked = false;\n";
+        echo "  });";
         echo "    })\n";
         echo "}\n";
 
@@ -722,7 +728,9 @@ function deleterecordyoutube($idsource) {
 
         $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
 
-        $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
+        $source = $DB->get_record('jitsi_source_record', array('id' => $idsource));
+        $account = $DB->get_record('jitsi_record_account', array('id' => $source->account));
+
 
         $_SESSION[$tokensessionkey] = $account->clientaccesstoken;
         $client->setAccessToken($_SESSION[$tokensessionkey]);
@@ -741,7 +749,6 @@ function deleterecordyoutube($idsource) {
 
         if ($client->getAccessToken($idsource)) {
             try {
-                $source = $DB->get_record('jitsi_source_record', array('id' => $idsource));
                 $youtube->videos->delete($source->link);
                 delete_jitsi_record($idsource);
             } catch (Google_Service_Exception $e) {
@@ -795,25 +802,13 @@ function mod_jitsi_inplace_editable($itemtype, $itemid, $newvalue) {
  */
 function getminutes($jitsi, $userid) {
     global $DB, $USER;
-    $sqllastlog = 'select * from {logstore_standard_log} where component = ? and action = ? and
-         objectid = ? and userid = ? order by timecreated desc limit 1';
-    $sqllfirstlog = 'select * from {logstore_standard_log} where component = ? and action = ? and
-         objectid = ? and userid = ? order by timecreated desc limit 1';
-    $lastlog = $DB->get_record_sql($sqllastlog, array('mod_jitsi', 'participating', $jitsi->id, $userid));
-    $firstlog = $DB->get_record_sql($sqllastlog, array('mod_jitsi', 'enter', $jitsi->id, $userid));
-    if ($lastlog) {
-        $timeout = $lastlog->timecreated;
-    }
-    if ($firstlog) {
-        $timein = $firstlog->timecreated;
-    }
-    if ($lastlog && $firstlog) {
-        $diferencia = $timeout - $timein;
-        return round($diferencia / 60);
-    } else {
-        $diferencia = 0;
-        return $diferencia;
-    }
+    $sqlminutos = 'select * from mdl_logstore_standard_log where component = \'mod_jitsi\' and action = \'participating\' and objectid = '.$jitsi->id.' and userid = '.$userid;
+    $sqlentry = 'select * from mdl_logstore_standard_log where component = \'mod_jitsi\' and action = \'enter\' and objectid = '.$jitsi->id.' and userid = '.$userid;
+
+    $minutos = $DB->get_records_sql($sqlminutos);
+    $entrys = $DB->get_records_sql($sqlentry);
+
+    return count($minutos)-count($entrys);
 }
 
 /**
@@ -915,7 +910,8 @@ function doembedable($idvideo) {
 
     $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
 
-    $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
+    $source = $DB->get_record('jitsi_source_record', array('link' => $idvideo));
+    $account = $DB->get_record('jitsi_record_account', array('id' => $source->account));
 
     $_SESSION[$tokensessionkey] = $account->clientaccesstoken;
     $client->setAccessToken($_SESSION[$tokensessionkey]);

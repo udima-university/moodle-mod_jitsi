@@ -63,20 +63,14 @@ if (is_siteadmin()) {
 
     foreach ($sources as $source) {
         if (isDeletable($source->id)) {
-            if ($source->account == $accountinuse->id) {
-                $deleteurl = new moodle_url('/mod/jitsi/adminrecord.php?&deletejitsisourceid='.
-                    $source->id. '&sesskey=' . sesskey());
-                $deleteicon = new pix_icon('t/delete', get_string('delete'));
-                $account = $DB->get_record('jitsi_record_account', array('id' => $source->account));
-                $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon,
-                    new confirm_action(get_string('deletesourceq', 'jitsi')));
-                $table->data[] = array($source->id, '<a href="https://youtu.be/'.$source->link.'" target=_blank">'
-                    .$source->link.'</a>', $account->name, userdate($source->timecreated), $deleteaction);
-            } else {
-                $account = $DB->get_record('jitsi_record_account', array('id' => $source->account));
-                $table->data[] = array($source->id, $source->link, $account->name, userdate($source->timecreated),
-                    get_string('otheraccount', 'jitsi'));
-            }
+            $deleteurl = new moodle_url('/mod/jitsi/adminrecord.php?&deletejitsisourceid='.
+                $source->id. '&sesskey=' . sesskey());
+            $deleteicon = new pix_icon('t/delete', get_string('delete'));
+            $account = $DB->get_record('jitsi_record_account', array('id' => $source->account));
+            $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon,
+                new confirm_action(get_string('deletesourceq', 'jitsi')));
+            $table->data[] = array($source->id, '<a href="https://youtu.be/'.$source->link.'" target=_blank">'
+                .$source->link.'</a>', $account->name, userdate($source->timecreated), $deleteaction);
         }
     }
     echo html_writer::table($table);

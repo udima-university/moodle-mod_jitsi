@@ -65,8 +65,6 @@ if ($name) {
             $DB->update_record('jitsi_record_account', $accountinuse);
         }
 
-        $client->revokeToken($accountinuse->clientaccesstoken);
-
         $accountinuse->inuse = 0;
         $DB->update_record('jitsi_record_account', $accountinuse);
     }
@@ -186,7 +184,6 @@ if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
         $PAGE->set_title(format_string(get_string('accounts', 'jitsi')));
         $PAGE->set_heading(format_string(get_string('accounts', 'jitsi')));
         echo $OUTPUT->header();
-
 
         $rand = mt_rand();
         $stateparameters = 'name='.$name.'&rand='.$rand;
