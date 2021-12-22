@@ -47,11 +47,8 @@ class name_form extends moodleform {
 
         $mform = $this->_form;
         $mform->addElement('text', 'name', get_string('name'));
-        $mform->addElement('text', 'mail', get_string('email'));
         $mform->setType('name', PARAM_TEXT);
-        $mform->setType('mail', PARAM_EMAIL);
         $mform->addRule('name', get_string('required'), 'required', '', 'client', false, false);
-        $mform->addRule('mail', get_string('missingemail'), 'email', null, 'client');
 
         $buttonarray = array();
         $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('continue'));
@@ -71,6 +68,10 @@ $PAGE->set_title(get_string('accesstotitle', 'jitsi', $sesion->name));
 $PAGE->set_heading(get_string('accesstotitle', 'jitsi', $sesion->name));
 
 echo $OUTPUT->header();
+
+if ($jitsi->intro) {
+    echo $OUTPUT->box(format_module_intro('jitsi', $jitsi, $cm->id), 'generalbox mod_introbox', 'jitsiintro');
+}
 
 $event = \mod_jitsi\event\jitsi_session_guest_form::create(array(
   'objectid' => $PAGE->cm->instance,
@@ -98,7 +99,6 @@ if (!istimedout($sesion)) {
                     } else {
                         $mform->display();
                     }
-                    echo get_string('mailprivacy', 'jitsi');
                 } else {
                     echo $OUTPUT->box(get_string('nostart', 'jitsi', $session->minpretime));
                 }
@@ -138,5 +138,6 @@ if (!istimedout($sesion)) {
 } else {
     echo generateerrortime($sesion);
 }
+echo $CFG->jitsi_help;
 
 echo $OUTPUT->footer();

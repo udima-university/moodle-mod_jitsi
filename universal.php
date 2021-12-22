@@ -31,7 +31,6 @@ require_once(dirname(__FILE__).'/lib.php');
 
 $sessionid = required_param('ses', PARAM_INT);
 $name = required_param('name', PARAM_TEXT);
-$mail = required_param('mail', PARAM_TEXT);
 $avatar = optional_param('avatar', null, PARAM_TEXT);
 $id = required_param('id', PARAM_INT);
 
@@ -84,7 +83,7 @@ $PAGE->set_heading($sesion->name);
 
 echo $OUTPUT->header();
 if (!istimedout($sesion)) {
-    createsession(0, $id,  $avatar, $name, $sesparam, $mail, $sesion, true, null);
+    createsession(0, $id,  $avatar, $name, $sesparam, null, $sesion, true, null);
 
 } else {
     echo generateerrortime($sesion);
