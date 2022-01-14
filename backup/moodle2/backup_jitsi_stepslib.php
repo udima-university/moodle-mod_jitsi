@@ -32,19 +32,43 @@ class backup_jitsi_activity_structure_step extends backup_activity_structure_ste
      * @return backup_nested_element
      */
     protected function define_structure() {
+
+        $userinfo = $this->get_setting_value('userinfo');
+
         $jitsi = new backup_nested_element('jitsi', array('id'), array('name', 'intro', 'introformat',
             'timeopen', 'timeclose', 'validitytime', 'minpretime', 'token', 'completionminutes'));
-
+        
+        $sources = new backup_nested_element('sources');
+        $source = new backup_nested_element('source', array('id'), array('link', 'timecreated', 'userid'));
+    
         $records = new backup_nested_element('records');
-        $record = new backup_nested_element('record', array('id'), array('jitsi', 'deleted', 'source', 'visible', 'name'));
+        $record = new backup_nested_element('record', array('id'), array('deleted', 'source', 'visible', 'name'));
+
+        
+        
 
         // Build the tree.
         $jitsi->add_child($records);
         $records->add_child($record);
 
+        $record->add_child($sources);
+        $sources->add_child($source);
+
+        // $jitsi->add_child($sources);
+        // $sources->add_child($source);
+
         $jitsi->set_source_table('jitsi', array('id' => backup::VAR_ACTIVITYID));
+        
+       
+        // if ($userinfo) {
+        $source->set_source_table('jitsi_source_record', array('id' => '../../source'));
 
         $record->set_source_table('jitsi_record', array('jitsi' => '../../id'));
+
+        // }
+
+
+        // $source->annotate_ids('user', 'userid');
 
         $jitsi->annotate_files('mod_jitsi', 'intro', null);
         return $this->prepare_activity_structure($jitsi);

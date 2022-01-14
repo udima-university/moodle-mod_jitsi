@@ -38,6 +38,9 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="source" TYPE="foreign" FIELDS="source" REFTABLE="jitsi_source_record" REFFIELDS="id"/>
+        <KEY NAME="jitsi" TYPE="foreign" FIELDS="jitsi" REFTABLE="jitsi" REFFIELDS="id"/>
+
       </KEYS>
       <INDEXES>
         <INDEX NAME="jitsi" UNIQUE="false" FIELDS="jitsi"/>
@@ -60,7 +63,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true"/>
         <FIELD NAME="link" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="link of the record"/>
-        <FIELD NAME="account" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Account"/>
+        <FIELD NAME="account" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Account"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>

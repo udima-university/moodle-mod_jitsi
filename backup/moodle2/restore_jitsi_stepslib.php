@@ -32,8 +32,15 @@ class restore_jitsi_activity_structure_step extends restore_activity_structure_s
     protected function define_structure() {
 
         $paths = array();
+        $userinfo = $this->get_setting_value('userinfo');
+
         $paths[] = new restore_path_element('jitsi', '/activity/jitsi');
-        $paths[] = new restore_path_element('jitsi_record', '/activity/jitsi/records/record');
+        if ($userinfo) {
+            $paths[] = new restore_path_element('jitsi_source_record', '/activity/jitsi/records/record/sources/source');
+            // $paths[] = new restore_path_element('jitsi_source_record', '/activity/jitsi/sources/source');
+            $paths[] = new restore_path_element('jitsi_record', '/activity/jitsi/records/record');
+
+        }
 
         // Return the paths wrapped into standard activity structure.
         return $this->prepare_activity_structure($paths);
@@ -48,7 +55,6 @@ class restore_jitsi_activity_structure_step extends restore_activity_structure_s
         global $DB;
 
         $data = (object)$data;
-        $oldid = $data->id;
         $data->course = $this->get_courseid();
 
         if (empty($data->timecreated)) {
@@ -66,22 +72,60 @@ class restore_jitsi_activity_structure_step extends restore_activity_structure_s
         $this->apply_activity_instance($newitemid);
     }
 
+    protected function process_jitsi_source_record($data) {
+        global $DB;
+        $data = (object)$data;
+        $oldid = $data->id;
+        
+        $source = $DB->get_record('jitsi_source_record', ['link' => $data->link]);
+        if (!$source) {
+            $data->userid = $this->get_mappingid('user', $data->userid);
+    
+            $newitemid = $DB->insert_record('jitsi_source_record', $data);
+            $data->id = $newitemid;
+
+        } else {
+            $data->id = $source->id;
+        } 
+        $this->get_logger()->process("SOURCE -- el id del source: ".$data->id, backup::LOG_ERROR);
+        $this->sources[$data->id] = $data;
+    }
+
     protected function process_jitsi_record($data) {
         global $DB;
 
         $data = (object)$data;
 
         $data->jitsi = $this->get_new_parentid('jitsi');
-        $newitemid = $DB->insert_record('jitsi_record', $data);
 
-        // No need to save this mapping as far as nothing depend on it
-        // (child paths, file areas nor links decoder).
+        $data->source = $this->get_mappingid('jitsi_source_record', $data->source);
+        $newitemid = $DB->insert_record('jitsi_record', $data);
+        $data->id = $newitemid;
+
+        $this->get_logger()->process("RECORD -- el id del record: ".$data->id, backup::LOG_ERROR);
+
+        $this->records[$data->id] = $data;
+
+
     }
 
     /**
      * Post-execution actions
      */
     protected function after_execute() {
+        
+        global $DB;
+        foreach($this->sources as $source) {
+            $sourceobj = $DB->get_record('jitsi_source_record', ['link' => $source->link]);
+        }
+
+        foreach($this->records as $record) {
+            $recordob = $DB->get_record('jitsi_record', ['id' => $record->id]);
+            $recordob->source = $sourceobj->id;
+            $DB->update_record('jitsi_record', $recordob);
+        }
+        
+
         // Add jitsi related files, no need to match by itemname (just internally handled context).
         $this->add_related_files('mod_jitsi', 'intro', null);
     }
