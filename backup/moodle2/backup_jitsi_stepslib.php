@@ -37,15 +37,12 @@ class backup_jitsi_activity_structure_step extends backup_activity_structure_ste
 
         $jitsi = new backup_nested_element('jitsi', array('id'), array('name', 'intro', 'introformat',
             'timeopen', 'timeclose', 'validitytime', 'minpretime', 'token', 'completionminutes'));
-        
         $sources = new backup_nested_element('sources');
-        $source = new backup_nested_element('source', array('id'), array('link', 'timecreated', 'userid'));
-    
+        $source = new backup_nested_element('source', array('id'), array('link', 'account', 'timecreated', 'userid'));
         $records = new backup_nested_element('records');
         $record = new backup_nested_element('record', array('id'), array('deleted', 'source', 'visible', 'name'));
-
-        
-        
+        $accounts = new backup_nested_element('accounts');
+        $account = new backup_nested_element('account', array('id'), array('name'));
 
         // Build the tree.
         $jitsi->add_child($records);
@@ -54,21 +51,18 @@ class backup_jitsi_activity_structure_step extends backup_activity_structure_ste
         $record->add_child($sources);
         $sources->add_child($source);
 
-        // $jitsi->add_child($sources);
-        // $sources->add_child($source);
+        $source->add_child($accounts);
+        $accounts->add_child($account);
 
         $jitsi->set_source_table('jitsi', array('id' => backup::VAR_ACTIVITYID));
-        
-       
-        // if ($userinfo) {
-        $source->set_source_table('jitsi_source_record', array('id' => '../../source'));
 
-        $record->set_source_table('jitsi_record', array('jitsi' => '../../id'));
+        if ($userinfo) {
+            $source->set_source_table('jitsi_source_record', array('id' => '../../source'));
+            $record->set_source_table('jitsi_record', array('jitsi' => '../../id'));
+            $account->set_source_table('jitsi_record_account', array('id' => '../../account'));
+        }
 
-        // }
-
-
-        // $source->annotate_ids('user', 'userid');
+        $source->annotate_ids('user', 'userid');
 
         $jitsi->annotate_files('mod_jitsi', 'intro', null);
         return $this->prepare_activity_structure($jitsi);

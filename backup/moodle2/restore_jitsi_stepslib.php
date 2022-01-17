@@ -35,9 +35,10 @@ class restore_jitsi_activity_structure_step extends restore_activity_structure_s
         $userinfo = $this->get_setting_value('userinfo');
 
         $paths[] = new restore_path_element('jitsi', '/activity/jitsi');
+        $paths[] = new restore_path_element('jitsi_record_account',
+            '/activity/jitsi/records/record/sources/source/accounts/account');
         if ($userinfo) {
             $paths[] = new restore_path_element('jitsi_source_record', '/activity/jitsi/records/record/sources/source');
-            // $paths[] = new restore_path_element('jitsi_source_record', '/activity/jitsi/sources/source');
             $paths[] = new restore_path_element('jitsi_record', '/activity/jitsi/records/record');
 
         }
@@ -67,66 +68,67 @@ class restore_jitsi_activity_structure_step extends restore_activity_structure_s
 
         $data->token = bin2hex(random_bytes(32));
 
-        // Create the jitsi instance.
         $newitemid = $DB->insert_record('jitsi', $data);
         $this->apply_activity_instance($newitemid);
+    }
+
+    protected function process_jitsi_record_account($data) {
+        global $DB;
+        $data = (object)$data;
+        $oldid = $data->id;
+        $account = $DB->get_record('jitsi_record_account', array('name' => $data->name));
+        if (!$account) {
+            $newitemid = $DB->insert_record('jitsi_record_account', $data);
+            $this->set_mapping('jitsi_record_account', $data->id, $newitemid);
+        } else {
+            $this->set_mapping('jitsi_record_account', $oldid, $account->id);
+        }
     }
 
     protected function process_jitsi_source_record($data) {
         global $DB;
         $data = (object)$data;
         $oldid = $data->id;
-        
         $source = $DB->get_record('jitsi_source_record', ['link' => $data->link]);
         if (!$source) {
             $data->userid = $this->get_mappingid('user', $data->userid);
-    
             $newitemid = $DB->insert_record('jitsi_source_record', $data);
+            $this->set_mapping('jitsi_source_record', $oldid, $newitemid);
             $data->id = $newitemid;
-
         } else {
             $data->id = $source->id;
-        } 
-        $this->get_logger()->process("SOURCE -- el id del source: ".$data->id, backup::LOG_ERROR);
+            $this->set_mapping('jitsi_source_record', $oldid, $source->id);
+        }
         $this->sources[$data->id] = $data;
     }
 
     protected function process_jitsi_record($data) {
         global $DB;
-
         $data = (object)$data;
-
         $data->jitsi = $this->get_new_parentid('jitsi');
-
-        $data->source = $this->get_mappingid('jitsi_source_record', $data->source);
         $newitemid = $DB->insert_record('jitsi_record', $data);
         $data->id = $newitemid;
-
-        $this->get_logger()->process("RECORD -- el id del record: ".$data->id, backup::LOG_ERROR);
-
         $this->records[$data->id] = $data;
-
-
     }
 
     /**
      * Post-execution actions
      */
     protected function after_execute() {
-        
-        global $DB;
-        foreach($this->sources as $source) {
-            $sourceobj = $DB->get_record('jitsi_source_record', ['link' => $source->link]);
-        }
 
-        foreach($this->records as $record) {
+        global $DB;
+        foreach ($this->records as $record) {
             $recordob = $DB->get_record('jitsi_record', ['id' => $record->id]);
-            $recordob->source = $sourceobj->id;
+            $recordob->source = $this->get_mappingid('jitsi_source_record', $record->source);
             $DB->update_record('jitsi_record', $recordob);
         }
-        
 
-        // Add jitsi related files, no need to match by itemname (just internally handled context).
+        foreach ($this->sources as $source) {
+            $sourceob = $DB->get_record('jitsi_source_record', ['id' => $source->id]);
+            $sourceob->account = $this->get_mappingid('jitsi_record_account', $source->account);
+            $DB->update_record('jitsi_source_record', $sourceob);
+        }
+
         $this->add_related_files('mod_jitsi', 'intro', null);
     }
 }

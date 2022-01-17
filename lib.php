@@ -535,7 +535,8 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "    console.log(ex);";
         echo "      document.getElementById('state').innerHTML = ";
 
-        echo "    '<div class=\"alert alert-light\" role=\"alert\">The streaming account set up has insufficient privileges. Please contact your administrator.</div>';";
+        echo "    '<div class=\"alert alert-light\" role=\"alert\">"
+            .get_string('accountinsufficientprivileges', 'jitsi')."</div>';";
         echo "      document.getElementById(\"recordSwitch\").checked = false;\n";
         echo "  });";
         echo "    })\n";
@@ -731,7 +732,6 @@ function deleterecordyoutube($idsource) {
         $source = $DB->get_record('jitsi_source_record', array('id' => $idsource));
         $account = $DB->get_record('jitsi_record_account', array('id' => $source->account));
 
-
         $_SESSION[$tokensessionkey] = $account->clientaccesstoken;
         $client->setAccessToken($_SESSION[$tokensessionkey]);
         $t = time();
@@ -747,15 +747,20 @@ function deleterecordyoutube($idsource) {
 
         $youtube = new Google_Service_YouTube($client);
 
-        if ($client->getAccessToken($idsource)) {
-            try {
-                $youtube->videos->delete($source->link);
-                delete_jitsi_record($idsource);
-            } catch (Google_Service_Exception $e) {
-                throw new \Exception("exception".$e->getMessage());
-            } catch (Google_Exception $e) {
-                throw new \Exception("exception".$e->getMessage());
+        $listresponse = $youtube->videos->listVideos("snippet", array('id' => $source->link));
+        if ($listresponse['items'] != []) {
+            if ($client->getAccessToken($idsource)) {
+                try {
+                    $youtube->videos->delete($source->link);
+                    delete_jitsi_record($idsource);
+                } catch (Google_Service_Exception $e) {
+                    throw new \Exception("exception".$e->getMessage());
+                } catch (Google_Exception $e) {
+                    throw new \Exception("exception".$e->getMessage());
+                }
             }
+        } else {
+            delete_jitsi_record($idsource);
         }
     }
 }
@@ -802,13 +807,15 @@ function mod_jitsi_inplace_editable($itemtype, $itemid, $newvalue) {
  */
 function getminutes($jitsi, $userid) {
     global $DB, $USER;
-    $sqlminutos = 'select * from mdl_logstore_standard_log where component = \'mod_jitsi\' and action = \'participating\' and objectid = '.$jitsi->id.' and userid = '.$userid;
-    $sqlentry = 'select * from mdl_logstore_standard_log where component = \'mod_jitsi\' and action = \'enter\' and objectid = '.$jitsi->id.' and userid = '.$userid;
+    $sqlminutos = 'select * from mdl_logstore_standard_log where component = \'mod_jitsi\'
+         and action = \'participating\' and objectid = '.$jitsi->id.' and userid = '.$userid;
+    $sqlentry = 'select * from mdl_logstore_standard_log where component = \'mod_jitsi\'
+         and action = \'enter\' and objectid = '.$jitsi->id.' and userid = '.$userid;
 
     $minutos = $DB->get_records_sql($sqlminutos);
     $entrys = $DB->get_records_sql($sqlentry);
 
-    return count($minutos)-count($entrys);
+    return count($minutos) - count($entrys);
 }
 
 /**
@@ -930,9 +937,14 @@ function doembedable($idvideo) {
 
     $listresponse = $youtube->videos->listVideos("status", array('id' => $idvideo));
     $video = $listresponse[0];
+
     $videostatus = $video['status'];
-    if ($videostatus['embeddable'] != true) {
-        $videostatus['embeddable'] = 'true';
-        $updateresponse = $youtube->videos->update("status", $video);
+    if ($videostatus != null) {
+        if ($videostatus['embeddable'] != true) {
+            $videostatus['embeddable'] = 'true';
+            $updateresponse = $youtube->videos->update("status", $video);
+        }
     }
+
+    return $updateresponse;
 }

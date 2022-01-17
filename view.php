@@ -192,7 +192,7 @@ echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
 $logs = $DB->get_records_select('logstore_standard_log', 'component = ? and action = ? and objectid = ? and
      courseid = ? and timecreated >= ? and timecreated < ?', array('mod_jitsi', 'participating',
      $jitsi->id, $course->id, $today[0] - 60, $today[0]));
-    
+
 echo " ";
 echo "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\"
      class=\"bi bi-person-workspace\" viewBox=\"0 0 16 16\">";
@@ -229,7 +229,8 @@ if ($CFG->jitsi_invitebuttons == 1 && has_capability('mod/jitsi:createlink', $PA
 
 $sql = 'select * from {jitsi_record} where jitsi = '.$jitsi->id.' and deleted = 0 order by id desc';
 $records = $DB->get_records_sql($sql);
-$sqlusersconnected = 'select userid from mdl_logstore_standard_log where component = \'mod_jitsi\' and action = \'enter\' and objectid = '.$jitsi->id.' group by userid';
+$sqlusersconnected = 'select userid from mdl_logstore_standard_log where component = \'mod_jitsi\'
+     and action = \'enter\' and objectid = '.$jitsi->id.' group by userid';
 $usersconnected = $DB->get_records_sql($sqlusersconnected);
 
 if ($records) {
@@ -342,16 +343,18 @@ if ($records) {
                 echo $record->name;
             }
             echo "</h5>";
-            if ($sourcerecord) { 
+            if ($sourcerecord) {
                 echo "<h6 class=\"card-subtitle mb-2 text-muted\">".userdate($sourcerecord->timecreated)."</h6>";
             } else {
                 echo "<h6 class=\"card-subtitle mb-2 text-muted\">".get_string('error')."</h6>";
 
             }
-
+            $account = $DB->get_record('jitsi_record_account', array('id' => $sourcerecord->account));
             echo "<div class=\"embed-responsive embed-responsive-16by9\">";
             if ($sourcerecord) {
-                doembedable($sourcerecord->link);
+                if ($account->clientaccesstoken != null) {
+                    doembedable($sourcerecord->link);
+                }
                 echo "<iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/".$sourcerecord->link."\"
                     allowfullscreen></iframe>";
             } else {

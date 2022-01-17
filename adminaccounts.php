@@ -138,19 +138,27 @@ if (is_siteadmin()) {
         $loginicon = new pix_icon('i/publish', get_string('login'));
         $loginaction = $OUTPUT->action_icon($loginurl, $loginicon, new confirm_action(get_string('loginq', 'jitsi')));
 
+        $authurl = new moodle_url('/mod/jitsi/auth.php?&name=' . $account->name);
+        $authicon = new pix_icon('i/permissionlock', 'auth');
+        $authaction = $OUTPUT->action_icon($authurl, $authicon, new confirm_action('auth?'));
         $numrecords = $DB->count_records('jitsi_source_record', array('account' => $account->id));
-        if ($account->inuse == 1) {
-            if ($numrecords == 0) {
-                $table->data[] = array($account->name.get_string('inuse', 'jitsi'), $deleteaction, $numrecords);
+        if ($account->clientaccesstoken != null) {
+            if ($account->inuse == 1) {
+                if ($numrecords == 0) {
+                    $table->data[] = array($account->name.get_string('inuse', 'jitsi'), $deleteaction, $numrecords);
+                } else {
+                    $table->data[] = array($account->name.get_string('inuse', 'jitsi'), null, $numrecords);
+                }
             } else {
-                $table->data[] = array($account->name.get_string('inuse', 'jitsi'), null, $numrecords);
+                if ($numrecords == 0) {
+                    $table->data[] = array($account->name, $loginaction.' '.$deleteaction, $numrecords);
+                } else {
+                    $table->data[] = array($account->name, $loginaction, $numrecords);
+                }
             }
         } else {
-            if ($numrecords == 0) {
-                $table->data[] = array($account->name, $loginaction.' '.$deleteaction, $numrecords);
-            } else {
-                $table->data[] = array($account->name, $loginaction, $numrecords);
-            }
+            $table->data[] = array($account->name.get_string('inuse', 'jitsi'), $authaction, $numrecords);
+
         }
     }
 

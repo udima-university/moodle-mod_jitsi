@@ -56,7 +56,7 @@ if ($name) {
         $timediff = $t - $accountinuse->tokencreated;
 
         if ($timediff > 3599) {
-            $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
+            $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($accountinuse->clientrefreshtoken);
 
             $accountinuse->clientaccesstoken = $newaccesstoken['access_token'];
             $newrefreshaccesstoken = $client->getRefreshToken();
@@ -138,6 +138,7 @@ if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
             $accesstoken = $client->getAccessToken()["access_token"];
             $clientrefreshtoken = $client->getRefreshToken();
             echo $OUTPUT->box(get_string('accountconnected', 'jitsi'));
+
             $link = new moodle_url('/mod/jitsi/adminaccounts.php');
             echo '<a href='.$link.'>'.get_string('back').'</a>';
 
