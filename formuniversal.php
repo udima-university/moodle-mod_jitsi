@@ -70,7 +70,7 @@ $PAGE->set_heading(get_string('accesstotitle', 'jitsi', $sesion->name));
 echo $OUTPUT->header();
 
 if ($jitsi->intro) {
-    echo $OUTPUT->box(format_module_intro('jitsi', $jitsi, $cm->id), 'generalbox mod_introbox', 'jitsiintro');
+    echo $jitsi->intro;
 }
 
 $event = \mod_jitsi\event\jitsi_session_guest_form::create(array(
@@ -138,6 +138,7 @@ if (!istimedout($sesion)) {
 } else {
     echo generateerrortime($sesion);
 }
+echo '<p></p>';
 echo $CFG->jitsi_help;
 
 echo $OUTPUT->footer();
