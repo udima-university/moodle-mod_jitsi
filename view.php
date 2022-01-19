@@ -233,7 +233,7 @@ $sqlusersconnected = 'select userid from mdl_logstore_standard_log where compone
      and action = \'enter\' and contextinstanceid = '.$id.' group by userid';
 $usersconnected = $DB->get_records_sql($sqlusersconnected);
 
-if ($records) {
+if ($records && isAllVisible($records) || $records && has_capability ('mod/jitsi:record', $PAGE->context)) {
     echo " ";
     echo "<button class=\"btn btn-secondary\" type=\"button\" data-toggle=\"collapse\" data-target=\"#collapseExample\"
          aria-expanded=\"false\" aria-controls=\"collapseExample\">";

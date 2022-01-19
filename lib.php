@@ -948,3 +948,13 @@ function doembedable($idvideo) {
 
     return $updateresponse;
 }
+
+function isAllVisible($records) {
+    $res = false;
+    foreach ($records as $record) {
+        if ($record->visible == 1) {
+            $res = true;
+        }
+    }
+    return $res;
+}
