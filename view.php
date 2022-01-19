@@ -202,7 +202,7 @@ echo "<path d=\"M2 1a2 2 0 0 0-2 2v9.5A1.5 1.5 0 0 0 1.5 14h.653a5.373 5.373 0 0
 echo "</svg>";
 echo (" ".count($logs)." ".get_string('connectedattendeesnow', 'jitsi'));
 echo "<p></p>";
-echo get_string('minutesconnected', 'jitsi', getminutes($jitsi, $USER->id));
+echo get_string('minutesconnected', 'jitsi', getminutes($id, $USER->id));
 
 if ($jitsi->intro) {
     echo $OUTPUT->box(format_module_intro('jitsi', $jitsi, $cm->id), 'generalbox mod_introbox', 'jitsiintro');
@@ -230,7 +230,7 @@ if ($CFG->jitsi_invitebuttons == 1 && has_capability('mod/jitsi:createlink', $PA
 $sql = 'select * from {jitsi_record} where jitsi = '.$jitsi->id.' and deleted = 0 order by id desc';
 $records = $DB->get_records_sql($sql);
 $sqlusersconnected = 'select userid from mdl_logstore_standard_log where component = \'mod_jitsi\'
-     and action = \'enter\' and objectid = '.$jitsi->id.' group by userid';
+     and action = \'enter\' and contextinstanceid = '.$id.' group by userid';
 $usersconnected = $DB->get_records_sql($sqlusersconnected);
 
 if ($records) {
@@ -255,7 +255,7 @@ if ($usersconnected && has_capability('mod/jitsi:viewusersonsession', $PAGE->con
     foreach ($usersconnected as $userconnected) {
         if ($userconnected->userid != 0) {
             $user = $DB->get_record('user', array('id' => $userconnected->userid));
-            $table->data[] = array(fullname($user), getminutes($jitsi, $user->id));
+            $table->data[] = array(fullname($user), getminutes($id, $user->id));
         }
     }
     echo html_writer::table($table);

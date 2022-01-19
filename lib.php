@@ -805,12 +805,12 @@ function mod_jitsi_inplace_editable($itemtype, $itemid, $newvalue) {
  * @param stdClass $jitsi - current session object
  * @param stdClass $user - course object
  */
-function getminutes($jitsi, $userid) {
+function getminutes($contextinstanceid, $userid) {
     global $DB, $USER;
     $sqlminutos = 'select * from mdl_logstore_standard_log where component = \'mod_jitsi\'
-         and action = \'participating\' and objectid = '.$jitsi->id.' and userid = '.$userid;
+         and action = \'participating\' and contextinstanceid = '.$contextinstanceid.' and userid = '.$userid;
     $sqlentry = 'select * from mdl_logstore_standard_log where component = \'mod_jitsi\'
-         and action = \'enter\' and objectid = '.$jitsi->id.' and userid = '.$userid;
+         and action = \'enter\' and contextinstanceid = '.$contextinstanceid.' and userid = '.$userid;
 
     $minutos = $DB->get_records_sql($sqlminutos);
     $entrys = $DB->get_records_sql($sqlentry);
