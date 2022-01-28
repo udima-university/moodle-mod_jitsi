@@ -327,7 +327,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     }
     $bluroption = '';
     if ($CFG->jitsi_blurbutton == 1) {
-        $bluroption = 'videobackgroundblur';
+        $bluroption = 'select-background';
     }
     $security = '';
     if ($CFG->jitsi_securitybutton == 1) {
