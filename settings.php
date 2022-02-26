@@ -69,7 +69,7 @@ if ($ADMIN->fulltree) {
         get_string('showavatarsex', 'jitsi'), 1));
 
     $settings->add(new admin_setting_configcheckbox('jitsi_record', get_string('record', 'jitsi'),
-        get_string('recordex', 'jitsi'), 0));
+        get_string('recordex', 'jitsi'), 1));
 
     $settings->add(new admin_setting_configcheckbox('jitsi_participantspane', get_string('participantspane', 'jitsi'),
         get_string('participantspaneex', 'jitsi'), 1));

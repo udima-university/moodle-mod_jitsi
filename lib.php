@@ -334,7 +334,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         $security = 'security';
     }
     $record = '';
-    if ($CFG->jitsi_record == 1) {
+    if ($CFG->jitsi_record == 1 && has_capability('mod/jitsi:record', $PAGE->context)) {
         $record = 'recording';
     }
     $invite = '';
