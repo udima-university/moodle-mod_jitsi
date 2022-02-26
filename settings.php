@@ -71,14 +71,14 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('jitsi_record', get_string('record', 'jitsi'),
         get_string('recordex', 'jitsi'), 0));
 
-    $settings->add(new admin_setting_configcheckbox('jitsi_reactions', get_string('reactions', 'jitsi'),
-        get_string('reactionsex', 'jitsi'), 1));
-
     $settings->add(new admin_setting_configcheckbox('jitsi_participantspane', get_string('participantspane', 'jitsi'),
         get_string('participantspaneex', 'jitsi'), 1));
 
     $settings->add(new admin_setting_configcheckbox('jitsi_raisehand', get_string('raisehand', 'jitsi'),
         get_string('raisehandex', 'jitsi'), 1));
+
+    $settings->add(new admin_setting_configcheckbox('jitsi_reactions', get_string('reactions', 'jitsi'),
+        get_string('reactionsex', 'jitsi'), 1));
 
     $settings->add(new admin_setting_heading('jitsistreaming',
             get_string('streamingconfig', 'jitsi'), get_string('streamingconfigex', 'jitsi', $CFG->wwwroot.'/mod/jitsi/auth.php')));
