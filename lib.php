@@ -350,9 +350,14 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         $participantspane = 'participants-pane';
     }
 
+    $raisehand = '';
+    if ($CFG->jitsi_raisehand == 1 ) {
+        $raisehand = 'raisehand';
+    }
+
     $buttons = "['microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
         'fodeviceselection', 'hangup', 'chat', '".$record."', 'etherpad', '".$youtubeoption."',
-        'settings', 'raisehand', 'videoquality', '".$streamingoption."','filmstrip', '".$invite."', 'stats',
+        'settings', '".$raisehand."', 'videoquality', '".$streamingoption."','filmstrip', '".$invite."', 'stats',
         'shortcuts', 'tileview', '".$bluroption."', 'download', 'help', '".$muteeveryone."',
         '".$mutevideoeveryone."', '".$security."', '".$participantspane."']";
 
