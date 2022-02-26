@@ -52,11 +52,11 @@ if ($ADMIN->fulltree) {
         get_string('simultaneouscamerasex', 'jitsi'), '4', PARAM_INT, 1));
 
     $settings->add(new admin_setting_configcheckbox('jitsi_blurbutton', get_string('blurbutton', 'jitsi'),
-        get_string('blurbuttonex', 'jitsi'), 0));
+        get_string('blurbuttonex', 'jitsi'), 1));
     $settings->add(new admin_setting_configcheckbox('jitsi_shareyoutube', get_string('youtubebutton', 'jitsi'),
-        get_string('youtubebuttonex', 'jitsi'), 0));
+        get_string('youtubebuttonex', 'jitsi'), 1));
     $settings->add(new admin_setting_configcheckbox('jitsi_finishandreturn', get_string('finishandreturn', 'jitsi'),
-        get_string('finishandreturnex', 'jitsi'), 0));
+        get_string('finishandreturnex', 'jitsi'), 1));
     $settings->add(new admin_setting_configcheckbox('jitsi_deeplink', get_string('deeplink', 'jitsi'),
         get_string('deeplinkex', 'jitsi'), 0));
 
@@ -72,7 +72,7 @@ if ($ADMIN->fulltree) {
         get_string('recordex', 'jitsi'), 0));
 
     $settings->add(new admin_setting_configcheckbox('jitsi_reactions', get_string('reactions', 'jitsi'),
-        get_string('reactionsex', 'jitsi'), 0));
+        get_string('reactionsex', 'jitsi'), 1));
 
     $settings->add(new admin_setting_configcheckbox('jitsi_participantspane', get_string('participantspane', 'jitsi'),
         get_string('participantspaneex', 'jitsi'), 1));
