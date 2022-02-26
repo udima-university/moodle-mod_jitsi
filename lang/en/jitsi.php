@@ -185,3 +185,5 @@ $string['connectedattendeesnow'] = 'Connected attendees now';
 $string['minutesconnected'] = 'You have been connected for {$a} minutes';
 $string['attendeesreport'] = 'Attendees report';
 $string['accountinsufficientprivileges'] = 'The streaming account set up has insufficient privileges. Please contact your administrator.';
+$string['deprecated'] = 'Deprecated';
+$string['deprecatedex'] = 'Deprecated params that probably will not work because Jitsi Meet changed its implementation';

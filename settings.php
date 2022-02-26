@@ -55,8 +55,6 @@ if ($ADMIN->fulltree) {
         get_string('blurbuttonex', 'jitsi'), 0));
     $settings->add(new admin_setting_configcheckbox('jitsi_shareyoutube', get_string('youtubebutton', 'jitsi'),
         get_string('youtubebuttonex', 'jitsi'), 0));
-    $settings->add(new admin_setting_configtext('jitsi_watermarklink', get_string('watermarklink', 'jitsi'),
-        get_string('watermarklinkex', 'jitsi'), 'https://jitsi.org'));
     $settings->add(new admin_setting_configcheckbox('jitsi_finishandreturn', get_string('finishandreturn', 'jitsi'),
         get_string('finishandreturnex', 'jitsi'), 0));
     $settings->add(new admin_setting_configcheckbox('jitsi_deeplink', get_string('deeplink', 'jitsi'),
@@ -111,4 +109,10 @@ if ($ADMIN->fulltree) {
         get_string('appidex', 'jitsi'), ''));
     $settings->add(new admin_setting_configpasswordunmask('jitsi_secret', get_string('secret', 'jitsi'),
         get_string('secretex', 'jitsi'), ''));
+
+    $settings->add(new admin_setting_heading('deprecated', get_string('deprecated', 'jitsi'),
+        get_string('deprecatedex', 'jitsi')));
+
+    $settings->add(new admin_setting_configtext('jitsi_watermarklink', get_string('watermarklink', 'jitsi'),
+        get_string('watermarklinkex', 'jitsi'), 'https://jitsi.org'));
 }
