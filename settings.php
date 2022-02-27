@@ -62,8 +62,6 @@ if ($ADMIN->fulltree) {
         get_string('passwordex', 'jitsi'), ''));
     $settings->add(new admin_setting_configcheckbox('jitsi_securitybutton', get_string('securitybutton', 'jitsi'),
         get_string('securitybuttonex', 'jitsi'), 0));
-    $settings->add(new admin_setting_configcheckbox('jitsi_privatesessions', get_string('privatesessions', 'jitsi'),
-        get_string('privatesessionsex', 'jitsi'), 1));
 
     $settings->add(new admin_setting_configcheckbox('jitsi_showavatars', get_string('showavatars', 'jitsi'),
         get_string('showavatarsex', 'jitsi'), 1));
@@ -102,6 +100,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_heading('jitsi_records_admin', '', '<a href='.$link.' >'.
             get_string('deletesources', 'jitsi').'</a>'));
 
+    //Jitsi Token Section
     $settings->add(new admin_setting_heading('jitsitoken',
         get_string('tokennconfig', 'jitsi'), get_string('tokenconfigurationex', 'jitsi')));
 
@@ -110,6 +109,14 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configpasswordunmask('jitsi_secret', get_string('secret', 'jitsi'),
         get_string('secretex', 'jitsi'), ''));
 
+    //Experimental Section
+    $settings->add(new admin_setting_heading('experimental', get_string('experimental', 'jitsi'),
+        get_string('experimentalex', 'jitsi')));
+
+    $settings->add(new admin_setting_configcheckbox('jitsi_privatesessions', get_string('privatesessions', 'jitsi'),
+        get_string('privatesessionsex', 'jitsi'), 0));
+
+    //Deprecated Section
     $settings->add(new admin_setting_heading('deprecated', get_string('deprecated', 'jitsi'),
         get_string('deprecatedex', 'jitsi')));
 

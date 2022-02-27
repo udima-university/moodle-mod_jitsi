@@ -187,3 +187,5 @@ $string['attendeesreport'] = 'Attendees report';
 $string['accountinsufficientprivileges'] = 'The streaming account set up has insufficient privileges. Please contact your administrator.';
 $string['deprecated'] = 'Deprecated';
 $string['deprecatedex'] = 'Deprecated params that probably will not work because Jitsi Meet changed its implementation';
+$string['experimental'] = 'Experimental';
+$string['experimentalex'] = 'These are options that we are experimenting with and that may disappear in future versions.';
