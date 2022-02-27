@@ -44,8 +44,6 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configmultiselect('jitsi_sesionname',
         get_string('sessionnamefields', 'jitsi'), get_string('sessionnamefieldsex', 'jitsi'),
         $sessionoptionsdefault, $sessionoptions));
-    $settings->add(new admin_setting_configcheckbox('jitsi_securitybutton', get_string('securitybutton', 'jitsi'),
-        get_string('securitybuttonex', 'jitsi'), 0));
     $settings->add(new admin_setting_configcheckbox('jitsi_invitebuttons', get_string('invitebutton', 'jitsi'),
         get_string('invitebuttonex', 'jitsi'), 1));
     $settings->add(new admin_setting_configtext('jitsi_channellastcam', get_string('simultaneouscameras', 'jitsi'),
@@ -62,6 +60,8 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configpasswordunmask('jitsi_password', get_string('password', 'jitsi'),
         get_string('passwordex', 'jitsi'), ''));
+    $settings->add(new admin_setting_configcheckbox('jitsi_securitybutton', get_string('securitybutton', 'jitsi'),
+        get_string('securitybuttonex', 'jitsi'), 0));
     $settings->add(new admin_setting_configcheckbox('jitsi_privatesessions', get_string('privatesessions', 'jitsi'),
         get_string('privatesessionsex', 'jitsi'), 1));
 
