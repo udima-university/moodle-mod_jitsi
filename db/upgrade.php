@@ -206,8 +206,8 @@ function xmldb_jitsi_upgrade($oldversion) {
             'message_provider_mod_jitsi_onprivatesession_loggedin'));
         $onprivatesessionloggedoff = $DB->get_record('config_plugins', array('name' =>
             'message_provider_mod_jitsi_onprivatesession_loggedoff'));
-        $onprivatesessionloggedin->value = 'airnotifier,email,popup';
-        $onprivatesessionloggedoff->value = 'airnotifier,email';
+        $onprivatesessionloggedin->value = 'airnotifier,popup';
+        $onprivatesessionloggedoff->value = 'airnotifier,popup';
         $DB->update_record('config_plugins', $onprivatesessionloggedin);
         $DB->update_record('config_plugins', $onprivatesessionloggedoff);
 
