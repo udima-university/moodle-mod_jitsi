@@ -56,7 +56,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('jitsi_finishandreturn', get_string('finishandreturn', 'jitsi'),
         get_string('finishandreturnex', 'jitsi'), 1));
     $settings->add(new admin_setting_configcheckbox('jitsi_deeplink', get_string('deeplink', 'jitsi'),
-        get_string('deeplinkex', 'jitsi'), 0));
+        get_string('deeplinkex', 'jitsi'), 1));
 
     $settings->add(new admin_setting_configpasswordunmask('jitsi_password', get_string('password', 'jitsi'),
         get_string('passwordex', 'jitsi'), ''));
