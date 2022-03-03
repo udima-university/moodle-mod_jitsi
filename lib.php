@@ -403,6 +403,8 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "const options = {\n";
     echo "configOverwrite: {\n";
 
+    echo "disableDeepLinking: true,\n";
+
     if (!has_capability('mod/jitsi:moderation', $PAGE->context)) {
         echo "remoteVideoMenu: {\n";
         echo "    disableKick: true,\n";
