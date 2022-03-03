@@ -402,9 +402,6 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "const domain = \"".$CFG->jitsi_domain."\";\n";
     echo "const options = {\n";
     echo "configOverwrite: {\n";
-    if ($CFG->jitsi_deeplink == 0) {
-        echo "disableDeepLinking: true,\n";
-    }
 
     if (!has_capability('mod/jitsi:moderation', $PAGE->context)) {
         echo "remoteVideoMenu: {\n";
