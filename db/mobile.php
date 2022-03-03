@@ -28,7 +28,7 @@ $addons = [
         'handlers' => [ // Different places where the plugin will display content.
             'jitsimeeting' => [ // Handler unique name (alphanumeric).
                 'displaydata' => [
-                    'icon' => $CFG->wwwroot . '/mod/jitsi/pix/icon.png',
+                    'icon' => $CFG->wwwroot . '/mod/jitsi/pix/icon.svg',
                     'class' => '',
                 ],
                 'delegate' => 'CoreCourseModuleDelegate', // Delegate (where to display the link to the plugin).
