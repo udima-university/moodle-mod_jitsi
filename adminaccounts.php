@@ -128,6 +128,7 @@ if (is_siteadmin()) {
     $client->setClientSecret($CFG->jitsi_oauth_secret);
 
     $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
+    echo $OUTPUT->box(get_string('adminaccountex', 'jitsi'));
 
     foreach ($accounts as $account) {
         $deleteurl = new moodle_url('/mod/jitsi/adminaccounts.php?&daccountid=' . $account->id. '&sesskey=' . sesskey());
@@ -142,6 +143,7 @@ if (is_siteadmin()) {
         $authicon = new pix_icon('i/permissionlock', 'auth');
         $authaction = $OUTPUT->action_icon($authurl, $authicon, new confirm_action('auth?'));
         $numrecords = $DB->count_records('jitsi_source_record', array('account' => $account->id));
+
         if ($account->clientaccesstoken != null) {
             if ($account->inuse == 1) {
                 if ($numrecords == 0) {
@@ -157,8 +159,7 @@ if (is_siteadmin()) {
                 }
             }
         } else {
-            $table->data[] = array($account->name.get_string('inuse', 'jitsi'), $authaction, $numrecords);
-
+            $table->data[] = array($account->name, $authaction, $numrecords);
         }
     }
 

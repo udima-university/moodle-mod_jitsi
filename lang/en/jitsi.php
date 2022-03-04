@@ -189,3 +189,4 @@ $string['deprecated'] = 'Deprecated';
 $string['deprecatedex'] = 'Deprecated params that probably will not work because Jitsi Meet changed its implementation';
 $string['experimental'] = 'Experimental';
 $string['experimentalex'] = 'These are options that we are experimenting with and that may disappear in future versions.';
+$string['adminaccountex'] = 'Perferendis non est maxime quod. Est quo error delectus omnis sed rerum nihil. Ea dicta consequuntur atque adipisci. At similique impedit voluptas quia quia eum. Totam neque et et nihil consectetur ducimus quaerat aut.';
