@@ -83,7 +83,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('jitsi_livebutton', get_string('streamingbutton', 'jitsi'),
             get_string('streamingbuttonex', 'jitsi'), 1));
 
-    $streamingoptions = ['Jitsi interface', 'Integrate'];
+    $streamingoptions = [get_string('jitsiinterface', 'jitsi'), get_string('integrated', 'jitsi')];
     $settings->add(new admin_setting_configselect('jitsi_streamingoption', get_string('streamingoption', 'jitsi'),
         get_string('streamingoptionex', 'jitsi'), null, $streamingoptions));
 

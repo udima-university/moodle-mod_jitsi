@@ -46,10 +46,10 @@ class accountname_form extends moodleform {
         global $CFG;
         $mform = $this->_form; // Don't forget the underscore!.
 
-        $mform->addElement('text', 'name', 'Name'); // Add elements to your form.
+        $mform->addElement('text', 'name', get_string('name')); // Add elements to your form.
         $mform->setType('name', PARAM_TEXT);        // Set type of element.
         $buttonarray = array();
-        $buttonarray[] = $mform->createElement('submit', 'submitbutton', 'Add account');
+        $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('addaccount', 'jitsi'));
         $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
     }
     // Custom validation should be added here.
@@ -121,7 +121,7 @@ echo $OUTPUT->heading(get_string('accounts', 'jitsi'));
 if (is_siteadmin()) {
     $accounts = $DB->get_records('jitsi_record_account', array());
     $table = new html_table();
-    $table->head = array('Name', 'Actions', 'Records');
+    $table->head = array(get_string('name'), get_string('actions'), get_string('records', 'jitsi'));
 
     $client = new Google_Client();
     $client->setClientId($CFG->jitsi_oauth_id);
@@ -132,16 +132,16 @@ if (is_siteadmin()) {
 
     foreach ($accounts as $account) {
         $deleteurl = new moodle_url('/mod/jitsi/adminaccounts.php?&daccountid=' . $account->id. '&sesskey=' . sesskey());
-        $deleteicon = new pix_icon('t/delete', get_string('delete'));
+        $deleteicon = new pix_icon('t/delete', get_string('deletetooltip', 'jitsi'));
         $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon, new confirm_action(get_string('deleteq', 'jitsi')));
 
         $loginurl = new moodle_url('/mod/jitsi/adminaccounts.php?&change=' . $account->id. '&sesskey=' . sesskey());
-        $loginicon = new pix_icon('i/publish', get_string('login'));
+        $loginicon = new pix_icon('i/publish', get_string('activatetooltip', 'jitsi'));
         $loginaction = $OUTPUT->action_icon($loginurl, $loginicon, new confirm_action(get_string('loginq', 'jitsi')));
 
         $authurl = new moodle_url('/mod/jitsi/auth.php?&name=' . $account->name);
-        $authicon = new pix_icon('i/permissionlock', 'auth');
-        $authaction = $OUTPUT->action_icon($authurl, $authicon, new confirm_action('auth?'));
+        $authicon = new pix_icon('i/permissionlock', get_string('logintooltip', 'jitsi'));
+        $authaction = $OUTPUT->action_icon($authurl, $authicon, new confirm_action(get_string('authq', 'jitsi')));
         $numrecords = $DB->count_records('jitsi_source_record', array('account' => $account->id));
 
         if ($account->clientaccesstoken != null) {
