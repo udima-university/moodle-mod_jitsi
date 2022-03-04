@@ -62,6 +62,7 @@ if (is_siteadmin()) {
     $accountinuse = $DB->get_record('jitsi_record_account', array('inuse' => 1));
 
     foreach ($sources as $source) {
+        $acount = $DB->get_record('jitsi_record_account', array('id' => $source->account));
         if (isDeletable($source->id)) {
             $deleteurl = new moodle_url('/mod/jitsi/adminrecord.php?&deletejitsisourceid='.
                 $source->id. '&sesskey=' . sesskey());
@@ -69,8 +70,14 @@ if (is_siteadmin()) {
             $account = $DB->get_record('jitsi_record_account', array('id' => $source->account));
             $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon,
                 new confirm_action(get_string('deletesourceq', 'jitsi')));
-            $table->data[] = array($source->id, '<a href="https://youtu.be/'.$source->link.'" target=_blank">'
-                .$source->link.'</a>', $account->name, userdate($source->timecreated), $deleteaction);
+            if ($acount->clientaccesstoken != null) {
+                $table->data[] = array($source->id, '<a href="https://youtu.be/'.$source->link.'" target=_blank">'
+                    .$source->link.'</a>', $account->name, userdate($source->timecreated), $deleteaction);
+            } else {
+                $table->data[] = array($source->id, '<a href="https://youtu.be/'.$source->link.'" target=_blank">'
+                    .$source->link.'</a>', $account->name, userdate($source->timecreated), get_string('notloggedin', 'jitsi'));
+            }
+            
         }
     }
     echo html_writer::table($table);

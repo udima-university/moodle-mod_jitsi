@@ -197,3 +197,4 @@ $string['activatetooltip'] = 'Activate';
 $string['logintooltip'] = 'Login';
 $string['authq'] = 'Login with account?';
 $string['addaccount'] = 'Add account';
+$string['notloggedin'] = 'Not logged in';
