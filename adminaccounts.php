@@ -140,7 +140,7 @@ if (is_siteadmin()) {
         $loginaction = $OUTPUT->action_icon($loginurl, $loginicon, new confirm_action(get_string('loginq', 'jitsi')));
 
         $authurl = new moodle_url('/mod/jitsi/auth.php?&name=' . $account->name);
-        $authicon = new pix_icon('i/permissionlock', get_string('logintooltip', 'jitsi'));
+        $authicon = new pix_icon('i/assignroles', get_string('logintooltip', 'jitsi'));
         $authaction = $OUTPUT->action_icon($authurl, $authicon, new confirm_action(get_string('authq', 'jitsi')));
         $numrecords = $DB->count_records('jitsi_source_record', array('account' => $account->id));
 
