@@ -79,7 +79,7 @@ if ($ADMIN->fulltree) {
         get_string('reactionsex', 'jitsi'), 1));
 
     $settings->add(new admin_setting_heading('jitsistreaming',
-            get_string('streamingconfig', 'jitsi'), get_string('streamingconfigex', 'jitsi', $CFG->wwwroot.'/mod/jitsi/auth.php')));
+            get_string('streamingconfig', 'jitsi'), get_string('streamingconfigex', 'jitsi')));
     $settings->add(new admin_setting_configcheckbox('jitsi_livebutton', get_string('streamingbutton', 'jitsi'),
             get_string('streamingbuttonex', 'jitsi'), 1));
 
@@ -88,7 +88,8 @@ if ($ADMIN->fulltree) {
         get_string('streamingoptionex', 'jitsi'), null, $streamingoptions));
 
     $settings->add(new admin_setting_configtext('jitsi_oauth_id', get_string('oauthid', 'jitsi'),
-            get_string('oauthidex', 'jitsi'), ''));
+            get_string('oauthidex', 'jitsi', $CFG->wwwroot.'/mod/jitsi/auth.php'), ''));
+
     $settings->add(new admin_setting_configpasswordunmask('jitsi_oauth_secret', get_string('oauthsecret', 'jitsi'),
             get_string('oauthsecretex', 'jitsi'), ''));
 

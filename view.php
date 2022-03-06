@@ -311,7 +311,7 @@ if ($records) {
         $deleteurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&deletejitsirecordid=' .
                  $record->id . '&sesskey=' . sesskey());
         $deleteicon = new pix_icon('t/delete', get_string('delete'));
-        $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon, new confirm_action('Delete?'));
+        $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon, new confirm_action(get_string('confirmdeleterecordinactivity', 'jitsi')));
 
         $hideurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&hidejitsirecordid=' .
                  $record->id . '&sesskey=' . sesskey());
