@@ -203,3 +203,4 @@ $string['authq'] = 'Login with this account to get credentials and put "in use"?
 $string['addaccount'] = 'Add account';
 $string['notloggedin'] = 'Account credentials required';
 $string['confirmdeleterecordinactivity'] = 'Confirm you want to delete this recording. This operation can\'t be undone.';
+$string['errordeleting'] = 'Error deleting';

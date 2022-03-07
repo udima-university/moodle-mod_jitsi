@@ -740,18 +740,52 @@ function deleterecordyoutube($idsource) {
         $client->setAccessToken($_SESSION[$tokensessionkey]);
         $t = time();
         $timediff = $t - $account->tokencreated;
-
         if ($timediff > 3599) {
             $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
-            $account->clientaccesstoken = $newaccesstoken["access_token"];
-            $newrefreshaccesstoken = $client->getRefreshToken();
-            $account->clientrefreshtoken = $newrefreshaccesstoken;
-            $account->tokencreated = time();
+            if ($newaccesstoken['error'] == null) {
+                $account->clientaccesstoken = $newaccesstoken["access_token"];
+                $newrefreshaccesstoken = $client->getRefreshToken();
+                $account->clientrefreshtoken = $newrefreshaccesstoken;
+                $account->tokencreated = time();
+            } else {
+                if ($account->inuse == 1) {
+                    $account->inuse = 0;
+                }
+                $account->clientaccesstoken = null;
+                $account->clientrefreshtoken = null;
+                $account->tokencreated = 0;
+                $DB->update_record('jitsi_record_account', $account);
+                $client->revokeToken();
+                return false;
+            }
         }
 
         $youtube = new Google_Service_YouTube($client);
-
-        $listresponse = $youtube->videos->listVideos("snippet", array('id' => $source->link));
+        try {
+            $listresponse = $youtube->videos->listVideos("snippet", array('id' => $source->link));
+        }  catch (Google_Service_Exception $e) {
+            if ($account->inuse == 1) {
+                $account->inuse = 0;
+            }
+            $account->clientaccesstoken = null;
+            $account->clientrefreshtoken = null;
+            $account->tokencreated = 0;
+            $DB->update_record('jitsi_record_account', $account);
+            $client->revokeToken();
+            return false;
+            throw new \Exception("exception".$e->getMessage());
+        } catch (Google_Exception $e) {
+            if ($account->inuse == 1) {
+                $account->inuse = 0;
+            }
+            $account->clientaccesstoken = null;
+            $account->clientrefreshtoken = null;
+            $account->tokencreated = 0;
+            $DB->update_record('jitsi_record_account', $account);
+            $client->revokeToken();
+            return false;
+            throw new \Exception("exception".$e->getMessage());
+        }
         if ($listresponse['items'] != []) {
             if ($client->getAccessToken($idsource)) {
                 try {
@@ -765,8 +799,9 @@ function deleterecordyoutube($idsource) {
             }
         } else {
             delete_jitsi_record($idsource);
-        }
+        }       
     }
+    return true;
 }
 
  /**

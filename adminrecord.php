@@ -44,8 +44,11 @@ $PAGE->set_url('/mod/jitsi/adminrecord.php');
 require_login();
 
 if ($deletejitsisourceid && confirm_sesskey($sesskey)) {
-    deleterecordyoutube($deletejitsisourceid);
-    redirect($PAGE->url, get_string('deleted'));
+    if (deleterecordyoutube($deletejitsisourceid) == true) {
+        redirect($PAGE->url, get_string('deleted'));
+    } else {
+        redirect($PAGE->url, get_string('errordeleting', 'jitsi'));
+    }
 }
 
 $PAGE->set_title(format_string(get_string('records', 'jitsi')));
@@ -75,7 +78,7 @@ if (is_siteadmin()) {
                     .$source->link.'</a>', $account->name, userdate($source->timecreated), $deleteaction);
             } else {
                 $table->data[] = array($source->id, '<a href="https://youtu.be/'.$source->link.'" target=_blank">'
-                    .$source->link.'</a>', $account->name, userdate($source->timecreated), get_string('notloggedin', 'jitsi'));
+                    .$source->link.'</a>', $account->name, userdate($source->timecreated),'<a href="'.$CFG->wwwroot.'/mod/jitsi/adminaccounts.php">'. get_string('notloggedin', 'jitsi').'</a>');
             }
             
         }

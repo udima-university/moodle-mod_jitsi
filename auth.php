@@ -42,7 +42,7 @@ if ($name) {
     }
 
     $accountinuse = $DB->get_record('jitsi_record_account', array('inuse' => 1));
-
+    unset($_SESSION[$tokensessionkey]);
     if ($accountinuse) {
         $client = new Google_Client();
         $client->setClientId($CFG->jitsi_oauth_id);
@@ -50,7 +50,6 @@ if ($name) {
 
         $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
         $client->setAccessToken($accountinuse->clientaccesstoken);
-        unset($_SESSION[$tokensessionkey]);
 
         $t = time();
         $timediff = $t - $accountinuse->tokencreated;
