@@ -763,7 +763,7 @@ function deleterecordyoutube($idsource) {
         $youtube = new Google_Service_YouTube($client);
         try {
             $listresponse = $youtube->videos->listVideos("snippet", array('id' => $source->link));
-        }  catch (Google_Service_Exception $e) {
+        } catch (Google_Service_Exception $e) {
             if ($account->inuse == 1) {
                 $account->inuse = 0;
             }
@@ -974,17 +974,38 @@ function doembedable($idvideo) {
 
     $youtube = new Google_Service_YouTube($client);
 
-    $listresponse = $youtube->videos->listVideos("status", array('id' => $idvideo));
-    $video = $listresponse[0];
-
-    $videostatus = $video['status'];
-    if ($videostatus != null) {
-        if ($videostatus['embeddable'] != true) {
-            $videostatus['embeddable'] = 'true';
-            $updateresponse = $youtube->videos->update("status", $video);
+    try {
+        $listresponse = $youtube->videos->listVideos("status", array('id' => $idvideo));
+        $video = $listresponse[0];
+    
+        $videostatus = $video['status'];
+        if ($videostatus != null) {
+            if ($videostatus['embeddable'] != true) {
+                $videostatus['embeddable'] = 'true';
+                $updateresponse = $youtube->videos->update("status", $video);
+            }
         }
+    } catch (Google_Service_Exception $e) {
+        if ($account->inuse == 1) {
+            $account->inuse = 0;
+        }
+        $account->clientaccesstoken = null;
+        $account->clientrefreshtoken = null;
+        $account->tokencreated = 0;
+        $DB->update_record('jitsi_record_account', $account);
+        $client->revokeToken();
+        return false;
+    } catch (Google_Exception $e) {
+        if ($account->inuse == 1) {
+            $account->inuse = 0;
+        }
+        $account->clientaccesstoken = null;
+        $account->clientrefreshtoken = null;
+        $account->tokencreated = 0;
+        $DB->update_record('jitsi_record_account', $account);
+        $client->revokeToken();
+        return false;
     }
-
     return $updateresponse;
 }
 
