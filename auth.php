@@ -42,9 +42,11 @@ if ($name) {
     }
 
     $accountbyname = $DB->get_record('jitsi_record_account', array('name' => $name));
-    if ($accountbyname->inuse ==  1 && $accountbyname->clientaccesstoken == NULL && $accountbyname->clientrefreshtoken == NULL) {
-        $accountbyname->inuse = 0;
-        $DB->update_record('jitsi_record_account', $accountbyname);
+    if ($accountbyname) {
+        if ($accountbyname->inuse ==  1 && $accountbyname->clientaccesstoken == NULL && $accountbyname->clientrefreshtoken == NULL) {
+            $accountbyname->inuse = 0;
+            $DB->update_record('jitsi_record_account', $accountbyname);
+        }
     }
     
     $accountinuse = $DB->get_record('jitsi_record_account', array('inuse' => 1));
