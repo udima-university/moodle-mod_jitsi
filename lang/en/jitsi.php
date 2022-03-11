@@ -36,12 +36,12 @@ Jitsi-meet is an open-source videoconferencing solution that enables you to easi
 $string['jitsi:addinstance'] = 'Add a new Jitsi';
 $string['jitsi:moderation'] = 'Jitsi Moderation';
 $string['jitsi:record'] = 'Record session';
-$string['jitsi:hide'] = 'Hide records';
-$string['jitsi:createlink'] = 'Create link to invite to session';
+$string['jitsi:hide'] = 'Hide recordings';
+$string['jitsi:createlink'] = 'View and copy invite links for guest users';
 $string['jitsi:sharedesktop'] = 'Share Desktop';
 $string['jitsi:view'] = 'View Jitsi';
 $string['jitsi:addinstance'] = 'Add a new Jitsi';
-$string['jitsi:viewusersonsession'] = 'View users on a session';
+$string['jitsi:viewusersonsession'] = 'Access to the attendees reports';
 $string['jitsiname'] = 'Session name';
 $string['jitsi'] = 'Jitsi';
 $string['pluginadministration'] = 'Jitsi administration';
