@@ -208,13 +208,15 @@ if ($jitsi->intro) {
     echo $OUTPUT->box(format_module_intro('jitsi', $jitsi, $cm->id), 'generalbox mod_introbox', 'jitsiintro');
 }
 if ($today[0] < $jitsi->timeclose || $jitsi->timeclose == 0) {
-    if ($today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))||
-        (in_array('editingteacher', $rolestr) == 1)) {
+    if ($today[0] > (($jitsi->timeopen))|| has_capability('mod/jitsi:moderation', $context) && $today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))) {
         echo $OUTPUT->box(get_string('instruction', 'jitsi'));
         echo $OUTPUT->single_button(new moodle_url('/mod/jitsi/session.php', $urlparams), get_string('access', 'jitsi'), 'post');
     } else {
-        echo $OUTPUT->box(get_string('nostart', 'jitsi', $jitsi->minpretime));
+        echo $OUTPUT->box(get_string('nostart', 'jitsi', userdate($jitsi->timeopen)));
     }
+
+
+
 } else {
     echo $OUTPUT->box(get_string('finish', 'jitsi'));
 }

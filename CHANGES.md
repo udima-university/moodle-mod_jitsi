@@ -18,6 +18,7 @@
 * Enable as default the jitsi_invitebuttons, jitsifinishandreturn, jitsi_blurbutton, jitsi_reactions and jitsi_shareyoutube options in config.
 * Only users with mod/jitsi:record should be able to launch native drop box recordings.
 * Better placed introduction text and help text.
+* Minutes to acces now apply only for users with moderation capability.
 ### Fixed
 * Background options 
 
