@@ -57,12 +57,6 @@ class mod_jitsi_mod_form extends moodleform_mod {
 
         $this->standard_intro_elements();
 
-        if ($CFG->jitsi_invitebuttons == 1) {
-            $mform->addElement('header', 'invitations', get_string('invitations', 'jitsi'));
-            $options = array('optional' => true);
-            $mform->addElement('date_time_selector', 'validitytime', get_string('finishinvitation', 'jitsi'), $options);
-        }
-
         $mform->addElement('header', 'availability', get_string('availability', 'assign'));
 
         $name = get_string('allow', 'jitsi');
@@ -82,6 +76,12 @@ class mod_jitsi_mod_form extends moodleform_mod {
         );
         $mform->addElement('select', 'minpretime', get_string('minpretime', 'jitsi'), $choicesminspre);
         $mform->disabledIf('minpretime', 'timeopen[enabled]');
+
+        if ($CFG->jitsi_invitebuttons == 1) {
+            $mform->addElement('header', 'invitations', get_string('invitations', 'jitsi'));
+            $options = array('optional' => true);
+            $mform->addElement('date_time_selector', 'validitytime', get_string('finishinvitation', 'jitsi'), $options);
+        }
 
         $this->standard_coursemodule_elements();
         $this->add_action_buttons();
