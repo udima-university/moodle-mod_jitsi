@@ -70,6 +70,7 @@ abstract class Strings
      * C = byte
      * b = boolean (true/false)
      * N = uint32
+     * Q = uint64
      * s = string
      * i = mpint
      * L = name-list
@@ -100,6 +101,12 @@ abstract class Strings
                         throw new \LengthException('At least four byte needs to be present for successful N / i / s / L decodes');
                     }
                     break;
+                case 'Q':
+                    if (strlen($data) < 8) {
+                        throw new \LengthException('At least eight byte needs to be present for successful N / i / s / L decodes');
+                    }
+                    break;
+
                 default:
                     throw new \InvalidArgumentException('$format contains an invalid character');
             }
@@ -112,6 +119,19 @@ abstract class Strings
                     continue 2;
                 case 'N':
                     list(, $temp) = unpack('N', self::shift($data, 4));
+                    $result[] = $temp;
+                    continue 2;
+                case 'Q':
+                    // pack() added support for Q in PHP 5.6.3 and PHP 5.6 is phpseclib 3's minimum version
+                    // so in theory we could support this BUT, "64-bit format codes are not available for
+                    // 32-bit versions" and phpseclib works on 32-bit installs. on 32-bit installs
+                    // 64-bit floats can be used to get larger numbers then 32-bit signed ints would allow
+                    // for. sure, you're not gonna get the full precision of 64-bit numbers but just because
+                    // you need > 32-bit precision doesn't mean you need the full 64-bit precision
+                    extract(unpack('Nupper/Nlower', self::shift($data, 8)));
+                    $temp = $upper ? 4294967296 * $upper : 0;
+                    $temp+= $lower < 0 ? ($lower & 0x7FFFFFFFF) + 0x80000000 : $lower;
+                    // $temp = hexdec(bin2hex(self::shift($data, 8)));
                     $result[] = $temp;
                     continue 2;
             }
@@ -138,9 +158,9 @@ abstract class Strings
     /**
      * Create SSH2-style string
      *
-     * @param string[] ...$elements
+     * @param string|int|float|array|bool ...$elements
      * @access public
-     * @return mixed
+     * @return string
      */
     public static function packSSH2(...$elements)
     {
@@ -164,6 +184,13 @@ abstract class Strings
                         throw new \InvalidArgumentException('A boolean parameter was expected.');
                     }
                     $result.= $element ? "\1" : "\0";
+                    break;
+                case 'Q':
+                    if (!is_int($element) && !is_float($element)) {
+                        throw new \InvalidArgumentException('An integer was expected.');
+                    }
+                    // 4294967296 == 1 << 32
+                    $result.= pack('NN', $element / 4294967296, $element);
                     break;
                 case 'N':
                     if (is_float($element)) {
@@ -281,7 +308,7 @@ abstract class Strings
      * @param string $x
      * @return string
      */
-    public static function bin2bits($x)
+    public static function bin2bits($x, $trim = true)
     {
         /*
         // the pure-PHP approach is slower than the GMP approach BUT
@@ -310,7 +337,7 @@ abstract class Strings
             }
         }
 
-        return ltrim($bits, '0');
+        return $trim ? ltrim($bits, '0') : $bits;
     }
 
     /**
@@ -323,14 +350,21 @@ abstract class Strings
     public static function switchEndianness($x)
     {
         $r = '';
-        // from http://graphics.stanford.edu/~seander/bithacks.html#ReverseByteWith32Bits
         for ($i = strlen($x) - 1; $i >= 0; $i--) {
             $b = ord($x[$i]);
-            $p1 = ($b * 0x0802) & 0x22110;
-            $p2 = ($b * 0x8020) & 0x88440;
-            $r.= chr(
-                (($p1 | $p2) * 0x10101) >> 16
-            );
+            if (PHP_INT_SIZE === 8) {
+                // 3 operations
+                // from http://graphics.stanford.edu/~seander/bithacks.html#ReverseByteWith64BitsDiv
+                $r.= chr((($b * 0x0202020202) & 0x010884422010) % 1023);
+            } else {
+                // 7 operations
+                // from http://graphics.stanford.edu/~seander/bithacks.html#ReverseByteWith32Bits
+                $p1 = ($b * 0x0802) & 0x22110;
+                $p2 = ($b * 0x8020) & 0x88440;
+                $r.= chr(
+                    (($p1 | $p2) * 0x10101) >> 16
+                );
+            }
         }
         return $r;
     }

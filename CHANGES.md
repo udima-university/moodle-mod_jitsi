@@ -19,6 +19,7 @@
 * Only users with mod/jitsi:record should be able to launch native drop box recordings.
 * Better placed introduction text and help text.
 * Minutes to acces now apply only for users with moderation capability.
+* Update Google Api Client to Version 2.12.1
 ### Fixed
 * Background options 
 

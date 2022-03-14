@@ -43,6 +43,7 @@ use phpseclib3\Exception\UnsupportedAlgorithmException;
 use phpseclib3\File\ASN1\Element;
 use phpseclib3\File\ASN1\Maps;
 use phpseclib3\Math\BigInteger;
+use phpseclib3\Crypt\PublicKeyLoader;
 
 /**
  * Pure-PHP X.509 Parser
@@ -302,6 +303,18 @@ class X509
      * @access private
      */
     private static $extensions = [];
+
+    /**
+     * @var ?array
+     * @access private
+     */
+    private $ipAddresses = null;
+
+    /**
+     * @var ?array
+     * @access private
+     */
+    private $domains = null;
 
     /**
      * Default Constructor.
@@ -614,7 +627,6 @@ class X509
             for ($i = 0; $i < count($extensions); $i++) {
                 $id = $extensions[$i]['extnId'];
                 $value = &$extensions[$i]['extnValue'];
-                $decoded = ASN1::decodeBER($value);
                 /* [extnValue] contains the DER encoding of an ASN.1 value
                    corresponding to the extension type identified by extnID */
                 $map = $this->getMapping($id);
@@ -622,6 +634,7 @@ class X509
                     $decoder = $id == 'id-ce-nameConstraints' ?
                         [static::class, 'decodeNameConstraintIP'] :
                         [static::class, 'decodeIP'];
+                    $decoded = ASN1::decodeBER($value);
                     $mapped = ASN1::asn1map($decoded[0], $map, ['iPAddress' => $decoder]);
                     $value = $mapped === false ? $decoded[0] : $mapped;
 
@@ -657,14 +670,25 @@ class X509
      */
     private function mapOutExtensions(&$root, $path)
     {
-        foreach ($this->extensionValues as $id => $value) {
-            $root['tbsCertificate']['extensions'][] = [
+        $extensions = &$this->subArray($root, $path, !empty($this->extensionValues));
+
+        foreach ($this->extensionValues as $id => $data) {
+            extract($data);
+            $newext = [
                 'extnId' => $id,
                 'extnValue' => $value,
+                'critical' => $critical
             ];
+            if ($replace) {
+                foreach ($extensions as $key => $value) {
+                    if ($value['extnId'] == $id) {
+                        $extensions[$key] = $newext;
+                        continue 2;
+                   }
+                }
+            }
+            $extensions[] = $newext;
         }
-
-        $extensions = &$this->subArray($root, $path);
 
         if (is_array($extensions)) {
             $size = count($extensions);
@@ -2095,6 +2119,17 @@ class X509
     }
 
     /**
+     * Returns the current cert
+     *
+     * @access public
+     * @return array|bool
+     */
+    public function &getCurrentCert()
+    {
+        return $this->currentCert;
+    }
+
+    /**
      * Set public key
      *
      * Key needs to be a \phpseclib3\Crypt\RSA object
@@ -2168,8 +2203,10 @@ class X509
         $key = $keyinfo['subjectPublicKey'];
 
         switch ($keyinfo['algorithm']['algorithm']) {
+            case 'id-RSASSA-PSS':
+                return RSA::loadFormat('PSS', $key);
             case 'rsaEncryption':
-                return RSA::loadFormat('PKCS8', $key);
+                return RSA::loadFormat('PKCS8', $key)->withPadding(RSA::SIGNATURE_PKCS1);
             case 'id-ecPublicKey':
             case 'id-Ed25519':
             case 'id-Ed448':
@@ -2580,7 +2617,7 @@ class X509
         if ($signatureAlgorithm != 'id-RSASSA-PSS') {
             $signatureAlgorithm = ['algorithm' => $signatureAlgorithm];
         } else {
-            $r = PSS::load($issuer->privateKey->toString('PSS'));
+            $r = PSS::load($issuer->privateKey->withPassword()->toString('PSS'));
             $signatureAlgorithm = [
                 'algorithm' => 'id-RSASSA-PSS',
                 'parameters' => PSS::savePSSParams($r)
@@ -2727,7 +2764,7 @@ class X509
 
             $this->setExtension(
                 'id-ce-basicConstraints',
-                array_unique(array_merge(['cA' => true], $basicConstraints)),
+                array_merge(['cA' => true], $basicConstraints),
                 true
             );
 
@@ -3690,14 +3727,11 @@ class X509
                     return false;
                 }
                 // If the key is private, compute identifier from its corresponding public key.
-                $key = new RSA();
-                if (!$key->load($raw)) {
-                    return false;   // Not an unencrypted RSA key.
-                }
-                if ($key->getPrivateKey() !== false) {  // If private.
+                $key = PublicKeyLoader::load($raw);
+                if ($key instanceof PrivateKey) {  // If private.
                     return $this->computeKeyIdentifier($key, $method);
                 }
-                $key = $raw;    // Is a public key.
+                $key = $raw; // Is a public key.
                 break;
             case $key instanceof X509:
                 if (isset($key->publicKey)) {
@@ -4058,9 +4092,11 @@ class X509
      *
      * @param string $id
      * @param mixed $value
+     * @param bool $critical
+     * @param bool $replace
      */
-    public function setExtensionValue($id, $value)
+    public function setExtensionValue($id, $value, $critical = false, $replace = false)
     {
-        $this->extensionValues[$id] = $value;
+        $this->extensionValues[$id] = compact('critical', 'replace', 'value');
     }
 }
