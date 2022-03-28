@@ -22,6 +22,7 @@
 * Update Google Api Client to Version 2.12.1
 ### Fixed
 * Background options 
+* Fixed problem mod_jitsi_external::create_link implementation is missing
 
 ---
 
