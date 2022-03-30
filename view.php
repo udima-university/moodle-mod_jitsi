@@ -111,6 +111,10 @@ if ($showjitsirecordid && confirm_sesskey($sesskey)) {
 }
 
 $context = context_module::instance($cm->id);
+
+$cm = get_coursemodule_from_id('jitsi', $id);
+$cminfo = \cm_info::create($cm);
+
 if (!has_capability('mod/jitsi:view', $context)) {
     notice(get_string('noviewpermission', 'jitsi'));
 }
@@ -173,35 +177,46 @@ $urlparams = array('avatar' => $avatar, 'nom' => $nom, 'ses' => $sesparam,
 
 $today = getdate();
 
-
-
-
 if (!$deletejitsirecordid) {
     echo $OUTPUT->header();
     echo $OUTPUT->heading($jitsi->name);
 }
-$logs = $DB->get_records_select('logstore_standard_log', 'component = ? and action = ? and objectid = ? and courseid = ? and timecreated >= ? and timecreated < ?', array('mod_jitsi', 'participating', $jitsi->id, $course->id, $today[0]-60, $today[0]));
+
+$cm = get_coursemodule_from_id('jitsi', $id, 0, false, MUST_EXIST);
+update_completition($cm);
+
+$completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
+$activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
+echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
+
+$logs = $DB->get_records_select('logstore_standard_log', 'component = ? and action = ? and objectid = ? and
+     courseid = ? and timecreated >= ? and timecreated < ?', array('mod_jitsi', 'participating',
+     $jitsi->id, $course->id, $today[0] - 60, $today[0]));
+
 echo " ";
-echo "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-person-workspace\" viewBox=\"0 0 16 16\">";
+echo "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\"
+     class=\"bi bi-person-workspace\" viewBox=\"0 0 16 16\">";
 echo "<path d=\"M4 16s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H4Zm4-5.95a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z\"/>";
-echo "<path d=\"M2 1a2 2 0 0 0-2 2v9.5A1.5 1.5 0 0 0 1.5 14h.653a5.373 5.373 0 0 1 1.066-2H1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v9h-2.219c.554.654.89 1.373 1.066 2h.653a1.5 1.5 0 0 0 1.5-1.5V3a2 2 0 0 0-2-2H2Z\"/>";
+echo "<path d=\"M2 1a2 2 0 0 0-2 2v9.5A1.5 1.5 0 0 0 1.5 14h.653a5.373 5.373 0 0 1 1.066-2H1V3a1 1 0 0 1 1-1h12a1 1 0 0 1
+     1 1v9h-2.219c.554.654.89 1.373 1.066 2h.653a1.5 1.5 0 0 0 1.5-1.5V3a2 2 0 0 0-2-2H2Z\"/>";
 echo "</svg>";
-echo (" ".count($logs).' participantes');
-
-
-
+echo (" ".count($logs)." ".get_string('connectedattendeesnow', 'jitsi'));
+echo "<p></p>";
+echo get_string('minutesconnected', 'jitsi', getminutes($id, $USER->id));
 
 if ($jitsi->intro) {
     echo $OUTPUT->box(format_module_intro('jitsi', $jitsi, $cm->id), 'generalbox mod_introbox', 'jitsiintro');
 }
 if ($today[0] < $jitsi->timeclose || $jitsi->timeclose == 0) {
-    if ($today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))||
-        (in_array('editingteacher', $rolestr) == 1)) {
+    if ($today[0] > (($jitsi->timeopen))|| has_capability('mod/jitsi:moderation', $context) && $today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))) {
         echo $OUTPUT->box(get_string('instruction', 'jitsi'));
         echo $OUTPUT->single_button(new moodle_url('/mod/jitsi/session.php', $urlparams), get_string('access', 'jitsi'), 'post');
     } else {
-        echo $OUTPUT->box(get_string('nostart', 'jitsi', $jitsi->minpretime));
+        echo $OUTPUT->box(get_string('nostart', 'jitsi', userdate($jitsi->timeopen)));
     }
+
+
+
 } else {
     echo $OUTPUT->box(get_string('finish', 'jitsi'));
 }
@@ -214,10 +229,13 @@ if ($CFG->jitsi_invitebuttons == 1 && has_capability('mod/jitsi:createlink', $PA
     echo "</button>";
 }
 
-$sql = 'select * from {jitsi_record} where jitsi = '.$jitsi->id.' and deleted = 0 order by id';
+$sql = 'select * from {jitsi_record} where jitsi = '.$jitsi->id.' and deleted = 0 order by id desc';
 $records = $DB->get_records_sql($sql);
+$sqlusersconnected = 'select userid from mdl_logstore_standard_log where component = \'mod_jitsi\'
+     and action = \'enter\' and contextinstanceid = '.$id.' group by userid';
+$usersconnected = $DB->get_records_sql($sqlusersconnected);
 
-if ($records) {
+if ($records && isAllVisible($records) || $records && has_capability ('mod/jitsi:record', $PAGE->context)) {
     echo " ";
     echo "<button class=\"btn btn-secondary\" type=\"button\" data-toggle=\"collapse\" data-target=\"#collapseExample\"
          aria-expanded=\"false\" aria-controls=\"collapseExample\">";
@@ -225,38 +243,27 @@ if ($records) {
     echo "</button>";
 }
 
-
-
-
-//Tabla de asistentes en la sesion        
-        if ($logs && has_capability('mod/jitsi:viewusersonsession', $PAGE->context)) {
-            echo " ";
-            echo "<button class=\"btn btn-secondary\" type=\"button\" data-toggle=\"collapse\" data-target=\"#collapseAsistentes\"
-            aria-expanded=\"false\" aria-controls=\"collapseExample\">";
-            echo "Participantes";
-            echo "</button>";
-
-            echo "<div class=\"collapse\" id=\"collapseAsistentes\">";
-            echo "<div class=\"card card-body\">";
-            $table = new html_table();
-            $table->head = array(get_string('name'), get_string('time'));
-            $table->data = array();
-            foreach ($logs as $log) {
-                $user = $DB->get_record('user', array('id' => $log->userid));
-                $time = getminutes($jitsi, $course, $user);
-                $table->data[] = array(fullname($user), round($time).' min');
-            }
-            echo html_writer::table($table);
-            echo "</div>";
-            echo "</div>";
+if ($usersconnected && has_capability('mod/jitsi:viewusersonsession', $PAGE->context)) {
+    echo " ";
+    echo "<button class=\"btn btn-secondary\" type=\"button\" data-toggle=\"collapse\" data-target=\"#collapseAsistentes\"
+    aria-expanded=\"false\" aria-controls=\"collapseExample\">";
+    echo get_string('attendeesreport', 'jitsi');
+    echo "</button>";
+    echo "<div class=\"collapse\" id=\"collapseAsistentes\">";
+    echo "<div class=\"card card-body\">";
+    $table = new html_table();
+    $table->head = array(get_string('name'), get_string('minutes'));
+    $table->data = array();
+    foreach ($usersconnected as $userconnected) {
+        if ($userconnected->userid != 0) {
+            $user = $DB->get_record('user', array('id' => $userconnected->userid));
+            $table->data[] = array(fullname($user), getminutes($id, $user->id));
         }
-        
-
-// Fin tabla de asistentes  en la sesion
-
-
-
-
+    }
+    echo html_writer::table($table);
+    echo "</div>";
+    echo "</div>";
+}
 
 if ($CFG->jitsi_invitebuttons == 1 && has_capability('mod/jitsi:createlink', $PAGE->context) && $jitsi->validitytime != 0) {
     echo "<div class=\"collapse\" id=\"collapseInvitaciones\">";
@@ -306,7 +313,7 @@ if ($records) {
         $deleteurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&deletejitsirecordid=' .
                  $record->id . '&sesskey=' . sesskey());
         $deleteicon = new pix_icon('t/delete', get_string('delete'));
-        $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon, new confirm_action('Delete?'));
+        $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon, new confirm_action(get_string('confirmdeleterecordinactivity', 'jitsi')));
 
         $hideurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&hidejitsirecordid=' .
                  $record->id . '&sesskey=' . sesskey());
@@ -338,11 +345,25 @@ if ($records) {
                 echo $record->name;
             }
             echo "</h5>";
-            echo "<h6 class=\"card-subtitle mb-2 text-muted\">".userdate($sourcerecord->timecreated)."</h6>";
+            if ($sourcerecord) {
+                echo "<h6 class=\"card-subtitle mb-2 text-muted\">".userdate($sourcerecord->timecreated)."</h6>";
+            } else {
+                echo "<h6 class=\"card-subtitle mb-2 text-muted\">".get_string('error')."</h6>";
 
+            }
+            $account = $DB->get_record('jitsi_record_account', array('id' => $sourcerecord->account));
             echo "<div class=\"embed-responsive embed-responsive-16by9\">";
-            echo "<iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/".$sourcerecord->link."\"
-                allowfullscreen></iframe>";
+            if ($sourcerecord) {
+                if ($account->clientaccesstoken != null) {
+                    doembedable($sourcerecord->link);
+                }
+                echo "<iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/".$sourcerecord->link."\"
+                    allowfullscreen></iframe>";
+            } else {
+                echo "<iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/\"
+                    allowfullscreen></iframe>";
+            }
+
             echo "</div>";
             echo "<div class=\"row\">";
             echo "<div class=\"col-sm\">";

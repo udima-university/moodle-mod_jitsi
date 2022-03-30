@@ -172,6 +172,91 @@ For invoking Cloud Identity-Aware Proxy, you will need to pass the Client ID
 used when you set up your protected resource as the target audience. See how to
 [secure your IAP app with signed headers](https://cloud.google.com/iap/docs/signed-headers-howto).
 
+#### Call using a specific JSON key
+If you want to use a specific JSON key instead of using `GOOGLE_APPLICATION_CREDENTIALS` environment variable, you can
+ do this:
+ 
+```php
+use Google\Auth\CredentialsLoader;
+use Google\Auth\Middleware\AuthTokenMiddleware;
+use GuzzleHttp\Client;
+use GuzzleHttp\HandlerStack;
+
+// Define the Google Application Credentials array
+$jsonKey = ['key' => 'value'];
+
+// define the scopes for your API call
+$scopes = ['https://www.googleapis.com/auth/drive.readonly'];
+
+// Load credentials
+$creds = CredentialsLoader::makeCredentials($scopes, $jsonKey);
+
+// optional caching
+// $creds = new FetchAuthTokenCache($creds, $cacheConfig, $cache);
+
+// create middleware
+$middleware = new AuthTokenMiddleware($creds);
+$stack = HandlerStack::create();
+$stack->push($middleware);
+
+// create the HTTP client
+$client = new Client([
+  'handler' => $stack,
+  'base_uri' => 'https://www.googleapis.com',
+  'auth' => 'google_auth'  // authorize all requests
+]);
+
+// make the request
+$response = $client->get('drive/v2/files');
+
+// show the result!
+print_r((string) $response->getBody());
+
+```
+
+#### Call using Proxy-Authorization Header
+If your application is behind a proxy such as [Google Cloud IAP][iap-proxy-header],
+and your application occupies the `Authorization` request header, 
+you can include the ID token in a `Proxy-Authorization: Bearer` 
+header instead. If a valid ID token is found in a `Proxy-Authorization` header, 
+IAP authorizes the request with it. After authorizing the request, IAP passes 
+the Authorization header to your application without processing the content.
+For this, use the static method `getProxyIdTokenMiddleware` on
+`ApplicationDefaultCredentials`.
+
+```php
+use Google\Auth\ApplicationDefaultCredentials;
+use GuzzleHttp\Client;
+use GuzzleHttp\HandlerStack;
+
+// specify the path to your application credentials
+putenv('GOOGLE_APPLICATION_CREDENTIALS=/path/to/my/credentials.json');
+
+// Provide the ID token audience. This can be a Client ID associated with an IAP application
+//    $targetAudience = 'IAP_CLIENT_ID.apps.googleusercontent.com';
+$targetAudience = 'YOUR_ID_TOKEN_AUDIENCE';
+
+// create middleware
+$middleware = ApplicationDefaultCredentials::getProxyIdTokenMiddleware($targetAudience);
+$stack = HandlerStack::create();
+$stack->push($middleware);
+
+// create the HTTP client
+$client = new Client([
+  'handler' => $stack,
+  'auth' => ['username', 'pass'], // auth option handled by your application
+  'proxy_auth' => 'google_auth',
+]);
+
+// make the request
+$response = $client->get('/');
+
+// show the result!
+print_r((string) $response->getBody());
+```
+
+[iap-proxy-header]: https://cloud.google.com/iap/docs/authentication-howto#authenticating_from_proxy-authorization_header
+
 #### Verifying JWTs
 
 If you are [using Google ID tokens to authenticate users][google-id-tokens], use

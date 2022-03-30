@@ -44,66 +44,64 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configmultiselect('jitsi_sesionname',
         get_string('sessionnamefields', 'jitsi'), get_string('sessionnamefieldsex', 'jitsi'),
         $sessionoptionsdefault, $sessionoptions));
-    $settings->add(new admin_setting_configcheckbox('jitsi_securitybutton', get_string('securitybutton', 'jitsi'),
-        get_string('securitybuttonex', 'jitsi'), 0));
     $settings->add(new admin_setting_configcheckbox('jitsi_invitebuttons', get_string('invitebutton', 'jitsi'),
-        get_string('invitebuttonex', 'jitsi'), 0));
+        get_string('invitebuttonex', 'jitsi'), 1));
     $settings->add(new admin_setting_configtext('jitsi_channellastcam', get_string('simultaneouscameras', 'jitsi'),
-        get_string('simultaneouscamerasex', 'jitsi'), '4', PARAM_INT, 1));
+        get_string('simultaneouscamerasex', 'jitsi'), '15', PARAM_INT, 1));
 
     $settings->add(new admin_setting_configcheckbox('jitsi_blurbutton', get_string('blurbutton', 'jitsi'),
-        get_string('blurbuttonex', 'jitsi'), 0));
+        get_string('blurbuttonex', 'jitsi'), 1));
     $settings->add(new admin_setting_configcheckbox('jitsi_shareyoutube', get_string('youtubebutton', 'jitsi'),
-        get_string('youtubebuttonex', 'jitsi'), 0));
-    $settings->add(new admin_setting_configtext('jitsi_watermarklink', get_string('watermarklink', 'jitsi'),
-        get_string('watermarklinkex', 'jitsi'), 'https://jitsi.org'));
+        get_string('youtubebuttonex', 'jitsi'), 1));
     $settings->add(new admin_setting_configcheckbox('jitsi_finishandreturn', get_string('finishandreturn', 'jitsi'),
-        get_string('finishandreturnex', 'jitsi'), 0));
+        get_string('finishandreturnex', 'jitsi'), 1));
     $settings->add(new admin_setting_configcheckbox('jitsi_deeplink', get_string('deeplink', 'jitsi'),
-        get_string('deeplinkex', 'jitsi'), 0));
+        get_string('deeplinkex', 'jitsi'), 1));
 
     $settings->add(new admin_setting_configpasswordunmask('jitsi_password', get_string('password', 'jitsi'),
         get_string('passwordex', 'jitsi'), ''));
-    $settings->add(new admin_setting_configcheckbox('jitsi_privatesessions', get_string('privatesessions', 'jitsi'),
-        get_string('privatesessionsex', 'jitsi'), 1));
+    $settings->add(new admin_setting_configcheckbox('jitsi_securitybutton', get_string('securitybutton', 'jitsi'),
+        get_string('securitybuttonex', 'jitsi'), 0));
 
     $settings->add(new admin_setting_configcheckbox('jitsi_showavatars', get_string('showavatars', 'jitsi'),
         get_string('showavatarsex', 'jitsi'), 1));
 
     $settings->add(new admin_setting_configcheckbox('jitsi_record', get_string('record', 'jitsi'),
-        get_string('recordex', 'jitsi'), 0));
-
-    $settings->add(new admin_setting_configcheckbox('jitsi_reactions', get_string('reactions', 'jitsi'),
-        get_string('reactionsex', 'jitsi'), 0));
+        get_string('recordex', 'jitsi'), 1));
 
     $settings->add(new admin_setting_configcheckbox('jitsi_participantspane', get_string('participantspane', 'jitsi'),
-        get_string('participantspaneex', 'jitsi'), 0));    
+        get_string('participantspaneex', 'jitsi'), 1));
+
+    $settings->add(new admin_setting_configcheckbox('jitsi_raisehand', get_string('raisehand', 'jitsi'),
+        get_string('raisehandex', 'jitsi'), 1));
+
+    $settings->add(new admin_setting_configcheckbox('jitsi_reactions', get_string('reactions', 'jitsi'),
+        get_string('reactionsex', 'jitsi'), 1));
 
     $settings->add(new admin_setting_heading('jitsistreaming',
-            get_string('streamingconfig', 'jitsi'), get_string('streamingconfigex', 'jitsi', $CFG->wwwroot.'/mod/jitsi/auth.php')));
+            get_string('streamingconfig', 'jitsi'), get_string('streamingconfigex', 'jitsi')));
     $settings->add(new admin_setting_configcheckbox('jitsi_livebutton', get_string('streamingbutton', 'jitsi'),
-            get_string('streamingbuttonex', 'jitsi'), 0));
+            get_string('streamingbuttonex', 'jitsi'), 1));
 
-    $streamingoptions = ['Jitsi interface', 'Integrate'];
+    $streamingoptions = [get_string('jitsiinterface', 'jitsi'), get_string('integrated', 'jitsi')];
     $settings->add(new admin_setting_configselect('jitsi_streamingoption', get_string('streamingoption', 'jitsi'),
         get_string('streamingoptionex', 'jitsi'), null, $streamingoptions));
 
     $settings->add(new admin_setting_configtext('jitsi_oauth_id', get_string('oauthid', 'jitsi'),
-            get_string('oauthidex', 'jitsi'), ''));
+            get_string('oauthidex', 'jitsi', $CFG->wwwroot.'/mod/jitsi/auth.php'), ''));
+
     $settings->add(new admin_setting_configpasswordunmask('jitsi_oauth_secret', get_string('oauthsecret', 'jitsi'),
             get_string('oauthsecretex', 'jitsi'), ''));
 
-    // $link = '<a href="'.$CFG->wwwroot.'/mod/jitsi/adminacounts.php" target="_blank">'.get_string('acounts', 'jitsi').'</a>';
     $link = new moodle_url('/mod/jitsi/adminaccounts.php');
-    // $settings->add(new admin_setting_heading('jitsi_loginoutyoutube', '', $link));
     $settings->add(new admin_setting_heading('jitsi_loginoutyoutube', '', '<a href='.$link.' >'.
-    get_string('acounts', 'jitsi').'</a>'));
+    get_string('accounts', 'jitsi').'</a>'));
 
-    // $settings->add(new admin_setting_heading('jitsi_records_admin', 'Tablas', ''));
     $link = new moodle_url('/mod/jitsi/adminrecord.php');
     $settings->add(new admin_setting_heading('jitsi_records_admin', '', '<a href='.$link.' >'.
             get_string('deletesources', 'jitsi').'</a>'));
 
+    // Jitsi Token Section.
     $settings->add(new admin_setting_heading('jitsitoken',
         get_string('tokennconfig', 'jitsi'), get_string('tokenconfigurationex', 'jitsi')));
 
@@ -111,4 +109,18 @@ if ($ADMIN->fulltree) {
         get_string('appidex', 'jitsi'), ''));
     $settings->add(new admin_setting_configpasswordunmask('jitsi_secret', get_string('secret', 'jitsi'),
         get_string('secretex', 'jitsi'), ''));
+
+    // Experimental Section.
+    $settings->add(new admin_setting_heading('experimental', get_string('experimental', 'jitsi'),
+        get_string('experimentalex', 'jitsi')));
+
+    $settings->add(new admin_setting_configcheckbox('jitsi_privatesessions', get_string('privatesessions', 'jitsi'),
+        get_string('privatesessionsex', 'jitsi'), 0));
+
+    // Deprecated Section.
+    $settings->add(new admin_setting_heading('deprecated', get_string('deprecated', 'jitsi'),
+        get_string('deprecatedex', 'jitsi')));
+
+    $settings->add(new admin_setting_configtext('jitsi_watermarklink', get_string('watermarklink', 'jitsi'),
+        get_string('watermarklinkex', 'jitsi'), 'https://jitsi.org'));
 }

@@ -69,19 +69,16 @@ class mod_jitsi_external extends external_api{
     public static function create_stream_parameters() {
         return new external_function_parameters(
             array('session' => new external_value(PARAM_TEXT, 'Session object from google', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
-                  'jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+                  'jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                  'userid' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
         );
     }
 
-
-
-
-
-
-    
-
-
-
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     */
     public static function enter_session_parameters() {
         return new external_function_parameters(
             array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
@@ -89,6 +86,12 @@ class mod_jitsi_external extends external_api{
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @param int $jitsi Jitsi session id
+     * @param int $user User id
+     */
     public static function enter_session($jitsi, $user) {
         global $DB;
         $event = \mod_jitsi\event\jitsi_session_enter::create(array(
@@ -109,38 +112,35 @@ class mod_jitsi_external extends external_api{
         return new external_value(PARAM_TEXT, 'Enter session');
     }
 
-
-
-
-
-
-
-
-    
+    /**
+     * Returns description of method result value
+     * @return external_description
+     */
     public static function participating_session_parameters() {
         return new external_function_parameters(
             array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
-                    'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED), 
+                    'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
                     'cmid' => new external_value(PARAM_INT, 'Course Module id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
         );
     }
 
+    /**
+     * Register a participation in a Jitsi session
+     * @param int $jitsi Jitsi session id
+     * @param int $user User id
+     * @param int $cmid Course Module id
+     */
     public static function participating_session($jitsi, $user, $cmid) {
         global $DB;
-
-        // $context = context_module::instance($jitsi);
         $context = context_module::instance($cmid);
-
         $event = \mod_jitsi\event\jitsi_session_participating::create(array(
             'objectid' => $jitsi,
             'context' => $context,
-          ));
-          $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
-        //   $jitsi->intro = 'hola';
-        //   $DB->update_record('jitsi', $jitsiob)
-          $event->add_record_snapshot('course', $jitsi->course);
-          $event->add_record_snapshot('jitsi', $jitsiob);
-          $event->trigger();
+        ));
+        $event->add_record_snapshot('course', $jitsi->course);
+        $event->add_record_snapshot('jitsi', $jitsiob);
+        $event->trigger();
+        update_completition(get_coursemodule_from_id('jitsi', $cmid, 0, false, MUST_EXIST));
     }
 
     /**
@@ -150,16 +150,6 @@ class mod_jitsi_external extends external_api{
     public static function participating_session_returns() {
         return new external_value(PARAM_TEXT, 'Participating session');
     }
-
-
-
-
-
-
-
-
-
-
 
     /**
      * Trigger the course module viewed event.
@@ -215,11 +205,11 @@ class mod_jitsi_external extends external_api{
         return 'recording'.$jitsiob->recording;
     }
 
-    public static function create_stream($session, $jitsi) {
+    public static function create_stream($session, $jitsi, $userid) {
         global $CFG, $DB;
 
         $params = self::validate_parameters(self::create_stream_parameters(),
-                array('session' => $session, 'jitsi' => $jitsi));
+                array('session' => $session, 'jitsi' => $jitsi, 'userid' => $userid));
 
         if (!file_exists(__DIR__ . '/../api/vendor/autoload.php')) {
             throw new \Exception('Api client not found on '.$CFG->wwwroot.'/mod/jitsi/api/vendor/autoload.php');
@@ -233,9 +223,9 @@ class mod_jitsi_external extends external_api{
 
         $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
 
-        $acount = $DB->get_record('jitsi_record_acount', array('inuse' => 1));
+        $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
 
-        $_SESSION[$tokensessionkey] = $acount->clientaccesstoken;
+        $_SESSION[$tokensessionkey] = $account->clientaccesstoken;
 
         $client->setAccessToken($_SESSION[$tokensessionkey]);
 
@@ -243,14 +233,14 @@ class mod_jitsi_external extends external_api{
         $timediff = $t - $token->tokencreated;
 
         if ($timediff > 3599) {
-            $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($acount->clientrefreshtoken);
+            $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
 
-            $acount->clientaccesstoken = $newaccesstoken["access_token"];
+            $account->clientaccesstoken = $newaccesstoken["access_token"];
             $newrefreshaccesstoken = $client->getRefreshToken();
-            $acount->clientrefreshtoken = $newrefreshaccesstoken;
+            $account->clientrefreshtoken = $newrefreshaccesstoken;
 
-            $acount->tokencreated = $t;
-            $DB->update_record('jitsi_record_acount', $acount);
+            $account->tokencreated = $t;
+            $DB->update_record('jitsi_record_account', $account);
         }
         $youtube = new Google_Service_YouTube($client);
 
@@ -267,7 +257,8 @@ class mod_jitsi_external extends external_api{
                 $contentdetails = new Google_Service_YouTube_LiveBroadcastContentDetails();
                 $contentdetails->setEnableAutoStart(true);
                 $contentdetails->setEnableAutoStop(true);
-                $contentdetails->setEnableEmbed(true);
+
+                $contentdetails->setEnableEmbed(false);
 
                 $broadcastinsert = new Google_Service_YouTube_LiveBroadcast();
                 $broadcastinsert->setSnippet($broadcastsnippet);
@@ -294,18 +285,20 @@ class mod_jitsi_external extends external_api{
 
                 $bindbroadcastresponse = $youtube->liveBroadcasts->bind($broadcastsresponse['id'], 'id,contentDetails',
                     array('streamId' => $streamsresponse['id'], ));
+
             } catch (Google_Service_Exception $e) {
                 throw new \Exception("exception".$e->getMessage());
             } catch (Google_Exception $e) {
                 throw new \Exception("exception".$e->getMessage());
             }
         }
-        $acount = $DB->get_record('jitsi_record_acount', array('inuse' => 1));
+        $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
 
         $source = new stdClass();
         $source->link = $broadcastsresponse['id'];
-        $source->acount = $acount->id;
+        $source->account = $account->id;
         $source->timecreated = time();
+        $source->userid = $userid;
         $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
 
         $record = new stdClass();

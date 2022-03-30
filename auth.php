@@ -41,42 +41,47 @@ if ($name) {
         throw new \Exception('Api client not found on '.$CFG->wwwroot.'/mod/jitsi/api/vendor/autoload.php');
     }
 
-    $acountinuse = $DB->get_record('jitsi_record_acount', array('inuse' => 1));
-   
-    if ($acountinuse) {
+    $accountbyname = $DB->get_record('jitsi_record_account', array('name' => $name));
+    if ($accountbyname) {
+        if ($accountbyname->inuse ==  1 && $accountbyname->clientaccesstoken == NULL && $accountbyname->clientrefreshtoken == NULL) {
+            $accountbyname->inuse = 0;
+            $DB->update_record('jitsi_record_account', $accountbyname);
+        }
+    }
+    
+    $accountinuse = $DB->get_record('jitsi_record_account', array('inuse' => 1));
+    
+    unset($_SESSION[$tokensessionkey]);
+    if ($accountinuse) {
         $client = new Google_Client();
         $client->setClientId($CFG->jitsi_oauth_id);
         $client->setClientSecret($CFG->jitsi_oauth_secret);
-    
+
         $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
-        $client->setAccessToken($acountinuse->clientaccesstoken);
-        unset($_SESSION[$tokensessionkey]);
-    
+        $client->setAccessToken($accountinuse->clientaccesstoken);
+
         $t = time();
-        $timediff = $t - $acountinuse->tokencreated;
-    
+        $timediff = $t - $accountinuse->tokencreated;
+
         if ($timediff > 3599) {
-            $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($acount->clientrefreshtoken);
-    
-            $acountinuse->clientaccesstoken = $newaccesstoken['access_token'];
+            $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($accountinuse->clientrefreshtoken);
+
+            $accountinuse->clientaccesstoken = $newaccesstoken['access_token'];
             $newrefreshaccesstoken = $client->getRefreshToken();
-            $acountinuse->refreshtoken = $newrefreshaccesstoken;
-            $acountinuse->tokencreated = time();
-            $DB->update_record('jitsi_record_acount', $acountinuse);
+            $accountinuse->refreshtoken = $newrefreshaccesstoken;
+            $accountinuse->tokencreated = time();
+            $DB->update_record('jitsi_record_account', $accountinuse);
         }
-    
-        $client->revokeToken($acountinuse->clientaccesstoken);
 
-
-        $acountinuse->inuse = 0;
-        $DB->update_record('jitsi_record_acount', $acountinuse);
+        $accountinuse->inuse = 0;
+        $DB->update_record('jitsi_record_account', $accountinuse);
     }
 
     $_SESSION['name'] = $name;
 }
 
-$acounttab = $DB->get_record('jitsi_record_acount', array('name' => $_SESSION['name']));
-if (!$acounttab) {
+$accounttab = $DB->get_record('jitsi_record_account', array('name' => $_SESSION['name']));
+if (!$accounttab) {
     $_SESSION[$tokensessionkey] = null;
 }
 
@@ -133,37 +138,38 @@ if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
     if ($client->getAccessToken()) {
         try {
             $PAGE->set_url('/mod/jitsi/auth.php');
-            $PAGE->set_title(format_string(get_string('acounts', 'jitsi')));
-            $PAGE->set_heading(format_string(get_string('acounts', 'jitsi')));
+            $PAGE->set_title(format_string(get_string('accounts', 'jitsi')));
+            $PAGE->set_heading(format_string(get_string('accounts', 'jitsi')));
             echo $OUTPUT->header();
 
 
             $accesstoken = $client->getAccessToken()["access_token"];
             $clientrefreshtoken = $client->getRefreshToken();
-            echo $OUTPUT->box(get_string('acountconnected', 'jitsi'));
+            echo $OUTPUT->box(get_string('accountconnected', 'jitsi'));
+
             $link = new moodle_url('/mod/jitsi/adminaccounts.php');
             echo '<a href='.$link.'>'.get_string('back').'</a>';
 
-            $acount = $DB->get_record('jitsi_record_acount', array('name' => $_SESSION['name']));
+            $account = $DB->get_record('jitsi_record_account', array('name' => $_SESSION['name']));
 
-            if ($acount == null) {
-                $acount = new stdClass();
+            if ($account == null) {
+                $account = new stdClass();
 
                 $time = time();
 
-                $acount->name = $_SESSION['name'];
-                $acount->clientaccesstoken = $accesstoken;
-                $acount->clientrefreshtoken = $clientrefreshtoken;
-                $acount->tokencreated = $time;
-                $acount->inuse = 1;
-                $DB->insert_record('jitsi_record_acount', $acount);
+                $account->name = $_SESSION['name'];
+                $account->clientaccesstoken = $accesstoken;
+                $account->clientrefreshtoken = $clientrefreshtoken;
+                $account->tokencreated = $time;
+                $account->inuse = 1;
+                $DB->insert_record('jitsi_record_account', $account);
             } else {
                 $time = time();
-                $acount->clientaccesstoken = $accesstoken;
-                $acount->clientrefreshtoken = $clientrefreshtoken;
-                $acount->tokencreated = $time;
-                $acount->inuse = 1;
-                $DB->update_record('jitsi_record_acount', $acount);
+                $account->clientaccesstoken = $accesstoken;
+                $account->clientrefreshtoken = $clientrefreshtoken;
+                $account->tokencreated = $time;
+                $account->inuse = 1;
+                $DB->update_record('jitsi_record_account', $account);
             }
 
         } catch (Google_Service_Exception $e) {
@@ -184,10 +190,9 @@ if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
         echo "<p>";
     } else {
         $PAGE->set_url('/mod/jitsi/auth.php');
-        $PAGE->set_title(format_string(get_string('acounts', 'jitsi')));
-        $PAGE->set_heading(format_string(get_string('acounts', 'jitsi')));
+        $PAGE->set_title(format_string(get_string('accounts', 'jitsi')));
+        $PAGE->set_heading(format_string(get_string('accounts', 'jitsi')));
         echo $OUTPUT->header();
-
 
         $rand = mt_rand();
         $stateparameters = 'name='.$name.'&rand='.$rand;

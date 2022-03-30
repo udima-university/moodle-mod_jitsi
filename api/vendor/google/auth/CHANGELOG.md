@@ -1,3 +1,31 @@
+## 1.18.0 (08/24/2021)
+
+ *  [feat]: Add support for guzzlehttp/psr7 v2 (#357)
+
+## 1.17.0 (08/17/2021)
+
+ * [fix]: consistently use useSelfSignedJwt method in ServiceAccountJwtAccessCredentials (#351)
+ * [feat]: add loading and executing of default client cert source (#353)
+ * [feat]: add support for proxy-authorization header (#347)
+
+## 1.16.0 (06/22/2021)
+
+ * [feat]: allow ServiceAccountJwtAccessCredentials to sign scopes (#341)
+ * [feat]: allow psr/cache:2.0  (#344)
+
+## 1.15.2 (06/21/2021)
+
+ * [fix]: ensure cached tokens are used for GCECredentials::signBlob (#340)
+ * [fix]: adds check for getClientName (#336)
+
+## 1.15.1 (04/21/2021)
+
+ * [fix]: update minimum phpseclib for vulnerability fix (#331)
+
+## 1.15.0 (02/05/2021)
+
+ * [feat]: support for PHP 8.0: updated dependencies and tests (#318, #319)
+
 ## 1.14.3 (10/16/2020)
 
  * [fix]: add expires_at to GCECredentials (#314)

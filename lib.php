@@ -50,6 +50,8 @@ function jitsi_supports($feature) {
             return true;
         case FEATURE_BACKUP_MOODLE2:
             return true;
+        case FEATURE_COMPLETION_HAS_RULES:
+            return true;
         default:
             return null;
     }
@@ -325,14 +327,14 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     }
     $bluroption = '';
     if ($CFG->jitsi_blurbutton == 1) {
-        $bluroption = 'videobackgroundblur';
+        $bluroption = 'select-background';
     }
     $security = '';
     if ($CFG->jitsi_securitybutton == 1) {
         $security = 'security';
     }
     $record = '';
-    if ($CFG->jitsi_record == 1) {
+    if ($CFG->jitsi_record == 1 && has_capability('mod/jitsi:record', $PAGE->context)) {
         $record = 'recording';
     }
     $invite = '';
@@ -344,6 +346,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     }
 
     $participantspane = '';
+<<<<<<< HEAD
     if (($CFG->jitsi_participantspane == 1) && (has_capability('mod/jitsi:moderation', $PAGE->context))) {
         $participantspane = 'participants-pane';
     }
@@ -354,18 +357,27 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "    disableGrantModerator: true\n";
         echo "},\n";
         echo "disableRemoteMute: true,\n";
+=======
+    if (has_capability('mod/jitsi:moderation', $PAGE->context) || $CFG->jitsi_participantspane == 1 ) {
+        $participantspane = 'participants-pane';
+    }
+
+    $raisehand = '';
+    if ($CFG->jitsi_raisehand == 1 ) {
+        $raisehand = 'raisehand';
+>>>>>>> imb_completion
     }
 
     $buttons = "['microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
         'fodeviceselection', 'hangup', 'chat', '".$record."', 'etherpad', '".$youtubeoption."',
-        'settings', 'raisehand', 'videoquality', '".$streamingoption."','filmstrip', '".$invite."', 'stats',
+        'settings', '".$raisehand."', 'videoquality', '".$streamingoption."','filmstrip', '".$invite."', 'stats',
         'shortcuts', 'tileview', '".$bluroption."', 'download', 'help', '".$muteeveryone."',
         '".$mutevideoeveryone."', '".$security."', '".$participantspane."']";
 
     echo "<div class=\"row\">";
     echo "<div class=\"col-sm\">";
 
-    $acount = $DB->get_record('jitsi_record_acount', array('inuse' => 1));
+    $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
 
     echo "<div class=\"row\">";
     echo "<div class=\"col-sm-9\">";
@@ -374,7 +386,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "<div class=\"col-sm-3 text-right\">";
     if ($user == null) {
         if ($CFG->jitsi_livebutton == 1 && has_capability('mod/jitsi:record', $PAGE->context)
-            && $acount != null
+            && $account != null
             && ($CFG->jitsi_streamingoption == 1)) {
             echo "<div class=\"text-right\">";
             echo "<div class=\"custom-control custom-switch\">";
@@ -383,7 +395,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             echo "  <label class=\"custom-control-label\" for=\"recordSwitch\">Record & Streaming</label>";
             echo "</div>";
             echo "</div>";
-        } else if ($CFG->jitsi_livebutton == 1 && $acount != null && $CFG->jitsi_streamingoption == 1) {
+        } else if ($CFG->jitsi_livebutton == 1 && $account != null && $CFG->jitsi_streamingoption == 1) {
             echo "<div class=\"text-right\">";
             echo "<div class=\"custom-control custom-switch\">";
             echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\" ";
@@ -403,8 +415,15 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "const domain = \"".$CFG->jitsi_domain."\";\n";
     echo "const options = {\n";
     echo "configOverwrite: {\n";
-    if ($CFG->jitsi_deeplink == 0) {
-        echo "disableDeepLinking: true,\n";
+
+    echo "disableDeepLinking: true,\n";
+
+    if (!has_capability('mod/jitsi:moderation', $PAGE->context)) {
+        echo "remoteVideoMenu: {\n";
+        echo "    disableKick: true,\n";
+        echo "    disableGrantModerator: true\n";
+        echo "},\n";
+        echo "disableRemoteMute: true,\n";
     }
 
     if ($CFG->jitsi_reactions == 0) {
@@ -519,7 +538,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "       var respuesta = ajax.call([{\n";
         echo "            methodname: 'mod_jitsi_create_stream',\n";
-        echo "            args: {session:'".$session."', jitsi:'".$jitsi->id."'},\n";
+        echo "            args: {session:'".$session."', jitsi:'".$jitsi->id."', userid: '".$USER->id."'},\n";
 
         echo "       }]);\n";
         echo "       respuesta[0].done(function(response) {\n";
@@ -529,7 +548,14 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "          })\n";
         echo "            console.log(response);";
         echo ";})";
-        echo  ".fail(function(ex) {console.log(ex);});";
+        echo  ".fail(function(ex) {";
+        echo "    console.log(ex);";
+        echo "      document.getElementById('state').innerHTML = ";
+
+        echo "    '<div class=\"alert alert-light\" role=\"alert\">"
+            .get_string('accountinsufficientprivileges', 'jitsi')."</div>';";
+        echo "      document.getElementById(\"recordSwitch\").checked = false;\n";
+        echo "  });";
         echo "    })\n";
         echo "}\n";
 
@@ -625,7 +651,7 @@ function sendnotificationprivatesession($fromuser, $touser) {
     .'> '.get_string('here', 'jitsi').'</a> '.get_string('toenter', 'jitsi');
     $message->smallmessage = get_string('userenter', 'jitsi', $fromuser->firstname .' '. $fromuser->lastname);
     $message->notification = 1;
-    $message->contexturl = new moodle_url('/mod/jitsi/viewpriv.php', array('user' => $touser->id));
+    $message->contexturl = new moodle_url('/mod/jitsi/viewpriv.php', array('user' => $touser->id, 'fromuser' => $fromuser->id));
     $message->contexturlname = 'Private session';
     $content = array('*' => array('header' => '', 'footer' => ''));
     $message->set_additional_content('email', $content);
@@ -720,35 +746,85 @@ function deleterecordyoutube($idsource) {
 
         $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
 
-        $acount = $DB->get_record('jitsi_record_acount', array('inuse' => 1));
+        $source = $DB->get_record('jitsi_source_record', array('id' => $idsource));
+        $account = $DB->get_record('jitsi_record_account', array('id' => $source->account));
 
-        $_SESSION[$tokensessionkey] = $acount->clientaccesstoken;
+        $_SESSION[$tokensessionkey] = $account->clientaccesstoken;
         $client->setAccessToken($_SESSION[$tokensessionkey]);
         $t = time();
-        $timediff = $t - $acount->tokencreated;
-
+        $timediff = $t - $account->tokencreated;
         if ($timediff > 3599) {
-            $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($acount->clientrefreshtoken);
-            $acount->clientaccesstoken = $newaccesstoken["access_token"];
-            $newrefreshaccesstoken = $client->getRefreshToken();
-            $acount->clientrefreshtoken = $newrefreshaccesstoken;
-            $acount->tokencreated = time();
-        }
-
-        $youtube = new Google_Service_YouTube($client);
-
-        if ($client->getAccessToken($idsource)) {
+            $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
             try {
-                $source = $DB->get_record('jitsi_source_record', array('id' => $idsource));
-                $youtube->videos->delete($source->link);
-                delete_jitsi_record($idsource);
+                $account->clientaccesstoken = $newaccesstoken["access_token"];
+                $newrefreshaccesstoken = $client->getRefreshToken();
+                $newrefreshaccesstoken = $client->getRefreshToken();
+                $account->clientrefreshtoken = $newrefreshaccesstoken;
+                $account->tokencreated = time();
             } catch (Google_Service_Exception $e) {
-                throw new \Exception("exception".$e->getMessage());
+                if ($account->inuse == 1) {
+                    $account->inuse = 0;
+                }
+                $account->clientaccesstoken = null;
+                $account->clientrefreshtoken = null;
+                $account->tokencreated = 0;
+                $DB->update_record('jitsi_record_account', $account);
+                $client->revokeToken();
+                return false;
             } catch (Google_Exception $e) {
-                throw new \Exception("exception".$e->getMessage());
+                if ($account->inuse == 1) {
+                    $account->inuse = 0;
+                }
+                $account->clientaccesstoken = null;
+                $account->clientrefreshtoken = null;
+                $account->tokencreated = 0;
+                $DB->update_record('jitsi_record_account', $account);
+                $client->revokeToken();
+                return false;
             }
         }
+        $youtube = new Google_Service_YouTube($client);
+        try {
+            $listresponse = $youtube->videos->listVideos("snippet", array('id' => $source->link));
+        } catch (Google_Service_Exception $e) {
+            if ($account->inuse == 1) {
+                $account->inuse = 0;
+            }
+            $account->clientaccesstoken = null;
+            $account->clientrefreshtoken = null;
+            $account->tokencreated = 0;
+            $DB->update_record('jitsi_record_account', $account);
+            $client->revokeToken();
+            return false;
+            throw new \Exception("exception".$e->getMessage());
+        } catch (Google_Exception $e) {
+            if ($account->inuse == 1) {
+                $account->inuse = 0;
+            }
+            $account->clientaccesstoken = null;
+            $account->clientrefreshtoken = null;
+            $account->tokencreated = 0;
+            $DB->update_record('jitsi_record_account', $account);
+            $client->revokeToken();
+            return false;
+            throw new \Exception("exception".$e->getMessage());
+        }
+        if ($listresponse['items'] != []) {
+            if ($client->getAccessToken($idsource)) {
+                try {
+                    $youtube->videos->delete($source->link);
+                    delete_jitsi_record($idsource);
+                } catch (Google_Service_Exception $e) {
+                    throw new \Exception("exception".$e->getMessage());
+                } catch (Google_Exception $e) {
+                    throw new \Exception("exception".$e->getMessage());
+                }
+            }
+        } else {
+            delete_jitsi_record($idsource);
+        }       
     }
+    return true;
 }
 
  /**
@@ -789,17 +865,179 @@ function mod_jitsi_inplace_editable($itemtype, $itemid, $newvalue) {
 /**
  * Counts the minutes of a user in the current session
  * @param stdClass $jitsi - current session object
- * @param stdClass $course - session object
  * @param stdClass $user - course object
  */
-function getminutes($jitsi, $course, $user){
+function getminutes($contextinstanceid, $userid) {
+    global $DB, $USER;
+    $sqlminutos = 'select * from mdl_logstore_standard_log where component = \'mod_jitsi\'
+         and action = \'participating\' and contextinstanceid = '.$contextinstanceid.' and userid = '.$userid;
+    $sqlentry = 'select * from mdl_logstore_standard_log where component = \'mod_jitsi\'
+         and action = \'enter\' and contextinstanceid = '.$contextinstanceid.' and userid = '.$userid;
+
+    $minutos = $DB->get_records_sql($sqlminutos);
+    $entrys = $DB->get_records_sql($sqlentry);
+
+    return count($minutos) - count($entrys);
+}
+
+/**
+ * Add a get_coursemodule_info function in case any jitsi type wants to add 'extra' information
+ * for the course (see resource).
+ *
+ * Given a course_module object, this function returns any "extra" information that may be needed
+ * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
+ *
+ * @param stdClass $coursemodule The coursemodule object (record).
+ * @return cached_cm_info An object on information that the courses
+ *                        will know about (most noticeably, an icon).
+ */
+function jitsi_get_coursemodule_info($coursemodule) {
     global $DB;
-    $sqllastlog = 'select * from {logstore_standard_log} where component = ? and action = ? and objectid = ? and courseid = ? and userid = ? order by timecreated desc limit 1';
-    $sqllfirstlog = 'select * from {logstore_standard_log} where component = ? and action = ? and objectid = ? and courseid = ? and userid = ? order by timecreated desc limit 1';
-    $lastlog = $DB->get_record_sql($sqllastlog, array('mod_jitsi', 'participating', $jitsi->id, $course->id, $user->id));
-    $firstlog = $DB->get_record_sql($sqllastlog, array('mod_jitsi', 'enter', $jitsi->id, $course->id, $user->id));
-    $timein = $firstlog->timecreated;
-    $timeout = $lastlog->timecreated;
-    $diferencia = $timeout-$timein;
-    return round($diferencia/60);
+
+    $dbparams = ['id' => $coursemodule->instance];
+    $fields = 'id, name, intro, introformat, completionminutes, timeopen, timeclose';
+    if (!$jitsi = $DB->get_record('jitsi', $dbparams, $fields)) {
+        return false;
+    }
+
+    $result = new cached_cm_info();
+    $result->name = $jitsi->name;
+
+    if ($coursemodule->showdescription) {
+        // Convert intro to html. Do not filter cached version, filters run at display time.
+        $result->content = format_module_intro('jitsi', $jitsi, $coursemodule->id, false);
+    }
+
+    // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
+    if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
+        $result->customdata['customcompletionrules']['completionminutes'] = $jitsi->completionminutes;
+    }
+
+    return $result;
+}
+
+/**
+ * Callback which returns human-readable strings describing the active completion custom rules for the module instance.
+ *
+ * @param cm_info|stdClass $cm object with fields ->completion and ->customdata['customcompletionrules']
+ * @return array $descriptions the array of descriptions for the custom rules.
+ */
+function mod_jitsi_get_completion_active_rule_descriptions($cm) {
+    // Values will be present in cm_info, and we assume these are up to date.
+    if (empty($cm->customdata['customcompletionrules'])
+        || $cm->completion != COMPLETION_TRACKING_AUTOMATIC) {
+        return [];
+    }
+
+    $descriptions = [];
+    foreach ($cm->customdata['customcompletionrules'] as $key => $val) {
+        switch ($key) {
+            case 'completionminutes':
+                if (!empty($val)) {
+                    $descriptions[] = get_string('completionminutes', 'jitsi', $val);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    return $descriptions;
+}
+
+/**
+ * Update completion.
+ * @param stdClass $cm - course module object
+ */
+function update_completition($cm) {
+    global $DB;
+    $jitsi = $DB->get_record('jitsi', array('id' => $cm->instance), '*', MUST_EXIST);
+    if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
+        print_error('coursemisconf');
+    }
+    $completion = new completion_info($course);
+
+    if ($completion->is_enabled($cm) == COMPLETION_TRACKING_AUTOMATIC && $jitsi->completionminutes) {
+        $completion->update_state($cm, COMPLETION_COMPLETE);
+    }
+}
+
+/**
+ * Set embedable a video
+ * @param int @idvideo - id of the video
+ */
+function doembedable($idvideo) {
+    global $CFG, $DB;
+    if (!file_exists(__DIR__ . '/api/vendor/autoload.php')) {
+        throw new \Exception('please run "composer require google/apiclient:~2.0" in "' . __DIR__ .'"');
+    }
+    require_once(__DIR__ . '/api/vendor/autoload.php');
+
+    $client = new Google_Client();
+
+    $client->setClientId($CFG->jitsi_oauth_id);
+    $client->setClientSecret($CFG->jitsi_oauth_secret);
+
+    $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
+
+    $source = $DB->get_record('jitsi_source_record', array('link' => $idvideo));
+    $account = $DB->get_record('jitsi_record_account', array('id' => $source->account));
+
+    $_SESSION[$tokensessionkey] = $account->clientaccesstoken;
+    $client->setAccessToken($_SESSION[$tokensessionkey]);
+    $t = time();
+    $timediff = $t - $account->tokencreated;
+
+    if ($timediff > 3599) {
+        $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
+        $account->clientaccesstoken = $newaccesstoken["access_token"];
+        $newrefreshaccesstoken = $client->getRefreshToken();
+        $account->clientrefreshtoken = $newrefreshaccesstoken;
+        $account->tokencreated = time();
+    }
+
+    $youtube = new Google_Service_YouTube($client);
+
+    try {
+        $listresponse = $youtube->videos->listVideos("status", array('id' => $idvideo));
+        $video = $listresponse[0];
+    
+        $videostatus = $video['status'];
+        if ($videostatus != null) {
+            if ($videostatus['embeddable'] != true) {
+                $videostatus['embeddable'] = 'true';
+                $updateresponse = $youtube->videos->update("status", $video);
+            }
+        }
+    } catch (Google_Service_Exception $e) {
+        if ($account->inuse == 1) {
+            $account->inuse = 0;
+        }
+        $account->clientaccesstoken = null;
+        $account->clientrefreshtoken = null;
+        $account->tokencreated = 0;
+        $DB->update_record('jitsi_record_account', $account);
+        $client->revokeToken();
+        return false;
+    } catch (Google_Exception $e) {
+        if ($account->inuse == 1) {
+            $account->inuse = 0;
+        }
+        $account->clientaccesstoken = null;
+        $account->clientrefreshtoken = null;
+        $account->tokencreated = 0;
+        $DB->update_record('jitsi_record_account', $account);
+        $client->revokeToken();
+        return false;
+    }
+    return $updateresponse;
+}
+
+function isAllVisible($records) {
+    $res = false;
+    foreach ($records as $record) {
+        if ($record->visible == 1) {
+            $res = true;
+        }
+    }
+    return $res;
 }

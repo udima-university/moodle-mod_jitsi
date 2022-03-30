@@ -44,8 +44,11 @@ $PAGE->set_url('/mod/jitsi/adminrecord.php');
 require_login();
 
 if ($deletejitsisourceid && confirm_sesskey($sesskey)) {
-    deleterecordyoutube($deletejitsisourceid);
-    redirect($PAGE->url, get_string('deleted'));
+    if (deleterecordyoutube($deletejitsisourceid) == true) {
+        redirect($PAGE->url, get_string('deleted'));
+    } else {
+        redirect($PAGE->url, get_string('errordeleting', 'jitsi'));
+    }
 }
 
 $PAGE->set_title(format_string(get_string('records', 'jitsi')));
@@ -57,25 +60,27 @@ echo $OUTPUT->box(get_string('tablelistjitsis', 'jitsi'));
 
 if (is_siteadmin()) {
     $table = new html_table();
-    $table->head = array('Id', 'Link', get_string('acount', 'jitsi'), get_string('date'), get_string('delete'));
+    $table->head = array('Id', 'Link', get_string('account', 'jitsi'), get_string('date'), get_string('delete'));
     $sources = $DB->get_records('jitsi_source_record', array());
-    $acountinuse = $DB->get_record('jitsi_record_acount', array('inuse' => 1));
+    $accountinuse = $DB->get_record('jitsi_record_account', array('inuse' => 1));
 
     foreach ($sources as $source) {
+        $acount = $DB->get_record('jitsi_record_account', array('id' => $source->account));
         if (isDeletable($source->id)) {
-            if ($source->acount == $acountinuse->id) {
-                $deleteurl = new moodle_url('/mod/jitsi/adminrecord.php?&deletejitsisourceid='.
-                    $source->id. '&sesskey=' . sesskey());
-                $deleteicon = new pix_icon('t/delete', get_string('delete'));
-                $acount = $DB->get_record('jitsi_record_acount', array('id' => $source->acount));
-                $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon,
-                    new confirm_action(get_string('deletesourceq', 'jitsi')));
-                $table->data[] = array($source->id, $source->link, $acount->name, userdate($source->timecreated), $deleteaction);
+            $deleteurl = new moodle_url('/mod/jitsi/adminrecord.php?&deletejitsisourceid='.
+                $source->id. '&sesskey=' . sesskey());
+            $deleteicon = new pix_icon('t/delete', get_string('delete'));
+            $account = $DB->get_record('jitsi_record_account', array('id' => $source->account));
+            $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon,
+                new confirm_action(get_string('deletesourceq', 'jitsi')));
+            if ($acount->clientaccesstoken != null) {
+                $table->data[] = array($source->id, '<a href="https://youtu.be/'.$source->link.'" target=_blank">'
+                    .$source->link.'</a>', $account->name, userdate($source->timecreated), $deleteaction);
             } else {
-                $acount = $DB->get_record('jitsi_record_acount', array('id' => $source->acount));
-                $table->data[] = array($source->id, $source->link, $acount->name, userdate($source->timecreated),
-                    get_string('otheracount', 'jitsi'));
+                $table->data[] = array($source->id, '<a href="https://youtu.be/'.$source->link.'" target=_blank">'
+                    .$source->link.'</a>', $account->name, userdate($source->timecreated),'<a href="'.$CFG->wwwroot.'/mod/jitsi/adminaccounts.php">'. get_string('notloggedin', 'jitsi').'</a>');
             }
+            
         }
     }
     echo html_writer::table($table);

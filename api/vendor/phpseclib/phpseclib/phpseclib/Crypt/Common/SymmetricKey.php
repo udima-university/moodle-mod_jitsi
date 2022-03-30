@@ -101,7 +101,15 @@ abstract class SymmetricKey
      * @see \phpseclib3\Crypt\Common\SymmetricKey::encrypt()
      * @see \phpseclib3\Crypt\Common\SymmetricKey::decrypt()
      */
-    const MODE_CFB8 = 38;
+    const MODE_CFB8 = 7;
+    /**
+     * Encrypt / decrypt using the Output Feedback mode (8bit)
+     *
+     * @access public
+     * @see \phpseclib3\Crypt\Common\SymmetricKey::encrypt()
+     * @see \phpseclib3\Crypt\Common\SymmetricKey::decrypt()
+     */
+    const MODE_OFB8 = 8;
     /**
      * Encrypt / decrypt using the Output Feedback mode.
      *
@@ -142,6 +150,7 @@ abstract class SymmetricKey
         'cfb'    => self::MODE_CFB,
         'cfb8'   => self::MODE_CFB8,
         'ofb'    => self::MODE_OFB,
+        'ofb8'   => self::MODE_OFB8,
         'gcm'    => self::MODE_GCM,
         'stream' => self::MODE_STREAM
     ];
@@ -237,7 +246,7 @@ abstract class SymmetricKey
      * @var string
      * @access private
      */
-    private $iv = false;
+    protected $iv = false;
 
     /**
      * A "sliding" Initialization Vector
@@ -475,7 +484,7 @@ abstract class SymmetricKey
      * @var string
      * @access private
      */
-    protected static $cipher_name_openssl_ecb;
+    protected $cipher_name_openssl_ecb;
 
     /**
      * The default salt used by setPassword()
@@ -642,6 +651,8 @@ abstract class SymmetricKey
      *
      * - ofb
      *
+     * - ofb8
+     *
      * - gcm
      *
      * @param string $mode
@@ -669,6 +680,7 @@ abstract class SymmetricKey
             case self::MODE_CFB:
             case self::MODE_CFB8:
             case self::MODE_OFB:
+            case self::MODE_OFB8:
             case self::MODE_STREAM:
                 $this->paddable = false;
                 break;
@@ -1237,14 +1249,30 @@ abstract class SymmetricKey
                         }
                     }
                     return $ciphertext;
+                case self::MODE_OFB8:
+                    $ciphertext = '';
+                    $len = strlen($plaintext);
+                    $iv = $this->encryptIV;
+
+                    for ($i = 0; $i < $len; ++$i) {
+                        $xor = openssl_encrypt($iv, $this->cipher_name_openssl_ecb, $this->key, $this->openssl_options, $this->decryptIV);
+                        $ciphertext.= $plaintext[$i] ^ $xor;
+                        $iv = substr($iv, 1) . $xor[0];
+                    }
+
+                    if ($this->continuousBuffer) {
+                        $this->encryptIV = $iv;
+                    }
+                    break;
                 case self::MODE_OFB:
                     return $this->openssl_ofb_process($plaintext, $this->encryptIV, $this->enbuffer);
             }
         }
 
         if ($this->engine === self::ENGINE_MCRYPT) {
+            set_error_handler(function() {});
             if ($this->enchanged) {
-                @mcrypt_generic_init($this->enmcrypt, $this->key, $this->getIV($this->encryptIV));
+                mcrypt_generic_init($this->enmcrypt, $this->key, $this->getIV($this->encryptIV));
                 $this->enchanged = false;
             }
 
@@ -1277,15 +1305,15 @@ abstract class SymmetricKey
                 if ($len >= $block_size) {
                     if ($this->enbuffer['enmcrypt_init'] === false || $len > $this->cfb_init_len) {
                         if ($this->enbuffer['enmcrypt_init'] === true) {
-                            @mcrypt_generic_init($this->enmcrypt, $this->key, $iv);
+                            mcrypt_generic_init($this->enmcrypt, $this->key, $iv);
                             $this->enbuffer['enmcrypt_init'] = false;
                         }
-                        $ciphertext.= @mcrypt_generic($this->enmcrypt, substr($plaintext, $i, $len - $len % $block_size));
+                        $ciphertext.= mcrypt_generic($this->enmcrypt, substr($plaintext, $i, $len - $len % $block_size));
                         $iv = substr($ciphertext, -$block_size);
                         $len%= $block_size;
                     } else {
                         while ($len >= $block_size) {
-                            $iv = @mcrypt_generic($this->ecb, $iv) ^ substr($plaintext, $i, $block_size);
+                            $iv = mcrypt_generic($this->ecb, $iv) ^ substr($plaintext, $i, $block_size);
                             $ciphertext.= $iv;
                             $len-= $block_size;
                             $i+= $block_size;
@@ -1294,21 +1322,25 @@ abstract class SymmetricKey
                 }
 
                 if ($len) {
-                    $iv = @mcrypt_generic($this->ecb, $iv);
+                    $iv = mcrypt_generic($this->ecb, $iv);
                     $block = $iv ^ substr($plaintext, -$len);
                     $iv = substr_replace($iv, $block, 0, $len);
                     $ciphertext.= $block;
                     $pos = $len;
                 }
 
+                restore_error_handler();
+
                 return $ciphertext;
             }
 
-            $ciphertext = @mcrypt_generic($this->enmcrypt, $plaintext);
+            $ciphertext = mcrypt_generic($this->enmcrypt, $plaintext);
 
             if (!$this->continuousBuffer) {
-                @mcrypt_generic_init($this->enmcrypt, $this->key, $this->getIV($this->encryptIV));
+                mcrypt_generic_init($this->enmcrypt, $this->key, $this->getIV($this->encryptIV));
             }
+
+            restore_error_handler();
 
             return $ciphertext;
         }
@@ -1426,6 +1458,21 @@ abstract class SymmetricKey
                     }
                 }
                 break;
+            case self::MODE_OFB8:
+                $ciphertext = '';
+                $len = strlen($plaintext);
+                $iv = $this->encryptIV;
+
+                for ($i = 0; $i < $len; ++$i) {
+                    $xor = $this->encryptBlock($iv);
+                    $ciphertext.= $plaintext[$i] ^ $xor;
+                    $iv = substr($iv, 1) . $xor[0];
+                }
+
+                if ($this->continuousBuffer) {
+                    $this->encryptIV = $iv;
+                }
+                break;
             case self::MODE_OFB:
                 $xor = $this->encryptIV;
                 if (strlen($buffer['xor'])) {
@@ -1479,7 +1526,6 @@ abstract class SymmetricKey
         if ($this->paddable && strlen($ciphertext) % $this->block_size) {
             throw new \LengthException('The ciphertext length (' . strlen($ciphertext) . ') needs to be a multiple of the block size (' . $this->block_size . ')');
         }
-
         $this->setup();
 
         if ($this->mode == self::MODE_GCM || isset($this->poly1305Key)) {
@@ -1591,6 +1637,21 @@ abstract class SymmetricKey
                         }
                     }
                     break;
+                case self::MODE_OFB8:
+                    $plaintext = '';
+                    $len = strlen($ciphertext);
+                    $iv = $this->decryptIV;
+
+                    for ($i = 0; $i < $len; ++$i) {
+                        $xor = openssl_encrypt($iv, $this->cipher_name_openssl_ecb, $this->key, $this->openssl_options, $this->decryptIV);
+                        $plaintext.= $ciphertext[$i] ^ $xor;
+                        $iv = substr($iv, 1) . $xor[0];
+                    }
+
+                    if ($this->continuousBuffer) {
+                        $this->decryptIV = $iv;
+                    }
+                    break;
                 case self::MODE_OFB:
                     $plaintext = $this->openssl_ofb_process($ciphertext, $this->decryptIV, $this->debuffer);
             }
@@ -1599,9 +1660,10 @@ abstract class SymmetricKey
         }
 
         if ($this->engine === self::ENGINE_MCRYPT) {
+            set_error_handler(function() {});
             $block_size = $this->block_size;
             if ($this->dechanged) {
-                @mcrypt_generic_init($this->demcrypt, $this->key, $this->getIV($this->decryptIV));
+                mcrypt_generic_init($this->demcrypt, $this->key, $this->getIV($this->decryptIV));
                 $this->dechanged = false;
             }
 
@@ -1629,25 +1691,29 @@ abstract class SymmetricKey
                 }
                 if ($len >= $block_size) {
                     $cb = substr($ciphertext, $i, $len - $len % $block_size);
-                    $plaintext.= @mcrypt_generic($this->ecb, $iv . $cb) ^ $cb;
+                    $plaintext.= mcrypt_generic($this->ecb, $iv . $cb) ^ $cb;
                     $iv = substr($cb, -$block_size);
                     $len%= $block_size;
                 }
                 if ($len) {
-                    $iv = @mcrypt_generic($this->ecb, $iv);
+                    $iv = mcrypt_generic($this->ecb, $iv);
                     $plaintext.= $iv ^ substr($ciphertext, -$len);
                     $iv = substr_replace($iv, substr($ciphertext, -$len), 0, $len);
                     $pos = $len;
                 }
 
+                restore_error_handler();
+
                 return $plaintext;
             }
 
-            $plaintext = @mdecrypt_generic($this->demcrypt, $ciphertext);
+            $plaintext = mdecrypt_generic($this->demcrypt, $ciphertext);
 
             if (!$this->continuousBuffer) {
-                @mcrypt_generic_init($this->demcrypt, $this->key, $this->getIV($this->decryptIV));
+                mcrypt_generic_init($this->demcrypt, $this->key, $this->getIV($this->decryptIV));
             }
+
+            restore_error_handler();
 
             return $this->paddable ? $this->unpad($plaintext) : $plaintext;
         }
@@ -1762,6 +1828,21 @@ abstract class SymmetricKey
                     } else {
                         $this->decryptIV = substr($this->decryptIV, $len - $block_size) . substr($ciphertext, -$len);
                     }
+                }
+                break;
+            case self::MODE_OFB8:
+                $plaintext = '';
+                $len = strlen($ciphertext);
+                $iv = $this->decryptIV;
+
+                for ($i = 0; $i < $len; ++$i) {
+                    $xor = $this->encryptBlock($iv);
+                    $plaintext.= $ciphertext[$i] ^ $xor;
+                    $iv = substr($iv, 1) . $xor[0];
+                }
+
+                if ($this->continuousBuffer) {
+                    $this->decryptIV = $iv;
                 }
                 break;
             case self::MODE_OFB:
@@ -1906,7 +1987,7 @@ abstract class SymmetricKey
                 for ($i = 0; $i < strlen($plaintext); $i+=$block_size) {
                     $block = substr($plaintext, $i, $block_size);
                     if (strlen($block) > strlen($buffer['ciphertext'])) {
-                        $buffer['ciphertext'].= openssl_encrypt($xor, static::$cipher_name_openssl_ecb, $key, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING);
+                        $buffer['ciphertext'].= openssl_encrypt($xor, $this->cipher_name_openssl_ecb, $key, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING);
                     }
                     Strings::increment_str($xor);
                     $otp = Strings::shift($buffer['ciphertext'], $block_size);
@@ -1915,7 +1996,7 @@ abstract class SymmetricKey
             } else {
                 for ($i = 0; $i < strlen($plaintext); $i+=$block_size) {
                     $block = substr($plaintext, $i, $block_size);
-                    $otp = openssl_encrypt($xor, static::$cipher_name_openssl_ecb, $key, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING);
+                    $otp = openssl_encrypt($xor, $this->cipher_name_openssl_ecb, $key, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING);
                     Strings::increment_str($xor);
                     $ciphertext.= $block ^ $otp;
                 }
@@ -1957,7 +2038,7 @@ abstract class SymmetricKey
             }
         }
         if ($this->continuousBuffer) {
-            $encryptIV = openssl_decrypt($encryptIV, static::$cipher_name_openssl_ecb, $key, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING);
+            $encryptIV = openssl_decrypt($encryptIV, $this->cipher_name_openssl_ecb, $key, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING);
             if ($overflow) {
                 Strings::increment_str($encryptIV);
             }
@@ -2182,16 +2263,19 @@ abstract class SymmetricKey
                 // that don't we'll emulate it
                 switch ($this->mode) {
                     case self::MODE_CTR:
-                        if (in_array(static::$cipher_name_openssl_ecb, $methods)) {
+                        if (in_array($this->cipher_name_openssl_ecb, $methods)) {
                             $this->openssl_emulate_ctr = true;
                             return true;
                         }
                 }
                 return false;
             case self::ENGINE_MCRYPT:
-                return $this->cipher_name_mcrypt &&
-                       extension_loaded('mcrypt') &&
-                       in_array($this->cipher_name_mcrypt, @mcrypt_list_algorithms());
+                set_error_handler(function() {});
+                $result = $this->cipher_name_mcrypt &&
+                          extension_loaded('mcrypt') &&
+                          in_array($this->cipher_name_mcrypt, mcrypt_list_algorithms());
+                restore_error_handler();
+                return $result;
             case self::ENGINE_EVAL:
                 return method_exists($this, 'setupInlineCrypt');
             case self::ENGINE_INTERNAL:
@@ -2304,17 +2388,19 @@ abstract class SymmetricKey
         }
 
         if ($this->engine != self::ENGINE_MCRYPT && $this->enmcrypt) {
+            set_error_handler(function() {});
             // Closing the current mcrypt resource(s). _mcryptSetup() will, if needed,
             // (re)open them with the module named in $this->cipher_name_mcrypt
-            @mcrypt_module_close($this->enmcrypt);
-            @mcrypt_module_close($this->demcrypt);
+            mcrypt_module_close($this->enmcrypt);
+            mcrypt_module_close($this->demcrypt);
             $this->enmcrypt = null;
             $this->demcrypt = null;
 
             if ($this->ecb) {
-                @mcrypt_module_close($this->ecb);
+                mcrypt_module_close($this->ecb);
                 $this->ecb = null;
             }
+            restore_error_handler();
         }
 
         $this->changed = $this->nonIVChanged = true;
@@ -2422,6 +2508,8 @@ abstract class SymmetricKey
             case self::ENGINE_MCRYPT:
                 $this->enchanged = $this->dechanged = true;
 
+                set_error_handler(function() {});
+
                 if (!isset($this->enmcrypt)) {
                     static $mcrypt_modes = [
                         self::MODE_CTR    => 'ctr',
@@ -2430,23 +2518,28 @@ abstract class SymmetricKey
                         self::MODE_CFB    => 'ncfb',
                         self::MODE_CFB8   => MCRYPT_MODE_CFB,
                         self::MODE_OFB    => MCRYPT_MODE_NOFB,
+                        self::MODE_OFB8   => MCRYPT_MODE_OFB,
                         self::MODE_STREAM => MCRYPT_MODE_STREAM,
                     ];
 
-                    $this->demcrypt = @mcrypt_module_open($this->cipher_name_mcrypt, '', $mcrypt_modes[$this->mode], '');
-                    $this->enmcrypt = @mcrypt_module_open($this->cipher_name_mcrypt, '', $mcrypt_modes[$this->mode], '');
+                    $this->demcrypt = mcrypt_module_open($this->cipher_name_mcrypt, '', $mcrypt_modes[$this->mode], '');
+                    $this->enmcrypt = mcrypt_module_open($this->cipher_name_mcrypt, '', $mcrypt_modes[$this->mode], '');
 
                     // we need the $ecb mcrypt resource (only) in MODE_CFB with enableContinuousBuffer()
                     // to workaround mcrypt's broken ncfb implementation in buffered mode
                     // see: {@link http://phpseclib.sourceforge.net/cfb-demo.phps}
                     if ($this->mode == self::MODE_CFB) {
-                        $this->ecb = @mcrypt_module_open($this->cipher_name_mcrypt, '', MCRYPT_MODE_ECB, '');
+                        $this->ecb = mcrypt_module_open($this->cipher_name_mcrypt, '', MCRYPT_MODE_ECB, '');
                     }
+
                 } // else should mcrypt_generic_deinit be called?
 
                 if ($this->mode == self::MODE_CFB) {
-                    @mcrypt_generic_init($this->ecb, $this->key, str_repeat("\0", $this->block_size));
+                    mcrypt_generic_init($this->ecb, $this->key, str_repeat("\0", $this->block_size));
                 }
+
+                restore_error_handler();
+
                 break;
             case self::ENGINE_INTERNAL:
                 $this->setupKey();
@@ -2957,6 +3050,44 @@ abstract class SymmetricKey
                     return $_plaintext;
                     ';
                 break;
+            case self::MODE_OFB8:
+                $encrypt = $init_encrypt . '
+                    $_ciphertext = "";
+                    $_len = strlen($_text);
+                    $_iv = $this->encryptIV;
+
+                    for ($_i = 0; $_i < $_len; ++$_i) {
+                        $in = $_iv;
+                        '.$encrypt_block.'
+                        $_ciphertext.= $_text[$_i] ^ $in;
+                        $_iv = substr($_iv, 1) . $in[0];
+                    }
+
+                    if ($this->continuousBuffer) {
+                        $this->encryptIV = $_iv;
+                    }
+
+                    return $_ciphertext;
+                    ';
+                $decrypt = $init_encrypt . '
+                    $_plaintext = "";
+                    $_len = strlen($_text);
+                    $_iv = $this->decryptIV;
+
+                    for ($_i = 0; $_i < $_len; ++$_i) {
+                        $in = $_iv;
+                        '.$encrypt_block.'
+                        $_plaintext.= $_text[$_i] ^ $in;
+                        $_iv = substr($_iv, 1) . $in[0];
+                    }
+
+                    if ($this->continuousBuffer) {
+                        $this->decryptIV = $_iv;
+                    }
+
+                    return $_plaintext;
+                    ';
+                break;
             case self::MODE_OFB:
                 $encrypt = $init_encrypt . '
                     $_ciphertext = "";
@@ -3267,5 +3398,18 @@ abstract class SymmetricKey
         $r = $a->toBigInteger()->add($s->toBigInteger());
         $mask = "\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF";
         return strrev($r->toBytes()) & $mask;
+    }
+
+    /**
+     * Return the mode
+     *
+     * You can do $obj instanceof AES or whatever to get the cipher but you can't do that to get the mode
+     *
+     * @access public
+     * @return string
+     */
+    public function getMode()
+    {
+        return array_flip(self::MODE_MAP)[$this->mode];
     }
 }

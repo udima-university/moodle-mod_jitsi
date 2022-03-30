@@ -119,40 +119,6 @@ if ($CFG->jitsi_privatesessions) {
     echo $OUTPUT->box(get_string('instruction', 'jitsi'));
     echo $OUTPUT->single_button(new moodle_url('/mod/jitsi/sessionpriv.php', $urlparams), get_string('access', 'jitsi'), 'post');
 
-    if ($USER->id == $user->id && has_capability('moodle/user:viewalldetails', context_system::instance(), $USER)) {
-        echo " <button type=\"button\" class=\"btn btn-secondary\" data-toggle=\"modal\" data-target=\"#exampleModal\">";
-        echo "Call";
-        echo " </button>";
-
-        echo "<div class=\"modal fade\" id=\"exampleModal\" tabindex=\"-1\" role=\"dialog\" ";
-        echo "aria-labelledby=\"exampleModalLabel\" aria-hidden=\"true\">";
-        echo "<div class=\"modal-dialog\" role=\"document\">";
-        echo "<div class=\"modal-content\">";
-        echo "<div class=\"modal-header\">";
-        echo "<h5 class=\"modal-title\">Call to user</h5>";
-        echo "<button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">";
-        echo "<span aria-hidden=\"true\">&times;</span>";
-        echo "</button>";
-        echo "</div>";
-        echo "<div class=\"modal-body\">";
-        echo "<p>Call another user to join your private session</p>";
-        $mform = new userstocall_form($PAGE->url);
-
-        if ($fromform = $mform->get_data()) {
-            $userstocall = [];
-            $mform->display();
-            // In this case you process validated data. $mform->get_data() returns data posted in form.
-        } else {
-            $mform->display();
-        }
-        echo "</div>";
-        echo "<div class=\"modal-footer\">";
-        echo "<button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Close</button>";
-        echo "</div>";
-        echo "</div>";
-        echo "</div>";
-        echo "</div>";
-    }
     echo "<p></p>";
     echo $CFG->jitsi_help;
 
