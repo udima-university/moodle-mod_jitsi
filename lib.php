@@ -856,10 +856,8 @@ function mod_jitsi_inplace_editable($itemtype, $itemid, $newvalue) {
  */
 function getminutes($contextinstanceid, $userid) {
     global $DB, $USER;
-    $sqlminutos = 'select * from mdl_logstore_standard_log where component = \'mod_jitsi\'
-         and action = \'participating\' and contextinstanceid = '.$contextinstanceid.' and userid = '.$userid;
-    $sqlentry = 'select * from mdl_logstore_standard_log where component = \'mod_jitsi\'
-         and action = \'enter\' and contextinstanceid = '.$contextinstanceid.' and userid = '.$userid;
+    $sqlminutos = 'select * from mdl_logstore_standard_log where userid = '.$userid.' and contextinstanceid = '.$contextinstanceid.' and action = \'participating\'';
+    $sqlentry = 'select * from mdl_logstore_standard_log where userid = '.$userid.' and contextinstanceid = '.$contextinstanceid.'and action = \'enter\'';
 
     $minutos = $DB->get_records_sql($sqlminutos);
     $entrys = $DB->get_records_sql($sqlentry);

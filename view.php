@@ -189,9 +189,8 @@ $completiondetails = \core_completion\cm_completion_details::get_instance($cminf
 $activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
 echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
 
-$logs = $DB->get_records_select('logstore_standard_log', 'component = ? and action = ? and objectid = ? and
-     courseid = ? and timecreated >= ? and timecreated < ?', array('mod_jitsi', 'participating',
-     $jitsi->id, $course->id, $today[0] - 60, $today[0]));
+$contextmodule = context_module::instance($cm->id);
+$logs = $DB->get_records_select('logstore_standard_log', 'contextid = ? and timecreated between ? and ? and action = ?', array($contextmodule->id, $today[0] - 60, $today[0], 'participating'));
 
 echo " ";
 echo "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\"
@@ -231,8 +230,10 @@ if ($CFG->jitsi_invitebuttons == 1 && has_capability('mod/jitsi:createlink', $PA
 
 $sql = 'select * from {jitsi_record} where jitsi = '.$jitsi->id.' and deleted = 0 order by id desc';
 $records = $DB->get_records_sql($sql);
-$sqlusersconnected = 'select userid from mdl_logstore_standard_log where component = \'mod_jitsi\'
-     and action = \'enter\' and contextinstanceid = '.$id.' group by userid';
+
+// $contextmodule = context_module::instance($cm->id);
+$sqlusersconnected = 'select distinct userid from mdl_logstore_standard_log where contextid = '.$contextmodule->id.' and action = \'enter\'';
+
 $usersconnected = $DB->get_records_sql($sqlusersconnected);
 
 if ($records && isAllVisible($records) || $records && has_capability ('mod/jitsi:record', $PAGE->context)) {
