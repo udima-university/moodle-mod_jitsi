@@ -1,13 +1,16 @@
 {
     "require": {
-        "google/apiclient": "^2.12.1"
-    },
-    "scripts": {
-        "pre-autoload-dump": "Google\\Task\\Composer::cleanup"
+        "google/apiclient": "^2.12.1",
+        "php": "^7.0"
     },
     "extra": {
         "google/apiclient-services": [
             "YouTube"
         ]
+    },
+    "config": {
+        "platform": {
+            "php": "7.0"
+        }
     }
 }
