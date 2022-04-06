@@ -53,9 +53,9 @@ For a better experience you can configure the plugin to stream and record in cor
 
 ![record-switch](doc/pix/record-switch.png)
 
-Recordings are automatically published to students in the same Jitsi activity with and editable title and the recording date. One Jitsi activity can have many recordings.
+With this advance configuration, recordings will be automatically published to students and teacher can edit the title of every recording. One Jitsi activity can have many recordings.
 
-Recordings will remain on "unlisted" mode in the YouTube accounts so nobody will find them searching in YouTube but there is nothing to stop your students from posting the url somewhere unwanted. Your teachers should be warned about it.
+Recordings will remain on "unlisted" mode in the YouTube accounts so nobody will find them searching in YouTube but there is no way to stop your students from posting the url somewhere unwanted. Your teachers should be warned about it.
 
 ![recordings](/home/isaac.marco/git/moodles/jitsi8/moodle/mod/jitsi/doc/pix/recordings.png)
 
@@ -71,7 +71,7 @@ So you need to configure your own OAuth 2.0 Client IDs in the Google Cloud Platf
 
 Only ONE YouTube account can be set as "in use", and all the streamings in your Moodle will be saved there. 
 
-Why it's allowed to set up several YouTube accounts? YouTube is unpredictable and we don't know if in the future they could establish quotas for "unlisted" videos or if in some moment they decide to restrict your Live Stream permission caused for reputation problems in some teacher recording (a teacher don't should stream Rolling Stones concerts). If  this happens, it is a good idea to have some extra accounts set up... just in case.
+Why it's allowed to set up several YouTube accounts? YouTube is unpredictable and we don't know if in the future they could establish quotas for "unlisted" videos or if in some moment they decide to restrict your Live Stream permission caused for reputation problems in some teacher recording (a teacher doesn't should stream Rolling Stones concerts). If  this happens, it is a good idea to have some extra accounts set up... just in case.
 
 ### Set up your OAuth 2.0 Client ID in Google Cloud
 
@@ -88,15 +88,17 @@ On few steps... you must
 - In Moodle add and authorize your Streaming/Recording Accounts (YouTube accounts)
 - In Moodle enable "Live stream" and select "Moodle Integrated" as "Live Streaming Method"
 
-At this moment you have set up an EXTERNAL app in "Testing" publishing status and may be in the future you would like to put in production. We don't thing it was required because only you are going to see the "Google hasn’t verified this app" announce... but you should read about the limitations when "Testing" status. https://support.google.com/cloud/answer/10311615#publishing-status&zippy=%2Ctesting.
+At this moment you have set up an EXTERNAL app in "Testing" publishing status but you should consider to "Publish App" because in "Testing", authorizations expire in 7 days and recordings will be broken. You should read about the limitations when "Testing" status. https://support.google.com/cloud/answer/10311615#publishing-status&zippy=%2Ctesting.
 
-If your institution has Google Workspace the "User type" in the "OAuth consent screen" can be "INTERNAL". None "Test users" are required to be add and no restrictions will apply. Probably that's the best way to implement this.
+If your institution has Google Workspace the "User type" in the "OAuth consent screen" can be "INTERNAL". In this way, none "Test users" are required to be add and tokens will never expire. Probably that's the easiest and fastest way to set up this and you don't need to request the "Publish App".
 
 WARNING: the credentials should never been deleted in the Google console because all the recordings done will be removed in all the YouTube accounts.
 
-We have recorder a screencast with the how to:
+We have recorded a screencast with the how to:
 
 https://youtu.be/BFHMsQYDprA
+
+NOTE: if your EXTERNAL app is in "Testing" and your authorizations expire and administrator with access to the database could set to NULL  `clientaccesstoken` and `tokencreated` columns in `mdl_jitsi_record_account` table in order to enable the button to reauthorice the account.
 
 ## Token based mode
 
