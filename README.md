@@ -82,23 +82,23 @@ On few steps... you must
 - prepare one or two YouTube accounts with live streaming features enabled (requires register a phone and wait for 24 hours)
 - create a new project in Google Console (https://console.cloud.google.com)
 - access to "APIs and services" and enable "youtube data api v3"
-- create OAuth2 credentials for a "Web application" adding the "Authorised redirect URIs" you will find in the Jitsi configuration plugin in the "OAuth2 id" instructions... (something like this **`https://your_moodle_domain/mod/jitsi/auth.php`** )
+- create OAuth2 credentials for a "Web application" adding the "Authorized redirect URIs" you will find in the Jitsi configuration plugin in the "OAuth2 id" instructions... (something like this **`https://your_moodle_domain/mod/jitsi/auth.php`** )
 - add your YouTube accounts as "Test users" in the "OAuth2 consent screen"
 - Copy "Your Client ID" and "Your Client Secret" to Jitsi config in Moodle
 - In Moodle add and authorize your Streaming/Recording Accounts (YouTube accounts)
 - In Moodle enable "Live stream" and select "Moodle Integrated" as "Live Streaming Method"
 
-At this moment you have set up an EXTERNAL app in "Testing" publishing status but you should consider to "Publish App" because in "Testing", authorizations expire in 7 days and recordings will be broken. You should read about the limitations when "Testing" status. https://support.google.com/cloud/answer/10311615#publishing-status&zippy=%2Ctesting.
+At this moment you have set up an EXTERNAL app in "Testing" and now you can try if everything is working as expected.
 
-If your institution has Google Workspace the "User type" in the "OAuth consent screen" can be "INTERNAL". In this way, none "Test users" are required to be add and tokens will never expire. Probably that's the easiest and fastest way to set up this and you don't need to request the "Publish App".
-
-WARNING: the credentials should never been deleted in the Google console because all the recordings done will be removed in all the YouTube accounts.
-
-We have recorded a screencast with the how to:
+We have recorded a screencast with the "how to":
 
 https://youtu.be/BFHMsQYDprA
 
-NOTE: if your EXTERNAL app is in "Testing" and your authorizations expire and administrator with access to the database could set to NULL  `clientaccesstoken` and `tokencreated` columns in `mdl_jitsi_record_account` table in order to enable the button to reauthorice the account.
+You should consider to get the status of "Publish App"  because in "Testing", authorizations expire in 7 days and the integrated switch to start recordings will disappear. In that case, as an administrator you should re-authorize your  Streaming/Recording YouTube account. You should read about the limitations when "Testing" status. https://support.google.com/cloud/answer/10311615#publishing-status&zippy=%2Ctesting.
+
+**IMPORTANT**: if your institution has **Google Workspace the "User type" in the "OAuth consent screen" can be "INTERNAL"**. In this way, none "Test users" are required to be added and tokens will never expire. **Probably that's the easiest and fastest way to set up this and you don't need to request the "Publish App"**.
+
+**WARNING**: the credentials should never been deleted in the Google console because all the recordings done will be removed in all the YouTube accounts.
 
 ## Token based mode
 
