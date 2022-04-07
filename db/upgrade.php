@@ -158,7 +158,7 @@ function xmldb_jitsi_upgrade($oldversion) {
         // Adding fields to table jitsi_record.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('jitsi', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('link', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('link', XMLDB_TYPE_CHAR, '255', null, null, null, null);
 
         // Adding keys to table jitsi_record.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
@@ -273,7 +273,7 @@ function xmldb_jitsi_upgrade($oldversion) {
 
         // Adding fields to table jitsi_record.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('link', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('link', XMLDB_TYPE_CHAR, '255', null, null, null, null);
         $table->add_field('account', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
 
         // Adding keys to table jitsi_record.
