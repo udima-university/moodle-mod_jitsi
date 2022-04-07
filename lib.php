@@ -379,7 +379,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             echo "<div class=\"custom-control custom-switch\">";
             echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\" ";
             echo "onClick=\"activaGrab($(this));\">";
-            echo "  <label class=\"custom-control-label\" for=\"recordSwitch\">Record & Streaming</label>";
+            echo "  <label class=\"custom-control-label\" for=\"recordSwitch\">".get_string('streamingandrecording', 'jitsi')."</label>";
             echo "</div>";
             echo "</div>";
         } else if ($CFG->jitsi_livebutton == 1 && $account != null && $CFG->jitsi_streamingoption == 1) {
@@ -387,7 +387,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             echo "<div class=\"custom-control custom-switch\">";
             echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\" ";
             echo "onClick=\"activaGrab($(this));\" disabled>";
-            echo "  <label class=\"custom-control-label\" for=\"recordSwitch\">Record & Streaming</label>";
+            echo "  <label class=\"custom-control-label\" for=\"recordSwitch\">".get_string('streamingandrecording', 'jitsi')."</label>";
             echo "</div>";
             echo "</div>";
         }
