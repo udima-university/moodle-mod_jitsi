@@ -338,7 +338,7 @@ if ($records) {
             }
             if (has_capability('mod/jitsi:record', $context) && has_capability('mod/jitsi:hide', $context)) {
                 $tmpl = new \core\output\inplace_editable('mod_jitsi', 'recordname', $record->id,
-                has_capability('mod/jitsi:record', context_system::instance()),
+                    has_capability('mod/jitsi:record', $context),
                     format_string($record->name), $record->name, get_string('editrecordname', 'jitsi'),
                     get_string('newvaluefor', 'jitsi') . format_string($record->name));
                 echo $OUTPUT->render($tmpl);
