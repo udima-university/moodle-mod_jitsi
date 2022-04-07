@@ -190,7 +190,9 @@ $activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
 echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
 
 $contextmodule = context_module::instance($cm->id);
-$logs = $DB->get_records_select('logstore_standard_log', 'contextid = ? and timecreated between ? and ? and action = ?', array($contextmodule->id, $today[0] - 60, $today[0], 'participating'));
+$logs = $DB->get_records_select('logstore_standard_log',
+    'contextid = ? and timecreated between ? and ? and action = ?',
+    array($contextmodule->id, $today[0] - 60, $today[0], 'participating'));
 
 echo " ";
 echo "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\"
@@ -207,15 +209,13 @@ if ($jitsi->intro) {
     echo $OUTPUT->box(format_module_intro('jitsi', $jitsi, $cm->id), 'generalbox mod_introbox', 'jitsiintro');
 }
 if ($today[0] < $jitsi->timeclose || $jitsi->timeclose == 0) {
-    if ($today[0] > (($jitsi->timeopen))|| has_capability('mod/jitsi:moderation', $context) && $today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))) {
+    if ($today[0] > (($jitsi->timeopen)) ||
+        has_capability('mod/jitsi:moderation', $context) && $today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))) {
         echo $OUTPUT->box(get_string('instruction', 'jitsi'));
         echo $OUTPUT->single_button(new moodle_url('/mod/jitsi/session.php', $urlparams), get_string('access', 'jitsi'), 'post');
     } else {
         echo $OUTPUT->box(get_string('nostart', 'jitsi', userdate($jitsi->timeopen)));
     }
-
-
-
 } else {
     echo $OUTPUT->box(get_string('finish', 'jitsi'));
 }
@@ -231,12 +231,12 @@ if ($CFG->jitsi_invitebuttons == 1 && has_capability('mod/jitsi:createlink', $PA
 $sql = 'select * from {jitsi_record} where jitsi = '.$jitsi->id.' and deleted = 0 order by id desc';
 $records = $DB->get_records_sql($sql);
 
-// $contextmodule = context_module::instance($cm->id);
-$sqlusersconnected = 'select distinct userid from mdl_logstore_standard_log where contextid = '.$contextmodule->id.' and action = \'enter\'';
+$sqlusersconnected = 'select distinct userid from mdl_logstore_standard_log where contextid = '
+    .$contextmodule->id.' and action = \'enter\'';
 
 $usersconnected = $DB->get_records_sql($sqlusersconnected);
 
-if ($records && isAllVisible($records) || $records && has_capability ('mod/jitsi:record', $PAGE->context)) {
+if ($records && isallvisible($records) || $records && has_capability ('mod/jitsi:record', $PAGE->context)) {
     echo " ";
     echo "<button class=\"btn btn-secondary\" type=\"button\" data-toggle=\"collapse\" data-target=\"#collapseExample\"
          aria-expanded=\"false\" aria-controls=\"collapseExample\">";
@@ -314,7 +314,8 @@ if ($records) {
         $deleteurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&deletejitsirecordid=' .
                  $record->id . '&sesskey=' . sesskey());
         $deleteicon = new pix_icon('t/delete', get_string('delete'));
-        $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon, new confirm_action(get_string('confirmdeleterecordinactivity', 'jitsi')));
+        $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon,
+            new confirm_action(get_string('confirmdeleterecordinactivity', 'jitsi')));
 
         $hideurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&hidejitsirecordid=' .
                  $record->id . '&sesskey=' . sesskey());

@@ -117,7 +117,7 @@ class restore_jitsi_activity_structure_step extends restore_activity_structure_s
     protected function after_execute() {
         global $DB;
         $userinfo = $this->get_setting_value('userinfo');
-        if ($userinfo) { 
+        if ($userinfo) {
             foreach ($this->records as $record) {
                 $recordob = $DB->get_record('jitsi_record', ['id' => $record->id]);
                 $recordob->source = $this->get_mappingid('jitsi_source_record', $record->source);

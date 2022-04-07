@@ -24,8 +24,6 @@
 
 namespace mod_jitsi\event;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The mod_jitsi instance list viewed event class.
  *

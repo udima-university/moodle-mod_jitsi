@@ -78,9 +78,9 @@ if (is_siteadmin()) {
                     .$source->link.'</a>', $account->name, userdate($source->timecreated), $deleteaction);
             } else {
                 $table->data[] = array($source->id, '<a href="https://youtu.be/'.$source->link.'" target=_blank">'
-                    .$source->link.'</a>', $account->name, userdate($source->timecreated),'<a href="'.$CFG->wwwroot.'/mod/jitsi/adminaccounts.php">'. get_string('notloggedin', 'jitsi').'</a>');
+                    .$source->link.'</a>', $account->name, userdate($source->timecreated), '<a href="'
+                    .$CFG->wwwroot.'/mod/jitsi/adminaccounts.php">'. get_string('notloggedin', 'jitsi').'</a>');
             }
-            
         }
     }
     echo html_writer::table($table);

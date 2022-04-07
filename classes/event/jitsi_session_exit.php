@@ -24,8 +24,6 @@
 
 namespace mod_jitsi\event;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The mod_identifier instance accepted event class
  *
@@ -36,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2019 Sergio Comerón Sánchez-Paniagua <sergiocomeron@icloud.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class jitsi_session_exit extends \core\event\base  {
+class jitsi_session_exit extends \core\event\base {
 
     /**
      * Init method.

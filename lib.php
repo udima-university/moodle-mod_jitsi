@@ -29,8 +29,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /* Moodle core API */
 
 /**
@@ -379,15 +377,18 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             echo "<div class=\"custom-control custom-switch\">";
             echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\" ";
             echo "onClick=\"activaGrab($(this));\">";
-            echo "  <label class=\"custom-control-label\" for=\"recordSwitch\">".get_string('streamingandrecording', 'jitsi')."</label>";
+            echo "  <label class=\"custom-control-label\" for=\"recordSwitch\">"
+                .get_string('streamingandrecording', 'jitsi')."</label>";
             echo "</div>";
             echo "</div>";
-        } else if ($CFG->jitsi_livebutton == 1 && $account != null && $CFG->jitsi_streamingoption == 1) {
+        } else if ($CFG->jitsi_livebutton == 1 && $account != null
+            && $CFG->jitsi_streamingoption == 1) {
             echo "<div class=\"text-right\">";
             echo "<div class=\"custom-control custom-switch\">";
             echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\" ";
             echo "onClick=\"activaGrab($(this));\" disabled>";
-            echo "  <label class=\"custom-control-label\" for=\"recordSwitch\">".get_string('streamingandrecording', 'jitsi')."</label>";
+            echo "  <label class=\"custom-control-label\" for=\"recordSwitch\">"
+                .get_string('streamingandrecording', 'jitsi')."</label>";
             echo "</div>";
             echo "</div>";
         }
@@ -810,7 +811,7 @@ function deleterecordyoutube($idsource) {
             }
         } else {
             delete_jitsi_record($idsource);
-        }       
+        }
     }
     return true;
 }
@@ -857,8 +858,10 @@ function mod_jitsi_inplace_editable($itemtype, $itemid, $newvalue) {
  */
 function getminutes($contextinstanceid, $userid) {
     global $DB, $USER;
-    $sqlminutos = 'select * from mdl_logstore_standard_log where userid = '.$userid.' and contextinstanceid = '.$contextinstanceid.' and action = \'participating\'';
-    $sqlentry = 'select * from mdl_logstore_standard_log where userid = '.$userid.' and contextinstanceid = '.$contextinstanceid.' and action = \'enter\'';
+    $sqlminutos = 'select * from mdl_logstore_standard_log where userid = '.$userid
+        .' and contextinstanceid = '.$contextinstanceid.' and action = \'participating\'';
+    $sqlentry = 'select * from mdl_logstore_standard_log where userid = '.$userid
+        .' and contextinstanceid = '.$contextinstanceid.' and action = \'enter\'';
 
     $minutos = $DB->get_records_sql($sqlminutos);
     $entrys = $DB->get_records_sql($sqlentry);
@@ -986,7 +989,7 @@ function doembedable($idvideo) {
     try {
         $listresponse = $youtube->videos->listVideos("status", array('id' => $idvideo));
         $video = $listresponse[0];
-    
+
         $videostatus = $video['status'];
         if ($videostatus != null) {
             if ($videostatus['embeddable'] != true) {
@@ -1018,7 +1021,7 @@ function doembedable($idvideo) {
     return $updateresponse;
 }
 
-function isAllVisible($records) {
+function isallvisible($records) {
     $res = false;
     foreach ($records as $record) {
         if ($record->visible == 1) {
