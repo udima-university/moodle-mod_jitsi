@@ -433,6 +433,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "jwt: \"".$jwt."\",\n";
     }
     if ($CFG->branch < 36) {
+        $themeconfig = theme_config::load($CFG->theme);
         if ($CFG->theme == 'boost' || in_array('boost', $themeconfig->parents)) {
             echo "parentNode: document.querySelector('#region-main .card-body'),\n";
         } else {
