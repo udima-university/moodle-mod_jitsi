@@ -860,13 +860,8 @@ function getminutes($contextinstanceid, $userid) {
     global $DB, $USER;
     $sqlminutos = 'select * from mdl_logstore_standard_log where userid = '.$userid
         .' and contextinstanceid = '.$contextinstanceid.' and action = \'participating\'';
-    $sqlentry = 'select * from mdl_logstore_standard_log where userid = '.$userid
-        .' and contextinstanceid = '.$contextinstanceid.' and action = \'enter\'';
-
     $minutos = $DB->get_records_sql($sqlminutos);
-    $entrys = $DB->get_records_sql($sqlentry);
-
-    return count($minutos) - count($entrys);
+    return count($minutos);
 }
 
 /**

@@ -89,15 +89,6 @@ $event->add_record_snapshot('course', $PAGE->course);
 $event->add_record_snapshot($PAGE->cm->modname, $jitsi);
 $event->trigger();
 
-$event = \mod_jitsi\event\jitsi_session_participating::create(array(
-  'objectid' => $PAGE->cm->instance,
-  'context' => $PAGE->context,
-));
-
-$event->add_record_snapshot('course', $PAGE->course);
-$event->add_record_snapshot($PAGE->cm->modname, $jitsi);
-$event->trigger();
-
 echo "<script>";
 echo "function participating () {";
 echo "  console.log(\"RUNNING\");";
