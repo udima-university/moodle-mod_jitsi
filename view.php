@@ -232,7 +232,7 @@ $sql = 'select * from {jitsi_record} where jitsi = '.$jitsi->id.' and deleted = 
 $records = $DB->get_records_sql($sql);
 
 $sqlusersconnected = 'select distinct userid from mdl_logstore_standard_log where contextid = '
-    .$contextmodule->id.' and action = \'enter\'';
+    .$contextmodule->id.' and action = \'participating\'';
 
 $usersconnected = $DB->get_records_sql($sqlusersconnected);
 
