@@ -249,7 +249,7 @@ function xmldb_jitsi_upgrade($oldversion) {
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
-        
+
         // Jitsi savepoint reached.
         upgrade_mod_savepoint(true, 2021101503, 'jitsi');
     }
@@ -360,7 +360,7 @@ function xmldb_jitsi_upgrade($oldversion) {
             $accesstoken = $DB->get_record('config_plugins', array('name' => 'jitsi_clientaccesstoken'));
             $refreshtoken = $DB->get_record('config_plugins', array('name' => 'jitsi_clientrefreshtoken'));
             $tokencreated = $DB->get_record('config_plugins', array('name' => 'jitsi_tokencreated'));
-    
+
             $account = new stdClass();
             $account->name = 'Migrated';
             $account->clientaccesstoken = $accesstoken->value;
