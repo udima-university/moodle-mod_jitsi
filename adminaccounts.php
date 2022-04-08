@@ -69,7 +69,6 @@ if ($change && confirm_sesskey($sesskey)) {
     if ($accountinuse) {
         $accountinuse->inuse = 0;
         $DB->update_record('jitsi_record_account', $accountinuse);
-        $DB->update_record('jitsi_record_account', $accountinuse);
     }
     $DB->update_record('jitsi_record_account', $accounttouse);
     redirect($PAGE->url, get_string('accountconnected', 'jitsi'));
