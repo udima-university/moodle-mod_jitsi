@@ -968,15 +968,41 @@ function doembedable($idvideo) {
 
     $_SESSION[$tokensessionkey] = $account->clientaccesstoken;
     $client->setAccessToken($_SESSION[$tokensessionkey]);
+
     $t = time();
     $timediff = $t - $account->tokencreated;
 
     if ($timediff > 3599) {
-        $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
-        $account->clientaccesstoken = $newaccesstoken["access_token"];
-        $newrefreshaccesstoken = $client->getRefreshToken();
-        $account->clientrefreshtoken = $newrefreshaccesstoken;
-        $account->tokencreated = time();
+        if ($timediff > 3599) {
+            $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
+            try {
+                $account->clientaccesstoken = $newaccesstoken["access_token"];
+                $newrefreshaccesstoken = $client->getRefreshToken();
+                $newrefreshaccesstoken = $client->getRefreshToken();
+                $account->clientrefreshtoken = $newrefreshaccesstoken;
+                $account->tokencreated = time();
+            } catch (Google_Service_Exception $e) {
+                if ($account->inuse == 1) {
+                    $account->inuse = 0;
+                }
+                $account->clientaccesstoken = null;
+                $account->clientrefreshtoken = null;
+                $account->tokencreated = 0;
+                $DB->update_record('jitsi_record_account', $account);
+                $client->revokeToken();
+                return false;
+            } catch (Google_Exception $e) {
+                if ($account->inuse == 1) {
+                    $account->inuse = 0;
+                }
+                $account->clientaccesstoken = null;
+                $account->clientrefreshtoken = null;
+                $account->tokencreated = 0;
+                $DB->update_record('jitsi_record_account', $account);
+                $client->revokeToken();
+                return false;
+            }
+        }
     }
 
     $youtube = new Google_Service_YouTube($client);

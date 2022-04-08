@@ -249,7 +249,7 @@ function xmldb_jitsi_upgrade($oldversion) {
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
-
+        
         // Jitsi savepoint reached.
         upgrade_mod_savepoint(true, 2021101503, 'jitsi');
     }
@@ -296,7 +296,7 @@ function xmldb_jitsi_upgrade($oldversion) {
         foreach ($records as $record) {
             $source = new stdClass();
             $source->link = $record->link;
-            $source->account = 0;
+            $source->account = 1;
 
             $sourceid = $DB->insert_record('jitsi_source_record', $source);
             $record->source = $sourceid;
@@ -354,6 +354,21 @@ function xmldb_jitsi_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
         upgrade_mod_savepoint(true, 2021110400, 'jitsi');
+
+        $records = $DB->get_records('jitsi_record', array());
+        if ($records) {
+            $accesstoken = $DB->get_record('config_plugins', array('name' => 'jitsi_clientaccesstoken'));
+            $refreshtoken = $DB->get_record('config_plugins', array('name' => 'jitsi_clientrefreshtoken'));
+            $tokencreated = $DB->get_record('config_plugins', array('name' => 'jitsi_tokencreated'));
+    
+            $account = new stdClass();
+            $account->name = 'Migrated';
+            $account->clientaccesstoken = $accesstoken->value;
+            $account->clientrefreshtoken = $refreshtoken->value;
+            $account->tokencreated = $tokencreated->value;
+            $account->inuse = 1;
+            $DB->insert_record('jitsi_record_account', $account);
+        }
     }
 
     if ($oldversion < 2021112501) {
