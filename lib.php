@@ -40,20 +40,35 @@
  * @return mixed true if the feature is supported, null if unknown
  */
 function jitsi_supports($feature) {
-
-    switch($feature) {
-        case FEATURE_MOD_INTRO:
-            return true;
-        case FEATURE_SHOW_DESCRIPTION:
-            return true;
-        case FEATURE_BACKUP_MOODLE2:
-            return true;
-        case FEATURE_COMPLETION_HAS_RULES:
-            return true;
-        case FEATURE_MOD_PURPOSE:
-            return MOD_PURPOSE_COMMUNICATION;
-        default:
-            return null;
+    global $CFG;
+    if ($CFG->branch >= 400) {
+        switch($feature) {
+            case FEATURE_MOD_INTRO:
+                return true;
+            case FEATURE_SHOW_DESCRIPTION:
+                return true;
+            case FEATURE_BACKUP_MOODLE2:
+                return true;
+            case FEATURE_COMPLETION_HAS_RULES:
+                return true;
+            case FEATURE_MOD_PURPOSE:
+                return MOD_PURPOSE_COMMUNICATION;
+            default:
+                return null;
+        }
+    } else {
+        switch($feature) {
+            case FEATURE_MOD_INTRO:
+                return true;
+            case FEATURE_SHOW_DESCRIPTION:
+                return true;
+            case FEATURE_BACKUP_MOODLE2:
+                return true;
+            case FEATURE_COMPLETION_HAS_RULES:
+                return true;
+            default:
+                return null;
+        }
     }
 }
 
