@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.2.2 (2022041300)
+### Added
+ * Moodle 4.0 compatibility
+### Fixed
+ * Remove mdl prefix in getminutes function
+
+---
+
 ## v3.2.0 ()
 ### Added
 * Multi-account support for recordings.
