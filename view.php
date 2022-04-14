@@ -231,7 +231,7 @@ if ($CFG->jitsi_invitebuttons == 1 && has_capability('mod/jitsi:createlink', $PA
 $sql = 'select * from {jitsi_record} where jitsi = '.$jitsi->id.' and deleted = 0 order by id desc';
 $records = $DB->get_records_sql($sql);
 
-$sqlusersconnected = 'select distinct userid from mdl_logstore_standard_log where contextid = '
+$sqlusersconnected = 'select distinct userid from {logstore_standard_log} where contextid = '
     .$contextmodule->id.' and action = \'participating\'';
 
 $usersconnected = $DB->get_records_sql($sqlusersconnected);
