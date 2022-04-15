@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.2.3 (2022041300)
+### Fixed
+ * Remove mdl prefix in sql userconnected
+
+---
+
 ## v3.2.2 (2022041300)
 ### Added
  * Moodle 4.0 compatibility
