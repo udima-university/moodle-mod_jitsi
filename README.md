@@ -57,7 +57,7 @@ With this advance configuration, recordings will be automatically published to s
 
 Recordings will remain on "unlisted" mode in the YouTube accounts so nobody will find them searching in YouTube but there is no way to stop your students from posting the url somewhere unwanted. Your teachers should be warned about it.
 
-![recordings](/home/isaac.marco/git/moodles/jitsi8/moodle/mod/jitsi/doc/pix/recordings.png)
+![recordings](doc/pix/recordings.png)
 
 Teachers can hide or deleted the recordings in the Jitsi activities but only administrators can order to completely delete the recording in YouTube. This is because backup and restore tasks with user data could cause a recording to be available in different courses (or different Moodle environments).
 
