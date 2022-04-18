@@ -467,8 +467,10 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "height: 650,\n";
     echo "}\n";
     echo "const api = new JitsiMeetExternalAPI(domain, options);\n";
+    echo "api.addListener('videoConferenceJoined', () => {\n";
     echo "api.executeCommand('displayName', '".$nombre."');\n";
     echo "api.executeCommand('avatarUrl', '".$avatar."');\n";
+    echo "});\n";
 
     if ($CFG->jitsi_finishandreturn == 1) {
         echo "api.on('readyToClose', () => {\n";
