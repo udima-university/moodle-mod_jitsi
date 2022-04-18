@@ -1,4 +1,12 @@
 # Changelog
+## v3.2.4 (2022041800)
+### Changed
+ * Clean code api php Google. Lower size plugin
+ * Corrections moodle style guideliness
+### Fixed
+ * Fixed destructure property on chrome
+
+---
 
 ## v3.2.3 (2022041300)
 ### Fixed
