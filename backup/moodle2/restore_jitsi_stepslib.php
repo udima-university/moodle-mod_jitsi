@@ -27,7 +27,7 @@ class restore_jitsi_activity_structure_step extends restore_activity_structure_s
     /**
      * Defines structure of path elements to be processed during the restore
      *
-     * @return array of {@link restore_path_element}
+     * @return array of restore_path_element
      */
     protected function define_structure() {
 
@@ -72,6 +72,11 @@ class restore_jitsi_activity_structure_step extends restore_activity_structure_s
         $this->apply_activity_instance($newitemid);
     }
 
+    /**
+     * Process the given restore path element data
+     *
+     * @param array $data parsed element data
+     */
     protected function process_jitsi_record_account($data) {
         global $DB;
         $data = (object)$data;
@@ -85,6 +90,11 @@ class restore_jitsi_activity_structure_step extends restore_activity_structure_s
         }
     }
 
+    /**
+     * Process the given restore path element data
+     *
+     * @param array $data parsed element data
+     */
     protected function process_jitsi_source_record($data) {
         global $DB;
         $data = (object)$data;
@@ -102,6 +112,11 @@ class restore_jitsi_activity_structure_step extends restore_activity_structure_s
         $this->sources[$data->id] = $data;
     }
 
+    /**
+     * Process the given restore path element data
+     *
+     * @param array $data parsed element data
+     */
     protected function process_jitsi_record($data) {
         global $DB;
         $data = (object)$data;

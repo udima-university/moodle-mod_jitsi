@@ -29,8 +29,13 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once("$CFG->libdir/formslib.php");
 
+/**
+ * Form users to call a meeting
+ */
 class userstocall_form extends moodleform {
-    // Add elements to form.
+    /**
+     * Define the form
+     */
     public function definition() {
         global $CFG;
         $mform = $this->_form; // Don't forget the underscore!.
@@ -44,7 +49,9 @@ class userstocall_form extends moodleform {
         $buttonarray[] = $mform->createElement('submit', 'submitbutton', 'Call');
         $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
     }
-    // Custom validation should be added here.
+    /** 
+     * Validate the form data
+     */
     public function validation($data, $files) {
         return array();
     }

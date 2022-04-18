@@ -87,6 +87,12 @@ if (is_siteadmin()) {
 }
 echo $OUTPUT->footer();
 
+/**
+ * Get true if the source is on array 
+ * @param $sources
+ * @param $sourceelement 
+ * @return bool
+ */
 function isincluded($sources, $sourceelement) {
     foreach ($sources as $source) {
         if ($source->id == $sourceelement->id) {

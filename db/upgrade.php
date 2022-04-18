@@ -200,14 +200,14 @@ function xmldb_jitsi_upgrade($oldversion) {
     }
 
     if ($oldversion < 2021092003) {
-        if($onprivatesessionloggedin = $DB->get_record('config_plugins', array('name' =>
+        if ($onprivatesessionloggedin = $DB->get_record('config_plugins', array('name' =>
             'message_provider_mod_jitsi_onprivatesession_loggedin'))) {
             $onprivatesessionloggedin->value = 'airnotifier,popup';
-            $DB->update_record('config_plugins', $onprivatesessionloggedin);            
+            $DB->update_record('config_plugins', $onprivatesessionloggedin);
         }
-        if($onprivatesessionloggedoff = $DB->get_record('config_plugins', array('name' =>
+        if ($onprivatesessionloggedoff = $DB->get_record('config_plugins', array('name' =>
             'message_provider_mod_jitsi_onprivatesession_loggedoff'))) {
-            $onprivatesessionloggedoff->value = 'airnotifier,popup';            
+            $onprivatesessionloggedoff->value = 'airnotifier,popup';
             $DB->update_record('config_plugins', $onprivatesessionloggedoff);
         }
         upgrade_mod_savepoint(true, 2021092003, 'jitsi');

@@ -40,8 +40,18 @@ $daccountid = optional_param('daccountid', 0, PARAM_INT);
 $change = optional_param('change', 0, PARAM_INT);
 $sesskey = optional_param('sesskey', null, PARAM_TEXT);
 
+/**
+ * Guest access form.
+ *
+ * @package   mod_jitsi
+ * @copyright  2019 Sergio Comerón Sánchez-Paniagua <sergiocomeron@icloud.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class accountname_form extends moodleform {
-    // Add elements to form.
+
+    /**
+     * Defines forms elements
+     */
     public function definition() {
         global $CFG;
         $mform = $this->_form; // Don't forget the underscore!.
@@ -52,7 +62,15 @@ class accountname_form extends moodleform {
         $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('addaccount', 'jitsi'));
         $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
     }
-    // Custom validation should be added here.
+    
+    /**
+     * Validate data
+     *
+     * @param array $data Data to validate
+     * @param array $files Array of files
+     * @return array Errors found
+     */
+     
     public function validation($data, $files) {
         return array();
     }

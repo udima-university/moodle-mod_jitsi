@@ -34,7 +34,7 @@
 /**
  * Returns the information on whether the module supports a feature
  *
- * See {@link plugin_supports()} for more info.
+ * See plugin_supports() for more info.
  *
  * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed true if the feature is supported, null if unknown
@@ -273,8 +273,6 @@ function string_sanitize($string, $forcelowercase = true, $anal = false) {
  * @param stdClass $jitsi - Jitsi session
  * @param bool $universal - Say if is universal session
  * @param stdClass $user - User object
- * @param int $timetsamp - Date
- * @param int $codet - Code
  */
 function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jitsi, $universal = false,
         $user = null) {
@@ -589,7 +587,6 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
 
 /**
  * Check if a date is out of time
- * @param int $timestamp date
  * @param stdClass $jitsi jitsi instance
  */
 function istimedout($jitsi) {
@@ -696,6 +693,7 @@ function sendcallprivatesession($fromuser, $touser) {
 /**
  * Mark Jitsi record to delete
  * @param int $idrecord - Jitsi record to delete
+ * @param int $option - Delete option
  */
 function marktodelete($idrecord, $option) {
     global $DB;
@@ -710,7 +708,7 @@ function marktodelete($idrecord, $option) {
 
 /**
  * Delete Jitsi record
- * @param int $idrecord - Jitsi record to delete
+ * @param int $source - Jitsi source record to delete
  */
 function delete_jitsi_record($source) {
     global $DB;
@@ -734,7 +732,7 @@ function isdeletable($sourcerecord) {
 
 /**
  * Delete Record from youtube
- * @param int $idrecord - Jitsi record to delete
+ * @param int $idsource - Jitsi source record to delete
  */
 function deleterecordyoutube($idsource) {
     global $CFG, $DB, $PAGE;
@@ -870,8 +868,8 @@ function mod_jitsi_inplace_editable($itemtype, $itemid, $newvalue) {
 
 /**
  * Counts the minutes of a user in the current session
- * @param stdClass $jitsi - current session object
- * @param stdClass $user - course object
+ * @param id $contextinstanceid - context instance
+ * @param id $userid - user id
  */
 function getminutes($contextinstanceid, $userid) {
     global $DB, $USER;
@@ -964,7 +962,7 @@ function update_completition($cm) {
 
 /**
  * Set embedable a video
- * @param int @idvideo - id of the video
+ * @param int $idvideo - id of the video
  */
 function doembedable($idvideo) {
     global $CFG, $DB;
@@ -1059,6 +1057,10 @@ function doembedable($idvideo) {
     return $updateresponse;
 }
 
+/**
+ * Get state of visibility of a video
+ * @param array $records - Array of records
+ */
 function isallvisible($records) {
     $res = false;
     foreach ($records as $record) {

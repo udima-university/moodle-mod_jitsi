@@ -119,7 +119,10 @@ class mod_jitsi_mod_form extends moodleform_mod {
     public function completion_rule_enabled($data) {
         return (!empty($data['completionminutesenabled']) && $data['completionminutes'] != 0);
     }
-
+    
+    /**
+     * Get Data
+     */
     public function get_data() {
         $data = parent::get_data();
         if (!$data) {
@@ -134,6 +137,9 @@ class mod_jitsi_mod_form extends moodleform_mod {
         return $data;
     }
 
+    /** 
+     * Processing data
+     */
     public function data_preprocessing(&$defaultvalues) {
         $defaultvalues['completionminutesenabled'] =
             !empty($defaultvalues['completionminutes']) ? 1 : 0;

@@ -190,6 +190,12 @@ class mod_jitsi_external extends external_api {
         return $result;
     }
 
+    /**
+     * Returns record state
+     * @param int $jitsi Jitsi session id
+     * @param string $state State
+     * @return array
+     */
     public static function state_record($jitsi, $state) {
         global $USER, $DB;
 
@@ -205,6 +211,13 @@ class mod_jitsi_external extends external_api {
         return 'recording'.$jitsiob->recording;
     }
 
+    /**
+     * Start stream with youtube
+     * @param int $session session
+     * @param int $jitsi Jitsi session id
+     * @param int $userid User id
+     * @return array result
+     */
     public static function create_stream($session, $jitsi, $userid) {
         global $CFG, $DB;
 

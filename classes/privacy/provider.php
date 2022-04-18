@@ -35,6 +35,12 @@ use core_privacy\local\metadata\collection;
  */
 class provider implements \core_privacy\local\metadata\provider, \core_privacy\local\request\data_provider {
 
+    /**
+     * Returns meta data about this system.
+     *
+     * @param   collection     $collection The initialised collection to add items to.
+     * @return  collection     A listing of user data stored through this system.
+     */
     public static function get_metadata(collection $collection) : collection {
         $collection->add_external_location_link('jitsi', [
             'username' => 'privacy:metadata:jitsi:username',

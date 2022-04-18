@@ -325,9 +325,9 @@ class mobile {
 
 /**
  * Sanitize strings
- * @param $string - The string to sanitize.
- * @param $forcelowercase - Force the string to lowercase?
- * @param $anal - If set to *true*, will remove all non-alphanumeric characters.
+ * @param string $string - The string to sanitize.
+ * @param boolean $forcelowercase - Force the string to lowercase?
+ * @param boolean $anal - If set to *true*, will remove all non-alphanumeric characters.
  */
 function string_sanitize($string, $forcelowercase = true, $anal = false) {
     $strip = array("~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")",
