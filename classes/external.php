@@ -261,7 +261,8 @@ class mod_jitsi_external extends external_api {
             try {
                 $broadcastsnippet = new Google_Service_YouTube_LiveBroadcastSnippet();
                 $testdate = time();
-                $broadcastsnippet->setTitle("Record: ".$session." (".date('l jS \of F', $testdate).")");
+
+                $broadcastsnippet->setTitle("Record ".date('l jS \of F', $testdate));
                 $broadcastsnippet->setScheduledStartTime(date('Y-m-d\TH:i:s', $testdate));
 
                 $status = new Google_Service_YouTube_LiveBroadcastStatus();
@@ -282,7 +283,7 @@ class mod_jitsi_external extends external_api {
                 $broadcastsresponse = $youtube->liveBroadcasts->insert('snippet,status,contentDetails', $broadcastinsert, array());
 
                 $streamsnippet = new Google_Service_YouTube_LiveStreamSnippet();
-                $streamsnippet->setTitle($session);
+                $streamsnippet->setTitle("Record ".date('l jS \of F', $testdate));
 
                 $cdn = new Google_Service_YouTube_CdnSettings();
                 $cdn->setIngestionType('rtmp');
@@ -300,9 +301,9 @@ class mod_jitsi_external extends external_api {
                     array('streamId' => $streamsresponse['id'], ));
 
             } catch (Google_Service_Exception $e) {
-                throw new \Exception("exception".$e->getMessage());
+                throw new \Exception("exception".$session.'-'.$e->getMessage());
             } catch (Google_Exception $e) {
-                throw new \Exception("exception".$e->getMessage());
+                throw new \Exception("exception".$session.'-'.$e->getMessage());
             }
         }
         $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
@@ -319,7 +320,7 @@ class mod_jitsi_external extends external_api {
         $record->source = $DB->insert_record('jitsi_source_record', $source);
         $record->deleted = 0;
         $record->visible = 1;
-        $record->name = get_string('record', 'jitsi').' '.$jitsiob->name;
+        $record->name = get_string('record', 'jitsi').' '.substr($jitsiob->name, 0, 30);
 
         $DB->insert_record('jitsi_record', $record);
 
