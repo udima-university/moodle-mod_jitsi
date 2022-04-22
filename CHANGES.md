@@ -1,4 +1,11 @@
 # Changelog
+## v3.2.5 (2022041800)
+### Changed
+ * Some strings to strings file
+### Fixed
+ * Fixed 'core_completion\cm_completion_details' not found on moodle v<311 #93
+ * Fixed session with long names records #94
+
 ## v3.2.4 (2022041800)
 ### Changed
  * Clean code api php Google. Lower size plugin
@@ -45,13 +52,3 @@
 ### Fixed
 * Background options 
 * Fixed problem mod_jitsi_external::create_link implementation is missing
-
----
-
-## v3.1.2 (2021090100)
-* Add validity time for link invitations
-
----
-
-## v3.1.2 (2021072300)
-* Fixed problem with Google API and https sites
