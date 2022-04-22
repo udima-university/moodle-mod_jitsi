@@ -1,10 +1,12 @@
 # Changelog
-## v3.2.5 (2022041800)
+## v3.2.5 (2022042200)
 ### Changed
  * Some strings to strings file
 ### Fixed
  * Fixed 'core_completion\cm_completion_details' not found on moodle v<311 #93
  * Fixed session with long names records #94
+
+---
 
 ## v3.2.4 (2022041800)
 ### Changed
