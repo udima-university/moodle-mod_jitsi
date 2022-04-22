@@ -184,10 +184,11 @@ if (!$deletejitsirecordid) {
 
 $cm = get_coursemodule_from_id('jitsi', $id, 0, false, MUST_EXIST);
 update_completition($cm);
-
-$completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
-$activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
-echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
+if ($CFG->branch >= 311) {
+    $completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
+    $activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
+    echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
+} 
 
 $contextmodule = context_module::instance($cm->id);
 $logs = $DB->get_records_select('logstore_standard_log',
