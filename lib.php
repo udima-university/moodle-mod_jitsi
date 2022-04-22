@@ -488,7 +488,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "    if (e.is(':checked')) {";
     echo "      console.log(\"Switch cambiado a activado\");";
     echo "      document.getElementById('state').innerHTML = ";
-    echo "      '<div class=\"alert alert-light\" role=\"alert\">Preparing. Please wait.</div>';";
+    echo "      '<div class=\"alert alert-light\" role=\"alert\">".get_string('preparing', 'jitsi')."</div>';";
     echo "      stream();";
     echo "    } else {";
     echo "      console.log(\"Switch cambiado a desactivado\");";
@@ -523,7 +523,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "2 0 0 1 9.5 13H2a2 2 0 0 1-2-2V5zm11.5 5.175 3.5 1.556V4.269l-3.5 1.556v4.35zM2 4a1 1 0 0 ";
         echo "0-1 1v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H2z\"/>";
         echo "</svg>";
-        echo " Session is being recorded";
+        echo " ".get_string('sessionisbeingrecorded', 'jitsi');
         echo "</div>';";
         echo "    } else if (!event['on']){\n";
         echo "      document.getElementById(\"recordSwitch\").checked = false;\n";

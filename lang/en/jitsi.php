@@ -195,3 +195,6 @@ $string['minpretime_help'] = 'Users with moderation permissions will be able to 
 $string['domain'] = 'Domain';
 $string['domainex'] = 'Domain Jitsi Server to use. You can search in Google for alternative public Jitsi servers that could be nearest to your users and with less latency.
  If you have your private own Jitsi Server inform it here without "https://".';
+$string['sessionisbeingrecorded'] = 'Session is being recorded';
+$string['recordtitle'] = 'Record';
+$string['preparing'] = 'Preparing. Please wait...';
