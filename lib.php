@@ -855,8 +855,6 @@ function mod_jitsi_inplace_editable($itemtype, $itemid, $newvalue) {
         // Must call validate_context for either system, or course or course module context.
         // This will both check access and set current context.
         \external_api::validate_context(context_system::instance());
-        // Check permission of the user to update this item.
-        require_capability('mod/jitsi:record', context_system::instance());
         // Clean input and update the record.
         $newvalue = clean_param($newvalue, PARAM_NOTAGS);
         $DB->update_record('jitsi_record', array('id' => $itemid, 'name' => $newvalue));
