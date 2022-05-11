@@ -198,3 +198,4 @@ $string['domainex'] = 'Domain Jitsi Server to use. You can search in Google for 
 $string['sessionisbeingrecorded'] = 'Session is being recorded';
 $string['recordtitle'] = 'Record';
 $string['preparing'] = 'Preparing. Please wait...';
+$string['closebeforeopen'] = 'Could not update the session. You have specified a close date before the open date.';

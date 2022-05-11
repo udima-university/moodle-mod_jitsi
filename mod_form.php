@@ -137,6 +137,25 @@ class mod_jitsi_mod_form extends moodleform_mod {
         return $data;
     }
 
+    /**
+     * Data validation
+     *
+     * @param data $data Input data to validated.
+     * @param files $files Files uploaded.
+     * @return String error message, if any.
+     */
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+
+        // Check open and close times are consistent.
+        if ($data['timeopen'] != 0 && $data['timeclose'] != 0 &&
+                $data['timeclose'] < $data['timeopen']) {
+            $errors['timeclose'] = get_string('closebeforeopen', 'jitsi');
+        }
+
+        return $errors;
+    }
+
     /** 
      * Processing data
      */
