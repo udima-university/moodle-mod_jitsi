@@ -151,7 +151,9 @@ if (!istimedout($sesion)) {
         echo get_string('noinviteaccess', 'jitsi');
     }
 } else {
+    echo "<div class=\"alert alert-danger\" role=\"alert\">";
     echo generateerrortime($sesion);
+    echo "</div>";
 }
 echo '<p></p>';
 echo $CFG->jitsi_help;

@@ -79,9 +79,10 @@ class mod_jitsi_mod_form extends moodleform_mod {
         $mform->addHelpButton('minpretime', 'minpretime', 'jitsi');
 
         if ($CFG->jitsi_invitebuttons == 1) {
+            $optionsinvitation = array('defaulttime' => time() + 86400, 'optional' => true);
             $mform->addElement('header', 'invitations', get_string('invitations', 'jitsi'));
             $options = array('optional' => true);
-            $mform->addElement('date_time_selector', 'validitytime', get_string('finishinvitation', 'jitsi'), $options);
+            $mform->addElement('date_time_selector', 'validitytime', get_string('finishinvitation', 'jitsi'), $optionsinvitation);
         }
 
         $this->standard_coursemodule_elements();
