@@ -140,8 +140,8 @@ class mod_jitsi_mod_form extends moodleform_mod {
     /**
      * Data validation
      *
-     * @param data $data Input data to validated.
-     * @param files $files Files uploaded.
+     * @param array $data Input data to validated.
+     * @param array $files Files uploaded.
      * @return String error message, if any.
      */
     public function validation($data, $files) {
