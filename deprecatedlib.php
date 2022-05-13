@@ -39,7 +39,7 @@ function jitsi_get_completion_state($course, $cm, $userid, $type) {
     if (!$jitsi = $DB->get_record('jitsi', ['id' => $cm->instance])) {
         throw new \moodle_exception('Unable to find jitsi with id ' . $cm->instance);
     }
-    if ($jitsi->get_instance()->completionminutes) {   
+    if ($jitsi->completionminutes) {   
         $completionminutes = $jitsi->completionminutes;
         $userminutes = getminutes($cm->id, $userid);
         return $completionminutes <= $userminutes;
