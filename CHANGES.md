@@ -1,4 +1,15 @@
 # Changelog
+## v3.2.6 (2022051300)
+### Added
+ * Check that the finish date is always later than the starting date #96
+### Changed
+ * Default time for invitations are time+24h. Error validitytime now are alert tipe
+### Fixed
+ * For versions <311 add jitsi_get_completion_state to deprecatedlib. Before these versions gave an error when using custom completions
+ * Fixed capability error when teacher edit record name
+ 
+---
+
 ## v3.2.5 (2022042200)
 ### Changed
  * Some strings to strings file
