@@ -35,16 +35,12 @@
  * @return bool True if completed, false if not, $type if conditions not set.
  */
 function jitsi_get_completion_state($course, $cm, $userid, $type) {
-    if ($jitsi->get_instance()->completionminutes) {
-
-        if (!$jitsi = $DB->get_record('jitsi', ['id' => $this->cm->instance])) {
-            throw new \moodle_exception('Unable to find jitsi with id ' . $this->cm->instance);
-        }
-        // $completionminutes = $this->cm->customdata['customcompletionrules']['completionminutes'];
+    if (!$jitsi = $DB->get_record('jitsi', ['id' => $this->cm->instance])) {
+        throw new \moodle_exception('Unable to find jitsi with id ' . $this->cm->instance);
+    }
+    if ($jitsi->get_instance()->completionminutes) {   
         $completionminutes = $jitsi->completionminutes;
-
         $userminutes = getminutes($this->cm->id, $userid);
-
         return $completionminutes <= $userminutes;
     } else {
         // Completion option is not enabled so just return $type.
