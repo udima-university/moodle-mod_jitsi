@@ -31,6 +31,8 @@
 
 /* Moodle core API */
 
+require_once(__DIR__ . '/deprecatedlib.php');
+
 /**
  * Returns the information on whether the module supports a feature
  *
