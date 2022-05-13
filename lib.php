@@ -30,7 +30,7 @@
  */
 
 /* Moodle core API */
-
+defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__ . '/deprecatedlib.php');
 
 /**

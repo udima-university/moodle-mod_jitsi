@@ -62,7 +62,7 @@ class accountname_form extends moodleform {
         $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('addaccount', 'jitsi'));
         $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
     }
-    
+
     /**
      * Validate data
      *
@@ -70,7 +70,7 @@ class accountname_form extends moodleform {
      * @param array $files Array of files
      * @return array Errors found
      */
-     
+
     public function validation($data, $files) {
         return array();
     }

@@ -42,7 +42,7 @@ $id = $cm->id;
 $sessionid = $cm->instance;
 
 /**
- * Access form for name 
+ * Access form for name.
  */
 class name_form extends moodleform {
     /**
@@ -60,7 +60,7 @@ class name_form extends moodleform {
         $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('continue'));
         $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
     }
-    
+
     /**
      * Validate the form data
      *

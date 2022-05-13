@@ -49,7 +49,7 @@ class userstocall_form extends moodleform {
         $buttonarray[] = $mform->createElement('submit', 'submitbutton', 'Call');
         $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
     }
-    /** 
+    /**
      * Validate the form data
      */
     public function validation($data, $files) {
