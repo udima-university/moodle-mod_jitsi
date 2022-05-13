@@ -35,6 +35,7 @@
  * @return bool True if completed, false if not, $type if conditions not set.
  */
 function jitsi_get_completion_state($course, $cm, $userid, $type) {
+    global $DB;
     if (!$jitsi = $DB->get_record('jitsi', ['id' => $this->cm->instance])) {
         throw new \moodle_exception('Unable to find jitsi with id ' . $this->cm->instance);
     }
