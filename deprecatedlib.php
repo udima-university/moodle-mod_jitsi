@@ -36,36 +36,15 @@
  */
 function jitsi_get_completion_state($course, $cm, $userid, $type) {
     global $DB;
-    if (!$jitsi = $DB->get_record('jitsi', ['id' => $this->cm->instance])) {
-        throw new \moodle_exception('Unable to find jitsi with id ' . $this->cm->instance);
+    if (!$jitsi = $DB->get_record('jitsi', ['id' => $cm->instance])) {
+        throw new \moodle_exception('Unable to find jitsi with id ' . $cm->instance);
     }
     if ($jitsi->get_instance()->completionminutes) {   
         $completionminutes = $jitsi->completionminutes;
-        $userminutes = getminutes($this->cm->id, $userid);
+        $userminutes = getminutes($cm->id, $userid);
         return $completionminutes <= $userminutes;
     } else {
         // Completion option is not enabled so just return $type.
         return $type;
     }
-
-
-
-
-
-    global $DB;
-
-        $this->validate_rule($rule);
-
-        $userid = $this->userid;
-        $jitsi = $this->cm->instance;
-
-        if (!$jitsi = $DB->get_record('jitsi', ['id' => $this->cm->instance])) {
-            throw new \moodle_exception('Unable to find jitsi with id ' . $this->cm->instance);
-        }
-        $completionminutes = $this->cm->customdata['customcompletionrules']['completionminutes'];
-        $userminutes = getminutes($this->cm->id, $userid);
-
-        $status = $completionminutes <= $userminutes;
-
-        return $status ? COMPLETION_COMPLETE : COMPLETION_INCOMPLETE;
 }
