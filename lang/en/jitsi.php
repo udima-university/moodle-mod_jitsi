@@ -199,3 +199,4 @@ $string['sessionisbeingrecorded'] = 'Session is being recorded';
 $string['recordtitle'] = 'Record';
 $string['preparing'] = 'Preparing. Please wait...';
 $string['closebeforeopen'] = 'Could not update the session. You have specified a close date before the open date.';
+$string['validitytimevalidation'] = 'The invitation cannot expire before the session start date or after the session end date.';
