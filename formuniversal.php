@@ -102,8 +102,7 @@ if (!istimedout($sesion)) {
             echo get_string('accessto', 'jitsi', $sesion->name);
             $today = getdate();
             if ($today[0] < $sesion->timeclose || $sesion->timeclose == 0) {
-                if ($today[0] > (($sesion->timeopen) - ($sesion->minpretime * 60))||
-                    (in_array('editingteacher', $rolestr) == 1)) {
+                if ($today[0] > (($sesion->timeopen) - ($sesion->minpretime * 60))) {
                     $urlparamsform = array('ses' => $sessionid, 'id' => $id);
                     $urlform = new moodle_url('/mod/jitsi/universal.php', $urlparamsform);
                     $mform = new name_form($urlform);
@@ -115,7 +114,7 @@ if (!istimedout($sesion)) {
                         $mform->display();
                     }
                 } else {
-                    echo $OUTPUT->box(get_string('nostart', 'jitsi', $session->minpretime));
+                    echo $OUTPUT->box(get_string('nostart', 'jitsi', date("d-m-Y H:i", ($sesion->timeopen - ($sesion->minpretime * 60)))));
                 }
             } else {
                 echo $OUTPUT->box(get_string('finish', 'jitsi'));
@@ -123,8 +122,7 @@ if (!istimedout($sesion)) {
         } else {
             echo get_string('accesstowithlogin', 'jitsi', $sesion->name);
             $today = getdate();
-            if ($today[0] > (($sesion->timeopen) - ($sesion->minpretime * 60))||
-                (in_array('editingteacher', $rolestr) == 1)) {
+            if ($today[0] > (($sesion->timeopen) - ($sesion->minpretime * 60))) {
                 $nom = null;
                 switch ($CFG->jitsi_id) {
                     case 'username':
