@@ -154,6 +154,12 @@ class mod_jitsi_mod_form extends moodleform_mod {
             $errors['timeclose'] = get_string('closebeforeopen', 'jitsi');
         }
 
+        // Check validitity time is consistent with open and close times.
+        if (($data['validitytime'] != 0 && $data['timeopen'] != 0 && $data['validitytime'] < $data['timeopen']) || 
+                ($data['validitytime'] != 0 && $data['timeclose'] != 0 && $data['validitytime'] > $data['timeclose'])) {
+            $errors['validitytime'] = get_string('validitytimevalidation', 'jitsi');
+        }
+
         return $errors;
     }
 
