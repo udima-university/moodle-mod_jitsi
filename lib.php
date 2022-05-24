@@ -298,41 +298,20 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             notice(get_string('noviewpermission', 'jitsi'));
         }
     }
-    $header = json_encode([
-        "kid" => "jitsi/custom_key_name",
-        "typ" => "JWT",
-        "alg" => "HS256"
-    ], JSON_UNESCAPED_SLASHES);
-    $base64urlheader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
-    $payload  = json_encode([
-        "context" => [
-            "user" => [
-                "affiliation" => $affiliation,
-                "avatar" => $avatar,
-                "name" => $nombre,
-                "email" => $mail,
-                "id" => ""
-            ],
-            "group" => ""
-        ],
-        "aud" => "jitsi",
-        "iss" => $CFG->jitsi_app_id,
-        "sub" => $CFG->jitsi_domain,
-        "room" => urlencode($sessionnorm),
-        "exp" => time() + 24 * 3600,
-        "moderator" => $teacher
-    ], JSON_UNESCAPED_SLASHES);
-    $base64urlpayload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
-    $secret = $CFG->jitsi_secret;
-    $signature = hash_hmac('sha256', $base64urlheader . "." . $base64urlpayload, $secret, true);
-    $base64urlsignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
-    $jwt = $base64urlheader . "." . $base64urlpayload . "." . $base64urlsignature;
+    
+
+
+
+
+
+
+
     echo "<script src=\"//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js\"></script>";
     echo "<script src=\"https://".$CFG->jitsi_domain."/external_api.js\"></script>\n";
 
     $streamingoption = '';
     if (($CFG->jitsi_livebutton == 1) && (has_capability('mod/jitsi:record', $PAGE->context))
-        && ($CFG->jitsi_streamingoption == 0)) {
+        && ($CFG->jitsi_streamingoption == 1)) {
         $streamingoption = 'livestreaming';
     }
 
@@ -389,7 +368,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     if ($user == null) {
         if ($CFG->jitsi_livebutton == 1 && has_capability('mod/jitsi:record', $PAGE->context)
             && $account != null
-            && ($CFG->jitsi_streamingoption == 1)) {
+            && ($CFG->jitsi_streamingoption == 2)) {
             echo "<div class=\"text-right\">";
             echo "<div class=\"custom-control custom-switch\">";
             echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\" ";
@@ -399,7 +378,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             echo "</div>";
             echo "</div>";
         } else if ($CFG->jitsi_livebutton == 1 && $account != null
-            && $CFG->jitsi_streamingoption == 1) {
+            && $CFG->jitsi_streamingoption == 2) {
             echo "<div class=\"text-right\">";
             echo "<div class=\"custom-control custom-switch\">";
             echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\" ";
@@ -446,111 +425,82 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "startWithAudioMuted: true,\n";
     echo "startWithVideoMuted: true,\n";
     echo "},\n";
-    // $appid8x8 = 'vpaas-magic-cookie-a9483eac131f4cffb9f3415f45f219e5';
-    $appid8x8 = null;
-    echo "roomName: \"".$appid8x8."/".urlencode($sessionnorm)."\",\n";
-    if (($CFG->jitsi_app_id != null && $CFG->jitsi_secret != null) || $appid8x8 != null) {
-        if ($appid8x8 != null) {
-            $payload = json_encode([
-                'iss' => 'chat',
-                'aud' => 'jitsi',
-                'exp' => time() + 24 * 3600,
-                'nbf' => time() - 10,
-                'room'=> '*',
-                'sub' => $appid8x8,
-                'context' => [
-                    'user' => [
-                        'moderator' => $teacher,
-                        'email' => $mail,
-                        'name' => $nombre,
-                        'avatar' => $avatar,
-                        'id' => ""
-                    ],
-                    'features' => [
-                        'recording' => $teacher,
-                        'livestreaming' => $teacher,
-                        'transcription' => $teacher,
-                        'outbound-call' => $teacher
-                    ]
-                ]
-            ]);
 
-            $secret = "vpaas-magic-cookie-a9483eac131f4cffb9f3415f45f219e5/d337d3";
-            $privatykey = "<<<EOD
-            -----BEGIN PRIVATE KEY-----
-            MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDR1tptrg3y4uku
-            cY9pFNOIfERVnVvGPRz+4EJfmLxMGsN2H69M55z0YEMWwEc4UuxLCtTGnwaD9U93
-            9WE8CkkKBfS7yTso6/b+J+QpL9CO+pL4yDP2tntd2wCE9B1vRaV3OzJR6MELI9I0
-            xDl74SGT/Yrs2jNggEKM9CGZ96TC5nbdw1QaxZE/DW6JQA7bZo3exmRXRQk/JeoI
-            tBXVes/1Vqa82sXGgpGMZm1UX/V36cJbEyLEpUfrZ2jmVkkH6mhTYdib8ojPR26M
-            Mx7byR7Z0ZI/a/EWCSl9Mj6o0V2wklsLDyzEl5/iSsVylHpKfgnU5iJFdVc7hoYN
-            vQMULfdjAgMBAAECggEATEB9+VNBgFySjaz4hx/pSnSVxGK9QcldawUFOYXgDuu+
-            0YLsCc80it0cI/1VJBOGCDL0ZQTOsk8HRLknT1ERf5Hwf/i9Bb7Rb0QBtjHI4NwP
-            YlYmA+YF6HI3uxiWRaQSX8RkIb2pwKmQrloL5YdG02dT/4O/Hbcd9+iS+UczWRsL
-            7bnNHNGTq6YPhgO9iuGT+7Ycj1CrkJqL4a0TpsvrPk3alsqh6ZHFoQyNrTOTPW1m
-            wWbEpxwTC5KpRRG4UHv9A8IIdcmsBnlDckXnA6nPzzt6Oh6Sovk4paxMXx5l3hfB
-            X8WKcv3i49nHNVNlUCIEunm2COgJMsXMHkrnFgmxYQKBgQDo7kWevkR6x7VMvjtw
-            uDM1ucJXBFqzEGx+Oqvf5JunNdq6m6++MoDH5Y3jqMQKNaLpOROThqva9G/6GEdN
-            Pdtbv4UXlDPuny5r86RLSKLjbk2D6wjWyTlLNOexgTf9c5451+sJ2hCy4g4GZOw/
-            mcBd/92gdOaVjyVo44ZtsvvcUQKBgQDmnx6m8IdRNb4nZ0q1m5gO32lfyihMWABU
-            nZ3csx7Lwx3KN/cn0xauwiMOc35q41R8w6TgPbghoARKfDNz2/xZr8oBJzI8qllW
-            D2wlON2tr953HtBJzp0y9+KlXm9Ybb0x0BiOiN/u4oo3rvVDplpxnj+40DlA8GcE
-            PxwtuP1PcwKBgQDb55dyts6P29seCLq1QDGYlzcST9oRE4BZ66o4RettgTpu0myo
-            c6WBEwdR1xK9UMXsySXiMVIt9HeC9Ujbc3qUs8tC53ff4AhDglGpgXnGnWwxDsPZ
-            gz/D8L6MpiHl9jF7Co2rT2RUfXYgM0eXA+DI3bauta67o9j9nVBcYI3HAQKBgAN7
-            19yxuXmSlELIHqrLpOpkmZTm2uD8W1Tr5JyW4Bo34lVRrxwc5jTRnfHz8K7wrDAO
-            TIlOpV9sqWPuqGBRrGg2bZjC3NFpyVuxc/LD/yVGiNfH0WGsC1ffwr64xHnTfo4o
-            FJbinm9fYLMio3XYJ3mb6F6EVrkSaJv50BUovDrdAoGBAK1y+hDWtdF+raiWieci
-            zmqnOO9nA+OqpBo/SeC9xSPZpW2omJo6+QXOX8EeNP9tafT7K+8RjmEUnyAgdoUy
-            bgUSvgg8cV8UA6iufieWF2qZDm8QLbCt+PnJyzAnnotc8FpJ8Re0L/+HNI3Cw5oD
-            co6jsOx01ejJ/XW+bs2JrC2d
-            -----END PRIVATE KEY-----
-            EOD";
-            $header = json_encode([
-                "kid" => $secret,
-                "typ" => "JWT",
-                "alg" => "RS256"
-            ], JSON_UNESCAPED_SLASHES);
-            $base64urlheader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
-            // $payload  = json_encode([
-            //     "context" => [
-            //         "user" => [
-            //             "affiliation" => $affiliation,
-            //             "avatar" => $avatar,
-            //             "name" => $nombre,
-            //             "email" => $mail,
-            //             "id" => ""
-            //         ],
-            //         "group" => ""
-            //     ],
-            //     "aud" => "jitsi",
-            //     "iss" => "chat",
-            //     "sub" => $CFG->jitsi_domain,
-            //     "room" => urlencode($sessionnorm),
-            //     "exp" => time() + 24 * 3600,
-            //     "moderator" => $teacher
-            // ], JSON_UNESCAPED_SLASHES);
-            $base64urlpayload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
-            // $secret = $secret;
-            $signature = hash_hmac('sha256', $base64urlheader . "." . $base64urlpayload, $privatykey, true);
-            $base64urlsignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
-            $jwt = $base64urlheader . "." . $base64urlpayload . "." . $base64urlsignature;
+    $appid8x8 = get_config('jitsi', '8x8app_id');
 
-
-
-            echo "jwt: \"".$jwt."\",\n";
-
-
-
-
-
-
-
-        } else if ($CFG->jitsi_app_id != null && $CFG->jitsi_secret != null) {
-            echo "jwt: \"".$jwt."\",\n";
-        }
+    // if ($CFG->jitsi_domain == '8x8.vc') {
+    if (get_config('jitsi', 'tokentype') == '2') {
+        $header = json_encode([
+            "kid" => get_config('jitsi', '8x8apikey_id'),
+            "typ" => "JWT",
+            "alg" => "RS256"
+        ]);
         
+        $payload = json_encode([
+            'iss' => 'chat',
+            'aud' => 'jitsi',
+            'exp' => time() + 24 * 3600,
+            'nbf' => time() - 10,
+            'room'=> '*',
+            'sub' => $appid8x8,
+            'context' => [
+                'user' => [
+                    'moderator' => $teacher,
+                    'email' => $mail,
+                    'name' => $nombre,
+                    'avatar' => $avatar,
+                    'id' => ""
+                ],
+                'features' => [
+                    'recording' => $teacher,
+                    'livestreaming' => $teacher,
+                    'transcription' => $teacher,
+                    'outbound-call' => $teacher
+                ]
+            ]
+        ]);
+        echo "roomName: \"".$appid8x8."/".urlencode($sessionnorm)."\",\n";
+        $payloadencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
+        $headerencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
+        openssl_sign( $headerencoded . "." . $payloadencoded, $signature, get_config('jitsi', 'privatykey'), OPENSSL_ALGO_SHA256);
+    } else if (set_config('jitsi', 'tokentype') == '1') {
+        $header = json_encode([
+            "kid" => "jitsi/custom_key_name",
+            "typ" => "JWT",
+            "alg" => "HS256"
+        ], JSON_UNESCAPED_SLASHES);
+        $base64urlheader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
+        $payload  = json_encode([
+            "context" => [
+                "user" => [
+                    "affiliation" => $affiliation,
+                    "avatar" => $avatar,
+                    "name" => $nombre,
+                    "email" => $mail,
+                    "id" => ""
+                ],
+                "group" => ""
+            ],
+            "aud" => "jitsi",
+            "iss" => $CFG->jitsi_app_id,
+            "sub" => $CFG->jitsi_domain,
+            "room" => urlencode($sessionnorm),
+            "exp" => time() + 24 * 3600,
+            "moderator" => $teacher
+        ], JSON_UNESCAPED_SLASHES);
+        echo "roomName: \"".urlencode($sessionnorm)."\",\n";
+        $payloadencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
+        $headerencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
+        $signature = hash_hmac('sha256', $headerencoded . "." . $payloadencoded, $CFG->jitsi_secret, true);
     }
+
+    if ((get_config('jitsi', 'tokentype') == '1' && ($CFG->jitsi_app_id != null && $CFG->jitsi_secret != null))
+        || get_config('jitsi', 'tokentype') == '2') {
+        $signature_encoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
+        $jwt = $headerencoded . "." . $payloadencoded . "." . $signature_encoded;
+        echo "jwt: \"".$jwt."\",\n";
+    }
+    
     if ($CFG->branch < 36) {
         $themeconfig = theme_config::load($CFG->theme);
         if ($CFG->theme == 'boost' || in_array('boost', $themeconfig->parents)) {

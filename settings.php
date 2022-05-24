@@ -85,15 +85,22 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('jitsi_livebutton', get_string('streamingbutton', 'jitsi'),
             get_string('streamingbuttonex', 'jitsi'), 1));
 
-    $streamingoptions = [get_string('jitsiinterface', 'jitsi'), get_string('integrated', 'jitsi')];
+    $streamingoptions = ['1' => get_string('jitsiinterface', 'jitsi'), '2' => get_string('integrated', 'jitsi')];
     $settings->add(new admin_setting_configselect('jitsi_streamingoption', get_string('streamingoption', 'jitsi'),
         get_string('streamingoptionex', 'jitsi'), null, $streamingoptions));
+    $settings->hide_if('jitsi_streamingoption', 'jitsi_livebutton', 'notchecked');
 
     $settings->add(new admin_setting_configtext('jitsi_oauth_id', get_string('oauthid', 'jitsi'),
             get_string('oauthidex', 'jitsi', $CFG->wwwroot.'/mod/jitsi/auth.php'), ''));
+    $settings->hide_if('jitsi_oauth_id', 'jitsi_streamingoption', 'in', '1');
+    $settings->hide_if('jitsi_oauth_id', 'jitsi_livebutton', 'notchecked');
+
 
     $settings->add(new admin_setting_configpasswordunmask('jitsi_oauth_secret', get_string('oauthsecret', 'jitsi'),
             get_string('oauthsecretex', 'jitsi'), ''));
+    $settings->hide_if('jitsi_oauth_secret', 'jitsi_streamingoption', 'in', '1');
+    $settings->hide_if('jitsi_oauth_secret', 'jitsi_livebutton', 'notchecked');
+
 
     $link = new moodle_url('/mod/jitsi/adminaccounts.php');
     $settings->add(new admin_setting_heading('jitsi_loginoutyoutube', '', '<a href='.$link.' >'.
@@ -107,13 +114,34 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_heading('jitsitoken',
         get_string('tokennconfig', 'jitsi'), get_string('tokenconfigurationex', 'jitsi')));
 
+    $tokenoptions = ['0' => 'Server without token', '1' => 'Self-hosted with appid and secret', '2' => '8x8 servers'];
+    $settings->add(new admin_setting_configselect('jitsi/tokentype', 'Server type', null, '0', $tokenoptions));
+
+    // Self-hosted servers with appid and secret
     $settings->add(new admin_setting_configtext('jitsi_app_id', get_string('appid', 'jitsi'),
         get_string('appidex', 'jitsi'), ''));
+    $settings->hide_if('jitsi_app_id', 'jitsi/tokentype', 'in', '2|0');
+
     $settings->add(new admin_setting_configpasswordunmask('jitsi_secret', get_string('secret', 'jitsi'),
         get_string('secretex', 'jitsi'), ''));
+    $settings->hide_if('jitsi_secret', 'jitsi/tokentype', 'in', '2|0');
+
+    // 8x8 servers token configuration
+    $settings->add(new admin_setting_configtextarea('jitsi/privatykey', get_string('privatekey', 'jitsi'),
+        get_string('privatekeyex', 'jitsi'), '', PARAM_TEXT));
+    $settings->hide_if('jitsi/privatykey', 'jitsi/tokentype', 'in', '1|0');
+
+    $settings->add(new admin_setting_configtext('jitsi/8x8app_id', get_string('appid', 'jitsi'),
+        get_string('appidex', 'jitsi'), null));
+    $settings->hide_if('jitsi/8x8app_id', 'jitsi/tokentype', 'in', '1|0');
+
+    $settings->add(new admin_setting_configtext('jitsi/8x8apikey_id', get_string('apikeyid8x8', 'jitsi'),
+        get_string('apikeyid8x8ex', 'jitsi'), null));
+    $settings->hide_if('jitsi/8x8apikey_id', 'jitsi/tokentype', 'in', '1|0');
+
 
     // Experimental Section.
-    $settings->add(new admin_setting_heading('experimental', get_string('experimental', 'jitsi'),
+    $settings->add(new admin_setting_heading('jitsiexperimental', get_string('experimental', 'jitsi'),
         get_string('experimentalex', 'jitsi')));
 
     $settings->add(new admin_setting_configcheckbox('jitsi_privatesessions', get_string('privatesessions', 'jitsi'),
