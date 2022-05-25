@@ -88,19 +88,12 @@ if ($ADMIN->fulltree) {
     $streamingoptions = ['1' => get_string('jitsiinterface', 'jitsi'), '2' => get_string('integrated', 'jitsi')];
     $settings->add(new admin_setting_configselect('jitsi_streamingoption', get_string('streamingoption', 'jitsi'),
         get_string('streamingoptionex', 'jitsi'), null, $streamingoptions));
-    $settings->hide_if('jitsi_streamingoption', 'jitsi_livebutton', 'notchecked');
 
     $settings->add(new admin_setting_configtext('jitsi_oauth_id', get_string('oauthid', 'jitsi'),
             get_string('oauthidex', 'jitsi', $CFG->wwwroot.'/mod/jitsi/auth.php'), ''));
-    $settings->hide_if('jitsi_oauth_id', 'jitsi_streamingoption', 'in', '1');
-    $settings->hide_if('jitsi_oauth_id', 'jitsi_livebutton', 'notchecked');
-
 
     $settings->add(new admin_setting_configpasswordunmask('jitsi_oauth_secret', get_string('oauthsecret', 'jitsi'),
             get_string('oauthsecretex', 'jitsi'), ''));
-    $settings->hide_if('jitsi_oauth_secret', 'jitsi_streamingoption', 'in', '1');
-    $settings->hide_if('jitsi_oauth_secret', 'jitsi_livebutton', 'notchecked');
-
 
     $link = new moodle_url('/mod/jitsi/adminaccounts.php');
     $settings->add(new admin_setting_heading('jitsi_loginoutyoutube', '', '<a href='.$link.' >'.
