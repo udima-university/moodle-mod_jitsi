@@ -65,8 +65,7 @@ $string['identificationex'] = 'ID to show in the session';
 $string['username'] = 'Username';
 $string['nameandsurname'] = 'Firstname + Lastname';
 $string['tokennconfig'] = 'Token configuration';
-$string['tokenconfigurationex'] = 'If you have your own Jitsi server configured in "token mode" fill here the App ID and secret.
- It is required in order to promote as native Jitsi moderators to your users with (mod/jitsi:moderation) capabity enabled. Empty for servers without token.';
+$string['tokenconfigurationex'] = 'If you are using a Jitsi server configured in "token mode", for example your own server or an 8x8 server, fill in the following parameters depending on the type of server you are using. Required to promote your users with the (mod/jitsi:moderation) capability enabled as native Jitsi moderators.';
 $string['separator'] = 'Separator';
 $string['separatorex'] = 'Define the field separator for the session name';
 $string['sessionnamefields'] = 'Session name fields';
