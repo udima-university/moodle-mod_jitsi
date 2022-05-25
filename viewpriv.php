@@ -51,6 +51,8 @@ class userstocall_form extends moodleform {
     }
     /**
      * Validate the form data
+     * @param array $data - array
+     * @param array $files - array files
      */
     public function validation($data, $files) {
         return array();

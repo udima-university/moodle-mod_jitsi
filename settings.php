@@ -110,7 +110,7 @@ if ($ADMIN->fulltree) {
     $tokenoptions = ['0' => 'Server without token', '1' => 'Self-hosted with appid and secret', '2' => '8x8 servers'];
     $settings->add(new admin_setting_configselect('jitsi/tokentype', 'Server type', null, '0', $tokenoptions));
 
-    // Self-hosted servers with appid and secret
+    // Self-hosted servers with appid and secret.
     $settings->add(new admin_setting_configtext('jitsi_app_id', get_string('appid', 'jitsi'),
         get_string('appidex', 'jitsi'), ''));
     $settings->hide_if('jitsi_app_id', 'jitsi/tokentype', 'in', '2|0');
