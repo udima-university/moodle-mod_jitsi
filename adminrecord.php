@@ -89,8 +89,8 @@ echo $OUTPUT->footer();
 
 /**
  * Get true if the source is on array.
- * @param $sources
- * @param $sourceelement.
+ * @param array $sources array of sources
+ * @param stdClass $sourceelement source element to search
  * @return bool
  */
 function isincluded($sources, $sourceelement) {

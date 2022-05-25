@@ -70,7 +70,6 @@ class accountname_form extends moodleform {
      * @param array $files Array of files
      * @return array Errors found
      */
-
     public function validation($data, $files) {
         return array();
     }

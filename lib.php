@@ -298,13 +298,6 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             notice(get_string('noviewpermission', 'jitsi'));
         }
     }
-    
-
-
-
-
-
-
 
     echo "<script src=\"//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js\"></script>";
     echo "<script src=\"https://".$CFG->jitsi_domain."/external_api.js\"></script>\n";
@@ -428,20 +421,19 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
 
     $appid8x8 = get_config('jitsi', '8x8app_id');
 
-    // if ($CFG->jitsi_domain == '8x8.vc') {
     if (get_config('jitsi', 'tokentype') == '2') {
         $header = json_encode([
             "kid" => get_config('jitsi', '8x8apikey_id'),
             "typ" => "JWT",
             "alg" => "RS256"
         ]);
-        
+
         $payload = json_encode([
             'iss' => 'chat',
             'aud' => 'jitsi',
             'exp' => time() + 24 * 3600,
             'nbf' => time() - 10,
-            'room'=> '*',
+            'room' => '*',
             'sub' => $appid8x8,
             'context' => [
                 'user' => [
@@ -496,11 +488,11 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
 
     if ((get_config('jitsi', 'tokentype') == '1' && ($CFG->jitsi_app_id != null && $CFG->jitsi_secret != null))
         || get_config('jitsi', 'tokentype') == '2') {
-        $signature_encoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
-        $jwt = $headerencoded . "." . $payloadencoded . "." . $signature_encoded;
+        $signatureencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
+        $jwt = $headerencoded . "." . $payloadencoded . "." . $signatureencoded;
         echo "jwt: \"".$jwt."\",\n";
     }
-    
+
     if ($CFG->branch < 36) {
         $themeconfig = theme_config::load($CFG->theme);
         if ($CFG->theme == 'boost' || in_array('boost', $themeconfig->parents)) {

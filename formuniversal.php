@@ -114,7 +114,8 @@ if (!istimedout($sesion)) {
                         $mform->display();
                     }
                 } else {
-                    echo $OUTPUT->box(get_string('nostart', 'jitsi', date("d-m-Y H:i", ($sesion->timeopen - ($sesion->minpretime * 60)))));
+                    echo $OUTPUT->box(get_string('nostart', 'jitsi',
+                        date("d-m-Y H:i", ($sesion->timeopen - ($sesion->minpretime * 60)))));
                 }
             } else {
                 echo $OUTPUT->box(get_string('finish', 'jitsi'));
