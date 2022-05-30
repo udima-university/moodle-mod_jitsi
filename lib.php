@@ -304,7 +304,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
 
     $streamingoption = '';
     if (($CFG->jitsi_livebutton == 1) && (has_capability('mod/jitsi:record', $PAGE->context))
-        && ($CFG->jitsi_streamingoption == 1)) {
+        && ($CFG->jitsi_streamingoption == 0)) {
         $streamingoption = 'livestreaming';
     }
 
@@ -361,7 +361,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     if ($user == null) {
         if ($CFG->jitsi_livebutton == 1 && has_capability('mod/jitsi:record', $PAGE->context)
             && $account != null
-            && ($CFG->jitsi_streamingoption == 2)) {
+            && ($CFG->jitsi_streamingoption == 1)) {
             echo "<div class=\"text-right\">";
             echo "<div class=\"custom-control custom-switch\">";
             echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\" ";
@@ -371,7 +371,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             echo "</div>";
             echo "</div>";
         } else if ($CFG->jitsi_livebutton == 1 && $account != null
-            && $CFG->jitsi_streamingoption == 2) {
+            && $CFG->jitsi_streamingoption == 1) {
             echo "<div class=\"text-right\">";
             echo "<div class=\"custom-control custom-switch\">";
             echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\" ";
