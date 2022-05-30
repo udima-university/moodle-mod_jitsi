@@ -392,6 +392,19 @@ function xmldb_jitsi_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2021121600, 'jitsi');
     }
 
+    if ($oldversion < 2022052800) {
+        global $CFG, $DB;
+        if ($CFG->jitsi_app_id != null && $CFG->jitsi_secret != null) {
+            $config = new stdClass();
+            $config->plugin = 'jitsi';
+            $config->name = 'tokentype';
+            $config->value = 1;
+
+            $DB->insert_record('config_plugins', $config);
+        }
+        upgrade_mod_savepoint(true, 2022052800, 'jitsi');
+    }
+
     /*
      * And that's all. Please, examine and understand the 3 example blocks above. Also
      * it's interesting to look how other modules are using this script. Remember that
