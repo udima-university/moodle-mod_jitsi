@@ -205,3 +205,4 @@ $string['tokenconfiguration8x8ex'] = 'If you use 8x8 servers you need to configu
 $string['privatekeyex'] = 'Private key to sign the token with 8x8 server. You can get it from the 8x8 server administration. (https://jaas.8x8.com/)';
 $string['apikeyid8x8'] = 'Api Key ID';
 $string['apikeyid8x8ex'] = 'Api Key ID to use with 8x8 server. You can get it from the 8x8 server administration. (https://jaas.8x8.com/)';
+$string['nojitsis'] = 'No Jitsi activities found';
