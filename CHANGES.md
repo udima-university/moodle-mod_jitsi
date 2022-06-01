@@ -1,4 +1,14 @@
 # Changelog
+## v3.2.7 (2022060100)
+### Added
+ * New version api google (v2.12.4)
+ * Validate link invitation with startdate #98
+ * Added compatibility with 8x8 servers
+### Changed
+ * jitsi_channellastcam deprecated
+
+---
+
 ## v3.2.6 (2022051300)
 ### Added
  * Check that the finish date is always later than the starting date #96
