@@ -74,7 +74,7 @@ if ($id) {
     $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
     $jitsi = $DB->get_record('jitsi', array('id' => $cm->instance), '*', MUST_EXIST);
 } else {
-    print_error('missingparam');
+    throw new \moodle_exception('Unable to find jitsi');
 }
 
 require_login($course, true, $cm);

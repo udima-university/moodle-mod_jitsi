@@ -55,7 +55,7 @@ class mobile {
             $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
             $jitsi = $DB->get_record('jitsi', array('id' => $cm->instance), '*', MUST_EXIST);
         } else {
-            print_error('missingparam');
+            throw new \moodle_exception('You must specify a course_module ID');
         }
 
         require_login($course, false, $cm, true, true);

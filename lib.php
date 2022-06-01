@@ -996,7 +996,7 @@ function update_completition($cm) {
     global $DB;
     $jitsi = $DB->get_record('jitsi', array('id' => $cm->instance), '*', MUST_EXIST);
     if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
-        print_error('coursemisconf');
+        throw new \Exception("Course is misconfigured");
     }
     $completion = new completion_info($course);
 
