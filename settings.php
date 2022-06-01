@@ -48,8 +48,6 @@ if ($ADMIN->fulltree) {
         $sessionoptionsdefault, $sessionoptions));
     $settings->add(new admin_setting_configcheckbox('jitsi_invitebuttons', get_string('invitebutton', 'jitsi'),
         get_string('invitebuttonex', 'jitsi'), 1));
-    $settings->add(new admin_setting_configtext('jitsi_channellastcam', get_string('simultaneouscameras', 'jitsi'),
-        get_string('simultaneouscamerasex', 'jitsi'), '15', PARAM_INT, 1));
 
     $settings->add(new admin_setting_configcheckbox('jitsi_blurbutton', get_string('blurbutton', 'jitsi'),
         get_string('blurbuttonex', 'jitsi'), 1));
@@ -146,4 +144,7 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configtext('jitsi_watermarklink', get_string('watermarklink', 'jitsi'),
         get_string('watermarklinkex', 'jitsi'), 'https://jitsi.org'));
+
+    $settings->add(new admin_setting_configtext('jitsi_channellastcam', get_string('simultaneouscameras', 'jitsi'),
+        get_string('simultaneouscamerasex', 'jitsi'), '15', PARAM_INT, 1));
 }
