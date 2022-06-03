@@ -320,7 +320,7 @@ class mod_jitsi_external extends external_api {
         $record->source = $DB->insert_record('jitsi_source_record', $source);
         $record->deleted = 0;
         $record->visible = 1;
-        $record->name = get_string('recordtitle', 'jitsi').' '.substr($jitsiob->name, 0, 30);
+        $record->name = get_string('recordtitle', 'jitsi').' '.mb_substr($jitsiob->name, 0, 30);
 
         $DB->insert_record('jitsi_record', $record);
 
