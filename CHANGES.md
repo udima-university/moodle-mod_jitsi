@@ -1,4 +1,13 @@
 # Changelog
+## v3.2.8 (2022061600)
+### Added
+ * New version api google (v2.12.6)
+### Fixed 
+ * Ilegal character with substr function #100
+ * Missing language string #81
+
+---
+
 ## v3.2.7 (2022060100)
 ### Added
  * New version api google (v2.12.4)
@@ -50,28 +59,3 @@
 ### Fixed
  * Remove mdl prefix in getminutes function
 
----
-
-## v3.2.0 ()
-### Added
-* Multi-account support for recordings.
-* Notification when the user enters a private session.
-* Allows guest users in a session. These guests can be users with a site account or without an account.
-* Show the number of participants in a session and show assistance report.
-* Add activity completion with number of minutes in a session.
-* Better moderation without tokens.
-* Allows to hide the Raise Hand Button.
-* Jitsi reactions.
-* Participants panel.
-### Changed
-* The recording button is replaced by a switch
-* Default cameras now are 15.
-* Watermark link now are deprecated.
-* Enable as default the jitsi_invitebuttons, jitsifinishandreturn, jitsi_blurbutton, jitsi_reactions and jitsi_shareyoutube options in config.
-* Only users with mod/jitsi:record should be able to launch native drop box recordings.
-* Better placed introduction text and help text.
-* Minutes to acces now apply only for users with moderation capability.
-* Update Google Api Client to Version 2.12.1
-### Fixed
-* Background options 
-* Fixed problem mod_jitsi_external::create_link implementation is missing
