@@ -143,7 +143,8 @@ if (!istimedout($sesion)) {
                 echo $OUTPUT->single_button(new moodle_url('/mod/jitsi/universal.php', $urlparams),
                     get_string('access', 'jitsi'), 'post');
             } else {
-                echo $OUTPUT->box(get_string('nostart', 'jitsi', $sesion->minpretime));
+                echo $OUTPUT->box(get_string('nostart', 'jitsi',
+                        date("d-m-Y H:i", ($sesion->timeopen - ($sesion->minpretime * 60)))));
             }
         }
     } else {
