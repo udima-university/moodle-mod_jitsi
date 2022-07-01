@@ -77,4 +77,11 @@ class jitsi_session_guest_form extends \core\event\base {
         return new \moodle_url('/mod/jitsi/view.php', array('id' => $this->contextinstanceid));
     }
 
+    /** 
+     * Mapping between log fields and event properties.
+     */
+    public static function get_objectid_mapping() {
+        return false;
+    }
+
 }
