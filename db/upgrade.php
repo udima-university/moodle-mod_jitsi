@@ -405,6 +405,19 @@ function xmldb_jitsi_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2022052800, 'jitsi');
     }
 
+    if ($oldversion < 2022070400) {
+
+        // Changing type of field name on table jitsi_record to text.
+        $table = new xmldb_table('jitsi_record');
+        $field = new xmldb_field('name', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, 'visible');
+
+        // Launch change of type for field name.
+        $dbman->change_field_type($table, $field);
+
+        // Jitsi savepoint reached.
+        upgrade_mod_savepoint(true, 2022070400, 'jitsi');
+    }
+
     /*
      * And that's all. Please, examine and understand the 3 example blocks above. Also
      * it's interesting to look how other modules are using this script. Remember that
