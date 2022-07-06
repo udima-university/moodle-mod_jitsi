@@ -1,4 +1,15 @@
 # Changelog
+## v3.2.10 (2022070601)
+### Added
+ * When a teacher marks a video as deleted it should be hidden on youtube. #105
+### Fixed 
+ * The message that the session has not started appears wrong when accessing through invite #102
+ * Jitsis with a lot of recordings takes a long time to load the access page #104 get_objectid_mapping function missing when importing logs #106
+ * get_objectid_mapping function missing when importing logs RDM #106
+ ### Changed
+ * Data type mismatch in name field of jitsi_record table RDM #107
+ ---
+
 ## v3.2.8 (2022061600)
 ### Added
  * New version api google (v2.12.6)
@@ -50,12 +61,3 @@
 ## v3.2.3 (2022041300)
 ### Fixed
  * Remove mdl prefix in sql userconnected
-
----
-
-## v3.2.2 (2022041300)
-### Added
- * Moodle 4.0 compatibility
-### Fixed
- * Remove mdl prefix in getminutes function
-
