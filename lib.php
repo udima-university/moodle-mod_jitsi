@@ -745,11 +745,13 @@ function sendcallprivatesession($fromuser, $touser) {
 function marktodelete($idrecord, $option) {
     global $DB;
     $record = $DB->get_record('jitsi_record', array('id' => $idrecord));
+    $source = $DB->get_record('jitsi_source_record', array('id' => $record->source));
     if ($option == 1) {
         $record->deleted = 1;
     } else if ($option == 2) {
         $record->deleted = 2;
     }
+    togglestate($source->link);
     $DB->update_record('jitsi_record', $record);
 }
 
@@ -1075,6 +1077,106 @@ function doembedable($idvideo) {
         if ($videostatus != null) {
             if ($videostatus['embeddable'] != true) {
                 $videostatus['embeddable'] = 'true';
+                $updateresponse = $youtube->videos->update("status", $video);
+            }
+        }
+    } catch (Google_Service_Exception $e) {
+        if ($account->inuse == 1) {
+            $account->inuse = 0;
+        }
+        $account->clientaccesstoken = null;
+        $account->clientrefreshtoken = null;
+        $account->tokencreated = 0;
+        $DB->update_record('jitsi_record_account', $account);
+        $client->revokeToken();
+        return false;
+    } catch (Google_Exception $e) {
+        if ($account->inuse == 1) {
+            $account->inuse = 0;
+        }
+        $account->clientaccesstoken = null;
+        $account->clientrefreshtoken = null;
+        $account->tokencreated = 0;
+        $DB->update_record('jitsi_record_account', $account);
+        $client->revokeToken();
+        return false;
+    }
+    return $updateresponse;
+}
+
+/**
+ * Set private a video
+ * @param int $idvideo - id of the video
+ */
+function togglestate($idvideo) {
+    global $CFG, $DB;
+    if (!file_exists(__DIR__ . '/api/vendor/autoload.php')) {
+        throw new \Exception('please run "composer require google/apiclient:~2.0" in "' . __DIR__ .'"');
+    }
+    require_once(__DIR__ . '/api/vendor/autoload.php');
+
+    $client = new Google_Client();
+
+    $client->setClientId($CFG->jitsi_oauth_id);
+    $client->setClientSecret($CFG->jitsi_oauth_secret);
+
+    $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
+
+    $source = $DB->get_record('jitsi_source_record', array('link' => $idvideo));
+    $account = $DB->get_record('jitsi_record_account', array('id' => $source->account));
+
+    $_SESSION[$tokensessionkey] = $account->clientaccesstoken;
+    $client->setAccessToken($_SESSION[$tokensessionkey]);
+
+    $t = time();
+    $timediff = $t - $account->tokencreated;
+
+    if ($timediff > 3599) {
+        if ($timediff > 3599) {
+            $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
+            try {
+                $account->clientaccesstoken = $newaccesstoken["access_token"];
+                $newrefreshaccesstoken = $client->getRefreshToken();
+                $newrefreshaccesstoken = $client->getRefreshToken();
+                $account->clientrefreshtoken = $newrefreshaccesstoken;
+                $account->tokencreated = time();
+            } catch (Google_Service_Exception $e) {
+                if ($account->inuse == 1) {
+                    $account->inuse = 0;
+                }
+                $account->clientaccesstoken = null;
+                $account->clientrefreshtoken = null;
+                $account->tokencreated = 0;
+                $DB->update_record('jitsi_record_account', $account);
+                $client->revokeToken();
+                return false;
+            } catch (Google_Exception $e) {
+                if ($account->inuse == 1) {
+                    $account->inuse = 0;
+                }
+                $account->clientaccesstoken = null;
+                $account->clientrefreshtoken = null;
+                $account->tokencreated = 0;
+                $DB->update_record('jitsi_record_account', $account);
+                $client->revokeToken();
+                return false;
+            }
+        }
+    }
+
+    $youtube = new Google_Service_YouTube($client);
+
+    try {
+        $listresponse = $youtube->videos->listVideos("status", array('id' => $idvideo));
+        $video = $listresponse[0];
+
+        $videostatus = $video['status'];
+        if ($videostatus != null) {
+            if ($videostatus['privacyStatus'] == 'unlisted') {
+                $videostatus['privacyStatus'] = 'private';
+                $updateresponse = $youtube->videos->update("status", $video);
+            } else {
+                $videostatus['privacyStatus'] = 'unlisted';
                 $updateresponse = $youtube->videos->update("status", $video);
             }
         }
