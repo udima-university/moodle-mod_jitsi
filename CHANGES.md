@@ -1,11 +1,11 @@
 # Changelog
-## v3.2.10 (2022070601)
+## v3.2.11 (2022070601)
 ### Added
  * When a teacher marks a video as deleted it should be hidden on youtube. #105
 ### Fixed 
  * The message that the session has not started appears wrong when accessing through invite #102
- * Jitsis with a lot of recordings takes a long time to load the access page #104 get_objectid_mapping function missing when importing logs #106
- * get_objectid_mapping function missing when importing logs RDM #106
+ * Jitsis with a lot of recordings takes a long time to load the access page #104 
+ * get_objectid_mapping function missing when importing logs #106
  ### Changed
  * Data type mismatch in name field of jitsi_record table RDM #107
  ---
