@@ -76,7 +76,7 @@ class jitsi_session_enter extends \core\event\base {
         return new \moodle_url('/mod/jitsi/view.php', array('id' => $this->contextinstanceid));
     }
 
-    /** 
+    /**
      * Mapping between log fields and event properties.
      */
     public static function get_objectid_mapping() {

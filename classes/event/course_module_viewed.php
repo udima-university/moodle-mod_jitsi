@@ -44,7 +44,7 @@ class course_module_viewed extends \core\event\course_module_viewed {
         parent::init();
     }
 
-    /** 
+    /**
      * Mapping between log fields and event properties.
      */
     public static function get_objectid_mapping() {
