@@ -272,7 +272,7 @@ class mod_jitsi_external extends external_api {
                 $contentdetails->setEnableAutoStart(true);
                 $contentdetails->setEnableAutoStop(true);
 
-                $contentdetails->setEnableEmbed(false);
+                $contentdetails->setEnableEmbed(true);
 
                 $broadcastinsert = new Google_Service_YouTube_LiveBroadcast();
                 $broadcastinsert->setSnippet($broadcastsnippet);

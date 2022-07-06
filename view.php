@@ -357,9 +357,6 @@ if ($records) {
             $account = $DB->get_record('jitsi_record_account', array('id' => $sourcerecord->account));
             echo "<div class=\"embed-responsive embed-responsive-16by9\">";
             if ($sourcerecord) {
-                if ($account->clientaccesstoken != null && $sourcerecord->timecreated != 0) {
-                    doembedable($sourcerecord->link);
-                }
                 echo "<iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/".$sourcerecord->link."\"
                     allowfullscreen></iframe>";
             } else {
