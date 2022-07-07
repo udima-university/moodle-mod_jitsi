@@ -103,6 +103,51 @@ echo "}";
 echo "setInterval(participating, 60000);\n";
 echo "</script>";
 
-createsession($teacher, $cmid, $avatar, $nombre, $session, null, $jitsi);
+// start jitsi-group-room
+
+$results = $DB->get_records_sql("SELECT * FROM {groups_members} gm JOIN {groups} g
+                                    ON g.id = gm.groupid
+                                  WHERE gm.userid = ? AND courseid='$courseid'
+                                   ORDER BY name ASC", array($USER->id));							   
+
+$row_cnt = count($results);
+if($row_cnt > 1){
+
+$urlparams1 = array('avatar' => $avatar, 'nom' => $nombre, 'ses' => $session, 'userid' => $USER->id,
+    'courseid' => $courseid, 'cmid' => $cmid, 't' => $teacher);
+$choosegroup = get_string('access', 'jitsi');
+$nogroup = get_string('nogroup', 'group');
+echo '<div style="text-align:center;padding-bottom:1px; margin-bottom:1px;">
+<form name="SelectGroupRoomForm" action="'.new moodle_url('/mod/jitsi/session.php', $urlparams1).'" method="POST" id="SelectGroupRoomForm">
+<select type="text" name="mygrouproom" id="mygrouproom_ID" style="font-size:16px;" onchange="changemygrouproom()">
+<option value="" disabled selected>'.$choosegroup.'</option>
+<option value="" >'.$nogroup.'</option>';
+foreach ($results as $row) {
+	$groupeNameSeleted = $row->name;
+echo'<option value="'.$groupeNameSeleted.'">'.$groupeNameSeleted.'</option>';
+    }
+echo '</select></form></div>'; 
+echo '<script>function changemygrouproom() {
+  document.getElementById("SelectGroupRoomForm").submit();} </script>';	
+	
+	$mygrouproomselected = $_POST['mygrouproom'];
+
+	$resultsuite = $DB->get_records_sql("SELECT * FROM {groups_members} gm JOIN {groups} g
+                                    ON g.id = gm.groupid
+                                  WHERE gm.userid = ? AND courseid='$courseid' AND name='$mygrouproomselected' 
+                                   ORDER BY name ASC", array($USER->id));	
+	foreach ($resultsuite as $rowsuite) {
+	$groupeName = $rowsuite->name;
+    }
+	createsession($teacher, $cmid, $avatar, $nombre, $session.' '.$groupeName, null, $jitsi);
+}
+elseif ($row_cnt <= 1) {
+foreach ($results as $row) {
+	$groupeName = $row->name;
+    }
+	createsession($teacher, $cmid, $avatar, $nombre, $session.' '.$groupeName, null, $jitsi);
+}
+
+// end jitsi-group-room
 
 echo $OUTPUT->footer();
