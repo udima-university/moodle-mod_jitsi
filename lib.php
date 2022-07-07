@@ -325,6 +325,9 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         $record = 'recording';
     }
     $invite = '';
+     if ($CFG->jitsi_invitebuttons == 1) {
+    $invite = 'invite';
+    }
     $muteeveryone = '';
     $mutevideoeveryone = '';
     if (has_capability('mod/jitsi:moderation', $PAGE->context)) {
