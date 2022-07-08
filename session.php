@@ -40,6 +40,7 @@ if ($state == null) {
     $session = required_param('ses', PARAM_TEXT);
     $avatar = $CFG->jitsi_showavatars == true ? required_param('avatar', PARAM_TEXT) : null;
     $teacher = required_param('t', PARAM_BOOL);
+    $groupeNameSeleted = '';
     $groupeName = '';
     $mygrouproomselected = $_POST['mygrouproom'];
 
