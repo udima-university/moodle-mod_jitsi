@@ -120,9 +120,9 @@ $urlparams1 = array('avatar' => $avatar, 'nom' => $nombre, 'ses' => $session, 'u
     'courseid' => $courseid, 'cmid' => $cmid, 't' => $teacher);
 $choosegroup = get_string('access', 'jitsi');
 $nogroup = get_string('nogroup', 'group');
-echo '<div style="text-align:center;padding-bottom:1px; margin-bottom:1px;">
+echo '<div style="text-align:center;">
 <form name="SelectGroupRoomForm" action="'.new moodle_url('/mod/jitsi/session.php', $urlparams1).'" method="POST" id="SelectGroupRoomForm">
-<select type="text" name="mygrouproom" id="mygrouproom_ID" style="font-size:16px;" onchange="changemygrouproom()">
+<select class="custom-select" type="text" name="mygrouproom" id="mygrouproom_ID" style="font-size:16px;" onchange="changemygrouproom()">
 <option value="" disabled selected>'.$choosegroup.'</option>
 <option value="" >'.$nogroup.'</option>';
 foreach ($results as $row) {
