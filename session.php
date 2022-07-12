@@ -27,7 +27,6 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(dirname(dirname(__FILE__))).'/lib/moodlelib.php');
-require_once(dirname(dirname(dirname(__FILE__))).'/lib/grouplib.php');
 require_once(dirname(__FILE__).'/lib.php');
 
 $PAGE->set_url($CFG->wwwroot.'/mod/jitsi/session.php');
