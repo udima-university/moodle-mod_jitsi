@@ -127,7 +127,10 @@ echo'<option value="'.$groupeNameSeleted.'">'.$groupeNameSeleted.'</option>';
 echo '</select></form></div>'; 
 	createsession($teacher, $cmid, $avatar, $nombre, $session.' '.$mygrouproomselected, null, $jitsi);
 }else{
-	$results = groups_get_my_groups();
+	$results = $DB->get_records_sql("SELECT * FROM {groups_members} gm JOIN {groups} g
+                                    ON g.id = gm.groupid
+                                  WHERE gm.userid = ? AND courseid='$courseid'
+                                   ORDER BY name ASC", array($USER->id));
 $row_cnt = count($results);
 if($row_cnt > 1){
 echo '<div style="text-align:center;">
