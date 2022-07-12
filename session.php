@@ -27,6 +27,7 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(dirname(dirname(__FILE__))).'/lib/moodlelib.php');
+require_once(dirname(dirname(dirname(__FILE__))).'/lib/grouplib.php');
 require_once(dirname(__FILE__).'/lib.php');
 
 $PAGE->set_url($CFG->wwwroot.'/mod/jitsi/session.php');
@@ -126,10 +127,7 @@ echo'<option value="'.$groupeNameSeleted.'">'.$groupeNameSeleted.'</option>';
 echo '</select></form></div>'; 
 	createsession($teacher, $cmid, $avatar, $nombre, $session.' '.$mygrouproomselected, null, $jitsi);
 }else{
-	$results = $DB->get_records_sql("SELECT * FROM {groups_members} gm JOIN {groups} g
-                                    ON g.id = gm.groupid
-                                  WHERE gm.userid = ? AND courseid='$courseid'
-                                   ORDER BY name ASC", array($USER->id));
+	$results = groups_get_my_groups();
 $row_cnt = count($results);
 if($row_cnt > 1){
 echo '<div style="text-align:center;">
