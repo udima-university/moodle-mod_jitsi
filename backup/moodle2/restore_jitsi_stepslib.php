@@ -133,16 +133,19 @@ class restore_jitsi_activity_structure_step extends restore_activity_structure_s
         global $DB;
         $userinfo = $this->get_setting_value('userinfo');
         if ($userinfo) {
-            foreach ($this->records as $record) {
-                $recordob = $DB->get_record('jitsi_record', ['id' => $record->id]);
-                $recordob->source = $this->get_mappingid('jitsi_source_record', $record->source);
-                $DB->update_record('jitsi_record', $recordob);
+            if (isset($this->records)) {
+                foreach ($this->records as $record) {
+                    $recordob = $DB->get_record('jitsi_record', ['id' => $record->id]);
+                    $recordob->source = $this->get_mappingid('jitsi_source_record', $record->source);
+                    $DB->update_record('jitsi_record', $recordob);
+                }
             }
-
-            foreach ($this->sources as $source) {
-                $sourceob = $DB->get_record('jitsi_source_record', ['id' => $source->id]);
-                $sourceob->account = $this->get_mappingid('jitsi_record_account', $source->account);
-                $DB->update_record('jitsi_source_record', $sourceob);
+            if (isset($this->sources)) {
+                foreach ($this->sources as $source) {
+                    $sourceob = $DB->get_record('jitsi_source_record', ['id' => $source->id]);
+                    $sourceob->account = $this->get_mappingid('jitsi_record_account', $source->account);
+                    $DB->update_record('jitsi_source_record', $sourceob);
+                }
             }
         }
         $this->add_related_files('mod_jitsi', 'intro', null);
