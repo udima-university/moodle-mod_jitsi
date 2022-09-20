@@ -556,7 +556,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
 
     if ($user == null) {
         echo "api.addEventListener('recordingStatusChanged', function(event) {\n";
-        echo "    if (event['on']){\n";
+        echo "    if (event['on'] && event['mode'] == 'stream'){\n";
         echo "      document.getElementById(\"recordSwitch\").checked = true;\n";
         echo "      document.getElementById('state').innerHTML = ";
         echo "      '<div class=\"alert alert-primary\" role=\"alert\">";
