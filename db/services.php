@@ -67,4 +67,14 @@ $functions = array(
                 'capabilities'  => 'mod/jitsi:view',
                 'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'),
         ),
+
+        'mod_jitsi_delete_record_youtube' => array(
+                'classname'     => 'mod_jitsi_external',
+                'methodname'    => 'delete_record_youtube',
+                'description'   => 'Delete video from youtube when problem',
+                'type'          => 'read',
+                'ajax'          => true,
+                'loginrequired' => false,
+                'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'),
+        ),
 );

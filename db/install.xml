@@ -51,6 +51,7 @@
         <FIELD NAME="clientrefreshtoken" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Refresh Token "/>
         <FIELD NAME="tokencreated" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
         <FIELD NAME="inuse" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" UNSIGNED="true" SEQUENCE="false" COMMENT="Account in use"/>
+        <FIELD NAME="embed" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Video Embeddable"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

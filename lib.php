@@ -392,6 +392,9 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "const domain = \"".$CFG->jitsi_domain."\";\n";
     echo "const options = {\n";
     echo "configOverwrite: {\n";
+    echo "recordingService: {\n";
+    echo "enabled: true,\n";
+    echo "},\n";
 
     echo "disableDeepLinking: true,\n";
 
@@ -530,6 +533,8 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo  "});\n";
     }
     echo "function activaGrab(e){";
+    echo "      document.getElementById(\"recordSwitch\").disabled = true;\n"; 
+
     echo "    if (e.is(':checked')) {";
     echo "      console.log(\"Switch cambiado a activado\");";
     echo "      document.getElementById('state').innerHTML = ";
@@ -539,6 +544,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "      console.log(\"Switch cambiado a desactivado\");";
     echo "      document.getElementById('state').innerHTML = '';";
     echo "      stopStream();";
+
     echo "    }";
     echo "}";
 
@@ -548,7 +554,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "        api.executeCommand('password', '".$CFG->jitsi_password."');";
         echo "    }";
         echo "});";
-        echo "api.on('passwordRequired', function ()";
+        echo "api.on('passwordRequired', function () {";
         echo "{";
         echo "    api.executeCommand('password', '".$CFG->jitsi_password."');";
         echo "});";
@@ -570,9 +576,12 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "</svg>";
         echo " ".get_string('sessionisbeingrecorded', 'jitsi');
         echo "</div>';";
+
         echo "    } else if (!event['on']){\n";
         echo "      document.getElementById(\"recordSwitch\").checked = false;\n";
         echo "      document.getElementById('state').innerHTML = '';";
+        echo "      setTimeout(function(){ document.getElementById(\"recordSwitch\").disabled = false }, 5000);\n"; 
+
         echo "    }\n";
         echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "        ajax.call([{\n";
@@ -581,34 +590,55 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "            done: console.log(\"Cambio grabación\"),\n";
         echo "            fail: notification.exception\n";
         echo "        }]);\n";
+        echo "      setTimeout(function(){ document.getElementById(\"recordSwitch\").disabled = false }, 5000);\n";
+
         echo "        console.log(event['on']);\n";
         echo "    })\n";
         echo "});\n";
-
+        echo "var idsource = null;\n";
         echo "function stream(){\n";
-        echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
-        echo "       var respuesta = ajax.call([{\n";
-        echo "            methodname: 'mod_jitsi_create_stream',\n";
-        echo "            args: {session:'".$session."', jitsi:'".$jitsi->id."', userid: '".$USER->id."'},\n";
+            echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+            echo "       var respuesta = ajax.call([{\n";
+            echo "            methodname: 'mod_jitsi_create_stream',\n";
+            echo "            args: {session:'".$session."', jitsi:'".$jitsi->id."', userid: '".$USER->id."'},\n";
+            echo "       }]);\n";
+            echo "       respuesta[0].done(function(response) {\n";
+            echo "          api.executeCommand('startRecording', {\n";
+            echo "              mode: 'stream',\n";
+            echo "              youtubeStreamKey: response['stream'] \n";
+            echo "          });\n";
+            echo "            console.log(response['stream']);";
+            echo "            idsource = response['idsource'];";
+            echo "            console.log(response['idsource']);";
+            echo "            console.log(idsource);";
+            echo ";})";
+            echo  ".fail(function(ex) {";
+            echo "    console.log(ex);";
+            echo "      document.getElementById('state').innerHTML = ";
+    
+            echo "    '<div class=\"alert alert-light\" role=\"alert\">"
+                .get_string('accountinsufficientprivileges', 'jitsi')."</div>';";
+            echo "      document.getElementById(\"recordSwitch\").checked = false;\n";
+            echo "      document.getElementById(\"recordSwitch\").disabled = false;\n";
+            echo "  });";
+            echo "    })\n";
+            echo "}\n";
+        
+            echo "api.addEventListener('recordingStatusChanged', function(event) {\n";
+            echo "    if (event['error']){\n";
+            echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+                echo "        ajax.call([{\n";
+                echo "            methodname: 'mod_jitsi_delete_record_youtube',\n";
+                echo "            args: {idsource: idsource},\n";
+                echo "            done: console.log(\"BORRADO VIDEO POR ERROR EN JITSI!\"),\n";
+                echo "            fail: notification.exception\n";
+                echo "        }]);\n";        
+                echo "    })\n";
+            echo "       console.log('ERROR DE JITSI');\n";
+            echo "    }";
+            echo "});\n";
 
-        echo "       }]);\n";
-        echo "       respuesta[0].done(function(response) {\n";
-        echo "          api.executeCommand('startRecording', {\n";
-        echo "              mode: 'stream',\n";
-        echo "              youtubeStreamKey: response \n";
-        echo "          })\n";
-        echo "            console.log(response);";
-        echo ";})";
-        echo  ".fail(function(ex) {";
-        echo "    console.log(ex);";
-        echo "      document.getElementById('state').innerHTML = ";
 
-        echo "    '<div class=\"alert alert-light\" role=\"alert\">"
-            .get_string('accountinsufficientprivileges', 'jitsi')."</div>';";
-        echo "      document.getElementById(\"recordSwitch\").checked = false;\n";
-        echo "  });";
-        echo "    })\n";
-        echo "}\n";
 
         echo "function stopStream(){\n";
         echo "api.executeCommand('stopRecording', 'stream');\n";
@@ -1079,6 +1109,8 @@ function doembedable($idvideo) {
                 $videostatus['embeddable'] = 'true';
                 $updateresponse = $youtube->videos->update("status", $video);
             }
+            $source->embed = 1;
+            $DB->update_record('jitsi_source_record', $source);
         }
     } catch (Google_Service_Exception $e) {
         if ($account->inuse == 1) {

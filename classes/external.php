@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/externallib.php');
+require_once($CFG->dirroot . '/mod/jitsi/lib.php');
 
 /**
  * Jitsi module external API
@@ -84,6 +85,114 @@ class mod_jitsi_external extends external_api {
             array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
                     'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
         );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     */
+     public static function delete_record_youtube_parameters() {
+        return new external_function_parameters(
+            array('idsource' => new external_value(PARAM_INT, 'Record session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+        );
+    }
+
+    /**
+     * Delete Video from youtube when jitsi get an error
+     *
+     * @return external_function_parameters
+     */
+    public static function delete_record_youtube($idsource) {
+        global $CFG, $DB, $PAGE;
+        if (!file_exists(__DIR__ . '/../api/vendor/autoload.php')) {
+            throw new \Exception('Api client not found on '.$CFG->wwwroot.'/mod/jitsi/api/vendor/autoload.php');
+        }
+
+        require_once(__DIR__ . '/../api/vendor/autoload.php');
+
+        $client = new Google_Client();
+
+        $client->setClientId($CFG->jitsi_oauth_id);
+        $client->setClientSecret($CFG->jitsi_oauth_secret);
+
+        $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
+        $source = $DB->get_record('jitsi_source_record', array('id' => $idsource));
+        $account = $DB->get_record('jitsi_record_account', array('id' => $source->account));
+
+        $_SESSION[$tokensessionkey] = $account->clientaccesstoken;
+        $client->setAccessToken($_SESSION[$tokensessionkey]);
+        $t = time();
+        $timediff = $t - $account->tokencreated;
+        if ($timediff > 3599) {
+            $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
+            try {
+                $account->clientaccesstoken = $newaccesstoken["access_token"];
+                $newrefreshaccesstoken = $client->getRefreshToken();
+                $newrefreshaccesstoken = $client->getRefreshToken();
+                $account->clientrefreshtoken = $newrefreshaccesstoken;
+                $account->tokencreated = time();
+            } catch (Google_Service_Exception $e) {
+                if ($account->inuse == 1) {
+                    $account->inuse = 0;
+                }
+                $account->clientaccesstoken = null;
+                $account->clientrefreshtoken = null;
+                $account->tokencreated = 0;
+                $DB->update_record('jitsi_record_account', $account);
+                $client->revokeToken();
+                return false;
+            } catch (Google_Exception $e) {
+                if ($account->inuse == 1) {
+                    $account->inuse = 0;
+                }
+                $account->clientaccesstoken = null;
+                $account->clientrefreshtoken = null;
+                $account->tokencreated = 0;
+                $DB->update_record('jitsi_record_account', $account);
+                $client->revokeToken();
+                return false;
+            }
+        }
+        $youtube = new Google_Service_YouTube($client);
+        try {
+            $listresponse = $youtube->videos->listVideos("snippet", array('id' => $source->link));
+        } catch (Google_Service_Exception $e) {
+            if ($account->inuse == 1) {
+                $account->inuse = 0;
+            }
+            $account->clientaccesstoken = null;
+            $account->clientrefreshtoken = null;
+            $account->tokencreated = 0;
+            $DB->update_record('jitsi_record_account', $account);
+            $client->revokeToken();
+            return false;
+            throw new \Exception("exception".$e->getMessage());
+        } catch (Google_Exception $e) {
+            if ($account->inuse == 1) {
+                $account->inuse = 0;
+            }
+            $account->clientaccesstoken = null;
+            $account->clientrefreshtoken = null;
+            $account->tokencreated = 0;
+            $DB->update_record('jitsi_record_account', $account);
+            $client->revokeToken();
+            return false;
+            throw new \Exception("exception".$e->getMessage());
+        }
+        if ($listresponse['items'] != []) {
+            if ($client->getAccessToken($idsource)) {
+                try {
+                    $youtube->videos->delete($source->link);
+                    delete_jitsi_record($idsource);
+                } catch (Google_Service_Exception $e) {
+                    throw new \Exception("exception".$e->getMessage());
+                } catch (Google_Exception $e) {
+                    throw new \Exception("exception".$e->getMessage());
+                }
+            }
+        }
+    return true;
     }
 
     /**
@@ -149,6 +258,14 @@ class mod_jitsi_external extends external_api {
      */
     public static function participating_session_returns() {
         return new external_value(PARAM_TEXT, 'Participating session');
+    }
+
+    /**
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function delete_record_youtube_returns() {
+        return new external_value(PARAM_TEXT, 'Video deleted');
     }
 
     /**
@@ -272,14 +389,14 @@ class mod_jitsi_external extends external_api {
                 $contentdetails->setEnableAutoStart(true);
                 $contentdetails->setEnableAutoStop(true);
 
-                $contentdetails->setEnableEmbed(false);
+                // $contentdetails->setEnableEmbed(false);
 
                 $broadcastinsert = new Google_Service_YouTube_LiveBroadcast();
                 $broadcastinsert->setSnippet($broadcastsnippet);
                 $broadcastinsert->setStatus($status);
                 $broadcastinsert->setKind('youtube#liveBroadcast');
                 $broadcastinsert->setContentDetails($contentdetails);
-
+                sleep(rand(1,2));
                 $broadcastsresponse = $youtube->liveBroadcasts->insert('snippet,status,contentDetails', $broadcastinsert, array());
 
                 $streamsnippet = new Google_Service_YouTube_LiveStreamSnippet();
@@ -294,12 +411,11 @@ class mod_jitsi_external extends external_api {
                 $streaminsert->setSnippet($streamsnippet);
                 $streaminsert->setCdn($cdn);
                 $streaminsert->setKind('youtube#liveStream');
-
+                sleep(rand(1,2));
                 $streamsresponse = $youtube->liveStreams->insert('snippet,cdn', $streaminsert, array());
-
+                sleep(rand(1,2));
                 $bindbroadcastresponse = $youtube->liveBroadcasts->bind($broadcastsresponse['id'], 'id,contentDetails',
                     array('streamId' => $streamsresponse['id'], ));
-
             } catch (Google_Service_Exception $e) {
                 throw new \Exception("exception".$session.'-'.$e->getMessage());
             } catch (Google_Exception $e) {
@@ -323,8 +439,12 @@ class mod_jitsi_external extends external_api {
         $record->name = get_string('recordtitle', 'jitsi').' '.mb_substr($jitsiob->name, 0, 30);
 
         $DB->insert_record('jitsi_record', $record);
-
-        return $streamsresponse['cdn']['ingestionInfo']['streamName'];
+        
+        $result = array();
+        $result['stream'] = $streamsresponse['cdn']['ingestionInfo']['streamName'];
+        $result['idsource'] = $record->source;
+        return $result;
+        // return $streamsresponse['cdn']['ingestionInfo']['streamName'];
     }
 
     /**
@@ -355,6 +475,12 @@ class mod_jitsi_external extends external_api {
      * @return external_description
      */
     public static function create_stream_returns() {
-        return new external_value(PARAM_TEXT, 'stream');
+        // return new external_value(PARAM_TEXT, 'stream');
+        return new external_single_structure(
+            array(
+                'stream' => new external_value(PARAM_TEXT, 'stream'),
+                'idsource' => new external_value(PARAM_INT, 'source instance id')
+            )
+        );
     }
 }
