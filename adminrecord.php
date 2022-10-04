@@ -60,7 +60,7 @@ echo $OUTPUT->box(get_string('tablelistjitsis', 'jitsi'));
 
 if (is_siteadmin()) {
     $table = new html_table();
-    $table->head = array('Id', 'Link', get_string('account', 'jitsi'), get_string('date'), get_string('delete'));
+    $table->head = array('Id', 'Link', get_string('account', 'jitsi'), get_string('user'), get_string('date'), get_string('delete'));
     $sources = $DB->get_records('jitsi_source_record', array());
     $accountinuse = $DB->get_record('jitsi_record_account', array('inuse' => 1));
 
@@ -71,14 +71,15 @@ if (is_siteadmin()) {
                 $source->id. '&sesskey=' . sesskey());
             $deleteicon = new pix_icon('t/delete', get_string('delete'));
             $account = $DB->get_record('jitsi_record_account', array('id' => $source->account));
+            $user = $DB->get_record('user', array('id' => $source->userid));
             $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon,
                 new confirm_action(get_string('deletesourceq', 'jitsi')));
             if ($acount->clientaccesstoken != null) {
                 $table->data[] = array($source->id, '<a href="https://youtu.be/'.$source->link.'" target=_blank">'
-                    .$source->link.'</a>', $account->name, userdate($source->timecreated), $deleteaction);
+                    .$source->link.'</a>', $account->name, $user->username, userdate($source->timecreated), $deleteaction);
             } else {
                 $table->data[] = array($source->id, '<a href="https://youtu.be/'.$source->link.'" target=_blank">'
-                    .$source->link.'</a>', $account->name, userdate($source->timecreated), '<a href="'
+                    .$source->link.'</a>', $account->name, $user->username, userdate($source->timecreated), '<a href="'
                     .$CFG->wwwroot.'/mod/jitsi/adminaccounts.php">'. get_string('notloggedin', 'jitsi').'</a>');
             }
         }
