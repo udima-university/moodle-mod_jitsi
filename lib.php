@@ -395,6 +395,9 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "recordingService: {\n";
     echo "enabled: true,\n";
     echo "},\n";
+    echo "remoteVideoMenu: {\n";
+    echo "disableGrantModerator: true, \n";
+    echo "},\n";
 
     echo "disableDeepLinking: true,\n";
 
