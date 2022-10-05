@@ -34,7 +34,7 @@ namespace mod_jitsi\event;
  * @copyright  2022 Sergio Comerón Sánchez-Paniagua <sergiocomeron@icloud.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class jitsi_press_button_end extends \core\event\base {
+class jitsi_press_button_microphone extends \core\event\base {
 
     /**
      * Init method.
@@ -51,7 +51,7 @@ class jitsi_press_button_end extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('pressendbutton', 'jitsi');
+        return get_string('pressmicrophonebutton', 'jitsi');
     }
 
     /**
@@ -60,7 +60,7 @@ class jitsi_press_button_end extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' press end button in jitsi with id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' press microphone button in jitsi with id '$this->contextinstanceid'.";
     }
 
     /**

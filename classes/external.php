@@ -361,6 +361,46 @@ class mod_jitsi_external extends external_api {
      * Returns description of method result value
      * @return external_description
      */
+    public static function press_button_microphone_returns() {
+        return new external_value(PARAM_TEXT, 'Press microphone button');
+    }
+
+        /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     */
+    public static function press_button_microphone_parameters() {
+        return new external_function_parameters(
+            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                    'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                    'cmid' => new external_value(PARAM_INT, 'Course Module id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @param int $jitsi Jitsi session id
+     * @param int $user User id
+     * @param int $cmid Course Module id
+     */
+    public static function press_button_microphone($jitsi, $user, $cmid) {
+        global $DB;
+        $context = context_module::instance($cmid);
+        $event = \mod_jitsi\event\jitsi_press_button_microphone::create(array(
+            'objectid' => $jitsi,
+            'context' => $context,
+        ));
+        $event->add_record_snapshot('course', $jitsi->course);
+        $event->add_record_snapshot('jitsi', $jitsiob);
+        $event->trigger();
+    }
+
+    /**
+     * Returns description of method result value
+     * @return external_description
+     */
     public static function press_button_end_returns() {
         return new external_value(PARAM_TEXT, 'Press end button');
     }

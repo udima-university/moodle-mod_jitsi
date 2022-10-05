@@ -92,6 +92,17 @@ $functions = array(
                 'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'],
         ),
 
+        'mod_jitsi_press_button_microphone' => array(
+                'classname'   => 'mod_jitsi_external',
+                'methodname'  => 'press_button_microphone',
+                'classpath'   => 'mod/jitsi/classes/external.php',
+                'description' => 'User press a microphone button',
+                'type'        => 'write',
+                'ajax'        => true,
+                'loginrequired' => false,
+                'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'],
+        ),
+
         'mod_jitsi_create_stream' => array(
                 'classname'   => 'mod_jitsi_external',
                 'methodname'  => 'create_stream',

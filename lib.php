@@ -697,6 +697,16 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
                     echo "       }]);\n";
                     echo "    ;});";
             echo "}\n";
+
+            echo "if (event.key == 'microphone'){\n";
+                echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+                    echo "       var respuesta = ajax.call([{\n";
+                    echo "            methodname: 'mod_jitsi_press_button_microphone',\n";
+                    echo "            args: {jitsi:'".$jitsi->id."', user:'".$USER->id."', cmid:'".$cmid."'},\n";
+                    echo "            fail: notification.exception\n";
+                    echo "       }]);\n";
+                    echo "    ;});";
+            echo "}\n";
             
             // Fin registro de los diferentes botones.
 
