@@ -399,6 +399,37 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "disableGrantModerator: true, \n";
     echo "},\n";
 
+    echo "buttonsWithNotifyClick: [
+           {
+                key: 'camera',
+                preventExecution: false
+           },
+           {
+                key: 'desktop',
+                preventExecution: false
+           }, 
+           {
+                key: 'tileview',
+                preventExecution: false
+           },
+           {
+                key: 'chat',
+                preventExecution: false
+           },
+           {
+                key: 'chat',
+                preventExecution: false
+           }, 
+           {
+                key: 'microphone',
+                preventExecution: false
+           }, 
+           {
+                key: '__end',
+                preventExecution: true
+           }
+    ],\n";
+
     echo "disableDeepLinking: true,\n";
 
     if (!has_capability('mod/jitsi:moderation', $PAGE->context)) {
@@ -537,6 +568,15 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     }
     echo "function activaGrab(e){";
     echo "      document.getElementById(\"recordSwitch\").disabled = true;\n"; 
+    
+
+    echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+    echo "       var respuesta = ajax.call([{\n";
+    echo "            methodname: 'mod_jitsi_press_record_button',\n";
+    echo "            args: {jitsi:'".$jitsi->id."', user:'".$USER->id."', cmid:'".$cmid."'},\n";
+    echo "            fail: notification.exception\n";
+    echo "       }]);\n";
+    echo "    ;});";
 
     echo "    if (e.is(':checked')) {";
     echo "      console.log(\"Switch cambiado a activado\");";
@@ -626,7 +666,43 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             echo "  });";
             echo "    })\n";
             echo "}\n";
-        
+            // Registro de los diferentes botones.
+            echo "api.addEventListener('toolbarButtonClicked', function(event) {\n";
+            echo "if (event.key == 'camera'){\n";
+                echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+                    echo "       var respuesta = ajax.call([{\n";
+                    echo "            methodname: 'mod_jitsi_press_button_cam',\n";
+                    echo "            args: {jitsi:'".$jitsi->id."', user:'".$USER->id."', cmid:'".$cmid."'},\n";
+                    echo "            fail: notification.exception\n";
+                    echo "       }]);\n";
+                    echo "    ;});";
+            echo "}\n";
+
+            echo "if (event.key == 'desktop'){\n";
+                echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+                    echo "       var respuesta = ajax.call([{\n";
+                    echo "            methodname: 'mod_jitsi_press_button_desktop',\n";
+                    echo "            args: {jitsi:'".$jitsi->id."', user:'".$USER->id."', cmid:'".$cmid."'},\n";
+                    echo "            fail: notification.exception\n";
+                    echo "       }]);\n";
+                    echo "    ;});";
+            echo "}\n";
+
+            echo "if (event.key == '__end'){\n";
+                echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+                    echo "       var respuesta = ajax.call([{\n";
+                    echo "            methodname: 'mod_jitsi_press_button_end',\n";
+                    echo "            args: {jitsi:'".$jitsi->id."', user:'".$USER->id."', cmid:'".$cmid."'},\n";
+                    echo "            fail: notification.exception\n";
+                    echo "       }]);\n";
+                    echo "    ;});";
+            echo "}\n";
+            
+            // Fin registro de los diferentes botones.
+
+            echo "    console.log(event['key']);\n";
+            echo "});\n";
+
             echo "api.addEventListener('recordingStatusChanged', function(event) {\n";
             echo "    if (event['error']){\n";
             echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";

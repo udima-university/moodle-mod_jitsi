@@ -48,6 +48,50 @@ $functions = array(
                 'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'],
         ),
 
+        'mod_jitsi_press_record_button' => array(
+                'classname'   => 'mod_jitsi_external',
+                'methodname'  => 'press_record_button',
+                'classpath'   => 'mod/jitsi/classes/external.php',
+                'description' => 'User press record button',
+                'type'        => 'write',
+                'ajax'        => true,
+                'loginrequired' => false,
+                'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'],
+        ),
+
+        'mod_jitsi_press_button_cam' => array(
+                'classname'   => 'mod_jitsi_external',
+                'methodname'  => 'press_button_cam',
+                'classpath'   => 'mod/jitsi/classes/external.php',
+                'description' => 'User press a camera button',
+                'type'        => 'write',
+                'ajax'        => true,
+                'loginrequired' => false,
+                'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'],
+        ),
+
+        'mod_jitsi_press_button_desktop' => array(
+                'classname'   => 'mod_jitsi_external',
+                'methodname'  => 'press_button_desktop',
+                'classpath'   => 'mod/jitsi/classes/external.php',
+                'description' => 'User press a desktop button',
+                'type'        => 'write',
+                'ajax'        => true,
+                'loginrequired' => false,
+                'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'],
+        ),
+
+        'mod_jitsi_press_button_end' => array(
+                'classname'   => 'mod_jitsi_external',
+                'methodname'  => 'press_button_desktop',
+                'classpath'   => 'mod/jitsi/classes/external.php',
+                'description' => 'User press a end button',
+                'type'        => 'write',
+                'ajax'        => true,
+                'loginrequired' => false,
+                'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'],
+        ),
+
         'mod_jitsi_create_stream' => array(
                 'classname'   => 'mod_jitsi_external',
                 'methodname'  => 'create_stream',

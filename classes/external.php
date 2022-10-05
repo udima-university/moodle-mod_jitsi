@@ -92,6 +92,19 @@ class mod_jitsi_external extends external_api {
      *
      * @return external_function_parameters
      */
+    public static function press_record_button_parameters() {
+        return new external_function_parameters(
+            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                    'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                    'cmid' => new external_value(PARAM_INT, 'Course Module id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     */
      public static function delete_record_youtube_parameters() {
         return new external_function_parameters(
             array('idsource' => new external_value(PARAM_INT, 'Record session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
@@ -214,11 +227,158 @@ class mod_jitsi_external extends external_api {
     }
 
     /**
+     * Returns description of method parameters
+     *
+     * @param int $jitsi Jitsi session id
+     * @param int $user User id
+     * @param int $cmid Course Module id
+     */
+    public static function press_record_button($jitsi, $user, $cmid) {
+          global $DB;
+          $context = context_module::instance($cmid);
+          $event = \mod_jitsi\event\jitsi_press_record_button::create(array(
+              'objectid' => $jitsi,
+              'context' => $context,
+          ));
+          $event->add_record_snapshot('course', $jitsi->course);
+          $event->add_record_snapshot('jitsi', $jitsiob);
+          $event->trigger();
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     */
+    public static function press_button_cam_parameters() {
+        return new external_function_parameters(
+            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                    'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                    'cmid' => new external_value(PARAM_INT, 'Course Module id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @param int $jitsi Jitsi session id
+     * @param int $user User id
+     * @param int $cmid Course Module id
+     */
+    public static function press_button_cam($jitsi, $user, $cmid) {
+        global $DB;
+        $context = context_module::instance($cmid);
+        $event = \mod_jitsi\event\jitsi_press_button_cam::create(array(
+            'objectid' => $jitsi,
+            'context' => $context,
+        ));
+        $event->add_record_snapshot('course', $jitsi->course);
+        $event->add_record_snapshot('jitsi', $jitsiob);
+        $event->trigger();
+    }
+
+    /**
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function press_button_cam_returns() {
+        return new external_value(PARAM_TEXT, 'Press cam button');
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     */
+    public static function press_button_desktop_parameters() {
+        return new external_function_parameters(
+            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                    'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                    'cmid' => new external_value(PARAM_INT, 'Course Module id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @param int $jitsi Jitsi session id
+     * @param int $user User id
+     * @param int $cmid Course Module id
+     */
+    public static function press_button_desktop($jitsi, $user, $cmid) {
+        global $DB;
+        $context = context_module::instance($cmid);
+        $event = \mod_jitsi\event\jitsi_press_button_desktop::create(array(
+            'objectid' => $jitsi,
+            'context' => $context,
+        ));
+        $event->add_record_snapshot('course', $jitsi->course);
+        $event->add_record_snapshot('jitsi', $jitsiob);
+        $event->trigger();
+    }
+
+    /**
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function press_button_desktop_returns() {
+        return new external_value(PARAM_TEXT, 'Press desktop button');
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     */
+    public static function press_button_end_parameters() {
+        return new external_function_parameters(
+            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                    'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                    'cmid' => new external_value(PARAM_INT, 'Course Module id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @param int $jitsi Jitsi session id
+     * @param int $user User id
+     * @param int $cmid Course Module id
+     */
+    public static function press_button_end($jitsi, $user, $cmid) {
+        global $DB;
+        $context = context_module::instance($cmid);
+        $event = \mod_jitsi\event\jitsi_press_button_end::create(array(
+            'objectid' => $jitsi,
+            'context' => $context,
+        ));
+        $event->add_record_snapshot('course', $jitsi->course);
+        $event->add_record_snapshot('jitsi', $jitsiob);
+        $event->trigger();
+    }
+
+    /**
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function press_button_end_returns() {
+        return new external_value(PARAM_TEXT, 'Press end button');
+    }
+
+    /**
      * Returns description of method result value
      * @return external_description
      */
     public static function enter_session_returns() {
         return new external_value(PARAM_TEXT, 'Enter session');
+    }
+
+    /**
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function press_record_button_returns() {
+        return new external_value(PARAM_TEXT, 'Press record button');
     }
 
     /**
@@ -379,7 +539,7 @@ class mod_jitsi_external extends external_api {
                 $broadcastsnippet = new Google_Service_YouTube_LiveBroadcastSnippet();
                 $testdate = time();
 
-                $broadcastsnippet->setTitle("Record ".date('l jS \of F', $testdate));
+                $broadcastsnippet->setTitle("Record ".date('Y-m-d\T H:i A', $testdate));
                 $broadcastsnippet->setScheduledStartTime(date('Y-m-d\TH:i:s', $testdate));
 
                 $status = new Google_Service_YouTube_LiveBroadcastStatus();
