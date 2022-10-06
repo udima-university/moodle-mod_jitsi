@@ -556,6 +556,13 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
 
     if ($CFG->jitsi_finishandreturn == 1) {
         echo "api.on('readyToClose', () => {\n";
+            echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+                echo "       var respuesta = ajax.call([{\n";
+                echo "            methodname: 'mod_jitsi_press_button_end',\n";
+                echo "            args: {jitsi:'".$jitsi->id."', user:'".$USER->id."', cmid:'".$cmid."'},\n";
+                echo "            fail: notification.exception\n";
+                echo "       }]);\n";
+                echo "    ;});";
         echo "    api.dispose();\n";
         if ($universal == false && $user == null) {
             echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/view.php?id=".$cmid."\";";

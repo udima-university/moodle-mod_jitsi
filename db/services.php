@@ -83,7 +83,7 @@ $functions = array(
 
         'mod_jitsi_press_button_end' => array(
                 'classname'   => 'mod_jitsi_external',
-                'methodname'  => 'press_button_desktop',
+                'methodname'  => 'press_button_end',
                 'classpath'   => 'mod/jitsi/classes/external.php',
                 'description' => 'User press a end button',
                 'type'        => 'write',
