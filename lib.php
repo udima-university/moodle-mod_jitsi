@@ -623,7 +623,9 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "    } else if (!event['on']){\n";
         echo "      document.getElementById(\"recordSwitch\").checked = false;\n";
         echo "      document.getElementById('state').innerHTML = '';";
-        echo "      setTimeout(function(){ document.getElementById(\"recordSwitch\").disabled = false }, 5000);\n"; 
+        if (has_capability('mod/jitsi:record', $PAGE->context)) {
+            echo "      setTimeout(function(){ document.getElementById(\"recordSwitch\").disabled = false }, 5000);\n"; 
+        }
 
         echo "    }\n";
         echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
@@ -633,7 +635,9 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "            done: console.log(\"Cambio grabación\"),\n";
         echo "            fail: notification.exception\n";
         echo "        }]);\n";
-        echo "      setTimeout(function(){ document.getElementById(\"recordSwitch\").disabled = false }, 5000);\n";
+        if (has_capability('mod/jitsi:record', $PAGE->context)) {
+            echo "      setTimeout(function(){ document.getElementById(\"recordSwitch\").disabled = false }, 5000);\n";
+        }
 
         echo "        console.log(event['on']);\n";
         echo "    })\n";
