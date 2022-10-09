@@ -132,4 +132,14 @@ $functions = array(
                 'loginrequired' => false,
                 'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'),
         ),
+
+        'mod_jitsi_send_error' => array(
+                'classname'     => 'mod_jitsi_external',
+                'methodname'    => 'send_error',
+                'description'   => 'Send error to admin',
+                'type'          => 'read',
+                'ajax'          => true,
+                'loginrequired' => false,
+                'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'),
+        ),
 );

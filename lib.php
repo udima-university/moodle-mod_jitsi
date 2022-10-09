@@ -666,10 +666,21 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             echo "            console.log(response['idsource']);";
             echo "            console.log(idsource);";
             echo ";})";
+
             echo  ".fail(function(ex) {";
             echo "    console.log(ex);";
+
+            echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+                echo "        ajax.call([{\n";
+                echo "            methodname: 'mod_jitsi_send_error',\n";
+                echo "            args: {jitsi:'".$jitsi->id."', user: '".$USER->id."', error: ex['backtrace'], cmid:".$cmid."},\n";
+                echo "            done: console.log(\"MAIL ENVIADO!\"),\n";
+                echo "            fail: notification.exception\n";
+                echo "        }]);\n";        
+            echo "    })\n";
+
+
             echo "      document.getElementById('state').innerHTML = ";
-    
             echo "    '<div class=\"alert alert-light\" role=\"alert\">"
                 .get_string('accountinsufficientprivileges', 'jitsi')."</div>';";
             echo "      document.getElementById(\"recordSwitch\").checked = false;\n";
@@ -735,6 +746,14 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
                 echo "        }]);\n";        
                 echo "    })\n";
             echo "       console.log('ERROR DE JITSI');\n";
+            echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+                echo "        ajax.call([{\n";
+                echo "            methodname: 'mod_jitsi_send_error',\n";
+                echo "            args: {jitsi:'".$jitsi->id."', user: '".$USER->id."', error: 'Error de servidor jitsi: ' + event['error'], cmid:".$cmid."},\n";
+                echo "            done: console.log(\"MAIL ENVIADO!\"),\n";
+                echo "            fail: notification.exception\n";
+                echo "        }]);\n";        
+            echo "    })\n";
             echo "    }";
             echo "});\n";
 

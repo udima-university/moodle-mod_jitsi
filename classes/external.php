@@ -301,6 +301,43 @@ class mod_jitsi_external extends external_api {
     /**
      * Returns description of method parameters
      *
+     * @return send_error_parameters
+     */
+    public static function send_error_parameters() {
+        return new external_function_parameters(
+            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                    'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                    'error' => new external_value(PARAM_TEXT, 'Error', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                    'cmid' => new external_value(PARAM_INT, 'Course Module id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @param int $jitsi Jitsi session id
+     * @param int $user User id
+     * @param int $cmid Course Module id
+     */
+    public static function send_error($jitsi, $user, $error, $cmid) {
+        global $PAGE, $DB, $CFG;
+        $PAGE->set_context(context_module::instance($cmid));
+        $admins = get_admins();
+        $user = $DB->get_record('user', array('id' => $user));
+        $mensaje = "El usuario ".$user->firstname." ".$user->lastname." ha tenido un error al intentar grabar la sesión de jitsi con id ".$jitsi."\nInfo:\n".$error."\n
+        Para más información, accede a la sesión de jitsi y mira el log.\n
+        URL: ".$CFG->wwwroot."/mod/jitsi/view.php?id=".$cmid."\n
+        Nombre de la sesión: ".$DB->get_record('jitsi', array('id' => $jitsi))->name."\n
+        Curso: ".$DB->get_record('course', array('id' => $DB->get_record('jitsi', array('id' => $jitsi))->course))->fullname."\n
+        Usuario: ".$user->username."\n";
+        foreach ($admins as $admin) {
+            email_to_user($admin, $admin, "ERROR JITSI! el usuario: ".$user->username." ha tenido un error en el jitsi: ".$jitsi, $mensaje);
+        }
+    }
+
+    /**
+     * Returns description of method parameters
+     *
      * @param int $jitsi Jitsi session id
      * @param int $user User id
      * @param int $cmid Course Module id
@@ -466,6 +503,14 @@ class mod_jitsi_external extends external_api {
      */
     public static function delete_record_youtube_returns() {
         return new external_value(PARAM_TEXT, 'Video deleted');
+    }
+
+    /**
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function send_error_returns() {
+        return new external_value(PARAM_TEXT, 'Error sent');
     }
 
     /**
