@@ -299,8 +299,9 @@ if ($CFG->jitsi_invitebuttons == 1 && has_capability('mod/jitsi:createlink', $PA
     echo "function copyurl() {\n";
         echo "var time = ".generatecode($jitsi).";\n";
         echo "var copyText = \"".$urlinvitacion."\";\n";
-        echo "navigator.clipboard.writeText(copyText);\n";
-        echo "alert(\"".get_string('copied', 'jitsi')."\");\n";
+        echo "navigator.clipboard.writeText(copyText)
+            .then(() => {alert('".get_string('copied', 'jitsi')."');})
+            .catch(err => {console.log('Error in copying text: ', err);});\n";
         echo "}\n";
     echo "</script>";
 }

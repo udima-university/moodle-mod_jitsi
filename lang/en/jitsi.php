@@ -211,3 +211,4 @@ $string['presscambutton'] = 'Press cam button';
 $string['pressdesktopbutton'] = 'Press desktop button';
 $string['pressendbutton'] = 'Press end button';
 $string['pressmicrophonebutton'] = 'Press microphone button';
+$string['copied'] = 'Link copied to clipboard';
