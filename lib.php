@@ -360,7 +360,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "<div class=\"col-sm-3 text-right\">";
     if ($user == null) {
         if ($CFG->jitsi_livebutton == 1 && has_capability('mod/jitsi:record', $PAGE->context)
-            && $account != null
+            && $account != null && $universal == false
             && ($CFG->jitsi_streamingoption == 1)) {
             echo "<div class=\"text-right\">";
             echo "<div class=\"custom-control custom-switch\">";
@@ -371,7 +371,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             echo "</div>";
             echo "</div>";
         } else if ($CFG->jitsi_livebutton == 1 && $account != null
-            && $CFG->jitsi_streamingoption == 1) {
+            && $CFG->jitsi_streamingoption == 1 && $universal == true) {
             echo "<div class=\"text-right\">";
             echo "<div class=\"custom-control custom-switch\">";
             echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\" ";
@@ -575,8 +575,6 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     }
     echo "function activaGrab(e){";
     echo "      document.getElementById(\"recordSwitch\").disabled = true;\n"; 
-    
-
     echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
     echo "       var respuesta = ajax.call([{\n";
     echo "            methodname: 'mod_jitsi_press_record_button',\n";
@@ -630,7 +628,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "    } else if (!event['on']){\n";
         echo "      document.getElementById(\"recordSwitch\").checked = false;\n";
         echo "      document.getElementById('state').innerHTML = '';";
-        if (has_capability('mod/jitsi:record', $PAGE->context)) {
+        if (has_capability('mod/jitsi:record', $PAGE->context) && $universal == false) {
             echo "      setTimeout(function(){ document.getElementById(\"recordSwitch\").disabled = false }, 5000);\n"; 
         }
 
@@ -642,7 +640,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "            done: console.log(\"Cambio grabación\"),\n";
         echo "            fail: notification.exception\n";
         echo "        }]);\n";
-        if (has_capability('mod/jitsi:record', $PAGE->context)) {
+        if (has_capability('mod/jitsi:record', $PAGE->context) && $universal == false) {
             echo "      setTimeout(function(){ document.getElementById(\"recordSwitch\").disabled = false }, 5000);\n";
         }
 
