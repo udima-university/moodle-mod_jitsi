@@ -407,7 +407,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
            {
                 key: 'desktop',
                 preventExecution: false
-           }, 
+           },
            {
                 key: 'tileview',
                 preventExecution: false
@@ -419,11 +419,11 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
            {
                 key: 'chat',
                 preventExecution: false
-           }, 
+           },
            {
                 key: 'microphone',
                 preventExecution: false
-           }, 
+           },
            {
                 key: '__end',
                 preventExecution: true
@@ -574,7 +574,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo  "});\n";
     }
     echo "function activaGrab(e){";
-    echo "      document.getElementById(\"recordSwitch\").disabled = true;\n"; 
+    echo "      document.getElementById(\"recordSwitch\").disabled = true;\n";
     echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
     echo "       var respuesta = ajax.call([{\n";
     echo "            methodname: 'mod_jitsi_press_record_button',\n";
@@ -629,7 +629,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "      document.getElementById(\"recordSwitch\").checked = false;\n";
         echo "      document.getElementById('state').innerHTML = '';";
         if (has_capability('mod/jitsi:record', $PAGE->context) && $universal == false) {
-            echo "      setTimeout(function(){ document.getElementById(\"recordSwitch\").disabled = false }, 5000);\n"; 
+            echo "      setTimeout(function(){ document.getElementById(\"recordSwitch\").disabled = false }, 5000);\n";
         }
 
         echo "    }\n";
@@ -674,9 +674,8 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
                 echo "            args: {jitsi:'".$jitsi->id."', user: '".$USER->id."', error: ex['backtrace'], cmid:".$cmid."},\n";
                 echo "            done: console.log(\"MAIL ENVIADO!\"),\n";
                 echo "            fail: notification.exception\n";
-                echo "        }]);\n";        
+                echo "        }]);\n";
             echo "    })\n";
-
 
             echo "      document.getElementById('state').innerHTML = ";
             echo "    '<div class=\"alert alert-light\" role=\"alert\">"
@@ -727,7 +726,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
                     echo "       }]);\n";
                     echo "    ;});";
             echo "}\n";
-            
+
             // Fin registro de los diferentes botones.
 
             echo "    console.log(event['key']);\n";
@@ -741,21 +740,20 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
                 echo "            args: {idsource: idsource},\n";
                 echo "            done: console.log(\"BORRADO VIDEO POR ERROR EN JITSI!\"),\n";
                 echo "            fail: notification.exception\n";
-                echo "        }]);\n";        
+                echo "        }]);\n";
                 echo "    })\n";
             echo "       console.log('ERROR DE JITSI');\n";
             echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
                 echo "        ajax.call([{\n";
                 echo "            methodname: 'mod_jitsi_send_error',\n";
-                echo "            args: {jitsi:'".$jitsi->id."', user: '".$USER->id."', error: 'Error de servidor jitsi: ' + event['error'], cmid:".$cmid."},\n";
+                echo "            args: {jitsi:'".$jitsi->id."', user: '".$USER->id.
+                    "', error: 'Error de servidor jitsi: ' + event['error'], cmid:".$cmid."},\n";
                 echo "            done: console.log(\"MAIL ENVIADO!\"),\n";
                 echo "            fail: notification.exception\n";
-                echo "        }]);\n";        
+                echo "        }]);\n";
             echo "    })\n";
             echo "    }";
             echo "});\n";
-
-
 
         echo "function stopStream(){\n";
         echo "api.executeCommand('stopRecording', 'stream');\n";

@@ -78,5 +78,4 @@ class jitsi_press_button_desktop extends \core\event\base {
     public static function get_objectid_mapping() {
         return false;
     }
-
 }

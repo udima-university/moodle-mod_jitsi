@@ -105,7 +105,7 @@ class mod_jitsi_external extends external_api {
      *
      * @return external_function_parameters
      */
-     public static function delete_record_youtube_parameters() {
+    public static function delete_record_youtube_parameters() {
         return new external_function_parameters(
             array('idsource' => new external_value(PARAM_INT, 'Record session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
         );
@@ -205,7 +205,7 @@ class mod_jitsi_external extends external_api {
                 }
             }
         }
-    return true;
+        return true;
     }
 
     /**
@@ -324,14 +324,16 @@ class mod_jitsi_external extends external_api {
         $PAGE->set_context(context_module::instance($cmid));
         $admins = get_admins();
         $user = $DB->get_record('user', array('id' => $user));
-        $mensaje = "El usuario ".$user->firstname." ".$user->lastname." ha tenido un error al intentar grabar la sesión de jitsi con id ".$jitsi."\nInfo:\n".$error."\n
+        $mensaje = "El usuario ".$user->firstname." ".$user->lastname.
+            " ha tenido un error al intentar grabar la sesión de jitsi con id ".$jitsi."\nInfo:\n".$error."\n
         Para más información, accede a la sesión de jitsi y mira el log.\n
         URL: ".$CFG->wwwroot."/mod/jitsi/view.php?id=".$cmid."\n
         Nombre de la sesión: ".$DB->get_record('jitsi', array('id' => $jitsi))->name."\n
         Curso: ".$DB->get_record('course', array('id' => $DB->get_record('jitsi', array('id' => $jitsi))->course))->fullname."\n
         Usuario: ".$user->username."\n";
         foreach ($admins as $admin) {
-            email_to_user($admin, $admin, "ERROR JITSI! el usuario: ".$user->username." ha tenido un error en el jitsi: ".$jitsi, $mensaje);
+            email_to_user($admin, $admin, "ERROR JITSI! el usuario: "
+                .$user->username." ha tenido un error en el jitsi: ".$jitsi, $mensaje);
         }
     }
 
@@ -402,7 +404,7 @@ class mod_jitsi_external extends external_api {
         return new external_value(PARAM_TEXT, 'Press microphone button');
     }
 
-        /**
+    /**
      * Returns description of method parameters
      *
      * @return external_function_parameters
@@ -634,14 +636,12 @@ class mod_jitsi_external extends external_api {
                 $contentdetails->setEnableAutoStart(true);
                 $contentdetails->setEnableAutoStop(true);
 
-                // $contentdetails->setEnableEmbed(false);
-
                 $broadcastinsert = new Google_Service_YouTube_LiveBroadcast();
                 $broadcastinsert->setSnippet($broadcastsnippet);
                 $broadcastinsert->setStatus($status);
                 $broadcastinsert->setKind('youtube#liveBroadcast');
                 $broadcastinsert->setContentDetails($contentdetails);
-                sleep(rand(1,2));
+                sleep(rand(1, 2));
                 $broadcastsresponse = $youtube->liveBroadcasts->insert('snippet,status,contentDetails', $broadcastinsert, array());
 
                 $streamsnippet = new Google_Service_YouTube_LiveStreamSnippet();
@@ -656,9 +656,9 @@ class mod_jitsi_external extends external_api {
                 $streaminsert->setSnippet($streamsnippet);
                 $streaminsert->setCdn($cdn);
                 $streaminsert->setKind('youtube#liveStream');
-                sleep(rand(1,2));
+                sleep(rand(1, 2));
                 $streamsresponse = $youtube->liveStreams->insert('snippet,cdn', $streaminsert, array());
-                sleep(rand(1,2));
+                sleep(rand(1, 2));
                 $bindbroadcastresponse = $youtube->liveBroadcasts->bind($broadcastsresponse['id'], 'id,contentDetails',
                     array('streamId' => $streamsresponse['id'], ));
             } catch (Google_Service_Exception $e) {
@@ -684,12 +684,11 @@ class mod_jitsi_external extends external_api {
         $record->name = get_string('recordtitle', 'jitsi').' '.mb_substr($jitsiob->name, 0, 30);
 
         $DB->insert_record('jitsi_record', $record);
-        
+
         $result = array();
         $result['stream'] = $streamsresponse['cdn']['ingestionInfo']['streamName'];
         $result['idsource'] = $record->source;
         return $result;
-        // return $streamsresponse['cdn']['ingestionInfo']['streamName'];
     }
 
     /**
@@ -720,7 +719,6 @@ class mod_jitsi_external extends external_api {
      * @return external_description
      */
     public static function create_stream_returns() {
-        // return new external_value(PARAM_TEXT, 'stream');
         return new external_single_structure(
             array(
                 'stream' => new external_value(PARAM_TEXT, 'stream'),

@@ -60,7 +60,8 @@ echo $OUTPUT->box(get_string('tablelistjitsis', 'jitsi'));
 
 if (is_siteadmin()) {
     $table = new html_table();
-    $table->head = array('Id', 'Link', get_string('account', 'jitsi'), get_string('user'), get_string('date'), get_string('delete'));
+    $table->head = array('Id', 'Link', get_string('account', 'jitsi'), get_string('user'),
+        get_string('date'), get_string('delete'));
     $sources = $DB->get_records('jitsi_source_record', array());
     $accountinuse = $DB->get_record('jitsi_record_account', array('inuse' => 1));
 
