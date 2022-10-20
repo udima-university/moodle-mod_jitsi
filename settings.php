@@ -23,7 +23,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-global $DB;
+global $DB, $CFG;
 
 if ($ADMIN->fulltree) {
     require_once($CFG->dirroot.'/mod/jitsi/lib.php');
@@ -111,24 +111,34 @@ if ($ADMIN->fulltree) {
     // Self-hosted servers with appid and secret.
     $settings->add(new admin_setting_configtext('jitsi_app_id', get_string('appid', 'jitsi'),
         get_string('appidex', 'jitsi'), ''));
-    $settings->hide_if('jitsi_app_id', 'jitsi/tokentype', 'in', '2|0');
+    if ($CFG->branch > 36) {
+        $settings->hide_if('jitsi_app_id', 'jitsi/tokentype', 'in', '2|0');
+    }
 
     $settings->add(new admin_setting_configpasswordunmask('jitsi_secret', get_string('secret', 'jitsi'),
         get_string('secretex', 'jitsi'), ''));
-    $settings->hide_if('jitsi_secret', 'jitsi/tokentype', 'in', '2|0');
+    if ($CFG->branch > 36) {
+        $settings->hide_if('jitsi_secret', 'jitsi/tokentype', 'in', '2|0');
+    }
 
     // 8x8 servers token configuration
     $settings->add(new admin_setting_configtextarea('jitsi/privatykey', get_string('privatekey', 'jitsi'),
         get_string('privatekeyex', 'jitsi'), '', PARAM_TEXT));
-    $settings->hide_if('jitsi/privatykey', 'jitsi/tokentype', 'in', '1|0');
+    if ($CFG->branch > 36) {
+        $settings->hide_if('jitsi/privatykey', 'jitsi/tokentype', 'in', '1|0');
+    }
 
     $settings->add(new admin_setting_configtext('jitsi/8x8app_id', get_string('appid', 'jitsi'),
         get_string('appidex', 'jitsi'), null));
-    $settings->hide_if('jitsi/8x8app_id', 'jitsi/tokentype', 'in', '1|0');
+    if ($CFG->branch > 36) {
+        $settings->hide_if('jitsi/8x8app_id', 'jitsi/tokentype', 'in', '1|0');
+    }
 
     $settings->add(new admin_setting_configtext('jitsi/8x8apikey_id', get_string('apikeyid8x8', 'jitsi'),
         get_string('apikeyid8x8ex', 'jitsi'), null));
-    $settings->hide_if('jitsi/8x8apikey_id', 'jitsi/tokentype', 'in', '1|0');
+    if ($CFG->branch > 36) {
+        $settings->hide_if('jitsi/8x8apikey_id', 'jitsi/tokentype', 'in', '1|0');
+    }
 
 
     // Experimental Section.
