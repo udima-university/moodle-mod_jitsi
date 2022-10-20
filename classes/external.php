@@ -114,6 +114,7 @@ class mod_jitsi_external extends external_api {
     /**
      * Delete Video from youtube when jitsi get an error
      *
+     * @param int $idsource Source record id
      * @return external_function_parameters
      */
     public static function delete_record_youtube($idsource) {
@@ -317,6 +318,7 @@ class mod_jitsi_external extends external_api {
      *
      * @param int $jitsi Jitsi session id
      * @param int $user User id
+     * @param string $error Error message
      * @param int $cmid Course Module id
      */
     public static function send_error($jitsi, $user, $error, $cmid) {
