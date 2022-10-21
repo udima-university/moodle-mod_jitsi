@@ -82,7 +82,10 @@ class mod_jitsi_mod_form extends moodleform_mod {
             $optionsinvitation = array('defaulttime' => time() + 86400, 'optional' => true);
             $mform->addElement('header', 'invitations', get_string('invitations', 'jitsi'));
             $options = array('optional' => true);
-            $mform->addElement('date_time_selector', 'validitytime', get_string('finishinvitation', 'jitsi'), $optionsinvitation);
+            $mform->addElement('static', 'description', get_string('staticinvitationlink', 'jitsi'),
+                get_string('staticinvitationlinkex', 'jitsi'));
+            $mform->addElement('date_time_selector', 'validitytime',
+                get_string('finishinvitation', 'jitsi'), $optionsinvitation);
         }
 
         $this->standard_coursemodule_elements();
