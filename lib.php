@@ -279,7 +279,7 @@ function string_sanitize($string, $forcelowercase = true, $anal = false) {
 function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jitsi, $universal = false,
         $user = null) {
     global $CFG, $DB, $PAGE, $USER;
-    $sessionnorm = str_replace(array(' ', ':', '"', 'º', 'ª'), '', $session);
+    $sessionnorm = str_replace(array(' ', ':', '"', 'º', 'ª', '{', '}'), '', $session);
     if ($teacher == 1) {
         $teacher = true;
         $affiliation = "owner";
@@ -431,7 +431,8 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     ],\n";
 
     echo "disableDeepLinking: true,\n";
-
+    echo "subject: '".str_replace(array("'"), ' ', $jitsi->name)."',\n";
+    
     if (!has_capability('mod/jitsi:moderation', $PAGE->context)) {
         echo "remoteVideoMenu: {\n";
         echo "    disableKick: true,\n";
