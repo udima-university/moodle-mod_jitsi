@@ -475,7 +475,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             'sub' => $appid8x8,
             'context' => [
                 'user' => [
-                    'moderator' => $teacher,
+                    'moderator' => has_capability('mod/jitsi:moderation', $PAGE->context),
                     'email' => $mail,
                     'name' => $nombre,
                     'avatar' => $avatar,
@@ -516,7 +516,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             "sub" => $CFG->jitsi_domain,
             "room" => urlencode($sessionnorm),
             "exp" => time() + 24 * 3600,
-            "moderator" => $teacher
+            "moderator" => has_capability('mod/jitsi:moderation', $PAGE->context)
         ], JSON_UNESCAPED_SLASHES);
         echo "roomName: \"".urlencode($sessionnorm)."\",\n";
         $payloadencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
