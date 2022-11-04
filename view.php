@@ -274,7 +274,7 @@ if ($CFG->jitsi_invitebuttons == 1 && has_capability('mod/jitsi:createlink', $PA
     echo "<div class=\"container\">";
     echo "<div class=\"row\">";
     echo "<div class=\"col-11\">";
-    echo get_string('sharetoinvite', 'jitsi');
+    echo get_string('staticinvitationlinkexview', 'jitsi');
     echo "</div>";
     echo "</div>";
     echo "<div class=\"row\">";

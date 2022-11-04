@@ -214,3 +214,4 @@ $string['pressmicrophonebutton'] = 'Press microphone button';
 $string['copied'] = 'Link copied to clipboard';
 $string['staticinvitationlink'] = 'Invitations option';
 $string['staticinvitationlinkex'] = 'Use this link for users who are not enrolled in this course. For example, for guests who don\'t have a Moodle user to access.';
+$string['staticinvitationlinkexview'] = 'Share this link for users who are not enrolled in this course. For example, for guests who don\'t have a Moodle user to access.';
