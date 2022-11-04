@@ -432,7 +432,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
 
     echo "disableDeepLinking: true,\n";
     echo "subject: '".str_replace(array("'"), ' ', $jitsi->name)."',\n";
-    
+
     if (!has_capability('mod/jitsi:moderation', $PAGE->context)) {
         echo "remoteVideoMenu: {\n";
         echo "    disableKick: true,\n";
