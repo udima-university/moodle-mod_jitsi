@@ -114,6 +114,28 @@ $capabilities = array(
       )
     ),
 
+    'mod/jitsi:deleterecord' => array(
+        'riskbitmask' => RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW
+      )
+    ),
+
+    'mod/jitsi:editrecordname' => array(
+        'riskbitmask' => RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW
+      )
+    ),
+
     'mod/jitsi:createlink' => array(
         'riskbitmask' => RISK_XSS,
         'captype' => 'write',
