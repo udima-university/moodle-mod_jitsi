@@ -217,3 +217,5 @@ $string['staticinvitationlinkex'] = 'Use this link for users who are not enrolle
 $string['staticinvitationlinkexview'] = 'Share this link for users who are not enrolled in this course. For example, for guests who don\'t have a Moodle user to access.';
 $string['jitsi:deleterecord'] = 'Delete record';
 $string['jitsi:editrecordname'] = 'Edit record name';
+$string['whiteboard'] = 'Whiteboard';
+$string['whiteboardex'] = 'Show the whiteboard button to all users.';

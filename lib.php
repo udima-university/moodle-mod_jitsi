@@ -343,11 +343,16 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         $raisehand = 'raisehand';
     }
 
+    $whiteboard = '';
+    if ($CFG->jitsi_whiteboard == 1 ) {
+        $whiteboard = 'whiteboard';
+    }
+
     $buttons = "['microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
         'fodeviceselection', 'hangup', 'chat', '".$record."', 'etherpad', '".$youtubeoption."',
         'settings', '".$raisehand."', 'videoquality', '".$streamingoption."','filmstrip', '".$invite."', 'stats',
         'shortcuts', 'tileview', '".$bluroption."', 'download', 'help', '".$muteeveryone."',
-        '".$mutevideoeveryone."', '".$security."', '".$participantspane."']";
+        '".$mutevideoeveryone."', '".$security."', '".$participantspane."', '".$whiteboard."']";
 
     echo "<div class=\"row\">";
     echo "<div class=\"col-sm\">";
@@ -394,7 +399,12 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "const options = {\n";
     echo "configOverwrite: {\n";
     echo "recordingService: {\n";
-    echo "enabled: true,\n";
+    if ($CFG->jitsi_livebutton == 1) {
+        echo "enabled: true,\n";
+    } else {
+        echo "enabled: false,\n";
+    }
+    // echo "enabled: true,\n";
     echo "},\n";
     echo "remoteVideoMenu: {\n";
     echo "disableGrantModerator: true, \n";

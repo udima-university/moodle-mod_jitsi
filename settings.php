@@ -78,6 +78,9 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('jitsi_reactions', get_string('reactions', 'jitsi'),
         get_string('reactionsex', 'jitsi'), 1));
 
+    $settings->add(new admin_setting_configcheckbox('jitsi_whiteboard', get_string('whiteboard', 'jitsi'),
+        get_string('whiteboardex', 'jitsi'), 1));
+
     $settings->add(new admin_setting_heading('jitsistreaming',
             get_string('streamingconfig', 'jitsi'), get_string('streamingconfigex', 'jitsi')));
     $settings->add(new admin_setting_configcheckbox('jitsi_livebutton', get_string('streamingbutton', 'jitsi'),
