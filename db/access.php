@@ -49,7 +49,6 @@ defined('MOODLE_INTERNAL') || die();
 // Modify capabilities as needed and remove this comment.
 $capabilities = array(
     'mod/jitsi:addinstance' => array(
-        'riskbitmask' => RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
@@ -69,7 +68,6 @@ $capabilities = array(
     ),
 
     'mod/jitsi:moderation' => array(
-        'riskbitmask' => RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
@@ -80,7 +78,6 @@ $capabilities = array(
     ),
 
     'mod/jitsi:record' => array(
-        'riskbitmask' => RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
@@ -92,7 +89,6 @@ $capabilities = array(
     ),
 
     'mod/jitsi:viewusersonsession' => array(
-        'riskbitmask' => RISK_XSS,
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
@@ -104,7 +100,6 @@ $capabilities = array(
     ),
 
     'mod/jitsi:hide' => array(
-        'riskbitmask' => RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
@@ -115,7 +110,6 @@ $capabilities = array(
     ),
 
     'mod/jitsi:deleterecord' => array(
-        'riskbitmask' => RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
@@ -126,7 +120,6 @@ $capabilities = array(
     ),
 
     'mod/jitsi:editrecordname' => array(
-        'riskbitmask' => RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
@@ -137,7 +130,6 @@ $capabilities = array(
     ),
 
     'mod/jitsi:createlink' => array(
-        'riskbitmask' => RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
