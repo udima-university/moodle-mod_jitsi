@@ -1235,9 +1235,10 @@ function doembedable($idvideo) {
             if ($videostatus['embeddable'] != true) {
                 $videostatus['embeddable'] = 'true';
                 $updateresponse = $youtube->videos->update("status", $video);
+            } else {
+                $source->embed = 1;
+                $DB->update_record('jitsi_source_record', $source);
             }
-            $source->embed = 1;
-            $DB->update_record('jitsi_source_record', $source);
         }
     } catch (Google_Service_Exception $e) {
         if ($account->inuse == 1) {
