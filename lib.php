@@ -609,15 +609,14 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "}";
 
     if ($CFG->jitsi_password != null) {
-        echo "api.addEventListener('participantRoleChanged', function(event) {";
-        echo "    if (event.role === \"moderator\") {";
-        echo "        api.executeCommand('password', '".$CFG->jitsi_password."');";
-        echo "    }";
-        echo "});";
-        echo "api.on('passwordRequired', function () {";
-        echo "{";
-        echo "    api.executeCommand('password', '".$CFG->jitsi_password."');";
-        echo "});";
+        echo "api.addEventListener('participantRoleChanged', function(event) {\n";
+        echo "    if (event.role === \"moderator\") {\n";
+        echo "        api.executeCommand('password', '".$CFG->jitsi_password."');\n";
+        echo "    }\n";
+        echo "});\n";
+        echo "api.on('passwordRequired', function () {\n";
+        echo "    api.executeCommand('password', '".$CFG->jitsi_password."');\n";
+        echo "});\n";
     }
 
     if ($user == null) {
