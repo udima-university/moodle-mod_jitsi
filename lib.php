@@ -279,7 +279,7 @@ function string_sanitize($string, $forcelowercase = true, $anal = false) {
 function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jitsi, $universal = false,
         $user = null) {
     global $CFG, $DB, $PAGE, $USER;
-    $sessionnorm = str_replace(array(' ', ':', '"', 'º', 'ª', '{', '}', '@', '[', ']', '^', '_', '{', 
+    $sessionnorm = str_replace(array(' ', ':', '"', 'º', 'ª', '{', '}', '@', '[', ']', '^', '_', '{',
             '|', '}', '~', '@', '·', '#', '4', '$', '~', '%', '½', '5', '½', '%'), '', $session);
     if ($teacher == 1) {
         $teacher = true;
@@ -405,7 +405,6 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     } else {
         echo "enabled: false,\n";
     }
-    // echo "enabled: true,\n";
     echo "},\n";
     echo "remoteVideoMenu: {\n";
     echo "disableGrantModerator: true, \n";
