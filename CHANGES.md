@@ -1,4 +1,16 @@
 # Changelog
+## v3.2.18 (2022111900)
+### Added
+ * Whiteboard added
+### Fixed
+ * Fixed double competibility output on view.php for moodles v>311
+ * Fixes issue where teachers couldn't assign capabilities
+ * #110 Plugin v.3.2.17 does not work when jitsi_password is configurated
+### Changed
+ * Disables all invite functions from the app
+ * Embedable value based on youtube response
+---
+
 ## v3.2.17 (2022110701)
 ### Added
  * Add gues link information in mod_form and view page
