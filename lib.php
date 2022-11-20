@@ -398,6 +398,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "const domain = \"".$CFG->jitsi_domain."\";\n";
     echo "const options = {\n";
     echo "configOverwrite: {\n";
+    echo "defaultLanguage: '".current_language()."',\n";
     echo "disableInviteFunctions: true,\n";
     echo "recordingService: {\n";
     if ($CFG->jitsi_livebutton == 1) {
