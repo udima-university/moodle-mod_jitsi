@@ -1114,6 +1114,13 @@ function jitsi_get_coursemodule_info($coursemodule) {
         $result->customdata['customcompletionrules']['completionminutes'] = $jitsi->completionminutes;
     }
 
+    if ($jitsi->timeopen) {
+        $result->customdata['timeopen'] = $jitsi->timeopen;
+    }
+    if ($jitsi->timeclose) {
+        $result->customdata['timeclose'] = $jitsi->timeclose;
+    }
+
     return $result;
 }
 
