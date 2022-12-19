@@ -585,9 +585,9 @@ class mod_jitsi_external extends external_api {
                 array('jitsi' => $jitsi, 'state' => $state));
         $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
         if ($state == 1) {
-            $jitsiob->recording = 'recording';
+            $jitsiob->status = 'streaming';
         } else {
-            $jitsiob->recording = 'stop';
+            $jitsiob->status = null;
         }
         $DB->update_record('jitsi', $jitsiob);
         return 'recording'.$jitsiob->recording;
@@ -622,7 +622,7 @@ class mod_jitsi_external extends external_api {
         $params = self::validate_parameters(self::create_stream_parameters(),
                 array('session' => $session, 'jitsi' => $jitsi, 'userid' => $userid));
         $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
-        if ($jitsiob->status == 'streaming') {
+        if ($jitsiob->status != null) {
             $result = array();
             $result['stream'] = 'streaming';
             $result['idsource'] = 0;

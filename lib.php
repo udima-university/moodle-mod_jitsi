@@ -636,14 +636,34 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo " ".get_string('sessionisbeingrecorded', 'jitsi');
         echo "</div>';";
 
-        echo "    } else if (!event['on']){\n";
+        echo "    } else if (event['on'] == false){\n";
+            echo "console.log(\"No esta grabando\");\n";
         echo "      document.getElementById(\"recordSwitch\").checked = false;\n";
         echo "      document.getElementById('state').innerHTML = '';";
         if (has_capability('mod/jitsi:record', $PAGE->context) && $universal == false) {
             echo "      setTimeout(function(){ document.getElementById(\"recordSwitch\").disabled = false }, 5000);\n";
         }
-
+        if ($jitsi->status == 'streaming') {
+            echo "console.log(\"Hay que cambiar status\");\n";
+            echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+                echo "        ajax.call([{\n";
+                echo "            methodname: 'mod_jitsi_stop_stream',\n";
+                echo "            args: {jitsi:'".$jitsi->id."'},\n";
+                echo "        }]);\n";
+            echo "    })\n";
+        }
         echo "    }\n";
+        // if ($jitsi->status == 'streaming') {
+        //     echo "   if (!event['on']) {\n";
+        //         echo "console.log('Habria que cambiar el status');\n";
+        //         echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+        //             echo "        ajax.call([{\n";
+        //             echo "            methodname: 'mod_jitsi_stop_stream',\n";
+        //             echo "            args: {jitsi:'".$jitsi->id."'},\n";
+        //             echo "        }]);\n";
+        //         echo "    })\n";
+        //     echo "   }\n";
+        // }
         echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "        ajax.call([{\n";
         echo "            methodname: 'mod_jitsi_state_record',\n";
