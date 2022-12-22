@@ -195,6 +195,11 @@ $logs = $DB->get_records_select('logstore_standard_log',
     'contextid = ? and timecreated between ? and ? and action = ?',
     array($contextmodule->id, $today[0] - 60, $today[0], 'participating'));
 
+if (count($logs) == 0 && $jitsi->status == 'streaming') {
+    $jitsi->status = null;
+    $DB->update_record('jitsi', $jitsi);
+}
+
 echo " ";
 echo "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\"
      class=\"bi bi-person-workspace\" viewBox=\"0 0 16 16\">";
