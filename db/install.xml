@@ -19,6 +19,7 @@
         <FIELD NAME="minpretime" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="token" TYPE="text" LENGTH="40" NOTNULL="true" SEQUENCE="false" COMMENT="Sha for invitations"/>
         <FIELD NAME="completionminutes" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

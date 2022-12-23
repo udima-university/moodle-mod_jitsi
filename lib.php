@@ -398,6 +398,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "const domain = \"".$CFG->jitsi_domain."\";\n";
     echo "const options = {\n";
     echo "configOverwrite: {\n";
+    echo "defaultLanguage: '".current_language()."',\n";
     echo "disableInviteFunctions: true,\n";
     echo "recordingService: {\n";
     if ($CFG->jitsi_livebutton == 1) {
@@ -635,14 +636,24 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo " ".get_string('sessionisbeingrecorded', 'jitsi');
         echo "</div>';";
 
-        echo "    } else if (!event['on']){\n";
+        echo "    } else if (event['on'] == false){\n";
+            echo "console.log(\"No esta grabando\");\n";
         echo "      document.getElementById(\"recordSwitch\").checked = false;\n";
         echo "      document.getElementById('state').innerHTML = '';";
         if (has_capability('mod/jitsi:record', $PAGE->context) && $universal == false) {
             echo "      setTimeout(function(){ document.getElementById(\"recordSwitch\").disabled = false }, 5000);\n";
         }
-
+        if ($jitsi->status == 'streaming') {
+            echo "console.log(\"Hay que cambiar status\");\n";
+            echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+                echo "        ajax.call([{\n";
+                echo "            methodname: 'mod_jitsi_stop_stream',\n";
+                echo "            args: {jitsi:'".$jitsi->id."'},\n";
+                echo "        }]);\n";
+            echo "    })\n";
+        }
         echo "    }\n";
+
         echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "        ajax.call([{\n";
         echo "            methodname: 'mod_jitsi_state_record',\n";
@@ -658,6 +669,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "    })\n";
         echo "});\n";
         echo "var idsource = null;\n";
+
         echo "function stream(){\n";
             echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
             echo "       var respuesta = ajax.call([{\n";
@@ -665,36 +677,45 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             echo "            args: {session:'".$session."', jitsi:'".$jitsi->id."', userid: '".$USER->id."'},\n";
             echo "       }]);\n";
             echo "       respuesta[0].done(function(response) {\n";
-            echo "          api.executeCommand('startRecording', {\n";
-            echo "              mode: 'stream',\n";
-            echo "              youtubeStreamKey: response['stream'] \n";
-            echo "          });\n";
-            echo "            console.log(response['stream']);";
-            echo "            idsource = response['idsource'];";
-            echo "            console.log(response['idsource']);";
-            echo "            console.log(idsource);";
-            echo ";})";
+                echo "          if (response['stream'] == 'streaming'){\n";
+                echo "            alert(\"".get_string('streamingisstarting', 'jitsi')."\");";
+                echo "              console.log(\"".get_string('streamingisstarting', 'jitsi')."\");  ";
+                echo "          } else {\n";
+                    echo "          api.executeCommand('startRecording', {\n";
+                        echo "              mode: 'stream',\n";
+                        echo "              youtubeStreamKey: response['stream'] \n";
+                        echo "          });\n";
+                        echo "            console.log(response['stream']);";
+                        echo "            idsource = response['idsource'];";
+                        echo "            console.log(response['idsource']);";
+                        echo "            console.log(idsource);";
+                echo "          }\n";
 
-            echo  ".fail(function(ex) {";
-            echo "    console.log(ex);";
+                echo ";})";
 
-            echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
-                echo "        ajax.call([{\n";
-                echo "            methodname: 'mod_jitsi_send_error',\n";
-                echo "            args: {jitsi:'".$jitsi->id."', user: '".$USER->id."', error: ex['backtrace'], cmid:".$cmid."},\n";
-                echo "            done: console.log(\"MAIL ENVIADO!\"),\n";
-                echo "            fail: notification.exception\n";
-                echo "        }]);\n";
-            echo "    })\n";
+                echo  ".fail(function(ex) {";
+                echo "    console.log(ex);";
 
-            echo "      document.getElementById('state').innerHTML = ";
-            echo "    '<div class=\"alert alert-light\" role=\"alert\">"
-                .get_string('accountinsufficientprivileges', 'jitsi')."</div>';";
-            echo "      document.getElementById(\"recordSwitch\").checked = false;\n";
-            echo "      document.getElementById(\"recordSwitch\").disabled = false;\n";
-            echo "  });";
+                echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+                    echo "        ajax.call([{\n";
+                    echo "            methodname: 'mod_jitsi_send_error',\n";
+                    echo "            args: {jitsi:'".$jitsi->id."', user: '".$USER->id."',
+                         error: ex['backtrace'], cmid:".$cmid."},\n";
+                    echo "            done: console.log(\"MAIL ENVIADO!\"),\n";
+                    echo "            fail: notification.exception\n";
+                    echo "        }]);\n";
+                echo "    })\n";
+
+                echo "      document.getElementById('state').innerHTML = ";
+                echo "    '<div class=\"alert alert-light\" role=\"alert\">"
+                    .get_string('accountinsufficientprivileges', 'jitsi')."</div>';";
+                echo "      document.getElementById(\"recordSwitch\").checked = false;\n";
+                echo "      document.getElementById(\"recordSwitch\").disabled = false;\n";
+                echo "  });";
+
             echo "    })\n";
             echo "}\n";
+
             // Registro de los diferentes botones.
             echo "api.addEventListener('toolbarButtonClicked', function(event) {\n";
             echo "if (event.key == 'camera'){\n";
@@ -767,6 +788,12 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
 
         echo "function stopStream(){\n";
         echo "api.executeCommand('stopRecording', 'stream');\n";
+        echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+            echo "        ajax.call([{\n";
+            echo "            methodname: 'mod_jitsi_stop_stream',\n";
+            echo "            args: {jitsi:'".$jitsi->id."'},\n";
+            echo "        }]);\n";
+        echo "    })\n";
         echo "}\n";
 
         echo "function sendlink(){\n";

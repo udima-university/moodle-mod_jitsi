@@ -112,6 +112,17 @@ class mod_jitsi_external extends external_api {
     }
 
     /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     */
+    public static function stop_stream_parameters() {
+        return new external_function_parameters(
+            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+        );
+    }
+
+    /**
      * Delete Video from youtube when jitsi get an error
      *
      * @param int $idsource Source record id
@@ -325,6 +336,11 @@ class mod_jitsi_external extends external_api {
         global $PAGE, $DB, $CFG;
         $PAGE->set_context(context_module::instance($cmid));
         $admins = get_admins();
+
+        $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
+        $jitsiob->status = null;
+        $DB->update_record('jitsi', $jitsiob);
+
         $user = $DB->get_record('user', array('id' => $user));
         $mensaje = "El usuario ".$user->firstname." ".$user->lastname.
             " ha tenido un error al intentar grabar la sesión de jitsi con id ".$jitsi."\nInfo:\n".$error."\n
@@ -569,12 +585,28 @@ class mod_jitsi_external extends external_api {
                 array('jitsi' => $jitsi, 'state' => $state));
         $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
         if ($state == 1) {
-            $jitsiob->recording = 'recording';
+            $jitsiob->status = 'streaming';
         } else {
-            $jitsiob->recording = 'stop';
+            $jitsiob->status = null;
         }
         $DB->update_record('jitsi', $jitsiob);
         return 'recording'.$jitsiob->recording;
+    }
+
+    /**
+     * Stop stream with youtube
+     * @param int $jitsi Jitsi session id
+     * @return array result
+     */
+    public static function stop_stream($jitsi) {
+        global $CFG, $DB;
+
+        $params = self::validate_parameters(self::stop_stream_parameters(),
+                array('jitsi' => $jitsi));
+        $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
+        $jitsiob->status = null;
+        $DB->update_record('jitsi', $jitsiob);
+        return 'stop: '.$jitsiob->id;
     }
 
     /**
@@ -589,107 +621,118 @@ class mod_jitsi_external extends external_api {
 
         $params = self::validate_parameters(self::create_stream_parameters(),
                 array('session' => $session, 'jitsi' => $jitsi, 'userid' => $userid));
-
-        if (!file_exists(__DIR__ . '/../api/vendor/autoload.php')) {
-            throw new \Exception('Api client not found on '.$CFG->wwwroot.'/mod/jitsi/api/vendor/autoload.php');
-        }
-
-        require_once(__DIR__ . '/../api/vendor/autoload.php');
-
-        $client = new Google_Client();
-        $client->setClientId($CFG->jitsi_oauth_id);
-        $client->setClientSecret($CFG->jitsi_oauth_secret);
-
-        $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
-
-        $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
-
-        $_SESSION[$tokensessionkey] = $account->clientaccesstoken;
-
-        $client->setAccessToken($_SESSION[$tokensessionkey]);
-
-        $t = time();
-        $timediff = $t - $token->tokencreated;
-
-        if ($timediff > 3599) {
-            $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
-
-            $account->clientaccesstoken = $newaccesstoken["access_token"];
-            $newrefreshaccesstoken = $client->getRefreshToken();
-            $account->clientrefreshtoken = $newrefreshaccesstoken;
-
-            $account->tokencreated = $t;
-            $DB->update_record('jitsi_record_account', $account);
-        }
-        $youtube = new Google_Service_YouTube($client);
-
-        if ($client->getAccessToken()) {
-            try {
-                $broadcastsnippet = new Google_Service_YouTube_LiveBroadcastSnippet();
-                $testdate = time();
-
-                $broadcastsnippet->setTitle("Record ".date('Y-m-d\T H:i A', $testdate));
-                $broadcastsnippet->setScheduledStartTime(date('Y-m-d\TH:i:s', $testdate));
-
-                $status = new Google_Service_YouTube_LiveBroadcastStatus();
-                $status->setPrivacyStatus('unlisted');
-                $status->setSelfDeclaredMadeForKids('false');
-                $contentdetails = new Google_Service_YouTube_LiveBroadcastContentDetails();
-                $contentdetails->setEnableAutoStart(true);
-                $contentdetails->setEnableAutoStop(true);
-
-                $broadcastinsert = new Google_Service_YouTube_LiveBroadcast();
-                $broadcastinsert->setSnippet($broadcastsnippet);
-                $broadcastinsert->setStatus($status);
-                $broadcastinsert->setKind('youtube#liveBroadcast');
-                $broadcastinsert->setContentDetails($contentdetails);
-                sleep(rand(1, 2));
-                $broadcastsresponse = $youtube->liveBroadcasts->insert('snippet,status,contentDetails', $broadcastinsert, array());
-
-                $streamsnippet = new Google_Service_YouTube_LiveStreamSnippet();
-                $streamsnippet->setTitle("Record ".date('l jS \of F', $testdate));
-
-                $cdn = new Google_Service_YouTube_CdnSettings();
-                $cdn->setIngestionType('rtmp');
-                $cdn->setResolution("variable");
-                $cdn->setFrameRate("variable");
-
-                $streaminsert = new Google_Service_YouTube_LiveStream();
-                $streaminsert->setSnippet($streamsnippet);
-                $streaminsert->setCdn($cdn);
-                $streaminsert->setKind('youtube#liveStream');
-                sleep(rand(1, 2));
-                $streamsresponse = $youtube->liveStreams->insert('snippet,cdn', $streaminsert, array());
-                sleep(rand(1, 2));
-                $bindbroadcastresponse = $youtube->liveBroadcasts->bind($broadcastsresponse['id'], 'id,contentDetails',
-                    array('streamId' => $streamsresponse['id'], ));
-            } catch (Google_Service_Exception $e) {
-                throw new \Exception("exception".$session.'-'.$e->getMessage());
-            } catch (Google_Exception $e) {
-                throw new \Exception("exception".$session.'-'.$e->getMessage());
-            }
-        }
-        $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
-
-        $source = new stdClass();
-        $source->link = $broadcastsresponse['id'];
-        $source->account = $account->id;
-        $source->timecreated = time();
-        $source->userid = $userid;
         $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
+        if ($jitsiob->status != null) {
+            $result = array();
+            $result['stream'] = 'streaming';
+            $result['idsource'] = 0;
+        } else {
+            $jitsiob->status = 'streaming';
+            $DB->update_record('jitsi', $jitsiob);
 
-        $record = new stdClass();
-        $record->jitsi = $jitsi;
-        $record->source = $DB->insert_record('jitsi_source_record', $source);
-        $record->deleted = 0;
-        $record->visible = 1;
-        $record->name = get_string('recordtitle', 'jitsi').' '.mb_substr($jitsiob->name, 0, 30);
+            if (!file_exists(__DIR__ . '/../api/vendor/autoload.php')) {
+                throw new \Exception('Api client not found on '.$CFG->wwwroot.'/mod/jitsi/api/vendor/autoload.php');
+            }
 
-        $DB->insert_record('jitsi_record', $record);
+            require_once(__DIR__ . '/../api/vendor/autoload.php');
 
-        $result = array();
-        $result['stream'] = $streamsresponse['cdn']['ingestionInfo']['streamName'];
-        $result['idsource'] = $record->source;
+            $client = new Google_Client();
+            $client->setClientId($CFG->jitsi_oauth_id);
+            $client->setClientSecret($CFG->jitsi_oauth_secret);
+
+            $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
+
+            $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
+
+            $_SESSION[$tokensessionkey] = $account->clientaccesstoken;
+
+            $client->setAccessToken($_SESSION[$tokensessionkey]);
+
+            $t = time();
+            $timediff = $t - $token->tokencreated;
+
+            if ($timediff > 3599) {
+                $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
+
+                $account->clientaccesstoken = $newaccesstoken["access_token"];
+                $newrefreshaccesstoken = $client->getRefreshToken();
+                $account->clientrefreshtoken = $newrefreshaccesstoken;
+
+                $account->tokencreated = $t;
+                $DB->update_record('jitsi_record_account', $account);
+            }
+            $youtube = new Google_Service_YouTube($client);
+
+            if ($client->getAccessToken()) {
+                try {
+                    $broadcastsnippet = new Google_Service_YouTube_LiveBroadcastSnippet();
+                    $testdate = time();
+
+                    $broadcastsnippet->setTitle("Record ".date('Y-m-d\T H:i A', $testdate));
+                    $broadcastsnippet->setScheduledStartTime(date('Y-m-d\TH:i:s', $testdate));
+
+                    $status = new Google_Service_YouTube_LiveBroadcastStatus();
+                    $status->setPrivacyStatus('unlisted');
+                    $status->setSelfDeclaredMadeForKids('false');
+                    $contentdetails = new Google_Service_YouTube_LiveBroadcastContentDetails();
+                    $contentdetails->setEnableAutoStart(true);
+                    $contentdetails->setEnableAutoStop(true);
+
+                    $broadcastinsert = new Google_Service_YouTube_LiveBroadcast();
+                    $broadcastinsert->setSnippet($broadcastsnippet);
+                    $broadcastinsert->setStatus($status);
+                    $broadcastinsert->setKind('youtube#liveBroadcast');
+                    $broadcastinsert->setContentDetails($contentdetails);
+                    sleep(rand(1, 2));
+                    $broadcastsresponse = $youtube->liveBroadcasts->insert('snippet,status,contentDetails',
+                        $broadcastinsert, array());
+
+                    $streamsnippet = new Google_Service_YouTube_LiveStreamSnippet();
+                    $streamsnippet->setTitle("Record ".date('l jS \of F', $testdate));
+
+                    $cdn = new Google_Service_YouTube_CdnSettings();
+                    $cdn->setIngestionType('rtmp');
+                    $cdn->setResolution("variable");
+                    $cdn->setFrameRate("variable");
+
+                    $streaminsert = new Google_Service_YouTube_LiveStream();
+                    $streaminsert->setSnippet($streamsnippet);
+                    $streaminsert->setCdn($cdn);
+                    $streaminsert->setKind('youtube#liveStream');
+                    sleep(rand(1, 2));
+                    $streamsresponse = $youtube->liveStreams->insert('snippet,cdn', $streaminsert, array());
+                    sleep(rand(1, 2));
+                    $bindbroadcastresponse = $youtube->liveBroadcasts->bind($broadcastsresponse['id'], 'id,contentDetails',
+                        array('streamId' => $streamsresponse['id'], ));
+                } catch (Google_Service_Exception $e) {
+                    throw new \Exception("exception".$session.'-'.$e->getMessage());
+                } catch (Google_Exception $e) {
+                    throw new \Exception("exception".$session.'-'.$e->getMessage());
+                }
+            }
+
+            $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
+
+            $source = new stdClass();
+            $source->link = $broadcastsresponse['id'];
+            $source->account = $account->id;
+            $source->timecreated = time();
+            $source->userid = $userid;
+
+            $record = new stdClass();
+            $record->jitsi = $jitsi;
+            $record->source = $DB->insert_record('jitsi_source_record', $source);
+            $record->deleted = 0;
+            $record->visible = 1;
+            $record->name = get_string('recordtitle', 'jitsi').' '.mb_substr($jitsiob->name, 0, 30);
+
+            $DB->insert_record('jitsi_record', $record);
+
+            $result = array();
+            $result['stream'] = $streamsresponse['cdn']['ingestionInfo']['streamName'];
+            $result['idsource'] = $record->source;
+        }
+
         return $result;
     }
 
@@ -699,6 +742,14 @@ class mod_jitsi_external extends external_api {
      */
     public static function state_record_returns() {
         return new external_value(PARAM_TEXT, 'State record session');
+    }
+
+    /**
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function stop_stream_returns() {
+        return new external_value(PARAM_TEXT, 'Result stop stream');
     }
 
     /**
