@@ -653,17 +653,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             echo "    })\n";
         }
         echo "    }\n";
-        // if ($jitsi->status == 'streaming') {
-        //     echo "   if (!event['on']) {\n";
-        //         echo "console.log('Habria que cambiar el status');\n";
-        //         echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
-        //             echo "        ajax.call([{\n";
-        //             echo "            methodname: 'mod_jitsi_stop_stream',\n";
-        //             echo "            args: {jitsi:'".$jitsi->id."'},\n";
-        //             echo "        }]);\n";
-        //         echo "    })\n";
-        //     echo "   }\n";
-        // }
+
         echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "        ajax.call([{\n";
         echo "            methodname: 'mod_jitsi_state_record',\n";
@@ -702,19 +692,20 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
                 echo "          }\n";
 
                 echo ";})";
-    
+
                 echo  ".fail(function(ex) {";
                 echo "    console.log(ex);";
-    
+
                 echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
                     echo "        ajax.call([{\n";
                     echo "            methodname: 'mod_jitsi_send_error',\n";
-                    echo "            args: {jitsi:'".$jitsi->id."', user: '".$USER->id."', error: ex['backtrace'], cmid:".$cmid."},\n";
+                    echo "            args: {jitsi:'".$jitsi->id."', user: '".$USER->id."',
+                         error: ex['backtrace'], cmid:".$cmid."},\n";
                     echo "            done: console.log(\"MAIL ENVIADO!\"),\n";
                     echo "            fail: notification.exception\n";
                     echo "        }]);\n";
                 echo "    })\n";
-    
+
                 echo "      document.getElementById('state').innerHTML = ";
                 echo "    '<div class=\"alert alert-light\" role=\"alert\">"
                     .get_string('accountinsufficientprivileges', 'jitsi')."</div>';";
@@ -724,6 +715,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
 
             echo "    })\n";
             echo "}\n";
+
             // Registro de los diferentes botones.
             echo "api.addEventListener('toolbarButtonClicked', function(event) {\n";
             echo "if (event.key == 'camera'){\n";
