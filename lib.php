@@ -370,7 +370,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             && ($CFG->jitsi_streamingoption == 1)) {
             echo "<div class=\"text-right\">";
             echo "<div class=\"custom-control custom-switch\">";
-            echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\" ";
+            echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\"";
             echo "onClick=\"activaGrab($(this));\">";
             echo "  <label class=\"custom-control-label\" for=\"recordSwitch\">"
                 .get_string('streamingandrecording', 'jitsi')."</label>";
@@ -380,7 +380,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             && $CFG->jitsi_streamingoption == 1 && $universal == true) {
             echo "<div class=\"text-right\">";
             echo "<div class=\"custom-control custom-switch\">";
-            echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\" ";
+            echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\"";
             echo "onClick=\"activaGrab($(this));\" disabled>";
             echo "  <label class=\"custom-control-label\" for=\"recordSwitch\">"
                 .get_string('streamingandrecording', 'jitsi')."</label>";
@@ -388,6 +388,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             echo "</div>";
         }
     }
+
     echo "</div>";
     echo "</div>";
 
@@ -395,6 +396,11 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "<hr>";
 
     echo "<script>\n";
+    echo "if (document.getElementById(\"recordSwitch\") != null) {\n";
+    echo "  document.getElementById(\"recordSwitch\").disabled = true;\n";
+    echo "  setTimeout(function() { document.getElementById(\"recordSwitch\").disabled = false; }, 5000);\n";
+    echo "}\n";
+
     echo "const domain = \"".$CFG->jitsi_domain."\";\n";
     echo "const options = {\n";
     echo "configOverwrite: {\n";
@@ -566,6 +572,43 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "api.executeCommand('avatarUrl', '".$avatar."');\n";
     echo "});\n";
 
+    $cm = get_coursemodule_from_id('jitsi', $cmid, 0, false, MUST_EXIST);
+    $event = \mod_jitsi\event\jitsi_session_enter::create(array(
+        'objectid' => $PAGE->cm->instance,
+        'context' => $PAGE->context,
+      ));
+    $event->add_record_snapshot('course', $PAGE->course);
+    $event->add_record_snapshot($PAGE->cm->modname, $jitsi);
+    $event->trigger();
+
+    echo "let intervalo = 6000;";
+    echo "var cont = 0;";
+    echo "setInterval(function(){myTimer(api)}, intervalo);\n";
+    echo "function myTimer(_api) {\n";
+    echo "  if (intervalo*cont > 60000) {";
+    echo "      console.log(\"RUNNING\");";
+    echo "      require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+    echo "          var respuesta = ajax.call([{\n";
+    echo "              methodname: 'mod_jitsi_participating_session',\n";
+    echo "              args: {jitsi:'".$jitsi->id."', user:'".$USER->id."', cmid:'".$cm->id."'},\n";
+    echo "          }]);\n";
+    echo "          console.log(respuesta[0]);";
+    echo "          cont = 0;";
+    echo "      })\n";
+    echo "  }";
+    echo "  cont++;";
+
+    echo "  const numberOfParticipants = _api.getNumberOfParticipants();\n";
+    echo "  require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+    echo "      var respuesta = ajax.call([{\n";
+    echo "          methodname: 'mod_jitsi_update_participants',\n";
+    echo "          args: {jitsi:'".$jitsi->id."', numberofparticipants:numberOfParticipants},\n";
+    echo "          fail: notification.exception\n";
+    echo "      }]);\n";
+    echo "   ;});";
+    echo "   console.log('Members joined :' + numberOfParticipants);\n";
+    echo "}\n";
+
     if ($CFG->jitsi_finishandreturn == 1) {
         echo "api.on('readyToClose', () => {\n";
             echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
@@ -585,6 +628,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         }
         echo  "});\n";
     }
+    echo "setTimeout(function(){ document.getElementById(\"recordSwitch\").disabled = false }, 5000);\n";
     echo "function activaGrab(e){";
     echo "      document.getElementById(\"recordSwitch\").disabled = true;\n";
     echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
