@@ -445,6 +445,22 @@ function xmldb_jitsi_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2022120900, 'jitsi');
     }
 
+    if ($oldversion < 2023011000) {
+
+        // Define field status to be added to jitsi.
+        $table = new xmldb_table('jitsi');
+        $field = new xmldb_field('numberofparticipants', XMLDB_TYPE_INTEGER, '3', XMLDB_UNSIGNED
+            , XMLDB_NOTNULL, null, '0', 'status');
+
+        // Conditionally launch add field status.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Jitsi savepoint reached.
+        upgrade_mod_savepoint(true, 2023011000, 'jitsi');
+    }
+
     /*
      * And that's all. Please, examine and understand the 3 example blocks above. Also
      * it's interesting to look how other modules are using this script. Remember that

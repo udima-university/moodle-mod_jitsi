@@ -191,12 +191,17 @@ if ($CFG->branch == 311) {
 }
 
 $contextmodule = context_module::instance($cm->id);
-$logs = $DB->get_records_select('logstore_standard_log',
-    'contextid = ? and timecreated between ? and ? and action = ?',
-    array($contextmodule->id, $today[0] - 60, $today[0], 'participating'));
 
-if (count($logs) == 0 && $jitsi->status == 'streaming') {
+if ($jitsi->numberofparticipants == 0 && $jitsi->status == 'streaming') {
     $jitsi->status = null;
+    $DB->update_record('jitsi', $jitsi);
+}
+
+$sqllastparticipating = 'select timecreated from {logstore_standard_log} where contextid = '
+    .$contextmodule->id.' and (action = \'participating\' or action = \'enter\') order by timecreated DESC limit 1';
+$usersconnected = $DB->get_record_sql($sqllastparticipating);
+if ((getdate()[0] - $usersconnected->timecreated) > 72 ) {
+    $jitsi->numberofparticipants = 0;
     $DB->update_record('jitsi', $jitsi);
 }
 
@@ -207,7 +212,8 @@ echo "<path d=\"M4 16s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H4Zm4-5.95a2.5 2.5 0 1 0 0
 echo "<path d=\"M2 1a2 2 0 0 0-2 2v9.5A1.5 1.5 0 0 0 1.5 14h.653a5.373 5.373 0 0 1 1.066-2H1V3a1 1 0 0 1 1-1h12a1 1 0 0 1
      1 1v9h-2.219c.554.654.89 1.373 1.066 2h.653a1.5 1.5 0 0 0 1.5-1.5V3a2 2 0 0 0-2-2H2Z\"/>";
 echo "</svg>";
-echo (" ".count($logs)." ".get_string('connectedattendeesnow', 'jitsi'));
+echo (" ".$jitsi->numberofparticipants." ".get_string('connectedattendeesnow', 'jitsi'));
+
 echo "<p></p>";
 echo get_string('minutesconnected', 'jitsi', getminutes($id, $USER->id));
 if ($jitsi->status == 'streaming') {
@@ -224,6 +230,7 @@ if ($jitsi->status == 'streaming') {
 if ($jitsi->intro) {
     echo $OUTPUT->box(format_module_intro('jitsi', $jitsi, $cm->id), 'generalbox mod_introbox', 'jitsiintro');
 }
+
 if ($today[0] < $jitsi->timeclose || $jitsi->timeclose == 0) {
     if ($today[0] > (($jitsi->timeopen)) ||
         has_capability('mod/jitsi:moderation', $context) && $today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))) {

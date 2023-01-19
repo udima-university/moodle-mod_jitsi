@@ -152,4 +152,14 @@ $functions = array(
                 'loginrequired' => false,
                 'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'),
         ),
+
+        'mod_jitsi_update_participants' => array(
+                'classname'     => 'mod_jitsi_external',
+                'methodname'    => 'update_participants',
+                'description'   => 'Update Participatns',
+                'type'          => 'write',
+                'ajax'          => true,
+                'loginrequired' => false,
+                'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'),
+        ),
 );
