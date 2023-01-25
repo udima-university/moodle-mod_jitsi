@@ -373,7 +373,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\" ";
             echo "onClick=\"activaGrab($(this));\">";
             echo "  <label class=\"custom-control-label\" for=\"recordSwitch\">"
-                .get_string('streamingandrecording', 'jitsi')."</label>";
+                .addslashes(get_string('streamingandrecording', 'jitsi'))."</label>";
             echo "</div>";
             echo "</div>";
         } else if ($CFG->jitsi_livebutton == 1 && $account != null
@@ -383,7 +383,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\" ";
             echo "onClick=\"activaGrab($(this));\" disabled>";
             echo "  <label class=\"custom-control-label\" for=\"recordSwitch\">"
-                .get_string('streamingandrecording', 'jitsi')."</label>";
+                .addslashes(get_string('streamingandrecording', 'jitsi'))."</label>";
             echo "</div>";
             echo "</div>";
         }
@@ -633,7 +633,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "2 0 0 1 9.5 13H2a2 2 0 0 1-2-2V5zm11.5 5.175 3.5 1.556V4.269l-3.5 1.556v4.35zM2 4a1 1 0 0 ";
         echo "0-1 1v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H2z\"/>";
         echo "</svg>";
-        echo " ".get_string('sessionisbeingrecorded', 'jitsi');
+        echo " ".addslashes(get_string('sessionisbeingrecorded', 'jitsi'));
         echo "</div>';";
 
         echo "    } else if (event['on'] == false){\n";
