@@ -200,9 +200,11 @@ if ($jitsi->numberofparticipants == 0 && $jitsi->status == 'streaming') {
 $sqllastparticipating = 'select timecreated from {logstore_standard_log} where contextid = '
     .$contextmodule->id.' and (action = \'participating\' or action = \'enter\') order by timecreated DESC limit 1';
 $usersconnected = $DB->get_record_sql($sqllastparticipating);
-if ((getdate()[0] - $usersconnected->timecreated) > 72 ) {
-    $jitsi->numberofparticipants = 0;
-    $DB->update_record('jitsi', $jitsi);
+if ($usersconnected != null) {
+    if ((getdate()[0] - $usersconnected->timecreated) > 72 ) {
+        $jitsi->numberofparticipants = 0;
+        $DB->update_record('jitsi', $jitsi);
+    }
 }
 
 echo " ";
