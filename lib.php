@@ -665,6 +665,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
 
     if ($user == null) {
         echo "api.addEventListener('recordingStatusChanged', function(event) {\n";
+            echo " \"la respuesta: \"+console.log(event);\n";
         echo "    if (event['on'] && event['mode'] == 'stream'){\n";
         echo "      document.getElementById(\"recordSwitch\").checked = true;\n";
         echo "      document.getElementById('state').innerHTML = ";
@@ -687,15 +688,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         if (has_capability('mod/jitsi:record', $PAGE->context) && $universal == false) {
             echo "      setTimeout(function(){ document.getElementById(\"recordSwitch\").disabled = false }, 5000);\n";
         }
-        if ($jitsi->status == 'streaming') {
-            echo "console.log(\"Hay que cambiar status\");\n";
-            echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
-                echo "        ajax.call([{\n";
-                echo "            methodname: 'mod_jitsi_stop_stream',\n";
-                echo "            args: {jitsi:'".$jitsi->id."'},\n";
-                echo "        }]);\n";
-            echo "    })\n";
-        }
+
         echo "    }\n";
 
         echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";

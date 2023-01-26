@@ -192,11 +192,6 @@ if ($CFG->branch == 311) {
 
 $contextmodule = context_module::instance($cm->id);
 
-if ($jitsi->numberofparticipants == 0 && $jitsi->status == 'streaming') {
-    $jitsi->status = null;
-    $DB->update_record('jitsi', $jitsi);
-}
-
 $sqllastparticipating = 'select timecreated from {logstore_standard_log} where contextid = '
     .$contextmodule->id.' and (action = \'participating\' or action = \'enter\') order by timecreated DESC limit 1';
 $usersconnected = $DB->get_record_sql($sqllastparticipating);
@@ -218,16 +213,6 @@ echo (" ".$jitsi->numberofparticipants." ".get_string('connectedattendeesnow', '
 
 echo "<p></p>";
 echo get_string('minutesconnected', 'jitsi', getminutes($id, $USER->id));
-if ($jitsi->status == 'streaming') {
-    echo "<p></p>";
-    echo "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\"
-     class=\"bi bi-record-circle\" viewBox=\"0 0 16 16\">";
-    echo "<path d=\"M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z\"/>";
-    echo "<path d=\"M11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0z\"/>";
-    echo "</svg>";
-    echo " ";
-    echo get_string('sessionisbeingrecorded', 'jitsi');
-}
 
 if ($jitsi->intro) {
     echo $OUTPUT->box(format_module_intro('jitsi', $jitsi, $cm->id), 'generalbox mod_introbox', 'jitsiintro');

@@ -461,6 +461,21 @@ function xmldb_jitsi_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2023011000, 'jitsi');
     }
 
+    if ($oldversion < 2023012601) {
+
+        // Define field status to be dropped from jitsi.
+        $table = new xmldb_table('jitsi');
+        $field = new xmldb_field('status');
+
+        // Conditionally launch drop field status.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Jitsi savepoint reached.
+        upgrade_mod_savepoint(true, 2023012601, 'jitsi');
+    }
+
     /*
      * And that's all. Please, examine and understand the 3 example blocks above. Also
      * it's interesting to look how other modules are using this script. Remember that
