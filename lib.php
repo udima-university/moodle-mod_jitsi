@@ -581,11 +581,9 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     $event->add_record_snapshot($PAGE->cm->modname, $jitsi);
     $event->trigger();
 
-    echo "let intervalo = 6000;";
-    echo "var cont = 0;";
+    echo "let intervalo = 60000;";
     echo "setInterval(function(){myTimer(api)}, intervalo);\n";
     echo "function myTimer(_api) {\n";
-    echo "  if (intervalo*cont > 60000) {";
     echo "      console.log(\"RUNNING\");";
     echo "      require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
     echo "          var respuesta = ajax.call([{\n";
@@ -595,19 +593,35 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "          console.log(respuesta[0]);";
     echo "          cont = 0;";
     echo "      })\n";
-    echo "  }";
-    echo "  cont++;";
-
-    echo "  const numberOfParticipants = _api.getNumberOfParticipants();\n";
-    echo "  require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
-    echo "      var respuesta = ajax.call([{\n";
-    echo "          methodname: 'mod_jitsi_update_participants',\n";
-    echo "          args: {jitsi:'".$jitsi->id."', numberofparticipants:numberOfParticipants},\n";
-    echo "          fail: notification.exception\n";
-    echo "      }]);\n";
-    echo "   ;});";
-    echo "   console.log('Members joined :' + numberOfParticipants);\n";
     echo "}\n";
+
+    echo "api.on('participantLeft', function () {\n";
+        echo "console.log('Participant left');\n";
+        echo "  const numberOfParticipants = api.getNumberOfParticipants();\n";
+        echo "  require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+        echo "      var respuesta = ajax.call([{\n";
+        echo "          methodname: 'mod_jitsi_update_participants',\n";
+        echo "          args: {jitsi:'".$jitsi->id."', numberofparticipants:api.getNumberOfParticipants()},\n";
+        echo "          fail: notification.exception\n";
+        echo "      }]);\n";
+        echo "   ;});";
+        echo "   console.log('Participants left :' + numberOfParticipants);\n";
+    echo "});\n";
+
+    echo "api.on('participantJoined', function () {\n";
+        echo " console.log('Participant joined');\n";
+        echo "  const numberOfParticipants = api.getNumberOfParticipants();\n";
+        echo "  require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+            echo "console.log(\"HA ENTRADO\");";
+
+        echo "      var respuesta = ajax.call([{\n";
+        echo "          methodname: 'mod_jitsi_update_participants',\n";
+        echo "          args: {jitsi:'".$jitsi->id."', numberofparticipants:api.getNumberOfParticipants()},\n";
+        echo "          fail: notification.exception\n";
+        echo "      }]);\n";
+        echo "   ;});";
+        echo "   console.log('Participants joined :' + numberOfParticipants);\n";
+    echo "});\n";
 
     if ($CFG->jitsi_finishandreturn == 1) {
         echo "api.on('readyToClose', () => {\n";
