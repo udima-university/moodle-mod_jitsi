@@ -1,6 +1,14 @@
 # Changelog
 
 ## v3.3 (2022122300)
+### Fixed
+ * Fix problem with timecreated when it's first time
+ * Solves problems with the French language.
+### Changed
+ * Improvement in the counting of participants
+---
+
+## v3.3 (2022122300)
 ### Added
  * New status field for better error handling in recordings
 ### Fixed
@@ -20,14 +28,4 @@
 ### Changed
  * Disables all invite functions from the app
  * Embedable value based on youtube response
----
-
-## v3.2.17 (2022110701)
-### Added
- * Add gues link information in mod_form and view page
- * New capabilities deleterecord and editrecordname
-### Fixed
- * Fixed exception - Call to undefined method admin_settingpage::hide_if() on versions less than 37
- * Fixed problems with special characteres for chrome 
----
 
