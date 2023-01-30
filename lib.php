@@ -590,8 +590,6 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "              methodname: 'mod_jitsi_participating_session',\n";
     echo "              args: {jitsi:'".$jitsi->id."', user:'".$USER->id."', cmid:'".$cm->id."'},\n";
     echo "          }]);\n";
-    echo "          console.log(respuesta[0]);";
-    echo "          cont = 0;";
     echo "      })\n";
     echo "}\n";
 
@@ -605,52 +603,42 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "          fail: notification.exception\n";
         echo "      }]);\n";
         echo "   ;});";
-        echo "   console.log('Participants left :' + numberOfParticipants);\n";
     echo "});\n";
 
     echo "api.on('participantJoined', function () {\n";
         echo " console.log('Participant joined');\n";
         echo "  const numberOfParticipants = api.getNumberOfParticipants();\n";
         echo "  require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
-            echo "console.log(\"HA ENTRADO\");";
-
         echo "      var respuesta = ajax.call([{\n";
         echo "          methodname: 'mod_jitsi_update_participants',\n";
         echo "          args: {jitsi:'".$jitsi->id."', numberofparticipants:api.getNumberOfParticipants()},\n";
         echo "          fail: notification.exception\n";
         echo "      }]);\n";
         echo "   ;});";
-        echo "   console.log('Participants joined :' + numberOfParticipants);\n";
     echo "});\n";
 
     echo "api.on('videoConferenceJoined', function () {\n";
         echo " console.log('Local Participant joined');\n";
         echo "  const numberOfParticipants = api.getNumberOfParticipants();\n";
         echo "  require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
-            echo "console.log(\"HA ENTRADO\");";
-
         echo "      var respuesta = ajax.call([{\n";
         echo "          methodname: 'mod_jitsi_update_participants',\n";
         echo "          args: {jitsi:'".$jitsi->id."', numberofparticipants:api.getNumberOfParticipants()},\n";
         echo "          fail: notification.exception\n";
         echo "      }]);\n";
         echo "   ;});";
-        echo "   console.log('Participants joined :' + numberOfParticipants);\n";
     echo "});\n";
 
     echo "api.on('videoConferenceLeft', function () {\n";
         echo " console.log('Local Participant left');\n";
         echo "  const numberOfParticipants = api.getNumberOfParticipants();\n";
         echo "  require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
-            echo "console.log(\"HA ENTRADO\");";
-
         echo "      var respuesta = ajax.call([{\n";
         echo "          methodname: 'mod_jitsi_update_participants',\n";
         echo "          args: {jitsi:'".$jitsi->id."', numberofparticipants:api.getNumberOfParticipants()},\n";
         echo "          fail: notification.exception\n";
         echo "      }]);\n";
         echo "   ;});";
-        echo "   console.log('Participants joined :' + numberOfParticipants);\n";
     echo "});\n";
 
     if ($CFG->jitsi_finishandreturn == 1) {
