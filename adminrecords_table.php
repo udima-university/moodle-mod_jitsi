@@ -83,7 +83,7 @@ class mod_adminrecords_table extends table_sql {
      *     when downloading.
      */
     protected function col_link($values) {
-        return '<a href="'.$values->link.'" target="_blank">'.$values->link.'</a>';
+        return '<a href="https://youtu.be/'.$values->link.'" target="_blank">'.$values->link.'</a>';
     }
 
     /**
