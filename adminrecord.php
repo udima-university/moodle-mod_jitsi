@@ -62,12 +62,12 @@ echo $OUTPUT->box(get_string('tablelistjitsis', 'jitsi'));
 
 if (is_siteadmin()) {
     $table = new mod_adminrecords_table('records_to_delete');
-    $fields = '{jitsi_source_record}.id,
-                {jitsi_source_record}.link link,
-                {jitsi_source_record}.account account,
-                {jitsi_source_record}.userid user,
-                {jitsi_source_record}.timecreated date,
-                \'delete\' delete';
+    $fields = '{jitsi_source_record}.id as id,
+                {jitsi_source_record}.link as link,
+                {jitsi_source_record}.account as account,
+                {jitsi_source_record}.userid as user,
+                {jitsi_source_record}.timecreated as date,
+                \'delete\' as delete';
     $from = '{jitsi_source_record}, {jitsi_record}';
     $where = '{jitsi_record}.source = {jitsi_source_record}.id and
                 {jitsi_record}.deleted = 1';
