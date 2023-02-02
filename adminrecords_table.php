@@ -33,7 +33,7 @@ class mod_adminrecords_table extends table_sql {
     public function __construct($uniqueid) {
         parent::__construct($uniqueid);
         // Define the list of columns to show.
-        $columns = array('id', 'link', 'account', 'user', 'date', 'delete');
+        $columns = array('id', 'link', 'account', 'userid', 'timecreated', 'delete');
         $this->define_columns($columns);
 
         // Define the titles of columns to show in header.
@@ -41,9 +41,9 @@ class mod_adminrecords_table extends table_sql {
         $this->define_headers($headers);
     }
 
-    protected function col_user($values) {
+    protected function col_userid($values) {
         global $DB;
-        $user = $DB->get_record('user', array('id' => $values->user));
+        $user = $DB->get_record('user', array('id' => $values->userid));
         return $user->username;
     }
 
@@ -55,9 +55,9 @@ class mod_adminrecords_table extends table_sql {
      * @return $string Return username with link to profile or username only
      *     when downloading.
      */
-    protected function col_date($values) {
+    protected function col_timecreated($values) {
         // If the data is being downloaded than we don't want to show HTML.
-        return userdate($values->date);
+        return userdate($values->timecreated);
     }
 
     /**
