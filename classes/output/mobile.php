@@ -230,7 +230,7 @@ class mobile {
         ], JSON_UNESCAPED_SLASHES);
         $base64urlheader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
 
-        $payload  = json_encode([
+        $payload = json_encode([
         "context" => [
             "user" => [
                 "affiliation" => $affiliation,
