@@ -118,6 +118,18 @@ class mod_jitsi_external extends external_api {
      */
     public static function stop_stream_parameters() {
         return new external_function_parameters(
+            array('jitsi' => new external_value(PARAM_TEXT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                  'userid' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     */
+    public static function stop_stream_byerror_parameters() {
+        return new external_function_parameters(
             array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
         );
     }
@@ -605,14 +617,44 @@ class mod_jitsi_external extends external_api {
      * @param int $jitsi Jitsi session id
      * @return array result
      */
-    public static function stop_stream($jitsi) {
+    public static function stop_stream($jitsi, $userid) {
         global $CFG, $DB;
 
         $params = self::validate_parameters(self::stop_stream_parameters(),
+                array('jitsi' => $jitsi, 'userid' => $userid));
+        $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
+        $author = $DB->get_record('user', array('id' => $jitsiob->authorrecord));
+        if ($jitsiob->authorrecord != $userid && $jitsiob->authorrecord != null) {
+            $result = array();
+            $result['error'] = 'errorauthor';
+            $result['user'] = $jitsiob->authorrecord;
+            $result['usercomplete'] = $author->firstname.' '.$author->lastname;
+            return $result;
+        }
+        $jitsiob->authorrecord = null;
+        $DB->update_record('jitsi', $jitsiob);
+        $result = array();
+
+        $result['error'] = '';
+        $result['user'] = $jitsiob->authorrecord;
+        $result['usercomplete'] = $author->firstname.' '.$author->lastname;
+        return $result;
+    }
+
+    /**
+     * Stop stream with youtube by error
+     * @param int $jitsi Jitsi session id
+     * @return array result
+     */
+    public static function stop_stream_byerror($jitsi) {
+        global $CFG, $DB;
+
+        $params = self::validate_parameters(self::stop_stream_byerror_parameters(),
                 array('jitsi' => $jitsi));
         $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
+        $jitsiob->authorrecord = null;
         $DB->update_record('jitsi', $jitsiob);
-        return 'stop: '.$jitsiob->id;
+        return 'authordeleted';
     }
 
     /**
@@ -628,6 +670,17 @@ class mod_jitsi_external extends external_api {
         $params = self::validate_parameters(self::create_stream_parameters(),
                 array('session' => $session, 'jitsi' => $jitsi, 'userid' => $userid));
         $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
+        $author = $DB->get_record('user', array('id' => $jitsiob->authorrecord));
+        if ($jitsiob->authorrecord != $userid && $jitsiob->authorrecord != null) {
+            $result = array();
+            $result['stream'] = 'nodata';
+            $result['idsource'] = 0;
+            $result['error'] = 'errorauthor';
+            $result['user'] = $jitsiob->authorrecord;
+            $result['usercomplete'] = $author->firstname.' '.$author->lastname;
+            return $result;
+        }
+        $jitsiob->authorrecord = $userid;
         $DB->update_record('jitsi', $jitsiob);
 
         if (!file_exists(__DIR__ . '/../api/vendor/autoload.php')) {
@@ -705,9 +758,23 @@ class mod_jitsi_external extends external_api {
                 $bindbroadcastresponse = $youtube->liveBroadcasts->bind($broadcastsresponse['id'], 'id,contentDetails',
                     array('streamId' => $streamsresponse['id'], ));
             } catch (Google_Service_Exception $e) {
-                throw new \Exception("exception".$session.'-'.$e->getMessage());
+                $result = array();
+                $result['stream'] = $streamsresponse['cdn']['ingestionInfo']['streamName'];
+                $result['idsource'] = $record->source;
+                $result['error'] = 'erroryoutube';
+                $result['user'] = $jitsiob->authorrecord;
+                $result['usercomplete'] = $author->firstname.' '.$author->lastname;
+                $result['errorinfo'] = $e->getMessage();
+                return $result;
             } catch (Google_Exception $e) {
-                throw new \Exception("exception".$session.'-'.$e->getMessage());
+                $result = array();
+                $result['stream'] = $streamsresponse['cdn']['ingestionInfo']['streamName'];
+                $result['idsource'] = $record->source;
+                $result['error'] = 'erroryoutube';
+                $result['user'] = $jitsiob->authorrecord;
+                $result['usercomplete'] = $author->firstname.' '.$author->lastname;
+                $result['errorinfo'] = $e->getMessage();
+                return $result;
             }
         }
 
@@ -731,13 +798,16 @@ class mod_jitsi_external extends external_api {
         $result = array();
         $result['stream'] = $streamsresponse['cdn']['ingestionInfo']['streamName'];
         $result['idsource'] = $record->source;
-
+        $result['error'] = '';
+        $result['user'] = $jitsiob->authorrecord;
+        $result['usercomplete'] = $author->firstname.' '.$author->lastname;
         return $result;
     }
 
     /**
      * Update Number of Participants
      * @param int $jitsi Jitsi session id
+     * @param int $numberofparticipants Number of participants
      * @return array result
      */
     public static function update_participants($jitsi, $numberofparticipants) {
@@ -768,7 +838,21 @@ class mod_jitsi_external extends external_api {
      * @return external_description
      */
     public static function stop_stream_returns() {
-        return new external_value(PARAM_TEXT, 'Result stop stream');
+        return new external_single_structure(
+            array(
+                'error' => new external_value(PARAM_TEXT, 'error'),
+                'user' => new external_value(PARAM_INT, 'user id'),
+                'usercomplete' => new external_value(PARAM_TEXT, 'user complete name'),
+            )
+        );
+    }
+
+    /**
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function stop_stream_byerror_returns() {
+        return new external_value(PARAM_TEXT, 'State');
     }
 
     /**
@@ -794,7 +878,11 @@ class mod_jitsi_external extends external_api {
         return new external_single_structure(
             array(
                 'stream' => new external_value(PARAM_TEXT, 'stream'),
-                'idsource' => new external_value(PARAM_INT, 'source instance id')
+                'idsource' => new external_value(PARAM_INT, 'source instance id'),
+                'error' => new external_value(PARAM_TEXT, 'error'),
+                'user' => new external_value(PARAM_INT, 'user id'),
+                'usercomplete' => new external_value(PARAM_TEXT, 'user complete name'),
+                'errorinfo' => new external_value(PARAM_TEXT, 'error info')
             )
         );
     }

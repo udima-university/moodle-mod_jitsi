@@ -116,7 +116,7 @@ function jitsi_update_instance($jitsi,  $mform = null) {
 
     $jitsi->timemodified = time();
     $jitsi->id = $jitsi->instance;
-    $cmid       = $jitsi->coursemodule;
+    $cmid = $jitsi->coursemodule;
 
     $result = $DB->update_record('jitsi', $jitsi);
     jitsi_update_calendar($jitsi, $cmid);
@@ -404,6 +404,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "const domain = \"".$CFG->jitsi_domain."\";\n";
     echo "const options = {\n";
     echo "configOverwrite: {\n";
+    echo "disableSelfView: false,\n";
     echo "defaultLanguage: '".current_language()."',\n";
     echo "disableInviteFunctions: true,\n";
     echo "recordingService: {\n";
@@ -517,7 +518,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             "alg" => "HS256"
         ], JSON_UNESCAPED_SLASHES);
         $base64urlheader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
-        $payload  = json_encode([
+        $payload = json_encode([
             "context" => [
                 "user" => [
                     "affiliation" => $affiliation,
@@ -673,6 +674,8 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
 
     echo "    if (e.is(':checked')) {";
     echo "      console.log(\"Switch cambiado a activado\");";
+    echo "var mensaje = document.getElementById('state').innerHTML\n";
+
     echo "      document.getElementById('state').innerHTML = ";
     echo "      '<div class=\"alert alert-light\" role=\"alert\">".get_string('preparing', 'jitsi')."</div>';";
     echo "      stream();";
@@ -715,6 +718,14 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
 
         echo "    } else if (event['on'] == false){\n";
             echo "console.log(\"No esta grabando\");\n";
+            echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+            echo "        ajax.call([{\n";
+            echo "            methodname: 'mod_jitsi_stop_stream_byerror',\n";
+            echo "            args: {jitsi: ".$jitsi->id."},\n";
+            echo "            done: console.log(\"borrado author!\"),\n";
+            echo "            fail: notification.exception\n";
+            echo "        }]);\n";
+            echo "    })\n";
         echo "      document.getElementById(\"recordSwitch\").checked = false;\n";
         echo "      document.getElementById('state').innerHTML = '';";
         if (has_capability('mod/jitsi:record', $PAGE->context) && $universal == false) {
@@ -746,6 +757,36 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             echo "            args: {session:'".$session."', jitsi:'".$jitsi->id."', userid: '".$USER->id."'},\n";
             echo "       }]);\n";
             echo "       respuesta[0].done(function(response) {\n";
+                echo "if (response['error'] == 'errorauthor'){\n";
+                    echo "alert(\"La grabación esta bloqueada por otro usuario id:\"+response['user']);\n";
+                    echo "      document.getElementById('state').innerHTML = ";
+                    echo "      '<div class=\"alert alert-light\" role=\"alert\"></div>';";
+                    echo "document.getElementById(\"recordSwitch\").disabled = false;\n";
+                    echo "      document.getElementById(\"recordSwitch\").checked = false;\n";
+                echo "} else if (response['error'] == 'erroryoutube'){\n";
+                    echo "var infoerror = response['errorinfo'];\n";
+                    echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+                        echo "        ajax.call([{\n";
+                        echo "            methodname: 'mod_jitsi_send_error',\n";
+                        echo "            args: {jitsi:'".$jitsi->id."', user: '".$USER->id."',
+                             error: 'error de youtube'+infoerror, cmid:".$cmid."},\n";
+                        echo "            done: console.log(\"MAIL ENVIADO!\"),\n";
+                        echo "            fail: notification.exception\n";
+                        echo "        }]);\n";
+                    echo "    })\n";
+                    echo "      document.getElementById('state').innerHTML = ";
+                    echo "      '<div class=\"alert alert-light\" role=\"alert\">ERROR RECORD ACCOUNT</div>';";
+                    echo "document.getElementById(\"recordSwitch\").disabled = false;\n";
+                    echo "      document.getElementById(\"recordSwitch\").checked = false;\n";
+                    echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+                        echo "        ajax.call([{\n";
+                        echo "            methodname: 'mod_jitsi_stop_stream_byerror',\n";
+                        echo "            args: {jitsi: ".$jitsi->id."},\n";
+                        echo "            done: console.log(\"borrado author!\"),\n";
+                        echo "            fail: notification.exception\n";
+                        echo "        }]);\n";
+                        echo "    })\n";
+                echo "} else {\n";
                 echo "          if (response['stream'] == 'streaming'){\n";
                 echo "            alert(\"".get_string('streamingisstarting', 'jitsi')."\");";
                 echo "              console.log(\"".get_string('streamingisstarting', 'jitsi')."\");  ";
@@ -759,6 +800,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
                         echo "            console.log(response['idsource']);";
                         echo "            console.log(idsource);";
                 echo "          }\n";
+                echo "        }\n";
 
                 echo ";})";
 
@@ -854,15 +896,41 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             echo "    })\n";
             echo "    }";
             echo "});\n";
-
         echo "function stopStream(){\n";
-        echo "api.executeCommand('stopRecording', 'stream');\n";
-        echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
-            echo "        ajax.call([{\n";
-            echo "            methodname: 'mod_jitsi_stop_stream',\n";
-            echo "            args: {jitsi:'".$jitsi->id."'},\n";
-            echo "        }]);\n";
-        echo "    })\n";
+        echo "  require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+        echo "      var respuesta = ajax.call([{\n";
+        echo "          methodname: 'mod_jitsi_stop_stream',\n";
+        echo "          args: {jitsi:'".$jitsi->id."', userid: '".$USER->id."'},\n";
+        echo "      }]);\n";
+        echo "              console.log(\"consultando estado grabación\");\n";
+
+        echo "      respuesta[0].done(function(response) {\n";
+        echo "              console.log(\"dentro consulta estado grabación\");\n";
+        echo "          if (response['error'] == 'errorauthor'){\n";
+        echo "              console.log(\"grabación ocupada\");\n";
+
+        echo "              alert(\"La grabación esta bloqueada por: \"+response['usercomplete']);\n";
+        echo "              document.getElementById('state').innerHTML = ";
+        echo "                  '<div class=\"alert alert-light\" role=\"alert\"></div>';";
+        echo "              document.getElementById(\"recordSwitch\").disabled = false;\n";
+        echo "              document.getElementById(\"recordSwitch\").checked = true;\n";
+        echo "      document.getElementById('state').innerHTML = ";
+        echo "      '<div class=\"alert alert-primary\" role=\"alert\">";
+        echo "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" fill=\"currentColor\" ";
+        echo "class=\"bi bi-exclamation-triangle-fill flex-shrink-0 me-2\" viewBox=\"0 0 16 16\" ";
+        echo "role=\"img\" aria-label=\"Warning:\">";
+        echo "<path d=\"M0 5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 ";
+        echo "16 4.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 ";
+        echo "2 0 0 1 9.5 13H2a2 2 0 0 1-2-2V5zm11.5 5.175 3.5 1.556V4.269l-3.5 1.556v4.35zM2 4a1 1 0 0 ";
+        echo "0-1 1v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H2z\"/>";
+        echo "</svg>";
+        echo " ".addslashes(get_string('sessionisbeingrecorded', 'jitsi'));
+        echo "</div>';";
+        echo "          } else {\n";
+        echo "              api.executeCommand('stopRecording', 'stream');\n";
+        echo "          }\n";
+        echo "      })\n";
+        echo "  })\n";
         echo "}\n";
 
         echo "function sendlink(){\n";

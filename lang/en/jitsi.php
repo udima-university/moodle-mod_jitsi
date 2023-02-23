@@ -220,3 +220,4 @@ $string['jitsi:editrecordname'] = 'Edit record name';
 $string['whiteboard'] = 'Whiteboard';
 $string['whiteboardex'] = 'Show the whiteboard button to all users.';
 $string['streamingisstarting'] = 'Streaming is starting. Please wait...';
+$string['sessionisbeingrecordingby'] = 'Session is being recorded by {$a}';

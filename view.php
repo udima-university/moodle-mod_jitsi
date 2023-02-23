@@ -34,7 +34,7 @@ header('Access-Control-Allow-Origin: *');
 global $USER;
 
 $id = optional_param('id', 0, PARAM_INT);
-$n  = optional_param('n', 0, PARAM_INT);
+$n = optional_param('n', 0, PARAM_INT);
 $state = optional_param('state', null, PARAM_TEXT);
 $deletejitsirecordid = optional_param('deletejitsirecordid', 0, PARAM_INT);
 $hidejitsirecordid = optional_param('hidejitsirecordid', 0, PARAM_INT);
@@ -46,7 +46,7 @@ if ($id) {
     $jitsi = $DB->get_record('jitsi', array('id' => $cm->instance), '*', MUST_EXIST);
     $sesskey = optional_param('sesskey', null, PARAM_TEXT);
 } else if ($n) {
-    $jitsi  = $DB->get_record('jitsi', array('id' => $n), '*', MUST_EXIST);
+    $jitsi = $DB->get_record('jitsi', array('id' => $n), '*', MUST_EXIST);
     $course = $DB->get_record('course', array('id' => $jitsi->course), '*', MUST_EXIST);
     $cm = get_coursemodule_from_instance('jitsi', $jitsi->id, $course->id, false, MUST_EXIST);
 } else if ($state) {
@@ -211,6 +211,16 @@ echo "<path d=\"M2 1a2 2 0 0 0-2 2v9.5A1.5 1.5 0 0 0 1.5 14h.653a5.373 5.373 0 0
 echo "</svg>";
 echo (" ".$jitsi->numberofparticipants." ".get_string('connectedattendeesnow', 'jitsi'));
 
+echo "<p></p>";
+if ($jitsi->authorrecord != null) {
+    echo "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"red\"
+        class=\"bi bi-record-circle\" viewBox=\"0 0 16 16\">";
+    echo "<path d=\"M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z\"/>";
+    echo "<path d=\"M11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0z\"/>";
+    echo "</svg> ";
+    $author = $DB->get_record('user', array('id' => $jitsi->authorrecord));
+    echo addslashes(get_string('sessionisbeingrecordingby', 'jitsi', $author->firstname." ".$author->lastname));
+}
 echo "<p></p>";
 echo get_string('minutesconnected', 'jitsi', getminutes($id, $USER->id));
 
