@@ -678,6 +678,7 @@ class mod_jitsi_external extends external_api {
             $result['error'] = 'errorauthor';
             $result['user'] = $jitsiob->authorrecord;
             $result['usercomplete'] = $author->firstname.' '.$author->lastname;
+            $result['errorinfo'] = '';
             return $result;
         }
         $jitsiob->authorrecord = $userid;
@@ -801,6 +802,7 @@ class mod_jitsi_external extends external_api {
         $result['error'] = '';
         $result['user'] = $jitsiob->authorrecord;
         $result['usercomplete'] = $author->firstname.' '.$author->lastname;
+        $result['errorinfo'] = '';
         return $result;
     }
 
