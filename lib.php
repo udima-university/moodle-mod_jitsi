@@ -761,7 +761,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             echo "        console.log(idsource);";
 
         echo "    if (response['error'] == 'errorauthor'){\n";
-        echo "      alert(\"La grabación esta bloqueada por otro usuario id:\"+response['usercomplete']);\n";
+        echo "      alert(\"La grabación esta bloqueada por: \"+response['usercomplete']);\n";
         echo "      document.getElementById('state').innerHTML = ";
         echo "        '<div class=\"alert alert-light\" role=\"alert\"></div>';";
         echo "      document.getElementById(\"recordSwitch\").disabled = false;\n";
