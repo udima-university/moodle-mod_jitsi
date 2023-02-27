@@ -198,8 +198,14 @@ $usersconnected = $DB->get_record_sql($sqllastparticipating);
 if ($usersconnected != null) {
     if ((getdate()[0] - $usersconnected->timecreated) > 72 ) {
         $jitsi->numberofparticipants = 0;
+        if ($jitsi->numberofparticipants == 0) {
+            $jitsi->authorrecord = null;
+        }
         $DB->update_record('jitsi', $jitsi);
     }
+}
+if ($jitsi->numberofparticipants = 0) {
+    $jitsi->recorauthor = null;
 }
 
 echo " ";
