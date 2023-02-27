@@ -753,8 +753,6 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "    args: {session:'".$session."', jitsi:'".$jitsi->id."', userid: '".$USER->id."'},\n";
         echo "  }]);\n";
 
-
-
         echo "  respuesta[0].done(function(response) {\n";
             echo "console.log(\"video creado\");";
             echo "        console.log(response['stream']);";
