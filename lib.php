@@ -719,7 +719,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "      ajax.call([{\n";
         echo "        methodname: 'mod_jitsi_stop_stream_byerror',\n";
-        echo "        args: {jitsi: ".$jitsi->id."},\n";
+        echo "        args: {jitsi: ".$jitsi->id.", userid: ".$USER->id."},\n";
         echo "        done: console.log(\"borrado author!\"),\n";
         echo "        fail: notification.exception\n";
         echo "      }]);\n";

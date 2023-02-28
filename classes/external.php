@@ -130,7 +130,8 @@ class mod_jitsi_external extends external_api {
      */
     public static function stop_stream_byerror_parameters() {
         return new external_function_parameters(
-            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                  'userid' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
         );
     }
 
@@ -646,15 +647,18 @@ class mod_jitsi_external extends external_api {
      * @param int $jitsi Jitsi session id
      * @return array result
      */
-    public static function stop_stream_byerror($jitsi) {
+    public static function stop_stream_byerror($jitsi, $userid) {
         global $CFG, $DB;
 
         $params = self::validate_parameters(self::stop_stream_byerror_parameters(),
-                array('jitsi' => $jitsi));
+                array('jitsi' => $jitsi, 'userid' => $userid));
         $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
-        $jitsiob->authorrecord = null;
-        $DB->update_record('jitsi', $jitsiob);
-        return 'authordeleted';
+        if ($userid != $jitsiob->authorrecord) {
+            $jitsiob->authorrecord = null;
+            $DB->update_record('jitsi', $jitsiob);
+            return 'authordeleted';
+        }
+        return 'authornotdeleted';
     }
 
     /**
