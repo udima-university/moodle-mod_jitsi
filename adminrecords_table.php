@@ -95,7 +95,7 @@ class mod_adminrecords_table extends table_sql {
      *     when downloading.
      */
     protected function col_delete($values) {
-        global $DB;
+        global $DB, $OUTPUT;
 
         $acount = $DB->get_record('jitsi_record_account', array('id' => $values->account));
         if (isDeletable($values->id)) {
@@ -103,10 +103,17 @@ class mod_adminrecords_table extends table_sql {
                 $deleteurl = new moodle_url('/mod/jitsi/adminrecord.php?&deletejitsisourceid='.
                     $values->id. '&sesskey=' . sesskey());
                 $deleteicon = new pix_icon('t/delete', get_string('delete'));
-                return '<a href="'.$deleteurl.'">Delete</a>';
+                $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon, new confirm_action(get_string('deletesourceq', 'jitsi')));
+                // return '<a href="'.$deleteurl.'">Delete</a>';
+                return $deleteaction;
             } else {
                 return 'not deletable';
             }
         }
     }
 }
+
+
+
+
+
