@@ -103,7 +103,8 @@ class mod_adminrecords_table extends table_sql {
                 $deleteurl = new moodle_url('/mod/jitsi/adminrecord.php?&deletejitsisourceid='.
                     $values->id. '&sesskey=' . sesskey());
                 $deleteicon = new pix_icon('t/delete', get_string('delete'));
-                $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon, new confirm_action(get_string('deletesourceq', 'jitsi')));
+                $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon,
+                  new confirm_action(get_string('deletesourceq', 'jitsi')));
                 return $deleteaction;
             } else {
                 return 'not deletable';
