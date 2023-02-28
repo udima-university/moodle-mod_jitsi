@@ -104,7 +104,6 @@ class mod_adminrecords_table extends table_sql {
                     $values->id. '&sesskey=' . sesskey());
                 $deleteicon = new pix_icon('t/delete', get_string('delete'));
                 $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon, new confirm_action(get_string('deletesourceq', 'jitsi')));
-                // return '<a href="'.$deleteurl.'">Delete</a>';
                 return $deleteaction;
             } else {
                 return 'not deletable';
