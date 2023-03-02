@@ -761,7 +761,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             echo "        console.log(idsource);";
 
         echo "    if (response['error'] == 'errorauthor'){\n";
-        echo "      alert(\"La grabación esta bloqueada por: \"+response['usercomplete']);\n";
+        echo "      alert(\"".addslashes(get_string('recordingbloquedby', 'jitsi'))."\"+response['usercomplete']);\n";
         echo "      document.getElementById('state').innerHTML = ";
         echo "        '<div class=\"alert alert-light\" role=\"alert\"></div>';";
         echo "      document.getElementById(\"recordSwitch\").disabled = false;\n";
@@ -913,8 +913,8 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "              console.log(\"dentro consulta estado grabación\");\n";
         echo "          if (response['error'] == 'errorauthor'){\n";
         echo "              console.log(\"grabación ocupada\");\n";
-
-        echo "              alert(\"La grabación esta bloqueada por: \"+response['usercomplete']);\n";
+        echo "              alert(\"".addslashes(get_string('recordingbloquedby', 'jitsi')).
+            "\"+response['usercomplete']);\n";
         echo "              document.getElementById('state').innerHTML = ";
         echo "                  '<div class=\"alert alert-light\" role=\"alert\"></div>';";
         echo "              document.getElementById(\"recordSwitch\").disabled = false;\n";
