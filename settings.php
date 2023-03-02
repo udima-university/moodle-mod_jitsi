@@ -104,6 +104,10 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_heading('jitsi_records_admin', '', '<a href='.$link.' >'.
             get_string('deletesources', 'jitsi').'</a>'));
 
+    $link = new moodle_url('/mod/jitsi/recordingmatrix.php');
+    $settings->add(new admin_setting_heading('jitsi_records_matrix', '', '<a href='.$link.' >'.
+            get_string('livesessionsnow', 'jitsi').'</a>'));
+
     // Jitsi Token Section.
     $settings->add(new admin_setting_heading('jitsitoken',
         get_string('tokennconfig', 'jitsi'), get_string('tokenconfigurationex', 'jitsi')));
