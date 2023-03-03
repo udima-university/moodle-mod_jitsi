@@ -81,6 +81,19 @@ echo $OUTPUT->header();
 
 $PAGE->set_context(context_module::instance($cm->id));
 
+if ($jitsi->authorrecord != null) {
+    $contextmodule = context_module::instance($cm->id);
+
+    $sqllastparticipating = 'select timecreated from {logstore_standard_log} where contextid = '
+    .$contextmodule->id.' and (action = \'participating\' or action = \'enter\') order by timecreated DESC limit 1';
+    $usersconnected = $DB->get_record_sql($sqllastparticipating);
+
+    if ($jitsi->numberofparticipants == 1 && (getdate()[0] - $usersconnected->timecreated) > 72 ) {
+        $jitsi->authorrecord = null;
+        $DB->update_record('jitsi', $jitsi);
+    }
+}
+
 createsession($teacher, $cmid, $avatar, $nombre, $session, null, $jitsi);
 
 echo $OUTPUT->footer();
