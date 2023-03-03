@@ -201,9 +201,11 @@ if ($usersconnected != null) {
         $DB->update_record('jitsi', $jitsi);
     }
 }
-if ($jitsi->numberofparticipants == 0 && (getdate()[0] - $usersconnected->timecreated) > 72 ) {
-    $jitsi->authorrecord = null;
-    $DB->update_record('jitsi', $jitsi);
+if ($usersconnected != null) {
+    if ($jitsi->numberofparticipants == 0 && (getdate()[0] - $usersconnected->timecreated) > 72 ) {
+        $jitsi->authorrecord = null;
+        $DB->update_record('jitsi', $jitsi);
+    }
 }
 
 echo " ";
