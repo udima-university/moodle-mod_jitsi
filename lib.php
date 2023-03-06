@@ -573,7 +573,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "api.executeCommand('avatarUrl', '".$avatar."');\n";
     echo "});\n";
     $navigator = $_SERVER['HTTP_USER_AGENT'];
-    
+
     $cm = get_coursemodule_from_id('jitsi', $cmid, 0, false, MUST_EXIST);
     $event = \mod_jitsi\event\jitsi_session_enter::create(array(
         'objectid' => $PAGE->cm->instance,
@@ -939,7 +939,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "      })\n";
         echo "  })\n";
         echo "}\n";
-        
+
         echo "console.log('el navegador: '+navigator.userAgent);";
 
         echo "function sendlink(){\n";
