@@ -35,6 +35,22 @@ namespace mod_jitsi\event;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class jitsi_session_enter extends \core\event\base {
+    /**
+     * Create instance of event.
+     *
+     * @param string $langcode
+     * @return langpack_updated
+     */
+    public static function event_with_navigator($navigator) {
+        $data = array(
+            'context' => \context_system::instance(),
+            'other' => array(
+                'navigator' => $navigator,
+            )
+        );
+
+        return self::create($data);
+    }
 
     /**
      * Init method.
@@ -61,10 +77,32 @@ class jitsi_session_enter extends \core\event\base {
      */
     public function get_description() {
         if ($this->userid != 0) {
-            return "The user with id '$this->userid' enter to session with coursemodule id '$this->contextinstanceid'.";
+            if (!empty($this->other['navigator'])) {
+                return "The user with id '$this->userid' enter to session with coursemodule id '$this->contextinstanceid' with: {$this->other['navigator']}.";
+            } else {
+                return "The user with id '$this->userid' enter to session with coursemodule id '$this->contextinstanceid'.";
+            }
         } else {
-            return "Guest user enter to session with coursemodule id '$this->contextinstanceid'.";
+            return "Guest user enter to session with coursemodule id '$this->contextinstanceid' with: {$this->other['navigator']}.";
         }
+    }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->other['navigator'])) {
+            throw new \coding_exception('The \'navigator\' value must be set');
+        }
+        // We can't use PARAM_LANG here as the string manager might not be aware of langpack yet.
+        // $cleanedlang = clean_param($this->other['navigator'], PARAM_SAFEDIR);
+        // if ($cleanedlang !== $this->other['langcode']) {
+        //     throw new \coding_exception('The \'navigator\' value must be set to a valid language code');
+        // }
     }
 
     /**

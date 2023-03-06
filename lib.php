@@ -572,11 +572,13 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "api.executeCommand('displayName', '".$nombre."');\n";
     echo "api.executeCommand('avatarUrl', '".$avatar."');\n";
     echo "});\n";
-
+    $navigator = $_SERVER['HTTP_USER_AGENT'];
+    
     $cm = get_coursemodule_from_id('jitsi', $cmid, 0, false, MUST_EXIST);
     $event = \mod_jitsi\event\jitsi_session_enter::create(array(
         'objectid' => $PAGE->cm->instance,
         'context' => $PAGE->context,
+        'other' => array('navigator' => $navigator)
       ));
     $event->add_record_snapshot('course', $PAGE->course);
     $event->add_record_snapshot($PAGE->cm->modname, $jitsi);
@@ -937,6 +939,8 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "      })\n";
         echo "  })\n";
         echo "}\n";
+        
+        echo "console.log('el navegador: '+navigator.userAgent);";
 
         echo "function sendlink(){\n";
         echo "        var nombreform = document.getElementById(\"nombrelink\").value;";
