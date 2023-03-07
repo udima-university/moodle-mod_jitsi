@@ -491,6 +491,27 @@ function xmldb_jitsi_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2023021600, 'jitsi');
     }
 
+    if ($oldversion < 2023030700) {
+
+        // Define field authorrecord to be added to jitsi.
+        $table = new xmldb_table('jitsi_record_account');
+        $field = new xmldb_field('embed');
+
+        // Conditionally launch drop field status.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Changing type of field name on table jitsi_record to text.
+        $table = new xmldb_table('jitsi_source_record');
+        $field = new xmldb_field('embed', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        // Launch change of type for field name.
+        $dbman->add_field($table, $field);
+
+        // Jitsi savepoint reached.
+        upgrade_mod_savepoint(true, 2023030700, 'jitsi');
+    }
+
     /*
      * And that's all. Please, examine and understand the 3 example blocks above. Also
      * it's interesting to look how other modules are using this script. Remember that
