@@ -223,3 +223,4 @@ $string['streamingisstarting'] = 'Streaming is starting. Please wait...';
 $string['sessionisbeingrecordingby'] = 'Session is being recorded by {$a}';
 $string['recordingbloquedby'] = 'The recording is blocked by ';
 $string['livesessionsnow'] = 'Live sessions now';
+$string['norecords'] = 'No recordings available';

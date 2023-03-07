@@ -264,27 +264,27 @@ if ($CFG->jitsi_help != null) {
      role=\"tab\" aria-controls=\"help\" aria-selected=\"true\">".get_string('help')."</a>";
     echo "  </li>";
     echo "  <li class=\"nav-item\">";
-    echo "    <a class=\"nav-link\" id=\"home-tab\" data-toggle=\"tab\" href=\"#home\"
-     role=\"tab\" aria-controls=\"home\" aria-selected=\"false\">".get_string('records', 'jitsi')."</a>";
+    echo "    <a class=\"nav-link\" id=\"record-tab\" data-toggle=\"tab\" href=\"#record\"
+     role=\"tab\" aria-controls=\"record\" aria-selected=\"false\">".get_string('records', 'jitsi')."</a>";
     echo "  </li>";
 } else {
     echo "  <li class=\"nav-item\">";
-    echo "    <a class=\"nav-link active\" id=\"home-tab\" data-toggle=\"tab\" href=\"#home\"
-     role=\"tab\" aria-controls=\"home\" aria-selected=\"true\">".get_string('records', 'jitsi')."</a>";
+    echo "    <a class=\"nav-link active\" id=\"record-tab\" data-toggle=\"tab\" href=\"#record\"
+     role=\"tab\" aria-controls=\"record\" aria-selected=\"true\">".get_string('records', 'jitsi')."</a>";
     echo "  </li>";
 }
 
 if ($usersconnected && has_capability('mod/jitsi:viewusersonsession', $PAGE->context)) {
     echo "  <li class=\"nav-item\">";
-    echo "    <a class=\"nav-link\" id=\"profile-tab\" data-toggle=\"tab\" href=\"#profile\"
-     role=\"tab\" aria-controls=\"profile\" aria-selected=\"false\">".get_string('attendeesreport', 'jitsi')."</a>";
+    echo "    <a class=\"nav-link\" id=\"attendees-tab\" data-toggle=\"tab\" href=\"#attendees\"
+     role=\"tab\" aria-controls=\"attendees\" aria-selected=\"false\">".get_string('attendeesreport', 'jitsi')."</a>";
     echo "  </li>";
 }
 
 if ($CFG->jitsi_invitebuttons == 1 && has_capability('mod/jitsi:createlink', $PAGE->context) && $jitsi->validitytime != 0) {
     echo "  <li class=\"nav-item\">";
-    echo "    <a class=\"nav-link\" id=\"contact-tab\" data-toggle=\"tab\" href=\"#contact\"
-     role=\"tab\" aria-controls=\"contact\" aria-selected=\"false\">".get_string('invitations', 'jitsi')."</a>";
+    echo "    <a class=\"nav-link\" id=\"invitations-tab\" data-toggle=\"tab\" href=\"#invitations\"
+     role=\"tab\" aria-controls=\"invitations\" aria-selected=\"false\">".get_string('invitations', 'jitsi')."</a>";
     echo "  </li>";
 }
 echo "</ul>";
@@ -295,26 +295,26 @@ if ($CFG->jitsi_help != null) {
     echo $CFG->jitsi_help;
     echo "  </div>";
 
-    echo "  <div class=\"tab-pane fade show \" id=\"home\" role=\"tabpanel\" aria-labelledby=\"home-tab\">";
+    echo "  <div class=\"tab-pane fade show \" id=\"record\" role=\"tabpanel\" aria-labelledby=\"record-tab\">";
 } else {
-    echo "  <div class=\"tab-pane fade show active\" id=\"home\" role=\"tabpanel\" aria-labelledby=\"home-tab\">";
+    echo "  <div class=\"tab-pane fade show active\" id=\"record\" role=\"tabpanel\" aria-labelledby=\"record-tab\">";
 }
 
-if ($records) {
+if ($records && isallvisible($records) || $records && has_capability ('mod/jitsi:record', $PAGE->context)) {
     echo "<br>";
     echo "<div class=\"row\">";
     foreach ($records as $record) {
         // Para borrar grabaciones.
         $deleteurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&deletejitsirecordid=' .
-                 $record->id . '&sesskey=' . sesskey());
+                 $record->id . '&sesskey=' . sesskey() . '#record');
         $deleteicon = new pix_icon('t/delete', get_string('delete'));
         $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon,
             new confirm_action(get_string('confirmdeleterecordinactivity', 'jitsi')));
 
         $hideurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&hidejitsirecordid=' .
-                 $record->id . '&sesskey=' . sesskey());
+                 $record->id . '&sesskey=' . sesskey(). '#record');
         $showurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&showjitsirecordid=' .
-                 $record->id . '&sesskey=' . sesskey());
+                 $record->id . '&sesskey=' . sesskey(). '#record');
         $hideicon = new pix_icon('t/hide', get_string('hide'));
         $showicon = new pix_icon('t/show', get_string('show'));
         $hideaction = $OUTPUT->action_icon($hideurl, $hideicon, new confirm_action('Hide?'));
@@ -398,11 +398,11 @@ if ($records) {
 } else {
     echo "<br>";
     echo "<div class=\"alert alert-info\" role=\"alert\">";
-    echo "No hay grabaciones disponibles";
+    echo get_string('norecords', 'jitsi');
     echo "</div>";
 }
 echo "  </div>";
-echo "  <div class=\"tab-pane fade\" id=\"profile\" role=\"tabpanel\" aria-labelledby=\"profile-tab\">";
+echo "  <div class=\"tab-pane fade\" id=\"attendees\" role=\"tabpanel\" aria-labelledby=\"attendees-tab\">";
 echo "<br>";
 
 $table = new html_table();
@@ -416,7 +416,7 @@ foreach ($usersconnected as $userconnected) {
 }
 echo html_writer::table($table);
 echo "  </div>";
-echo "  <div class=\"tab-pane fade\" id=\"contact\" role=\"tabpanel\" aria-labelledby=\"contact-tab\">";
+echo "  <div class=\"tab-pane fade\" id=\"invitations\" role=\"tabpanel\" aria-labelledby=\"invitations-tab\">";
 echo "<br>";
 
 $urlinvitacion = $CFG->wwwroot.'/mod/jitsi/formuniversal.php?t='.$jitsi->token;
