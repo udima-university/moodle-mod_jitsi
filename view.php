@@ -263,15 +263,19 @@ if ($CFG->jitsi_help != null) {
     echo "    <a class=\"nav-link active\" id=\"help-tab\" data-toggle=\"tab\" href=\"#help\"
      role=\"tab\" aria-controls=\"help\" aria-selected=\"true\">".get_string('help')."</a>";
     echo "  </li>";
-    echo "  <li class=\"nav-item\">";
-    echo "    <a class=\"nav-link\" id=\"record-tab\" data-toggle=\"tab\" href=\"#record\"
-     role=\"tab\" aria-controls=\"record\" aria-selected=\"false\">".get_string('records', 'jitsi')."</a>";
-    echo "  </li>";
+    if ($CFG->jitsi_streamingoption == 1) {
+        echo "  <li class=\"nav-item\">";
+        echo "    <a class=\"nav-link\" id=\"record-tab\" data-toggle=\"tab\" href=\"#record\"
+         role=\"tab\" aria-controls=\"record\" aria-selected=\"false\">".get_string('records', 'jitsi')."</a>";
+        echo "  </li>";
+    }
 } else {
-    echo "  <li class=\"nav-item\">";
-    echo "    <a class=\"nav-link active\" id=\"record-tab\" data-toggle=\"tab\" href=\"#record\"
-     role=\"tab\" aria-controls=\"record\" aria-selected=\"true\">".get_string('records', 'jitsi')."</a>";
-    echo "  </li>";
+    if ($CFG->jitsi_streamingoption == 1) {
+        echo "  <li class=\"nav-item\">";
+        echo "    <a class=\"nav-link active\" id=\"record-tab\" data-toggle=\"tab\" href=\"#record\"
+         role=\"tab\" aria-controls=\"record\" aria-selected=\"true\">".get_string('records', 'jitsi')."</a>";
+        echo "  </li>";
+    }
 }
 
 if ($usersconnected && has_capability('mod/jitsi:viewusersonsession', $PAGE->context)) {
