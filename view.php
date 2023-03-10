@@ -203,7 +203,7 @@ if ($usersconnected != null) {
 }
 if ($usersconnected != null) {
     if ($jitsi->numberofparticipants == 0 && (getdate()[0] - $usersconnected->timecreated) > 72 ) {
-        $jitsi->authorrecord = null;
+        $jitsi->sourcerecord = null;
         $DB->update_record('jitsi', $jitsi);
     }
 }
@@ -218,13 +218,14 @@ echo "</svg>";
 echo (" ".$jitsi->numberofparticipants." ".get_string('connectedattendeesnow', 'jitsi'));
 
 echo "<p></p>";
-if ($jitsi->authorrecord != null) {
+if ($jitsi->sourcerecord != null) {
     echo "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"red\"
         class=\"bi bi-record-circle\" viewBox=\"0 0 16 16\">";
     echo "<path d=\"M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z\"/>";
     echo "<path d=\"M11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0z\"/>";
     echo "</svg> ";
-    $author = $DB->get_record('user', array('id' => $jitsi->authorrecord));
+    $source = $DB->get_record('jitsi_source_record', array('id' => $jitsi->sourcerecord));
+    $author = $DB->get_record('user', array('id' => $source->userid));
     echo addslashes(get_string('sessionisbeingrecordingby', 'jitsi', $author->firstname." ".$author->lastname));
 }
 echo "<p></p>";
@@ -245,14 +246,8 @@ if ($today[0] < $jitsi->timeclose || $jitsi->timeclose == 0) {
 } else {
     echo $OUTPUT->box(get_string('finish', 'jitsi'));
 }
-if ($CFG->jitsi_invitebuttons == 1 && has_capability('mod/jitsi:createlink', $PAGE->context) && $jitsi->validitytime != 0) {
-    echo " ";
-    echo "<button class=\"btn btn-secondary\" type=\"button\" ";
-    echo "     data-toggle=\"collapse\" data-target=\"#collapseInvitaciones\"";
-    echo "     aria-expanded=\"false\" aria-controls=\"collapseExample\">";
-    echo get_string('invitations', 'jitsi');
-    echo "</button>";
-}
+
+echo "<br><br>";
 
 $sql = 'select * from {jitsi_record} where jitsi = '.$jitsi->id.' and deleted = 0 order by id desc';
 $records = $DB->get_records_sql($sql);
@@ -262,92 +257,69 @@ $sqlusersconnected = 'select distinct userid from {logstore_standard_log} where 
 
 $usersconnected = $DB->get_records_sql($sqlusersconnected);
 
-if ($records && isallvisible($records) || $records && has_capability ('mod/jitsi:record', $PAGE->context)) {
-    echo " ";
-    echo "<button class=\"btn btn-secondary\" type=\"button\" data-toggle=\"collapse\" data-target=\"#collapseExample\"
-         aria-expanded=\"false\" aria-controls=\"collapseExample\">";
-    echo get_string('records', 'jitsi');
-    echo "</button>";
+// Tabs.
+echo "<ul class=\"nav nav-tabs\" id=\"myTab\" role=\"tablist\">";
+if ($CFG->jitsi_help != null) {
+    echo "  <li class=\"nav-item\">";
+    echo "    <a class=\"nav-link active\" id=\"help-tab\" data-toggle=\"tab\" href=\"#help\"
+     role=\"tab\" aria-controls=\"help\" aria-selected=\"true\">".get_string('help')."</a>";
+    echo "  </li>";
+    if ($CFG->jitsi_streamingoption == 1) {
+        echo "  <li class=\"nav-item\">";
+        echo "    <a class=\"nav-link\" id=\"record-tab\" data-toggle=\"tab\" href=\"#record\"
+         role=\"tab\" aria-controls=\"record\" aria-selected=\"false\">".get_string('records', 'jitsi')."</a>";
+        echo "  </li>";
+    }
+} else {
+    if ($CFG->jitsi_streamingoption == 1) {
+        echo "  <li class=\"nav-item\">";
+        echo "    <a class=\"nav-link active\" id=\"record-tab\" data-toggle=\"tab\" href=\"#record\"
+         role=\"tab\" aria-controls=\"record\" aria-selected=\"true\">".get_string('records', 'jitsi')."</a>";
+        echo "  </li>";
+    }
 }
 
 if ($usersconnected && has_capability('mod/jitsi:viewusersonsession', $PAGE->context)) {
-    echo " ";
-    echo "<button class=\"btn btn-secondary\" type=\"button\" data-toggle=\"collapse\" data-target=\"#collapseAsistentes\"
-    aria-expanded=\"false\" aria-controls=\"collapseExample\">";
-    echo get_string('attendeesreport', 'jitsi');
-    echo "</button>";
-    echo "<div class=\"collapse\" id=\"collapseAsistentes\">";
-    echo "<div class=\"card card-body\">";
-    $table = new html_table();
-    $table->head = array(get_string('name'), get_string('minutes'));
-    $table->data = array();
-    foreach ($usersconnected as $userconnected) {
-        if ($userconnected->userid != 0) {
-            $user = $DB->get_record('user', array('id' => $userconnected->userid));
-            $table->data[] = array(fullname($user), getminutes($id, $user->id));
-        }
-    }
-    echo html_writer::table($table);
-    echo "</div>";
-    echo "</div>";
+    echo "  <li class=\"nav-item\">";
+    echo "    <a class=\"nav-link\" id=\"attendees-tab\" data-toggle=\"tab\" href=\"#attendees\"
+     role=\"tab\" aria-controls=\"attendees\" aria-selected=\"false\">".get_string('attendeesreport', 'jitsi')."</a>";
+    echo "  </li>";
 }
 
 if ($CFG->jitsi_invitebuttons == 1 && has_capability('mod/jitsi:createlink', $PAGE->context) && $jitsi->validitytime != 0) {
-    echo "<div class=\"collapse\" id=\"collapseInvitaciones\">";
-    echo "<div class=\"card card-body\">";
-    $urlinvitacion = $CFG->wwwroot.'/mod/jitsi/formuniversal.php?t='.$jitsi->token;
-    echo "<div class=\"container\">";
-    echo "<div class=\"row\">";
-    echo "<div class=\"col-11\">";
-    echo get_string('staticinvitationlinkexview', 'jitsi');
-    echo "</div>";
-    echo "</div>";
-    echo "<div class=\"row\">";
-    echo "<div class=\"col-11\">";
+    echo "  <li class=\"nav-item\">";
+    echo "    <a class=\"nav-link\" id=\"invitations-tab\" data-toggle=\"tab\" href=\"#invitations\"
+     role=\"tab\" aria-controls=\"invitations\" aria-selected=\"false\">".get_string('invitations', 'jitsi')."</a>";
+    echo "  </li>";
+}
+echo "</ul>";
+echo "<div class=\"tab-content\" id=\"myTabContent\">";
+if ($CFG->jitsi_help != null) {
+    echo "  <div class=\"tab-pane fade show active\" id=\"help\" role=\"tabpanel\" aria-labelledby=\"help-tab\">";
+    echo "  <br>";
+    echo $CFG->jitsi_help;
+    echo "  </div>";
 
-    echo "<input class=\"form-control\" type=\"text\" placeholder=\"".$urlinvitacion."\" ";
-    echo "        aria-label=\"Disabled input example\" disabled>";
-    echo "</div>";
-    echo "<div class=\"col-1\">";
-    echo "<button onclick=\"copyurl()\" type=\"button\" class=\"btn btn-secondary\" id=\"copyurl\">";
-    echo "Copy";
-    echo "</button>";
-    echo "</div>";
-    echo "</div>";
-    echo "</div>";
-
-    echo "</div>";
-    echo "</div>";
-
-    echo "<p></p>";
-    echo "<script>";
-    echo "function copyurl() {\n";
-        echo "var time = ".generatecode($jitsi).";\n";
-        echo "var copyText = \"".$urlinvitacion."\";\n";
-        echo "navigator.clipboard.writeText(copyText)
-            .then(() => {alert('".get_string('copied', 'jitsi')."');})
-            .catch(err => {console.log('Error in copying text: ', err);});\n";
-        echo "}\n";
-    echo "</script>";
+    echo "  <div class=\"tab-pane fade show \" id=\"record\" role=\"tabpanel\" aria-labelledby=\"record-tab\">";
+} else {
+    echo "  <div class=\"tab-pane fade show active\" id=\"record\" role=\"tabpanel\" aria-labelledby=\"record-tab\">";
 }
 
-if ($records) {
-    echo "<div class=\"collapse\" id=\"collapseExample\">";
-    echo "<div class=\"card card-body\">";
-
+if ($records && isallvisible($records) || $records && has_capability ('mod/jitsi:record', $PAGE->context)) {
+    echo "<br>";
     echo "<div class=\"row\">";
     foreach ($records as $record) {
         // Para borrar grabaciones.
         $deleteurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&deletejitsirecordid=' .
-                 $record->id . '&sesskey=' . sesskey());
+                 $record->id . '&sesskey=' . sesskey() . '#record');
         $deleteicon = new pix_icon('t/delete', get_string('delete'));
         $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon,
             new confirm_action(get_string('confirmdeleterecordinactivity', 'jitsi')));
 
         $hideurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&hidejitsirecordid=' .
-                 $record->id . '&sesskey=' . sesskey());
+                 $record->id . '&sesskey=' . sesskey(). '#record');
         $showurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&showjitsirecordid=' .
-                 $record->id . '&sesskey=' . sesskey());
+                 $record->id . '&sesskey=' . sesskey(). '#record');
         $hideicon = new pix_icon('t/hide', get_string('hide'));
         $showicon = new pix_icon('t/show', get_string('show'));
         $hideaction = $OUTPUT->action_icon($hideurl, $hideicon, new confirm_action('Hide?'));
@@ -428,11 +400,64 @@ if ($records) {
         }
     }
     echo "</div>";
-
-    echo "</div>";
+} else {
+    echo "<br>";
+    echo "<div class=\"alert alert-info\" role=\"alert\">";
+    echo get_string('norecords', 'jitsi');
     echo "</div>";
 }
+echo "  </div>";
+echo "  <div class=\"tab-pane fade\" id=\"attendees\" role=\"tabpanel\" aria-labelledby=\"attendees-tab\">";
+echo "<br>";
 
-echo $CFG->jitsi_help;
+$table = new html_table();
+$table->head = array(get_string('name'), get_string('minutes'));
+$table->data = array();
+foreach ($usersconnected as $userconnected) {
+    if ($userconnected->userid != 0) {
+        $user = $DB->get_record('user', array('id' => $userconnected->userid));
+        $table->data[] = array(fullname($user), getminutes($id, $user->id));
+    }
+}
+echo html_writer::table($table);
+echo "  </div>";
+echo "  <div class=\"tab-pane fade\" id=\"invitations\" role=\"tabpanel\" aria-labelledby=\"invitations-tab\">";
+echo "<br>";
+
+$urlinvitacion = $CFG->wwwroot.'/mod/jitsi/formuniversal.php?t='.$jitsi->token;
+echo "<div class=\"container\">";
+echo "<div class=\"row\">";
+echo "<div class=\"col-11\">";
+echo get_string('staticinvitationlinkexview', 'jitsi');
+echo "</div>";
+echo "</div>";
+echo "<div class=\"row\">";
+echo "<div class=\"col-11\">";
+
+echo "<input class=\"form-control\" type=\"text\" placeholder=\"".$urlinvitacion."\" ";
+echo "        aria-label=\"Disabled input example\" disabled>";
+echo "</div>";
+echo "<div class=\"col-1\">";
+echo "<button onclick=\"copyurl()\" type=\"button\" class=\"btn btn-secondary\" id=\"copyurl\">";
+echo "Copy";
+echo "</button>";
+echo "</div>";
+echo "</div>";
+echo "</div>";
+
+echo "</div>";
+echo "</div>";
+
+echo "<p></p>";
+echo "<script>";
+echo "function copyurl() {\n";
+echo "  var time = ".generatecode($jitsi).";\n";
+echo "  var copyText = \"".$urlinvitacion."\";\n";
+echo "  navigator.clipboard.writeText(copyText)
+        .then(() => {alert('".get_string('copied', 'jitsi')."');})
+        .catch(err => {console.log('Error in copying text: ', err);});\n";
+echo "}\n";
+echo "</script>";
+
 echo "<hr>";
 echo $OUTPUT->footer();

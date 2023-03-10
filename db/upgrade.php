@@ -478,11 +478,11 @@ function xmldb_jitsi_upgrade($oldversion) {
 
     if ($oldversion < 2023021600) {
 
-        // Define field authorrecord to be added to jitsi.
+        // Define field sourcerecord to be added to jitsi.
         $table = new xmldb_table('jitsi');
-        $field = new xmldb_field('authorrecord', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'numberofparticipants');
+        $field = new xmldb_field('sourcerecord', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'numberofparticipants');
 
-        // Conditionally launch add field authorrecord.
+        // Conditionally launch add field sourcerecord.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -493,7 +493,7 @@ function xmldb_jitsi_upgrade($oldversion) {
 
     if ($oldversion < 2023030700) {
 
-        // Define field authorrecord to be added to jitsi.
+        // Define field sourcerecord to be added to jitsi.
         $table = new xmldb_table('jitsi_record_account');
         $field = new xmldb_field('embed');
 

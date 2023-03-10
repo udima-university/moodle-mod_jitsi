@@ -624,20 +624,22 @@ class mod_jitsi_external extends external_api {
         $params = self::validate_parameters(self::stop_stream_parameters(),
                 array('jitsi' => $jitsi, 'userid' => $userid));
         $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
-        $author = $DB->get_record('user', array('id' => $jitsiob->authorrecord));
-        if ($jitsiob->authorrecord != $userid && $jitsiob->authorrecord != null) {
+        $sourcealmacenada = $DB->get_record('jitsi_source_record', array('id' => $jitsiob->sourcerecord));
+        $author = $DB->get_record('user', array('id' => $sourcealmacenada->userid));
+
+        if ($sourcealmacenada->userid != $userid && $jitsiob->sourcerecord != null) {
             $result = array();
             $result['error'] = 'errorauthor';
-            $result['user'] = $jitsiob->authorrecord;
+            $result['user'] = $author->id;
             $result['usercomplete'] = $author->firstname.' '.$author->lastname;
             return $result;
         }
-        $jitsiob->authorrecord = null;
+        $jitsiob->sourcerecord = null;
         $DB->update_record('jitsi', $jitsiob);
         $result = array();
 
         $result['error'] = '';
-        $result['user'] = $jitsiob->authorrecord;
+        $result['user'] = $author->id;
         $result['usercomplete'] = $author->firstname.' '.$author->lastname;
         return $result;
     }
@@ -653,8 +655,8 @@ class mod_jitsi_external extends external_api {
         $params = self::validate_parameters(self::stop_stream_byerror_parameters(),
                 array('jitsi' => $jitsi, 'userid' => $userid));
         $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
-        if ($userid != $jitsiob->authorrecord) {
-            $jitsiob->authorrecord = null;
+        if ($userid != $jitsiob->sourcerecord) {
+            $jitsiob->sourcerecord = null;
             $DB->update_record('jitsi', $jitsiob);
             return 'authordeleted';
         }
@@ -673,19 +675,38 @@ class mod_jitsi_external extends external_api {
 
         $params = self::validate_parameters(self::create_stream_parameters(),
                 array('session' => $session, 'jitsi' => $jitsi, 'userid' => $userid));
+
+        $author = $DB->get_record('user', array('id' => $userid));
         $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
-        $author = $DB->get_record('user', array('id' => $jitsiob->authorrecord));
-        if ($jitsiob->authorrecord != $userid && $jitsiob->authorrecord != null) {
-            $result = array();
-            $result['stream'] = 'nodata';
-            $result['idsource'] = 0;
-            $result['error'] = 'errorauthor';
-            $result['user'] = $jitsiob->authorrecord;
-            $result['usercomplete'] = $author->firstname.' '.$author->lastname;
-            $result['errorinfo'] = '';
-            return $result;
+        if ($jitsiob->sourcerecord != null) {
+            $sourcealmacenada = $DB->get_record('jitsi_source_record', array('id' => $jitsiob->sourcerecord));
+            if ($sourcealmacenada->userid != $userid) {
+                $result = array();
+                $result['stream'] = 'nodata';
+                $result['idsource'] = 0;
+                $result['error'] = 'errorauthor';
+                $result['user'] = $sourcealmacenada->userid;
+                $authoralmacenada = $DB->get_record('user', array('id' => $sourcealmacenada->userid));
+                $result['usercomplete'] = $authoralmacenada->firstname.' '.$authoralmacenada->lastname;
+                $result['errorinfo'] = '';
+                return $result;
+            }
         }
-        $jitsiob->authorrecord = $userid;
+
+        $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
+        $source = new stdClass();
+        $source->account = $account->id;
+        $source->timecreated = time();
+        $source->userid = $userid;
+
+        $record = new stdClass();
+        $record->jitsi = $jitsi;
+        $record->source = $DB->insert_record('jitsi_source_record', $source);
+        $record->deleted = 0;
+        $record->visible = 1;
+        $record->name = get_string('recordtitle', 'jitsi').' '.mb_substr($jitsiob->name, 0, 30);
+        $DB->insert_record('jitsi_record', $record);
+        $jitsiob->sourcerecord = $record->source;
         $DB->update_record('jitsi', $jitsiob);
 
         if (!file_exists(__DIR__ . '/../api/vendor/autoload.php')) {
@@ -763,48 +784,39 @@ class mod_jitsi_external extends external_api {
                 $bindbroadcastresponse = $youtube->liveBroadcasts->bind($broadcastsresponse['id'], 'id,contentDetails',
                     array('streamId' => $streamsresponse['id'], ));
             } catch (Google_Service_Exception $e) {
+                $DB->delete_record('jitsi_record', array('source' => $record->id));
+                $DB->delete_record('jitsi_source_record', array('id' => $source->id));
                 $result = array();
                 $result['stream'] = $streamsresponse['cdn']['ingestionInfo']['streamName'];
                 $result['idsource'] = $record->source;
                 $result['error'] = 'erroryoutube';
-                $result['user'] = $jitsiob->authorrecord;
+                $result['user'] = $jitsiob->sourcerecord;
                 $result['usercomplete'] = $author->firstname.' '.$author->lastname;
                 $result['errorinfo'] = $e->getMessage();
                 return $result;
             } catch (Google_Exception $e) {
+                $DB->delete_record('jitsi_record', array('source' => $record->id));
+                $DB->delete_record('jitsi_source_record', array('id' => $source->id));
                 $result = array();
                 $result['stream'] = $streamsresponse['cdn']['ingestionInfo']['streamName'];
                 $result['idsource'] = $record->source;
                 $result['error'] = 'erroryoutube';
-                $result['user'] = $jitsiob->authorrecord;
+                $result['user'] = $jitsiob->sourcerecord;
                 $result['usercomplete'] = $author->firstname.' '.$author->lastname;
                 $result['errorinfo'] = $e->getMessage();
                 return $result;
             }
         }
 
-        $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
-
-        $source = new stdClass();
+        $source = $DB->get_record('jitsi_source_record', array('id' => $record->source));
         $source->link = $broadcastsresponse['id'];
-        $source->account = $account->id;
-        $source->timecreated = time();
-        $source->userid = $userid;
-
-        $record = new stdClass();
-        $record->jitsi = $jitsi;
-        $record->source = $DB->insert_record('jitsi_source_record', $source);
-        $record->deleted = 0;
-        $record->visible = 1;
-        $record->name = get_string('recordtitle', 'jitsi').' '.mb_substr($jitsiob->name, 0, 30);
-
-        $DB->insert_record('jitsi_record', $record);
+        $DB->update_record('jitsi_source_record', $source);
 
         $result = array();
         $result['stream'] = $streamsresponse['cdn']['ingestionInfo']['streamName'];
         $result['idsource'] = $record->source;
         $result['error'] = '';
-        $result['user'] = $jitsiob->authorrecord;
+        $result['user'] = $author->id;
         $result['usercomplete'] = $author->firstname.' '.$author->lastname;
         $result['errorinfo'] = '';
         return $result;

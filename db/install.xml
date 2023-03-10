@@ -21,7 +21,7 @@
         <FIELD NAME="completionminutes" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="status" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="numberofparticipants" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of participants"/>
-        <FIELD NAME="authorrecord" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="sourcerecord" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
