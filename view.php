@@ -203,7 +203,7 @@ if ($usersconnected != null) {
 }
 if ($usersconnected != null) {
     if ($jitsi->numberofparticipants == 0 && (getdate()[0] - $usersconnected->timecreated) > 72 ) {
-        $jitsi->authorrecord = null;
+        $jitsi->sourcerecord = null;
         $DB->update_record('jitsi', $jitsi);
     }
 }
@@ -218,13 +218,14 @@ echo "</svg>";
 echo (" ".$jitsi->numberofparticipants." ".get_string('connectedattendeesnow', 'jitsi'));
 
 echo "<p></p>";
-if ($jitsi->authorrecord != null) {
+if ($jitsi->sourcerecord != null) {
     echo "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"red\"
         class=\"bi bi-record-circle\" viewBox=\"0 0 16 16\">";
     echo "<path d=\"M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z\"/>";
     echo "<path d=\"M11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0z\"/>";
     echo "</svg> ";
-    $author = $DB->get_record('user', array('id' => $jitsi->authorrecord));
+    $source = $DB->get_record('jitsi_source_record', array('id' => $jitsi->sourcerecord));
+    $author = $DB->get_record('user', array('id' => $source->userid));
     echo addslashes(get_string('sessionisbeingrecordingby', 'jitsi', $author->firstname." ".$author->lastname));
 }
 echo "<p></p>";

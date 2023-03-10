@@ -81,7 +81,7 @@ echo $OUTPUT->header();
 
 $PAGE->set_context(context_module::instance($cm->id));
 
-if ($jitsi->authorrecord != null) {
+if ($jitsi->sourcerecord != null) {
     $contextmodule = context_module::instance($cm->id);
 
     $sqllastparticipating = 'select timecreated from {logstore_standard_log} where contextid = '
@@ -89,7 +89,7 @@ if ($jitsi->authorrecord != null) {
     $usersconnected = $DB->get_record_sql($sqllastparticipating);
 
     if ($jitsi->numberofparticipants == 1 && (getdate()[0] - $usersconnected->timecreated) > 72 ) {
-        $jitsi->authorrecord = null;
+        $jitsi->sourcerecord = null;
         $DB->update_record('jitsi', $jitsi);
     }
 }

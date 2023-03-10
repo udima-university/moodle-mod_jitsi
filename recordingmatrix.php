@@ -61,22 +61,23 @@ echo $OUTPUT->heading(get_string('records', 'jitsi'));
 
 if (is_siteadmin()) {
     $sqljitsilive = 'select {jitsi}.id,
-                    {jitsi}.authorrecord
+                    {jitsi}.sourcerecord
                     from {jitsi}
-                    where {jitsi}.authorrecord > 0';
+                    where {jitsi}.sourcerecord > 0';
     $jitsilives = $DB->get_records_sql($sqljitsilive);
     echo "<div class=\"container-fluid\">";
     echo "<div class=\"row\">";
     foreach ($jitsilives as $jitsilive) {
         $sqlsourcelive = 'select {jitsi_source_record}.id,
-                                 {jitsi_record}.name,
-                                 {jitsi_source_record}.timecreated,
-                                 {jitsi_source_record}.link
+                            {jitsi_source_record}.timecreated,
+                            {jitsi_record}.name,
+                            {jitsi_source_record}.link,
+                            {jitsi_source_record}.userid,
+                            {jitsi_source_record}.embed
                         from {jitsi_source_record},
-                             {jitsi_record}
-                        where '.$jitsilive->id.' = {jitsi_record}.jitsi and
-                              {jitsi_record}.source = {jitsi_source_record}.id order by
-                               {jitsi_source_record}.timecreated desc limit 1';
+                            {jitsi_record}
+                        where '.$jitsilive->sourcerecord.' = {jitsi_source_record}.id and
+                            {jitsi_record}.source = {jitsi_source_record}.id';
         $sourcelives = $DB->get_records_sql($sqlsourcelive);
 
         foreach ($sourcelives as $sourcelive) {
@@ -89,9 +90,13 @@ if (is_siteadmin()) {
             echo "<a href=".$urljitsi.">".$sourcelive->name."</a>";
             echo "</h5>";
             echo "<h6 class=\"card-subtitle mb-2 text-muted\">".userdate($sourcelive->timecreated)."</h6>";
+            if ($sourcelive->embed == 0) {
+                doembedable($sourcelive->link);
+                sleep(1);
+            }
             echo "<iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/"
                 .$sourcelive->link."\"allowfullscreen></iframe>";
-            $author = $DB->get_record('user', array('id' => $jitsilive->authorrecord));
+            $author = $DB->get_record('user', array('id' => $sourcelive->userid));
             echo "<h6 class=\"card-subtitle mb-2 text-muted\">".$author->firstname." ".$author->lastname."</h6>";
             echo "</div>";
             echo "</div>";
