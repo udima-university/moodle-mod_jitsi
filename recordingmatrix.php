@@ -82,25 +82,27 @@ if (is_siteadmin()) {
             $sourcelives = $DB->get_records_sql($sqlsourcelive);
     
             foreach ($sourcelives as $sourcelive) {
-                $coursemodule = get_coursemodule_from_instance('jitsi', $jitsilive->id);
-                $urljitsiparams = array('id' => $coursemodule->id);
-                $urljitsi = new moodle_url('/mod/jitsi/view.php', $urljitsiparams);
-                echo "<div class=\"card\" >";
-                echo "<div class=\"card-body\">";
-                echo "<h5 class=\"card-title\">";
-                echo "<a href=".$urljitsi.">".$sourcelive->name."</a>";
-                echo "</h5>";
-                echo "<h6 class=\"card-subtitle mb-2 text-muted\">".userdate($sourcelive->timecreated)."</h6>";
-                if ($sourcelive->embed == 0) {
-                    doembedable($sourcelive->link);
-                    sleep(1);
+                if ($sourcelive->link != null) {
+                    $coursemodule = get_coursemodule_from_instance('jitsi', $jitsilive->id);
+                    $urljitsiparams = array('id' => $coursemodule->id);
+                    $urljitsi = new moodle_url('/mod/jitsi/view.php', $urljitsiparams);
+                    echo "<div class=\"card\" >";
+                    echo "<div class=\"card-body\">";
+                    echo "<h5 class=\"card-title\">";
+                    echo "<a href=".$urljitsi.">".$sourcelive->name."</a>";
+                    echo "</h5>";
+                    echo "<h6 class=\"card-subtitle mb-2 text-muted\">".userdate($sourcelive->timecreated)."</h6>";
+                    if ($sourcelive->embed == 0) {
+                        doembedable($sourcelive->link);
+                        sleep(1);
+                    }
+                    echo "<iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/"
+                        .$sourcelive->link."\"allowfullscreen></iframe>";
+                    $author = $DB->get_record('user', array('id' => $sourcelive->userid));
+                    echo "<h6 class=\"card-subtitle mb-2 text-muted\">".$author->firstname." ".$author->lastname."</h6>";
+                    echo "</div>";
+                    echo "</div>";
                 }
-                echo "<iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/"
-                    .$sourcelive->link."\"allowfullscreen></iframe>";
-                $author = $DB->get_record('user', array('id' => $sourcelive->userid));
-                echo "<h6 class=\"card-subtitle mb-2 text-muted\">".$author->firstname." ".$author->lastname."</h6>";
-                echo "</div>";
-                echo "</div>";
             }
         }
         echo "</div>";

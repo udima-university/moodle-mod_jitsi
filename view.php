@@ -354,7 +354,7 @@ if ($records && isallvisible($records) || $records && has_capability ('mod/jitsi
             }
             $account = $DB->get_record('jitsi_record_account', array('id' => $sourcerecord->account));
             echo "<div class=\"embed-responsive embed-responsive-16by9\">";
-            if ($sourcerecord) {
+            if ($sourcerecord && $sourcerecord->link != null) {
                 if ($account->clientaccesstoken != null && $sourcerecord->timecreated != 0) {
                     if ($sourcerecord->embed == 0) {
                         doembedable($sourcerecord->link);
