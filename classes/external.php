@@ -784,6 +784,8 @@ class mod_jitsi_external extends external_api {
                 $bindbroadcastresponse = $youtube->liveBroadcasts->bind($broadcastsresponse['id'], 'id,contentDetails',
                     array('streamId' => $streamsresponse['id'], ));
             } catch (Google_Service_Exception $e) {
+                $DB->delete_record('jitsi_record', array('source' => $record->id));
+                $DB->delete_record('jitsi_source_record', array('id' => $source->id));
                 $result = array();
                 $result['stream'] = $streamsresponse['cdn']['ingestionInfo']['streamName'];
                 $result['idsource'] = $record->source;
@@ -793,6 +795,8 @@ class mod_jitsi_external extends external_api {
                 $result['errorinfo'] = $e->getMessage();
                 return $result;
             } catch (Google_Exception $e) {
+                $DB->delete_record('jitsi_record', array('source' => $record->id));
+                $DB->delete_record('jitsi_source_record', array('id' => $source->id));
                 $result = array();
                 $result['stream'] = $streamsresponse['cdn']['ingestionInfo']['streamName'];
                 $result['idsource'] = $record->source;
