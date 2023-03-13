@@ -80,7 +80,6 @@ if (is_siteadmin()) {
                             where '.$jitsilive->sourcerecord.' = {jitsi_source_record}.id and
                                 {jitsi_record}.source = {jitsi_source_record}.id';
             $sourcelives = $DB->get_records_sql($sqlsourcelive);
-    
             foreach ($sourcelives as $sourcelive) {
                 if ($sourcelive->link != null) {
                     $coursemodule = get_coursemodule_from_instance('jitsi', $jitsilive->id);
@@ -112,7 +111,6 @@ if (is_siteadmin()) {
         echo get_string('norecords', 'jitsi');
         echo "</div>";
     }
-    
 }
 echo $OUTPUT->footer();
 
