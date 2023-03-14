@@ -1,6 +1,6 @@
 {
     "require": {
-        "google/apiclient": "^2.13.0",
+        "google/apiclient": "^2.13.1",
         "php": "^7.0"
     },
     "extra": {
