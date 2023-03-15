@@ -52,9 +52,9 @@ class cron_task_delete extends \core\task\scheduled_task {
             // $recordtodelete->name = $recordtodelete->name.'-'.'deleted';
             if ($deleterecordyoutube($source->link)) {
                 echo "eliminando source: ".$source->link;
-                $DB->delete_records('jitsi_source_record', array('id' => $recordtodelete->source);
+                $DB->delete_records('jitsi_source_record', array('id' => $recordtodelete->source));
                 echo "eliminando record: ".$recordtodelete->name;
-                $DB->delete_records('jitsi_record', array('id' => $recordtodelete->id);
+                $DB->delete_records('jitsi_record', array('id' => $recordtodelete->id));
                 $cont = $cont + 1;
             } else {
                 echo "no se ha podido eliminar el source: ".$source->link;
