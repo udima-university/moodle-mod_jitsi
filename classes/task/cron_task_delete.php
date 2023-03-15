@@ -24,7 +24,7 @@
  */
 namespace mod_jitsi\task;
 
-require_once(dirname(dirname(dirname(__FILE__))).'/instances/lib.php');
+// require_once(dirname(dirname(dirname(__FILE__))).'/instances/lib.php');
 require_once(dirname(dirname(dirname(__FILE__))).'/lib.php');
 
 class cron_task_delete extends \core\task\scheduled_task {
