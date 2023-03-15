@@ -48,7 +48,7 @@ class cron_task_delete extends \core\task\scheduled_task {
         $cont = 0;
         foreach ($recordstodelete as $recordtodelete){
           $source = $DB->get_record('jitsi_source_record', array('id' => $recordtodelete->source));
-          if ($source->timecreated > time() - 60*60*24*7){
+          if ($source->timecreated > time() - 60*60*24*7 && $cont < 5){
             // $recordtodelete->name = $recordtodelete->name.'-'.'deleted';
             if ($deleterecordyoutube($source->link)) {
                 echo "eliminando source: ".$source->link;
