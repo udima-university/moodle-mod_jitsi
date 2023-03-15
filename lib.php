@@ -1347,62 +1347,12 @@ function update_completition($cm) {
  * @param int $idvideo - id of the video
  */
 function doembedable($idvideo) {
-    global $CFG, $DB;
-    if (!file_exists(__DIR__ . '/api/vendor/autoload.php')) {
-        throw new \Exception('please run "composer require google/apiclient:~2.0" in "' . __DIR__ .'"');
-    }
-    require_once(__DIR__ . '/api/vendor/autoload.php');
-
-    $client = new Google_Client();
-
-    $client->setClientId($CFG->jitsi_oauth_id);
-    $client->setClientSecret($CFG->jitsi_oauth_secret);
-
-    $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
+    global $DB;
+    $client = getClientGoogleApi();
+    $youtube = new Google_Service_YouTube($client);
 
     $source = $DB->get_record('jitsi_source_record', array('link' => $idvideo));
     $account = $DB->get_record('jitsi_record_account', array('id' => $source->account));
-
-    $_SESSION[$tokensessionkey] = $account->clientaccesstoken;
-    $client->setAccessToken($_SESSION[$tokensessionkey]);
-
-    $t = time();
-    $timediff = $t - $account->tokencreated;
-
-    if ($timediff > 3599) {
-        if ($timediff > 3599) {
-            $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
-            try {
-                $account->clientaccesstoken = $newaccesstoken["access_token"];
-                $newrefreshaccesstoken = $client->getRefreshToken();
-                $newrefreshaccesstoken = $client->getRefreshToken();
-                $account->clientrefreshtoken = $newrefreshaccesstoken;
-                $account->tokencreated = time();
-            } catch (Google_Service_Exception $e) {
-                if ($account->inuse == 1) {
-                    $account->inuse = 0;
-                }
-                $account->clientaccesstoken = null;
-                $account->clientrefreshtoken = null;
-                $account->tokencreated = 0;
-                $DB->update_record('jitsi_record_account', $account);
-                $client->revokeToken();
-                return false;
-            } catch (Google_Exception $e) {
-                if ($account->inuse == 1) {
-                    $account->inuse = 0;
-                }
-                $account->clientaccesstoken = null;
-                $account->clientrefreshtoken = null;
-                $account->tokencreated = 0;
-                $DB->update_record('jitsi_record_account', $account);
-                $client->revokeToken();
-                return false;
-            }
-        }
-    }
-
-    $youtube = new Google_Service_YouTube($client);
 
     try {
         $listresponse = $youtube->videos->listVideos("status", array('id' => $idvideo));
@@ -1555,4 +1505,65 @@ function isallvisible($records) {
         }
     }
     return $res;
+}
+
+/**
+ * Get client google api
+ * @return Google_Client - Client google api
+ */
+function getClientGoogleApi() {
+    global $CFG, $DB;
+    if (!file_exists(__DIR__ . '/api/vendor/autoload.php')) {
+        throw new \Exception('please run "composer require google/apiclient:~2.0" in "' . __DIR__ .'"');
+    }
+    require_once(__DIR__ . '/api/vendor/autoload.php');
+
+    $client = new Google_Client();
+
+    $client->setClientId($CFG->jitsi_oauth_id);
+    $client->setClientSecret($CFG->jitsi_oauth_secret);
+
+    $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
+
+    // $source = $DB->get_record('jitsi_source_record', array('link' => $idvideo));
+    // $account = $DB->get_record('jitsi_record_account', array('id' => $source->account));
+
+    $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
+    $_SESSION[$tokensessionkey] = $account->clientaccesstoken;
+    $client->setAccessToken($_SESSION[$tokensessionkey]);
+
+    $t = time();
+    $timediff = $t - $account->tokencreated;
+
+    if ($timediff > 3599) {
+        $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
+        try {
+            $account->clientaccesstoken = $newaccesstoken["access_token"];
+            $newrefreshaccesstoken = $client->getRefreshToken();
+            $newrefreshaccesstoken = $client->getRefreshToken();
+            $account->clientrefreshtoken = $newrefreshaccesstoken;
+            $account->tokencreated = time();
+        } catch (Google_Service_Exception $e) {
+            if ($account->inuse == 1) {
+                $account->inuse = 0;
+            }
+            $account->clientaccesstoken = null;
+            $account->clientrefreshtoken = null;
+            $account->tokencreated = 0;
+            $DB->update_record('jitsi_record_account', $account);
+            $client->revokeToken();
+            return false;
+        } catch (Google_Exception $e) {
+            if ($account->inuse == 1) {
+                $account->inuse = 0;
+            }
+            $account->clientaccesstoken = null;
+            $account->clientrefreshtoken = null;
+            $account->tokencreated = 0;
+            $DB->update_record('jitsi_record_account', $account);
+            $client->revokeToken();
+            return false;
+        }
+    }
+    return $client;
 }
