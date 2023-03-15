@@ -115,7 +115,7 @@ if ($daccountid && confirm_sesskey($sesskey)) {
         if ($timediff > 3599) {
             $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
 
-            $account->clientaccesstoken = $newaccesstoken['access_token'];
+            $account->clientaccesstoken = $newaccesstoken["access_token"];
             $newrefreshaccesstoken = $client->getRefreshToken();
             $account->refreshtoken = $newrefreshaccesstoken;
             $account->tokencreated = time();
