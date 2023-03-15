@@ -224,3 +224,4 @@ $string['sessionisbeingrecordingby'] = 'Session is being recorded by {$a}';
 $string['recordingbloquedby'] = 'The recording is blocked by ';
 $string['livesessionsnow'] = 'Live sessions now';
 $string['norecords'] = 'No recordings available';
+$string['crontaskdelete'] = 'Delete recordings';
