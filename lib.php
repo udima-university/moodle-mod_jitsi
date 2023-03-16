@@ -1348,7 +1348,7 @@ function update_completition($cm) {
  */
 function doembedable($idvideo) {
     global $DB;
-    $client = getClientGoogleApi();
+    $client = getclientgoogleapi();
     $youtube = new Google_Service_YouTube($client);
 
     $source = $DB->get_record('jitsi_source_record', array('link' => $idvideo));
@@ -1511,7 +1511,7 @@ function isallvisible($records) {
  * Get client google api
  * @return Google_Client - Client google api
  */
-function getClientGoogleApi() {
+function getclientgoogleapi() {
     global $CFG, $DB;
     if (!file_exists(__DIR__ . '/api/vendor/autoload.php')) {
         throw new \Exception('please run "composer require google/apiclient:~2.0" in "' . __DIR__ .'"');
@@ -1524,9 +1524,6 @@ function getClientGoogleApi() {
     $client->setClientSecret($CFG->jitsi_oauth_secret);
 
     $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
-
-    // $source = $DB->get_record('jitsi_source_record', array('link' => $idvideo));
-    // $account = $DB->get_record('jitsi_record_account', array('id' => $source->account));
 
     $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
     $_SESSION[$tokensessionkey] = $account->clientaccesstoken;

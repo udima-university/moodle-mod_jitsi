@@ -22,10 +22,10 @@
  * @copyright  2023 Sergio Comerón Sánchez-Paniagua <sergiocomeron@icloud.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+defined('MOODLE_INTERNAL') || die();
 namespace mod_jitsi\task;
 
-// require_once(dirname(dirname(dirname(__FILE__))).'/instances/lib.php');
-require_once(dirname(dirname(dirname(__FILE__))).'/lib.php');
+require_once($CFG->dirroot.'/mod/jitsi/lib.php');
 
 class cron_task_delete extends \core\task\scheduled_task {
 
@@ -46,36 +46,23 @@ class cron_task_delete extends \core\task\scheduled_task {
 
         $recordstodelete = $DB->get_records('jitsi_record', array('deleted' => 1));
         $cont = 0;
-        foreach ($recordstodelete as $recordtodelete){
-          $source = $DB->get_record('jitsi_source_record', array('id' => $recordtodelete->source));
-          if ($source->timecreated > time() - 60*60*24*7 && $cont < 5){
-            // $recordtodelete->name = $recordtodelete->name.'-'.'deleted';
-            if ($deleterecordyoutube($source->link)) {
-                echo "eliminando source: ".$source->link;
-                $DB->delete_records('jitsi_source_record', array('id' => $recordtodelete->source));
-                echo "eliminando record: ".$recordtodelete->name;
-                $DB->delete_records('jitsi_record', array('id' => $recordtodelete->id));
-                $cont = $cont + 1;
-            } else {
-                echo "no se ha podido eliminar el source: ".$source->link;
+        echo "Fecha: ".userdate(time()).PHP_EOL;
+        echo "Borrando hasta: ".userdate(time() - get_config('mod_jitsi', 'videosexpiry')).PHP_EOL;
+        foreach ($recordstodelete as $recordtodelete) {
+            $source = $DB->get_record('jitsi_source_record', array('id' => $recordtodelete->source));
+            if (($source->timecreated < time() - get_config('mod_jitsi', 'videosexpiry')) &&
+                 $cont < get_config('mod_jitsi', 'numbervideosdeleted')) {
+                if (deleterecordyoutube($source->id)) {
+                    echo "eliminando source: ".$source->link." del ".userdate($source->timecreated).PHP_EOL;
+                    $DB->delete_records('jitsi_source_record', array('id' => $recordtodelete->source));
+                    echo "eliminando record: ".$recordtodelete->name.PHP_EOL;
+                    $DB->delete_records('jitsi_record', array('id' => $recordtodelete->id));
+                    $cont = $cont + 1;
+                } else {
+                    echo "no se ha podido eliminar el source: ".$source->link;
+                }
             }
-          }
         }
         return true;
-        // $guacamolecomputers = $DB->get_records('guacamole_computers', array('state'=>'stopped', 'root'=>$CFG->wwwroot));
-
-        // foreach ($guacamolecomputers as $guacamolecomputer){
-        //   echo $guacamolecomputer->cloudimage.'-'.$guacamolecomputer->imageid.'-'.$guacamolecomputer->userid;
-        //   if ($guacamolecomputer->timetodelete<time()){
-        //     $guacamolecomputer->state = 'deleting';
-        //     $DB->update_record('guacamole_computers', $guacamolecomputer);
-        //     echo "....eliminada";
-        //     stopinstance($guacamolecomputer->cloudimage.'-'.$guacamolecomputer->imageid.'-'.$guacamolecomputer->userid);
-        //     $DB->delete_records('guacamole_computers', array('imageid' => $guacamolecomputer->imageid, 'userid' => $guacamolecomputer->userid));
-        //   }else{
-        //     echo "....no eliminada";
-        //   }
-        //   echo "<br>";
-        // }
     }
 }

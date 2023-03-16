@@ -96,6 +96,17 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configpasswordunmask('jitsi_oauth_secret', get_string('oauthsecret', 'jitsi'),
             get_string('oauthsecretex', 'jitsi'), ''));
 
+    $settings->add(new admin_setting_configtext('mod_jitsi/numbervideosdeleted', get_string('numbervideosdeleted', 'jitsi'),
+            get_string('numbervideosdeletedex', 'jitsi'), '1', PARAM_INT, 1));
+
+    $settings->add(new admin_setting_configduration(
+        'mod_jitsi/videosexpiry',
+        new lang_string('videoexpiry', 'jitsi'),
+        new lang_string('videoexpiryex', 'jitsi'),
+        4 * WEEKSECS,
+        WEEKSECS
+    ));
+
     $link = new moodle_url('/mod/jitsi/adminaccounts.php');
     $settings->add(new admin_setting_heading('jitsi_loginoutyoutube', '', '<a href='.$link.' >'.
     get_string('accounts', 'jitsi').'</a>'));
