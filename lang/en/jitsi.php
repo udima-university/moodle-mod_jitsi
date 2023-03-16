@@ -227,5 +227,5 @@ $string['norecords'] = 'No recordings available';
 $string['crontaskdelete'] = 'Delete recordings';
 $string['numbervideosdeleted'] = 'Number of videos to delete';
 $string['numbervideosdeletedex'] = 'Number of videos to delete in each execution of the cron task';
-$string['videoexpiry'] = 'Video lifetime';
+$string['videoexpiry'] = 'Retention period';
 $string['videoexpiryex'] = 'Time a deleted video will be available in the streaming server. After this time the video will be deleted from the streaming server.';
