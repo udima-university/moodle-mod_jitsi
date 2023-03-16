@@ -142,48 +142,6 @@ class mod_jitsi_external extends external_api {
      * @return external_function_parameters
      */
     public static function delete_record_youtube($idsource) {
-        // global $CFG, $DB, $PAGE;
-
-        // $client = getClientGoogleApi();
-        // $youtube = new Google_Service_YouTube($client);
-        // try {
-        //     $listresponse = $youtube->videos->listVideos("snippet", array('id' => $source->link));
-        // } catch (Google_Service_Exception $e) {
-        //     if ($account->inuse == 1) {
-        //         $account->inuse = 0;
-        //     }
-        //     $account->clientaccesstoken = null;
-        //     $account->clientrefreshtoken = null;
-        //     $account->tokencreated = 0;
-        //     $DB->update_record('jitsi_record_account', $account);
-        //     $client->revokeToken();
-        //     return false;
-        //     throw new \Exception("exception".$e->getMessage());
-        // } catch (Google_Exception $e) {
-        //     if ($account->inuse == 1) {
-        //         $account->inuse = 0;
-        //     }
-        //     $account->clientaccesstoken = null;
-        //     $account->clientrefreshtoken = null;
-        //     $account->tokencreated = 0;
-        //     $DB->update_record('jitsi_record_account', $account);
-        //     $client->revokeToken();
-        //     return false;
-        //     throw new \Exception("exception".$e->getMessage());
-        // }
-        // if ($listresponse['items'] != []) {
-        //     if ($client->getAccessToken($idsource)) {
-        //         try {
-        //             $youtube->videos->delete($source->link);
-        //             delete_jitsi_record($idsource);
-        //         } catch (Google_Service_Exception $e) {
-        //             throw new \Exception("exception".$e->getMessage());
-        //         } catch (Google_Exception $e) {
-        //             throw new \Exception("exception".$e->getMessage());
-        //         }
-        //     }
-        // }
-        // return true;
         return deleterecordyoutube($idsource);
     }
 
@@ -663,7 +621,7 @@ class mod_jitsi_external extends external_api {
         $jitsiob->sourcerecord = $record->source;
         $DB->update_record('jitsi', $jitsiob);
 
-        $client = getClientGoogleApi();
+        $client = getclientgoogleapi();
         $youtube = new Google_Service_YouTube($client);
 
         try {

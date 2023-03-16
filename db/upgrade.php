@@ -509,7 +509,6 @@ function xmldb_jitsi_upgrade($oldversion) {
             // Launch change of type for field name.
             $dbman->add_field($table, $field);
         }
-        
 
         // Jitsi savepoint reached.
         upgrade_mod_savepoint(true, 2023030700, 'jitsi');
