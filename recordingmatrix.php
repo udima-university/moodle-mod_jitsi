@@ -42,7 +42,7 @@ $sesskey = optional_param('sesskey', null, PARAM_TEXT);
 
 $PAGE->set_context(context_system::instance());
 
-$PAGE->set_url('/mod/jitsi/adminrecord.php');
+$PAGE->set_url('/mod/jitsi/recordingmatrix.php');
 require_login();
 
 if ($deletejitsisourceid && confirm_sesskey($sesskey)) {
@@ -53,11 +53,11 @@ if ($deletejitsisourceid && confirm_sesskey($sesskey)) {
     }
 }
 
-$PAGE->set_title(format_string(get_string('records', 'jitsi')));
-$PAGE->set_heading(format_string(get_string('records', 'jitsi')));
+$PAGE->set_title(format_string(get_string('recordsonair', 'jitsi')));
+$PAGE->set_heading(format_string(get_string('recordsonair', 'jitsi')));
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('records', 'jitsi'));
+echo $OUTPUT->heading(get_string('recordsonair', 'jitsi'));
 
 if (is_siteadmin()) {
     $sqljitsilive = 'select {jitsi}.id,
