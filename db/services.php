@@ -172,4 +172,32 @@ $functions = array(
                 'loginrequired' => false,
                 'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'),
         ),
+        'mod_jitsi_get_participants' => array(
+                'classname' => 'mod_jitsi_external',
+                'methodname' => 'get_participants',
+                'description' => 'Get Participatns',
+                'type' => 'write',
+                'ajax' => true,
+                'loginrequired' => false,
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'),
+        ),
+        'mod_jitsi_delete_recordsource' => array(
+                'classname' => 'mod_jitsi_external',
+                'methodname' => 'delete_recordsource',
+                'description' => 'Delete record source',
+                'type' => 'write',
+                'ajax' => true,
+                'loginrequired' => false,
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'),
+        ),
+
+        'mod_jitsi_log_error' => array(
+                'classname' => 'mod_jitsi_external',
+                'methodname' => 'log_error',
+                'description' => 'Log error',
+                'type' => 'read',
+                'ajax' => true,
+                'loginrequired' => false,
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'),
+        ),
 );
