@@ -142,6 +142,10 @@ class mod_jitsi_external extends external_api {
      * @return external_function_parameters
      */
     public static function delete_record_youtube($idsource) {
+        global $DB;
+        $record = $DB->get_record('jitsi_record', array('source' => $idsource));
+        $record->deleted = 1;
+        $DB->update_record('jitsi_record', $record);
         return deleterecordyoutube($idsource);
     }
 
@@ -277,6 +281,16 @@ class mod_jitsi_external extends external_api {
             email_to_user($admin, $admin, "ERROR JITSI! el usuario: "
                 .$user->username." ha tenido un error en el jitsi: ".$jitsi, $mensaje);
         }
+
+        $cm = get_coursemodule_from_id('jitsi', $cmid, 0, false, MUST_EXIST);
+        $event = \mod_jitsi\event\jitsi_error::create(array(
+            'objectid' => $PAGE->cm->instance,
+            'context' => $PAGE->context,
+            'other' => array('error' => $error)
+        ));
+        $event->add_record_snapshot('course', $PAGE->course);
+        $event->add_record_snapshot('jitsi', $jitsi);
+        $event->trigger();
     }
 
     /**
@@ -322,6 +336,19 @@ class mod_jitsi_external extends external_api {
     /**
      * Returns description of method parameters
      *
+     * @return external_function_parameters
+     */
+    public static function log_error_parameters() {
+        return new external_function_parameters(
+            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                    'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                    'cmid' => new external_value(PARAM_INT, 'Course Module id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
      * @param int $jitsi Jitsi session id
      * @param int $user User id
      * @param int $cmid Course Module id
@@ -339,11 +366,38 @@ class mod_jitsi_external extends external_api {
     }
 
     /**
+     * Returns description of method parameters
+     *
+     * @param int $jitsi Jitsi session id
+     * @param int $user User id
+     * @param int $cmid Course Module id
+     */
+    public static function log_error($jitsi, $user, $cmid) {
+        global $DB;
+        $context = context_module::instance($cmid);
+        $event = \mod_jitsi\event\jitsi_error::create(array(
+            'objectid' => $jitsi,
+            'context' => $context,
+        ));
+        $event->add_record_snapshot('course', $jitsi->course);
+        $event->add_record_snapshot('jitsi', $jitsiob);
+        $event->trigger();
+    }
+
+    /**
      * Returns description of method result value
      * @return external_description
      */
     public static function press_button_microphone_returns() {
         return new external_value(PARAM_TEXT, 'Press microphone button');
+    }
+
+    /**
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function log_error_returns() {
+        return new external_value(PARAM_TEXT, 'Log error');
     }
 
     /**
@@ -369,6 +423,17 @@ class mod_jitsi_external extends external_api {
             array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
                     'numberofparticipants' =>
                         new external_value(PARAM_INT, 'Number of participants', VALUE_REQUIRED, '', NULL_NOT_ALLOWED), )
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     */
+    public static function get_participants_parameters() {
+        return new external_function_parameters(
+            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
         );
     }
 
@@ -605,22 +670,6 @@ class mod_jitsi_external extends external_api {
             }
         }
 
-        $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
-        $source = new stdClass();
-        $source->account = $account->id;
-        $source->timecreated = time();
-        $source->userid = $userid;
-
-        $record = new stdClass();
-        $record->jitsi = $jitsi;
-        $record->source = $DB->insert_record('jitsi_source_record', $source);
-        $record->deleted = 0;
-        $record->visible = 1;
-        $record->name = get_string('recordtitle', 'jitsi').' '.mb_substr($jitsiob->name, 0, 30);
-        $DB->insert_record('jitsi_record', $record);
-        $jitsiob->sourcerecord = $record->source;
-        $DB->update_record('jitsi', $jitsiob);
-
         $client = getclientgoogleapi();
         $youtube = new Google_Service_YouTube($client);
 
@@ -665,8 +714,6 @@ class mod_jitsi_external extends external_api {
             $bindbroadcastresponse = $youtube->liveBroadcasts->bind($broadcastsresponse['id'], 'id,contentDetails',
                 array('streamId' => $streamsresponse['id'], ));
         } catch (Google_Service_Exception $e) {
-            $DB->delete_record('jitsi_record', array('source' => $record->id));
-            $DB->delete_record('jitsi_source_record', array('id' => $source->id));
             $result = array();
             $result['stream'] = $streamsresponse['cdn']['ingestionInfo']['streamName'];
             $result['idsource'] = $record->source;
@@ -676,8 +723,6 @@ class mod_jitsi_external extends external_api {
             $result['errorinfo'] = $e->getMessage();
             return $result;
         } catch (Google_Exception $e) {
-            $DB->delete_record('jitsi_record', array('source' => $record->id));
-            $DB->delete_record('jitsi_source_record', array('id' => $source->id));
             $result = array();
             $result['stream'] = $streamsresponse['cdn']['ingestionInfo']['streamName'];
             $result['idsource'] = $record->source;
@@ -687,10 +732,24 @@ class mod_jitsi_external extends external_api {
             $result['errorinfo'] = $e->getMessage();
             return $result;
         }
-
-        $source = $DB->get_record('jitsi_source_record', array('id' => $record->source));
+        $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
+        $source = new stdClass();
+        $source->account = $account->id;
+        $source->timecreated = time();
+        $source->userid = $userid;
         $source->link = $broadcastsresponse['id'];
-        $DB->update_record('jitsi_source_record', $source);
+
+        $record = new stdClass();
+        $record->jitsi = $jitsi;
+        $record->source = $DB->insert_record('jitsi_source_record', $source);
+        $record->deleted = 0;
+        $record->visible = 1;
+        $record->name = get_string('recordtitle', 'jitsi').' '.mb_substr($jitsiob->name, 0, 30);
+
+        $DB->insert_record('jitsi_record', $record);
+        $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
+        $jitsiob->sourcerecord = $record->source;
+        $DB->update_record('jitsi', $jitsiob);
 
         $result = array();
         $result['stream'] = $streamsresponse['cdn']['ingestionInfo']['streamName'];
@@ -720,6 +779,25 @@ class mod_jitsi_external extends external_api {
                 $DB->update_record('jitsi', $jitsiob);
             }
         }
+        return $jitsiob->numberofparticipants;
+    }
+
+    /**
+     * Get Number of Participants
+     * @param int $jitsi Jitsi session id
+     * @param int $numberofparticipants Number of participants
+     * @return array result
+     */
+    public static function get_participants($jitsi) {
+        global $CFG, $DB;
+
+        $params = self::validate_parameters(self::update_participants_parameters(),
+                array('jitsi' => $jitsi));
+        $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
+        //TEsteo modificacion.
+        $jitsiob->name = 'modificado';
+        $DB->update_record('jitsi', $jitsiob);
+        // Fin TEsteo modificacion.
         return $jitsiob->numberofparticipants;
     }
 
@@ -790,6 +868,14 @@ class mod_jitsi_external extends external_api {
      * @return external_description
      */
     public static function update_participants_returns() {
+        return new external_value(PARAM_INT, 'Number of partipants');
+    }
+
+    /**
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function get_participants_returns() {
         return new external_value(PARAM_INT, 'Number of partipants');
     }
 }
