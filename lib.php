@@ -759,7 +759,6 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             echo "console.log(\"video creado\");";
             echo "        console.log(response['stream']);";
             echo "        idsource = response['idsource'];";
-            echo "        console.log(response['idsource']);";
             echo "        console.log(idsource);";
 
         echo "    if (response['error'] == 'errorauthor'){\n";
@@ -770,6 +769,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "      document.getElementById(\"recordSwitch\").checked = false;\n";
         echo "    } else if (response['error'] == 'erroryoutube'){\n";
         echo "      var infoerror = response['errorinfo'];\n";
+        echo "      console.log(infoerror);\n";
         echo "      require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "        ajax.call([{\n";
         echo "          methodname: 'mod_jitsi_send_error',\n";
@@ -779,6 +779,16 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "          fail: notification.exception\n";
         echo "        }]);\n";
         echo "      })\n";
+
+        echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+        echo "        ajax.call([{\n";
+        echo "            methodname: 'mod_jitsi_delete_record_youtube',\n";
+        echo "            args: {idsource: idsource},\n";
+        echo "            done: console.log(\"BORRADO VIDEO POR ERROR EN JITSI!\"),\n";
+        echo "            fail: notification.exception\n";
+        echo "        }]);\n";
+        echo "    })\n";
+
         echo "      document.getElementById('state').innerHTML = ";
         echo "        '<div class=\"alert alert-light\" role=\"alert\">ERROR RECORD ACCOUNT</div>';";
         echo "      document.getElementById(\"recordSwitch\").disabled = false;\n";
@@ -915,8 +925,36 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "              console.log(\"dentro consulta estado grabación\");\n";
         echo "          if (response['error'] == 'errorauthor'){\n";
         echo "              console.log(\"grabación ocupada\");\n";
-        echo "              alert(\"".addslashes(get_string('recordingbloquedby', 'jitsi')).
-            "\"+response['usercomplete']);\n";
+        // echo "              alert(\"".addslashes(get_string('recordingbloquedby', 'jitsi'))."\"+response['usercomplete']);\n";
+
+        // echo "   require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
+        // echo "     var respuesta = ajax.call([{\n";
+        // echo "       methodname: 'mod_jitsi_getminutesfromlastconexion',\n";
+        // echo "       args: {user:'".$USER->id."', cmid:'".$cmid."'},\n";
+        // echo "       fail: notification.exception\n";
+        // echo "     }]);\n";
+        // echo "   ;});";
+        // echo " console.log(\"consultando minutos de la ultima conexion\");\n";
+        // echo " respuesta[0].done(function(response) {\n";
+        // echo " console.log(\"dentro consulta minutos de la ultima conexion\");\n";
+        // echo " console.log(response);\n";
+        // echo " });\n";
+
+        echo "  if (confirm(\"".addslashes(get_string('recordingwasbloquedby', 'jitsi'))."\"+response['usercomplete'])) {";
+            // Se ha presionado "Aceptar"
+            // Realiza alguna acción aquí
+            echo "      console.log(\"Switch cambiado a desactivado\");";
+            echo "      document.getElementById('state').innerHTML = '';";
+            echo "      stopStream();";
+            // echo "      console.log(\"Switch cambiado a activado\");";        
+            // echo "      document.getElementById('state').innerHTML = ";
+            // echo "      '<div class=\"alert alert-light\" role=\"alert\">".get_string('preparing', 'jitsi')."</div>';";
+            // echo "      stream();";
+        echo "  } else {";
+            // Se ha presionado "Cancelar"
+            // Realiza alguna acción aquí
+        echo "  }";
+          
         echo "              document.getElementById('state').innerHTML = ";
         echo "                  '<div class=\"alert alert-light\" role=\"alert\"></div>';";
         echo "              document.getElementById(\"recordSwitch\").disabled = false;\n";
@@ -1113,35 +1151,60 @@ function isdeletable($sourcerecord) {
  */
 function deleterecordyoutube($idsource) {
     global $CFG, $DB, $PAGE;
-    // Api google.
+
+    $source = $DB->get_record('jitsi_source_record', array('id' => $idsource));
+    $account = $DB->get_record('jitsi_record_account', array('id' => $source->account));
     if (isdeletable($idsource)) {
-        if (!file_exists(__DIR__ . '/api/vendor/autoload.php')) {
-            throw new \Exception('please run "composer require google/apiclient:~2.0" in "' . __DIR__ .'"');
-        }
-        require_once(__DIR__ . '/api/vendor/autoload.php');
+        if ($source->link != null) {
+            if (!file_exists(__DIR__ . '/api/vendor/autoload.php')) {
+                throw new \Exception('please run "composer require google/apiclient:~2.0" in "' . __DIR__ .'"');
+            }
+            require_once(__DIR__ . '/api/vendor/autoload.php');
+    
+            $client = new Google_Client();
+    
+            $client->setClientId($CFG->jitsi_oauth_id);
+            $client->setClientSecret($CFG->jitsi_oauth_secret);
+    
+            $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
 
-        $client = new Google_Client();
-
-        $client->setClientId($CFG->jitsi_oauth_id);
-        $client->setClientSecret($CFG->jitsi_oauth_secret);
-
-        $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
-
-        $source = $DB->get_record('jitsi_source_record', array('id' => $idsource));
-        $account = $DB->get_record('jitsi_record_account', array('id' => $source->account));
-
-        $_SESSION[$tokensessionkey] = $account->clientaccesstoken;
-        $client->setAccessToken($_SESSION[$tokensessionkey]);
-        $t = time();
-        $timediff = $t - $account->tokencreated;
-        if ($timediff > 3599) {
-            $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
+            $_SESSION[$tokensessionkey] = $account->clientaccesstoken;
+            $client->setAccessToken($_SESSION[$tokensessionkey]);
+            $t = time();
+            $timediff = $t - $account->tokencreated;
+            if ($timediff > 3599) {
+                $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
+                try {
+                    $account->clientaccesstoken = $newaccesstoken["access_token"];
+                    $newrefreshaccesstoken = $client->getRefreshToken();
+                    $newrefreshaccesstoken = $client->getRefreshToken();
+                    $account->clientrefreshtoken = $newrefreshaccesstoken;
+                    $account->tokencreated = time();
+                } catch (Google_Service_Exception $e) {
+                    if ($account->inuse == 1) {
+                        $account->inuse = 0;
+                    }
+                    $account->clientaccesstoken = null;
+                    $account->clientrefreshtoken = null;
+                    $account->tokencreated = 0;
+                    $DB->update_record('jitsi_record_account', $account);
+                    $client->revokeToken();
+                    return false;
+                } catch (Google_Exception $e) {
+                    if ($account->inuse == 1) {
+                        $account->inuse = 0;
+                    }
+                    $account->clientaccesstoken = null;
+                    $account->clientrefreshtoken = null;
+                    $account->tokencreated = 0;
+                    $DB->update_record('jitsi_record_account', $account);
+                    $client->revokeToken();
+                    return false;
+                }
+            }
+            $youtube = new Google_Service_YouTube($client);
             try {
-                $account->clientaccesstoken = $newaccesstoken["access_token"];
-                $newrefreshaccesstoken = $client->getRefreshToken();
-                $newrefreshaccesstoken = $client->getRefreshToken();
-                $account->clientrefreshtoken = $newrefreshaccesstoken;
-                $account->tokencreated = time();
+                $listresponse = $youtube->videos->listVideos("snippet", array('id' => $source->link));
             } catch (Google_Service_Exception $e) {
                 if ($account->inuse == 1) {
                     $account->inuse = 0;
@@ -1152,6 +1215,7 @@ function deleterecordyoutube($idsource) {
                 $DB->update_record('jitsi_record_account', $account);
                 $client->revokeToken();
                 return false;
+                throw new \Exception("exception".$e->getMessage());
             } catch (Google_Exception $e) {
                 if ($account->inuse == 1) {
                     $account->inuse = 0;
@@ -1162,48 +1226,26 @@ function deleterecordyoutube($idsource) {
                 $DB->update_record('jitsi_record_account', $account);
                 $client->revokeToken();
                 return false;
+                throw new \Exception("exception".$e->getMessage());
             }
-        }
-        $youtube = new Google_Service_YouTube($client);
-        try {
-            $listresponse = $youtube->videos->listVideos("snippet", array('id' => $source->link));
-        } catch (Google_Service_Exception $e) {
-            if ($account->inuse == 1) {
-                $account->inuse = 0;
-            }
-            $account->clientaccesstoken = null;
-            $account->clientrefreshtoken = null;
-            $account->tokencreated = 0;
-            $DB->update_record('jitsi_record_account', $account);
-            $client->revokeToken();
-            return false;
-            throw new \Exception("exception".$e->getMessage());
-        } catch (Google_Exception $e) {
-            if ($account->inuse == 1) {
-                $account->inuse = 0;
-            }
-            $account->clientaccesstoken = null;
-            $account->clientrefreshtoken = null;
-            $account->tokencreated = 0;
-            $DB->update_record('jitsi_record_account', $account);
-            $client->revokeToken();
-            return false;
-            throw new \Exception("exception".$e->getMessage());
-        }
-        if ($listresponse['items'] != []) {
-            if ($client->getAccessToken($idsource)) {
-                try {
-                    $youtube->videos->delete($source->link);
-                    delete_jitsi_record($idsource);
-                } catch (Google_Service_Exception $e) {
-                    throw new \Exception("exception".$e->getMessage());
-                } catch (Google_Exception $e) {
-                    throw new \Exception("exception".$e->getMessage());
+            if ($listresponse['items'] != []) {
+                if ($client->getAccessToken($idsource)) {
+                    try {
+                        $youtube->videos->delete($source->link);
+                        delete_jitsi_record($idsource);
+                    } catch (Google_Service_Exception $e) {
+                        throw new \Exception("exception".$e->getMessage());
+                    } catch (Google_Exception $e) {
+                        throw new \Exception("exception".$e->getMessage());
+                    }
                 }
+            } else {
+                delete_jitsi_record($idsource);
             }
         } else {
             delete_jitsi_record($idsource);
         }
+        
     }
     return true;
 }
@@ -1360,13 +1402,15 @@ function doembedable($idvideo) {
 
         $videostatus = $video['status'];
         if ($videostatus != null) {
-            if ($videostatus['embeddable'] != true) {
-                $videostatus['embeddable'] = 'true';
+            if ($videostatus['embeddable'] == 0) {
+                $videostatus['embeddable'] = 1;
                 $updateresponse = $youtube->videos->update("status", $video);
-            } else {
                 $source->embed = 1;
                 $DB->update_record('jitsi_source_record', $source);
-                $updateresponse = $videostatus;
+            } else if ($videostatus['embeddable'] == 1) {
+                $source->embed = 1;
+                $DB->update_record('jitsi_source_record', $source);
+                $updateresponse = 'Video already embedable';
             }
         }
     } catch (Google_Service_Exception $e) {
@@ -1563,4 +1607,16 @@ function getclientgoogleapi() {
         }
     }
     return $client;
+}
+
+function getminutesfromlastconexion($cmid, $user) {
+    global $DB;
+    
+    $contextmodule = context_module::instance($cmid);
+
+    $sqllastparticipating = 'select timecreated from {logstore_standard_log} where contextid = '
+        .$contextmodule->id.' and (action = \'participating\' or action = \'enter\') and userid = '.$user.' order by timecreated DESC limit 1';
+    $usersconnected = $DB->get_record_sql($sqllastparticipating);
+
+    return $usersconnected->timecreated;
 }

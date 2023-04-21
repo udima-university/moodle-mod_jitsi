@@ -135,6 +135,17 @@ class mod_jitsi_external extends external_api {
         );
     }
 
+    public static function getminutesfromlastconexion_parameters() {
+        return new external_funciton_parameters(
+            array('cmid' => new external_value(PARAM_INT, 'Cm id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                  'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+        );
+    }
+
+    public static function getminutesfromlastconexion($cmid, $user) {
+        return getminutesfromlastconexion($cmid, $user);
+    }
+
     /**
      * Delete Video from youtube when jitsi get an error
      *
@@ -673,6 +684,30 @@ class mod_jitsi_external extends external_api {
         $client = getclientgoogleapi();
         $youtube = new Google_Service_YouTube($client);
 
+
+
+
+        $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
+        $source = new stdClass();
+        $source->account = $account->id;
+        $source->timecreated = time();
+        $source->userid = $userid;
+        $source->link = $broadcastsresponse['id'];
+
+        $record = new stdClass();
+        $record->jitsi = $jitsi;
+        $record->source = $DB->insert_record('jitsi_source_record', $source);
+        $record->deleted = 0;
+        $record->visible = 1;
+        $record->name = get_string('recordtitle', 'jitsi').' '.mb_substr($jitsiob->name, 0, 30);
+
+        $DB->insert_record('jitsi_record', $record);
+        $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
+        $jitsiob->sourcerecord = $record->source;
+        $DB->update_record('jitsi', $jitsiob);
+
+
+
         try {
             $broadcastsnippet = new Google_Service_YouTube_LiveBroadcastSnippet();
             $testdate = time();
@@ -682,7 +717,7 @@ class mod_jitsi_external extends external_api {
 
             $status = new Google_Service_YouTube_LiveBroadcastStatus();
             $status->setPrivacyStatus('unlisted');
-            $status->setSelfDeclaredMadeForKids('false');
+            $status->setSelfDeclaredMadeForKids('true');
             $contentdetails = new Google_Service_YouTube_LiveBroadcastContentDetails();
             $contentdetails->setEnableAutoStart(true);
             $contentdetails->setEnableAutoStop(true);
@@ -732,24 +767,28 @@ class mod_jitsi_external extends external_api {
             $result['errorinfo'] = $e->getMessage();
             return $result;
         }
-        $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
-        $source = new stdClass();
-        $source->account = $account->id;
-        $source->timecreated = time();
-        $source->userid = $userid;
+        // $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
+        // $source = new stdClass();
+        // $source->account = $account->id;
+        // $source->timecreated = time();
+        // $source->userid = $userid;
+        // $source->link = $broadcastsresponse['id'];
+
+        // $record = new stdClass();
+        // $record->jitsi = $jitsi;
+        // $record->source = $DB->insert_record('jitsi_source_record', $source);
+        // $record->deleted = 0;
+        // $record->visible = 1;
+        // $record->name = get_string('recordtitle', 'jitsi').' '.mb_substr($jitsiob->name, 0, 30);
+
+        // $DB->insert_record('jitsi_record', $record);
+        // $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
+        // $jitsiob->sourcerecord = $record->source;
+        // $DB->update_record('jitsi', $jitsiob);
+
+        $source = $DB->get_record('jitsi_source_record', array('id' => $record->source));
         $source->link = $broadcastsresponse['id'];
-
-        $record = new stdClass();
-        $record->jitsi = $jitsi;
-        $record->source = $DB->insert_record('jitsi_source_record', $source);
-        $record->deleted = 0;
-        $record->visible = 1;
-        $record->name = get_string('recordtitle', 'jitsi').' '.mb_substr($jitsiob->name, 0, 30);
-
-        $DB->insert_record('jitsi_record', $record);
-        $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
-        $jitsiob->sourcerecord = $record->source;
-        $DB->update_record('jitsi', $jitsiob);
+        $DB->update_record('jitsi_source_record', $source);
 
         $result = array();
         $result['stream'] = $streamsresponse['cdn']['ingestionInfo']['streamName'];
@@ -794,10 +833,8 @@ class mod_jitsi_external extends external_api {
         $params = self::validate_parameters(self::update_participants_parameters(),
                 array('jitsi' => $jitsi));
         $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
-        //TEsteo modificacion.
         $jitsiob->name = 'modificado';
         $DB->update_record('jitsi', $jitsiob);
-        // Fin TEsteo modificacion.
         return $jitsiob->numberofparticipants;
     }
 
@@ -877,5 +914,9 @@ class mod_jitsi_external extends external_api {
      */
     public static function get_participants_returns() {
         return new external_value(PARAM_INT, 'Number of partipants');
+    }
+
+    public static function getminutesfromlastconexion_returns() {
+        return new external_value(PARAM_INT, 'Last conexion timestamp');
     }
 }

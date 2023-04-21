@@ -90,7 +90,7 @@ $PAGE->set_url('/mod/jitsi/view.php', array('id' => $cm->id));
 
 $PAGE->set_title(format_string($jitsi->name));
 $PAGE->set_heading(format_string($course->fullname));
-
+echo getminutesfromlastconexion($cm->id, $USER->id);
 if ($deletejitsirecordid && confirm_sesskey($sesskey)) {
     marktodelete($deletejitsirecordid, 1);
     redirect($PAGE->url, get_string('deleted'));
@@ -239,8 +239,9 @@ if ($today[0] < $jitsi->timeclose || $jitsi->timeclose == 0) {
     if ($today[0] > (($jitsi->timeopen)) ||
         has_capability('mod/jitsi:moderation', $context) && $today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))) {
         echo $OUTPUT->box(get_string('instruction', 'jitsi'));
-        
-        $button = new single_button(new moodle_url('/mod/jitsi/session.php', $urlparams), get_string('access', 'jitsi'), 'get', ["class" => "btn btn-primary"]);
+
+        $button = new single_button(new moodle_url('/mod/jitsi/session.php', $urlparams),
+            get_string('access', 'jitsi'), 'get', ["class" => "btn btn-primary"]);
         $button->class = 'singlebutton jitsiaccess';
         $button->formid = 'accesssession';
         echo $OUTPUT->render($button);
@@ -332,7 +333,8 @@ if ($records && isallvisible($records) || $records && has_capability ('mod/jitsi
         $sourcerecord = $DB->get_record('jitsi_source_record', array('id' => $record->source));
         $context = context_module::instance($cm->id);
         if ($sourcerecord->link != null) {
-            if ($record->visible != 0 || (has_capability('mod/jitsi:record', $context) && has_capability('mod/jitsi:hide', $context))) {
+            if ($record->visible != 0 || (has_capability('mod/jitsi:record', $context)
+                && has_capability('mod/jitsi:hide', $context))) {
 
                 echo "<div class=\"col-sm-6\">";
                 echo "<div class=\"card\" >";
@@ -371,13 +373,13 @@ if ($records && isallvisible($records) || $records && has_capability ('mod/jitsi
                     echo "<iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/\"
                         allowfullscreen></iframe>";
                 }
-    
+
                 echo "</div>";
                 echo "<div class=\"row\">";
                 echo "<div class=\"col-sm\">";
                 echo "</div>";
                 echo "  <div class=\"col-sm\">";
-    
+
                 if (has_capability('mod/jitsi:deleterecord', $context) && !has_capability('mod/jitsi:hide', $context)) {
                     echo "<span class=\"align-middle text-right\"><p>".$deleteaction."</p></span>";
                 }
@@ -404,7 +406,6 @@ if ($records && isallvisible($records) || $records && has_capability ('mod/jitsi
                 echo "</div>";
             }
         }
-        
     }
     echo "</div>";
 } else {

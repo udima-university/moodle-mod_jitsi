@@ -231,3 +231,6 @@ $string['videoexpiry'] = 'Retention period';
 $string['videoexpiryex'] = 'Time a deleted video will be available in the streaming server. After this time the video will be deleted from the streaming server.';
 $string['recordsonair'] = 'Recordings on air';
 $string['error'] = 'Error';
+$string['recordingwasbloquedby'] = 'This recording was blocked by ';
+$string['buthasbeenout'] = ' but has been out of session for some time. Do you want to unlock it?';
+

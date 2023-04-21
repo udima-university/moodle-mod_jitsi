@@ -200,4 +200,14 @@ $functions = array(
                 'loginrequired' => false,
                 'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'),
         ),
+
+        'mod_jitsi_getminutesfromlastconexion' => array(
+                'classname' => 'mod_jitsi_external',
+                'methodname' => 'getminutesfromlastconexion',
+                'description' => 'Get minutes from last conexion',
+                'type' => 'read',
+                'ajax' => true,
+                'loginrequired' => false,
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'),
+        ),
 );
