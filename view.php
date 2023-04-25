@@ -240,11 +240,13 @@ if ($today[0] < $jitsi->timeclose || $jitsi->timeclose == 0) {
         has_capability('mod/jitsi:moderation', $context) && $today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))) {
         echo $OUTPUT->box(get_string('instruction', 'jitsi'));
 
-        $button = new single_button(new moodle_url('/mod/jitsi/session.php', $urlparams),
-            get_string('access', 'jitsi'), 'get', ["class" => "btn btn-primary"]);
-        $button->class = 'singlebutton jitsiaccess';
-        $button->formid = 'accesssession';
-        echo $OUTPUT->render($button);
+        $button = new moodle_url('/mod/jitsi/session.php', $urlparams);
+        $options = array(
+            'class' => 'btn btn-primary',
+            'title' => get_string('access', 'jitsi'),
+        );
+        $boton = \html_writer::link($button, get_string('access', 'jitsi'), $options);
+        echo $boton;
     } else {
         echo $OUTPUT->box(get_string('nostart', 'jitsi', userdate($jitsi->timeopen)));
     }
