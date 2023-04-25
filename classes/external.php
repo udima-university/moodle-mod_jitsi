@@ -135,8 +135,20 @@ class mod_jitsi_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     */
+    public static function stop_stream_noauthor_parameters() {
+        return new external_function_parameters(
+            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                  'userid' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+        );
+    }
+
     public static function getminutesfromlastconexion_parameters() {
-        return new external_funciton_parameters(
+        return new external_function_parameters(
             array('cmid' => new external_value(PARAM_INT, 'Cm id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
                   'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
         );
@@ -652,6 +664,25 @@ class mod_jitsi_external extends external_api {
     }
 
     /**
+     * Stop stream with youtube by error
+     * @param int $jitsi Jitsi session id
+     * @return array result
+     */
+    public static function stop_stream_noauthor($jitsi, $userid) {
+        global $CFG, $DB;
+
+        $params = self::validate_parameters(self::stop_stream_byerror_parameters(),
+                array('jitsi' => $jitsi, 'userid' => $userid));
+        $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
+        if ($userid != $jitsiob->sourcerecord) {
+            $jitsiob->sourcerecord = null;
+            $DB->update_record('jitsi', $jitsiob);
+            return 'authordeleted';
+        }
+        return 'authornotdeleted';
+    }
+
+    /**
      * Start stream with youtube
      * @param int $session session
      * @param int $jitsi Jitsi session id
@@ -684,9 +715,6 @@ class mod_jitsi_external extends external_api {
         $client = getclientgoogleapi();
         $youtube = new Google_Service_YouTube($client);
 
-
-
-
         $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
         $source = new stdClass();
         $source->account = $account->id;
@@ -705,8 +733,6 @@ class mod_jitsi_external extends external_api {
         $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
         $jitsiob->sourcerecord = $record->source;
         $DB->update_record('jitsi', $jitsiob);
-
-
 
         try {
             $broadcastsnippet = new Google_Service_YouTube_LiveBroadcastSnippet();
@@ -767,24 +793,6 @@ class mod_jitsi_external extends external_api {
             $result['errorinfo'] = $e->getMessage();
             return $result;
         }
-        // $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
-        // $source = new stdClass();
-        // $source->account = $account->id;
-        // $source->timecreated = time();
-        // $source->userid = $userid;
-        // $source->link = $broadcastsresponse['id'];
-
-        // $record = new stdClass();
-        // $record->jitsi = $jitsi;
-        // $record->source = $DB->insert_record('jitsi_source_record', $source);
-        // $record->deleted = 0;
-        // $record->visible = 1;
-        // $record->name = get_string('recordtitle', 'jitsi').' '.mb_substr($jitsiob->name, 0, 30);
-
-        // $DB->insert_record('jitsi_record', $record);
-        // $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
-        // $jitsiob->sourcerecord = $record->source;
-        // $DB->update_record('jitsi', $jitsiob);
 
         $source = $DB->get_record('jitsi_source_record', array('id' => $record->source));
         $source->link = $broadcastsresponse['id'];
@@ -865,6 +873,14 @@ class mod_jitsi_external extends external_api {
      * @return external_description
      */
     public static function stop_stream_byerror_returns() {
+        return new external_value(PARAM_TEXT, 'State');
+    }
+
+    /**
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function stop_stream_noauthor_returns() {
         return new external_value(PARAM_TEXT, 'State');
     }
 

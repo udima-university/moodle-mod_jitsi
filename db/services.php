@@ -210,4 +210,14 @@ $functions = array(
                 'loginrequired' => false,
                 'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'),
         ),
+
+        'mod_jitsi_stop_stream_noauthor' => array(
+                'classname' => 'mod_jitsi_external',
+                'methodname' => 'stop_stream_byerror',
+                'description' => 'Stop stream by error',
+                'type' => 'write',
+                'ajax' => true,
+                'loginrequired' => false,
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'),
+        ),
 );

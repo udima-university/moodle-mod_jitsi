@@ -90,7 +90,7 @@ $PAGE->set_url('/mod/jitsi/view.php', array('id' => $cm->id));
 
 $PAGE->set_title(format_string($jitsi->name));
 $PAGE->set_heading(format_string($course->fullname));
-echo getminutesfromlastconexion($cm->id, $USER->id);
+
 if ($deletejitsirecordid && confirm_sesskey($sesskey)) {
     marktodelete($deletejitsirecordid, 1);
     redirect($PAGE->url, get_string('deleted'));
