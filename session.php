@@ -88,7 +88,7 @@ if ($jitsi->sourcerecord != null) {
     .$contextmodule->id.' and (action = \'participating\' or action = \'enter\') order by timecreated DESC limit 1';
     $usersconnected = $DB->get_record_sql($sqllastparticipating);
 
-    if ($jitsi->numberofparticipants == 1 && (getdate()[0] - $usersconnected->timecreated) > 72 ) {
+    if (($jitsi->numberofparticipants == 1 || $jitsi->numberofparticipants == 0) && (getdate()[0] - $usersconnected->timecreated) > 72 ) {
         $jitsi->sourcerecord = null;
         $DB->update_record('jitsi', $jitsi);
     }
