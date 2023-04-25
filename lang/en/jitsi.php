@@ -192,7 +192,7 @@ $string['confirmdeleterecordinactivity'] = 'Confirm you want to delete this reco
 $string['errordeleting'] = 'Error deleting';
 $string['minpretime_help'] = 'Users with moderation permissions will be able to access these minutes before the start';
 $string['domain'] = 'Domain';
-$string['domainex'] = 'Domain Jitsi Server to use. You can search in Google for alternative public Jitsi servers that could be nearest to your users and with less latency.
+$string['domainex'] = 'Domain Jitsi Server to use. Default server (meet.jit.si) have a time limit of 5 minutes. You can search in Google for alternative public Jitsi servers that could be nearest to your users and with less latency.
  If you have your private own Jitsi Server inform it here without "https://".';
 $string['sessionisbeingrecorded'] = 'Session is being recorded';
 $string['recordtitle'] = 'Record';
@@ -202,7 +202,7 @@ $string['validitytimevalidation'] = 'The invitation cannot expire before the ses
 $string['privatekey'] = 'Private key';
 $string['tokennconfig8x8'] = '8x8 Servers configuration';
 $string['tokenconfiguration8x8ex'] = 'If you use 8x8 servers you need to configure the following parameters.';
-$string['privatekeyex'] = 'Private key to sign the token with 8x8 server. You can get it from the 8x8 server administration. (https://jaas.8x8.com/)';
+$string['privatekeyex'] = 'Private key to sign the token with 8x8 server. You can get it from the 8x8 server administration. (https://jaas.8x8.com/). Download the private key file and copy the content here.';
 $string['apikeyid8x8'] = 'Api Key ID';
 $string['apikeyid8x8ex'] = 'Api Key ID to use with 8x8 server. You can get it from the 8x8 server administration. (https://jaas.8x8.com/)';
 $string['nojitsis'] = 'No Jitsi activities found';
@@ -232,4 +232,3 @@ $string['videoexpiryex'] = 'Time a deleted video will be available in the stream
 $string['recordsonair'] = 'Recordings on air';
 $string['error'] = 'Error';
 $string['recordingwasbloquedby'] = 'The user who started this recording is no longer participating in the session. Do you want to stop this recording? It was started by ';
-
