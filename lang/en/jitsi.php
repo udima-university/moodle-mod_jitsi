@@ -232,3 +232,6 @@ $string['videoexpiryex'] = 'Time a deleted video will be available in the stream
 $string['recordsonair'] = 'Recordings on air';
 $string['error'] = 'Error';
 $string['recordingwasbloquedby'] = 'The user who started this recording is no longer participating in the session. Do you want to stop this recording? It was started by ';
+$string['news'] = 'News';
+$string['news1'] = 'lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
+$string['config'] = 'Configuration';

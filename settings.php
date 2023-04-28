@@ -27,6 +27,10 @@ global $DB, $CFG;
 
 if ($ADMIN->fulltree) {
     require_once($CFG->dirroot.'/mod/jitsi/lib.php');
+    $settings->add(new admin_setting_heading('jitsi/news', get_string('news', 'jitsi'),
+    html_writer::tag('p', get_string('news1', 'jitsi'))));
+    $settings->add(new admin_setting_heading('jitsi/config', get_string('config', 'jitsi'),
+    ''));
     $settings->add(new admin_setting_configtext('jitsi_domain', 'Domain', 'Domain Jitsi Server', 'meet.jit.si'));
     $settings->add(new admin_setting_configtext('jitsi_domain', get_string('domain', 'jitsi'),
         get_string('domainex', 'jitsi'), 'meet.jit.si'));
@@ -157,7 +161,6 @@ if ($ADMIN->fulltree) {
     if ($CFG->branch > 36) {
         $settings->hide_if('jitsi/8x8apikey_id', 'jitsi/tokentype', 'in', '1|0');
     }
-
 
     // Experimental Section.
     $settings->add(new admin_setting_heading('jitsiexperimental', get_string('experimental', 'jitsi'),
