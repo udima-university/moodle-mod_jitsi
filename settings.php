@@ -40,13 +40,13 @@ if ($ADMIN->fulltree) {
         'nameandsurname' => get_string('nameandsurname', 'jitsi'),
         'alias' => get_string('alias', 'jitsi')];
     $settings->add(new admin_setting_configselect('jitsi_id', get_string('identification', 'jitsi'),
-        get_string('identificationex', 'jitsi'), null, $options));
+        get_string('identificationex', 'jitsi'), 'username', $options));
     $sessionoptions = ['Course Shortname', 'Session ID', 'Session Name'];
     $sessionoptionsdefault = [0, 1, 2];
 
     $optionsseparator = ['.', '-', '_', 'empty'];
     $settings->add(new admin_setting_configselect('jitsi_separator',
-        get_string('separator', 'jitsi'), get_string('separatorex', 'jitsi'), '.', $optionsseparator));
+        get_string('separator', 'jitsi'), get_string('separatorex', 'jitsi'), 0, $optionsseparator));
     $settings->add(new admin_setting_configmultiselect('jitsi_sesionname',
         get_string('sessionnamefields', 'jitsi'), get_string('sessionnamefieldsex', 'jitsi'),
         $sessionoptionsdefault, $sessionoptions));
@@ -92,7 +92,7 @@ if ($ADMIN->fulltree) {
 
     $streamingoptions = ['0' => get_string('jitsiinterface', 'jitsi'), '1' => get_string('integrated', 'jitsi')];
     $settings->add(new admin_setting_configselect('jitsi_streamingoption', get_string('streamingoption', 'jitsi'),
-        get_string('streamingoptionex', 'jitsi'), null, $streamingoptions));
+        get_string('streamingoptionex', 'jitsi'), '0', $streamingoptions));
 
     $settings->add(new admin_setting_configtext('jitsi_oauth_id', get_string('oauthid', 'jitsi'),
             get_string('oauthidex', 'jitsi', $CFG->wwwroot.'/mod/jitsi/auth.php'), ''));
