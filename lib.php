@@ -1118,7 +1118,9 @@ function marktodelete($idrecord, $option) {
     } else if ($option == 2) {
         $record->deleted = 2;
     }
-    togglestate($source->link);
+    if (isdeletable($source->id)) {
+        togglestate($source->link);
+    }
     $DB->update_record('jitsi_record', $record);
 }
 
@@ -1152,7 +1154,7 @@ function isdeletable($sourcerecord) {
  */
 function deleterecordyoutube($idsource) {
     global $CFG, $DB, $PAGE;
-
+    $res = false;
     $source = $DB->get_record('jitsi_source_record', array('id' => $idsource));
     $account = $DB->get_record('jitsi_record_account', array('id' => $source->account));
     if (isdeletable($idsource)) {
@@ -1234,6 +1236,7 @@ function deleterecordyoutube($idsource) {
                     try {
                         $youtube->videos->delete($source->link);
                         delete_jitsi_record($idsource);
+                        return true;
                     } catch (Google_Service_Exception $e) {
                         throw new \Exception("exception".$e->getMessage());
                     } catch (Google_Exception $e) {
@@ -1247,7 +1250,7 @@ function deleterecordyoutube($idsource) {
             delete_jitsi_record($idsource);
         }
     }
-    return true;
+    return $res;
 }
 
  /**
