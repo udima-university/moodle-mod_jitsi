@@ -192,8 +192,10 @@ $string['confirmdeleterecordinactivity'] = 'Confirm you want to delete this reco
 $string['errordeleting'] = 'Error deleting';
 $string['minpretime_help'] = 'Users with moderation permissions will be able to access these minutes before the start';
 $string['domain'] = 'Domain';
-$string['domainex'] = 'Domain Jitsi Server to use. Default server (meet.jit.si) have a time limit of 5 minutes. You can search in Google for alternative public Jitsi servers that could be nearest to your users and with less latency.
- If you have your private own Jitsi Server inform it here without "https://".';
+$string['domainex'] = 'Domain Jitsi Server to use. Default server (<b>meet.jit.si</b>) have a time limit of 5 minutes per conference. 
+ You can search in Google for alternative public Jitsi servers that could be nearest to your users and with less latency.
+ If you have your private own Jitsi Server inform it here without "https://". 
+ The 8x8 professional server uses to be (<b>8x8.vc</b>) and requires to config your credentials in the bellow "Token Configuration" section.';
 $string['sessionisbeingrecorded'] = 'Session is being recorded';
 $string['recordtitle'] = 'Record';
 $string['preparing'] = 'Preparing. Please wait...';
@@ -202,7 +204,9 @@ $string['validitytimevalidation'] = 'The invitation cannot expire before the ses
 $string['privatekey'] = 'Private key';
 $string['tokennconfig8x8'] = '8x8 Servers configuration';
 $string['tokenconfiguration8x8ex'] = 'If you use 8x8 servers you need to configure the following parameters.';
-$string['privatekeyex'] = 'Private key to sign the token with 8x8 server. You can get it from the 8x8 server administration. (https://jaas.8x8.com/). Download the private key file and copy the content here.';
+$string['privatekeyex'] = 'Private key to sign the token with 8x8 server. You can get it from the 8x8 server administration. (https://jaas.8x8.com/). 
+Download the private key file and copy the content here.
+</br><b>IMPORTANT</b>: remember to update the "Domain" setting to something like <b>8x8.vc</b>';
 $string['apikeyid8x8'] = 'Api Key ID';
 $string['apikeyid8x8ex'] = 'Api Key ID to use with 8x8 server. You can get it from the 8x8 server administration. (https://jaas.8x8.com/)';
 $string['nojitsis'] = 'No Jitsi activities found';
@@ -218,11 +222,11 @@ $string['staticinvitationlinkexview'] = 'Share this link for users who are not e
 $string['jitsi:deleterecord'] = 'Delete record';
 $string['jitsi:editrecordname'] = 'Edit record name';
 $string['whiteboard'] = 'Whiteboard';
-$string['whiteboardex'] = 'Show the whiteboard button to all users.';
+$string['whiteboardex'] = 'Show the whiteboard button to all users. Actually Whiteboard is not available on Jaas Servers.';
 $string['streamingisstarting'] = 'Streaming is starting. Please wait...';
 $string['sessionisbeingrecordingby'] = 'Session is being recorded by {$a}';
 $string['recordingbloquedby'] = 'The recording is blocked by ';
-$string['livesessionsnow'] = 'Live sessions now';
+$string['livesessionsnow'] = 'Recordings on air';
 $string['norecords'] = 'No recordings available';
 $string['crontaskdelete'] = 'Delete recordings';
 $string['numbervideosdeleted'] = 'Number of videos to delete';
@@ -233,6 +237,15 @@ $string['recordsonair'] = 'Recordings on air';
 $string['error'] = 'Error';
 $string['recordingwasbloquedby'] = 'The user who started this recording is no longer participating in the session. Do you want to stop this recording? It was started by ';
 $string['news'] = 'News';
-$string['news1'] = 'lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
+$string['news1'] = '<div class="alert alert-info" role="alert"><center>If you have recently upgraded,
+ it is recommended that you check the <a href="../mod/jitsi/CHANGES.md">CHANGES.md</a> for updates and set your language to English to be sure you read updated instructions on this configuration screen.
+ </br></br><b>IMPORTANT NOTICE</b>
+ </br>Recently the meet.jit.si public servers have implemented restrictions for the embed mode that limit to 5 minutes per conference 
+ (<a href="https://github.com/udima-university/moodle-mod_jitsi#important-announcement-from-meetjitsi-team">read more here</a>).
+ </br>If you want to hire professional hosting services for Jitsi, we recommend <a href="https://jaas.8x8.vc/">https://jaas.8x8.vc/</a>.
+ It is run by the Jitsi developers, they have <b>very competitive prices</b> and this way you help to keep alive the Jitsi Open Source Project. 
+ You can <b>enjoy an 80% discount</b> on the first 3 months <b>using the coupon MOODLE23</b> when you sign up for your account.
+ </br></br><b>DISCLAIMER</b></br>This plugin is maintained by UDIMA University (<a href="https://www.udima.es">www.udima.es</a>) and is not related or partner 
+ with 8x8 Inc nor with "Jitsi as a service" (jaas).</center></div>';
 $string['config'] = 'Configuration';
 $string['deleterecord'] = 'Delete record';

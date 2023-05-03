@@ -3,7 +3,7 @@ This plugin (**mod_jitsi**) allows teachers **create webconference activities** 
 
 **Jitsi Meet** is an open-source videoconferencing solution that enables you to easily build and implement secure video conferencing. If you don't know about Jitsi Meet you can try it at https://meet.jit.si/. Many commercial web conference services are deployed using Jitsi Meet because it is extremely scalable. More information about Jitsi can be found at https://jitsi.org/
 
-**Out of the box the plugin works** using the public Jitsi Meet Servers (meet.jit.si). **It's a free ** and that's the best way to test if this plugin satisfies you. Most of the features in this plugin are available using the public server.
+**Out of the box the plugin works** using the public Jitsi Meet Servers (meet.jit.si). **It's free** and that's the best way to test if this plugin satisfies you. Most of the features in this plugin are available using the public server but probably you'll be restricted to 5 minutes per conference (read more below).
 
 Stop reading here... try the plugin now in your test Moodle environment and return later to continue reading.
 
@@ -26,7 +26,7 @@ Glad to see you here again. These are some of the Jitsi features inside Moodle y
 * Virtual Backgrounds
 * YouTube video sharing... pause, rewind and comment videos with all your students (cool)
 * Full moderation control in order to silence or kickoff students (token based mode recomended... see below)
-* YouTube streaming and **automatic recordings publishing** in your course  (really cool)
+* YouTube streaming and **automatic recordings publishing** in your course...  really cool (requires the streaming configuration... see below)
 * and others...
 
 ## Permissions
@@ -39,6 +39,8 @@ Most of them are available at the activity level so a teachers can override some
 
 - **Add a new Jitsi** (mod/jitsi:addinstance): allow to create Jitsi activities.
 - **View and copy invite links for guest users** (mod/jitsi:createlink): a teacher could allow students to share the invitation links for guest users.
+- **Delete record** (mod/jitsi:deleterecord): allow to mark a recording as deleted. The recording will be set as private in YouTube.  Recordings marked as deleted will be deleted in YouTube with the scheduled task (\mod_jitsi\task\cron_task_delete) or by the admin from a list. You may want to prevent non-editing teachers from deleting recordings.
+- **Edit record name** (mod/jitsi:editrecordname): allow to rename the title in a recording. You may want to prevent non-editing teachers from renaming recordings.
 - **Hide recordings** (mod/jitsi:hide): allow to hide recordings. You may want to prevent non-editing teachers from hiding recordings.
 - **Jitsi Moderation** (mod/jitsi:moderation): determine who is moderator in sessions. When "Token configuration" is set only users with this rol are promoted as Jitsi moderators and this icon ![image-20220309175303324](doc/pix/moderator_icon.png)is displayed with these users. When "Token configuration" is missing some buttons and features like "mute-everyone" or "kick off participant" are hidden to non moderator user but you must be careful because we are not able to hide all moderation options in scenarios without token configuration and experienced users may be able to bypass these restrictions.
 - **Record session** (mod/jitsi:record): allow to start recordings. You could create Jitsi Sessions where students could record themselves.
@@ -59,7 +61,7 @@ Recordings will remain on "unlisted" mode in the YouTube accounts so nobody will
 
 ![recordings](doc/pix/recordings.png)
 
-Teachers can hide or deleted the recordings in the Jitsi activities but only administrators can order to completely delete the recording in YouTube. This is because backup and restore tasks with user data could cause a recording to be available in different courses (or different Moodle environments).
+Teachers can hide or deleted the recordings in the Jitsi activities but only administrators can order to completely delete the recording in YouTube. This is because backup and restore tasks with user data could cause a recording to be available in different courses (or different Moodle environments). Now an scheduled task is configured by default in order to  remove recordings in YouTube. You can set the retention period for this automatic deletion task.
 
 All the magic works using **YouTube v3 APIs** in order to:
 
@@ -106,7 +108,7 @@ If you decide to deploy this plugin in production you may would like to install 
 
 Jitsi Meet deployment servers can be complex and is beyond the scope of this article but you can review our ansible playbook ([ansible-jitsi-meet](https://github.com/udima-university/ansible-jitsi-meet)).
 
-Alternatively you could explore on buying Jitsi Meet as a service with some provider (ie: https://jaas.8x8.vc).
+Alternatively you could explore on buying Jitsi Meet as a service with some provider (ie: https://jaas.8x8.vc) with an important discount for Moodle users (read more below).
 
 Many Governmental Education Institutions deploy their own Jitsi servers to be used by their schools or universities... you could ask them if they provide Jitsi token credentials for this configuration.
 
@@ -114,6 +116,23 @@ Basically the token configuration send your teachers (or roles with the mod/jits
 
 ## Recommendations when using public Jitsi servers
 
-As we said "out of the box", the plugin connects with the public servers at meet.jit.si but there many other public Jitsi Meet servers... just make some search with Google.  If your institution haven't enough resources to deploy their own Jitsi servers it's OK to use public servers and meet.jit.si is a very robust server but you should test other servers in order to be able change in case of a disruption service or maybe because you find a public server nearest to your users and with less latency.
+As we said "out of the box", the plugin connects with the public servers at meet.jit.si but there many other public Jitsi Meet servers... just make some search with Google or look at the [Community-run instances list](https://jitsi.github.io/handbook/docs/community/community-instances/).  You should test other servers in order to be able change in case of a disruption service or maybe because you find a public server nearest to your users and with less latency.
 
-With our default configuration in NO token mode, students can mute or kickoff participants (including teachers), using the "Panel participants" but this is notified to all the participants so students could be punished. If that's not a problem for you we recommend the default settings, but if that disturbs you, you could disable the "Participants panel" and the "Raise hand button" in the plugin configuration loosing those features for your students. We like think students are good... so we recommend to start without restrictions. You must decide.
+## Important announcement from meet.jit.si team
+
+The **meet.jit.si** team recently announced that the embed mode, required by our plugin, **is now restricted and they only allow to use it for 5 minutes on every conference**, but this is enough in order to test if this fits to you. You can [read about this announcement here](https://community.jitsi.org/t/important-embedding-meet-jit-si-in-your-web-app-will-no-longer-be-supported-please-use-jaas/). We would like to thank them for providing such a good service for so many years without restrictions, which helped many schools to continue their activities during the Covid pandemic.
+
+ **Jitsi is Open Source** and you can **install your own Jitsi Server** or to **rent the service from https://jaas.8x8.vc/** with an **important discount for you**. Probably you could find other unofficial sites providing professional hosting for Jitsi, but 8x8 is the company which supports the Jitsi project and buying their services is the best way to support the project in order to guarantee it's future.
+
+## Discount from 8x8 on Jitsi as a Service (jaas)
+
+If you decide to rent Jitsi as service from https://jaas.8x8.vc/ you can use the coupon **MOODLE23** in order to get an **80% discount for three months on the three JaaS packages**. This means,  for your first three months, you can have up to 300 users for $20/month, 1500 users for $100/month and 3000 users for $200/month.
+
+## Disclaimer
+
+This plugin is maintained by UDIMA University (www.udima.es) and is not related or partner with 8x8 Inc nor with "Jitsi as a service" (jaas).
+
+
+
+
+
