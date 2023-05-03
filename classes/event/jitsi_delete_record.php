@@ -77,7 +77,8 @@ class jitsi_delete_record extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' delete record with id {$this->other['record']} with link: https://www.youtube.com/watch?v={$this->other['link']}";
+        return "The user with id '$this->userid' delete record with id {$this->other['record']}
+             with link: https://www.youtube.com/watch?v={$this->other['link']}";
     }
 
     /**
