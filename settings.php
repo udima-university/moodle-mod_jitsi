@@ -144,12 +144,6 @@ if ($ADMIN->fulltree) {
     }
 
     // 8x8 servers token configuration
-    $settings->add(new admin_setting_configtextarea('jitsi/privatykey', get_string('privatekey', 'jitsi'),
-        get_string('privatekeyex', 'jitsi'), '', PARAM_TEXT));
-    if ($CFG->branch > 36) {
-        $settings->hide_if('jitsi/privatykey', 'jitsi/tokentype', 'in', '1|0');
-    }
-
     $settings->add(new admin_setting_configtext('jitsi/8x8app_id', get_string('appid', 'jitsi'),
         get_string('appidex', 'jitsi'), null));
     if ($CFG->branch > 36) {
@@ -160,6 +154,12 @@ if ($ADMIN->fulltree) {
         get_string('apikeyid8x8ex', 'jitsi'), null));
     if ($CFG->branch > 36) {
         $settings->hide_if('jitsi/8x8apikey_id', 'jitsi/tokentype', 'in', '1|0');
+    }
+
+    $settings->add(new admin_setting_configtextarea('jitsi/privatykey', get_string('privatekey', 'jitsi'),
+    get_string('privatekeyex', 'jitsi'), '', PARAM_TEXT));
+    if ($CFG->branch > 36) {
+        $settings->hide_if('jitsi/privatykey', 'jitsi/tokentype', 'in', '1|0');
     }
 
     // Experimental Section.
