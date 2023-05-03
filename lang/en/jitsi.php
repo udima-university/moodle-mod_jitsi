@@ -237,7 +237,7 @@ $string['recordsonair'] = 'Recordings on air';
 $string['error'] = 'Error';
 $string['recordingwasbloquedby'] = 'The user who started this recording is no longer participating in the session. Do you want to stop this recording? It was started by ';
 $string['news'] = 'News';
-$string['news1'] = '<div class="alert alert-info" role="alert"><center>If you have recently upgraded,
+$string['news1'] = 'If you have recently upgraded,
  it is recommended that you check the <a href="../mod/jitsi/CHANGES.md">CHANGES.md</a> for updates and set your language to English to be sure you read updated instructions on this configuration screen.
  </br></br><b>IMPORTANT NOTICE</b>
  </br>Recently the meet.jit.si public servers have implemented restrictions for the embed mode that limit to 5 minutes per conference 
@@ -246,6 +246,6 @@ $string['news1'] = '<div class="alert alert-info" role="alert"><center>If you ha
  It is run by the Jitsi developers, they have <b>very competitive prices</b> and this way you help to keep alive the Jitsi Open Source Project. 
  You can <b>enjoy an 80% discount</b> on the first 3 months <b>using the coupon MOODLE23</b> when you sign up for your account.
  </br></br><b>DISCLAIMER</b></br>This plugin is maintained by UDIMA University (<a href="https://www.udima.es">www.udima.es</a>) and is not related or partner 
- with 8x8 Inc nor with "Jitsi as a service" (jaas).</center></div>';
+ with 8x8 Inc nor with "Jitsi as a service" (jaas).';
 $string['config'] = 'Configuration';
 $string['deleterecord'] = 'Delete record';
