@@ -93,6 +93,17 @@ $PAGE->set_heading(format_string($course->fullname));
 
 if ($deletejitsirecordid && confirm_sesskey($sesskey)) {
     marktodelete($deletejitsirecordid, 1);
+    $record = $DB->get_record('jitsi_record', array('id' => $deletejitsirecordid));
+    $source = $DB->get_record('jitsi_source_record', array('id' => $record->source));
+    $event = \mod_jitsi\event\jitsi_delete_record::create(array(
+        'objectid' => $PAGE->cm->instance,
+        'context' => $PAGE->context,
+        'other' => array('record' => $deletejitsirecordid, 'link' => $source->link)
+      ));
+    $event->add_record_snapshot('course', $PAGE->course);
+    $event->add_record_snapshot($PAGE->cm->modname, $jitsi);
+    $event->trigger();
+
     redirect($PAGE->url, get_string('deleted'));
 }
 
