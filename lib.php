@@ -1118,7 +1118,8 @@ function marktodelete($idrecord, $option) {
     } else if ($option == 2) {
         $record->deleted = 2;
     }
-    if (isdeletable($source->id)) {
+    $records = $DB->get_records('jitsi_record', array('source' => $record->source));
+    if (count($records) == 1) {
         togglestate($source->link);
     }
     $DB->update_record('jitsi_record', $record);
