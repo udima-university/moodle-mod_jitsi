@@ -61,7 +61,8 @@ echo $OUTPUT->heading(get_string('recordsonair', 'jitsi'));
 
 if (is_siteadmin()) {
     $sqljitsilive = 'select {jitsi}.id,
-                    {jitsi}.sourcerecord
+                    {jitsi}.sourcerecord, 
+                    {jitsi}.numberofparticipants
                     from {jitsi}
                     where {jitsi}.sourcerecord > 0';
     $jitsilives = $DB->get_records_sql($sqljitsilive);
@@ -85,11 +86,15 @@ if (is_siteadmin()) {
                     $coursemodule = get_coursemodule_from_instance('jitsi', $jitsilive->id);
                     $urljitsiparams = array('id' => $coursemodule->id);
                     $urljitsi = new moodle_url('/mod/jitsi/view.php', $urljitsiparams);
+                    $urlcourse = new moodle_url('/course/view.php', array('id' => $coursemodule->course));
+                    $course = $DB->get_record('course', array('id' => $coursemodule->course));
                     echo "<div class=\"card\" >";
                     echo "<div class=\"card-body\">";
                     echo "<h5 class=\"card-title\">";
-                    echo "<a href=".$urljitsi.">".$sourcelive->name."</a>";
+                    echo "<a href=".$urljitsi." >".$sourcelive->name."</a> (".$jitsilive->numberofparticipants.")";
                     echo "</h5>";
+                    echo "<h6 class=\"card-subtitle mb-2 text-muted\"><a href=".$urljitsi."
+                        data-toggle=\"tooltip\" data-placement=\"top\" title=\"".$course->fullname."\">".$course->shortname."</a></h6>";
                     echo "<h6 class=\"card-subtitle mb-2 text-muted\">".userdate($sourcelive->timecreated)."</h6>";
                     if ($sourcelive->embed == 0) {
                         doembedable($sourcelive->link);
