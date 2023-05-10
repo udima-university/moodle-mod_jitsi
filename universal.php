@@ -43,9 +43,12 @@ $PAGE->set_cm($cm);
 
 $PAGE->set_context(context_module::instance($cm->id));
 
+$navigator = $_SERVER['HTTP_USER_AGENT'];
+
 $event = \mod_jitsi\event\jitsi_session_enter::create(array(
   'objectid' => $PAGE->cm->instance,
   'context' => $PAGE->context,
+  'other' => array('navigator' => $navigator)
 ));
 $event->add_record_snapshot('course', $PAGE->course);
 $event->add_record_snapshot($PAGE->cm->modname, $sesion);
