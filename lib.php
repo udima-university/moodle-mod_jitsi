@@ -808,9 +808,9 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "          fail: notification.exception\n";
         echo "      }]);\n";
         echo "   ;});";
-    echo "});\n";
+        echo "});\n";
 
-    echo "api.on('participantJoined', function () {\n";
+        echo "api.on('participantJoined', function () {\n";
         echo " console.log('Participant joined');\n";
         echo "  const numberOfParticipants = api.getNumberOfParticipants();\n";
         echo "  require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
@@ -820,9 +820,9 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "          fail: notification.exception\n";
         echo "      }]);\n";
         echo "   ;});";
-    echo "});\n";
+        echo "});\n";
 
-    echo "api.on('videoConferenceJoined', function () {\n";
+        echo "api.on('videoConferenceJoined', function () {\n";
         echo " console.log('Local Participant joined');\n";
         echo "  const numberOfParticipants = api.getNumberOfParticipants();\n";
         echo "  require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
@@ -832,9 +832,9 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "          fail: notification.exception\n";
         echo "      }]);\n";
         echo "   ;});";
-    echo "});\n";
+        echo "});\n";
 
-    echo "api.on('videoConferenceLeft', function () {\n";
+        echo "api.on('videoConferenceLeft', function () {\n";
         echo " console.log('Local Participant left');\n";
         echo "  const numberOfParticipants = api.getNumberOfParticipants();\n";
         echo "  require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
@@ -844,7 +844,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "          fail: notification.exception\n";
         echo "      }]);\n";
         echo "   ;});";
-    echo "});\n";
+        echo "});\n";
 
         // Registro de los diferentes botones.
         echo "api.addEventListener('toolbarButtonClicked', function(event) {\n";

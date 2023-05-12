@@ -445,7 +445,7 @@ class mod_jitsi_external extends external_api {
         return new external_function_parameters(
             array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
                     'numberofparticipants' =>
-                        new external_value(PARAM_INT, 'Number of participants', VALUE_REQUIRED, '', NULL_NOT_ALLOWED), 
+                        new external_value(PARAM_INT, 'Number of participants', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
                     'link' => new external_value(PARAM_TEXT, 'Jitsi link'))
         );
     }
@@ -924,7 +924,7 @@ class mod_jitsi_external extends external_api {
                 'error' => new external_value(PARAM_TEXT, 'error'),
                 'user' => new external_value(PARAM_INT, 'user id'),
                 'usercomplete' => new external_value(PARAM_TEXT, 'user complete name'),
-                'errorinfo' => new external_value(PARAM_TEXT, 'error info'), 
+                'errorinfo' => new external_value(PARAM_TEXT, 'error info'),
                 'link' => new external_value(PARAM_TEXT, 'link')
             )
         );

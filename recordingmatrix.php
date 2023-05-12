@@ -61,7 +61,7 @@ echo $OUTPUT->heading(get_string('recordsonair', 'jitsi'));
 
 if (is_siteadmin()) {
     $sqljitsilive = 'select {jitsi}.id,
-                    {jitsi}.sourcerecord, 
+                    {jitsi}.sourcerecord,
                     {jitsi}.numberofparticipants
                     from {jitsi}
                     where {jitsi}.sourcerecord > 0';
@@ -94,7 +94,8 @@ if (is_siteadmin()) {
                     echo "<a href=".$urljitsi." >".$sourcelive->name."</a> (".$jitsilive->numberofparticipants.")";
                     echo "</h5>";
                     echo "<h6 class=\"card-subtitle mb-2 text-muted\"><a href=".$urljitsi."
-                        data-toggle=\"tooltip\" data-placement=\"top\" title=\"".$course->fullname."\">".$course->shortname."</a></h6>";
+                        data-toggle=\"tooltip\" data-placement=\"top\" title=\"".$course->fullname."\">".
+                        $course->shortname."</a></h6>";
                     echo "<h6 class=\"card-subtitle mb-2 text-muted\">".userdate($sourcelive->timecreated)."</h6>";
                     if ($sourcelive->embed == 0) {
                         doembedable($sourcelive->link);
