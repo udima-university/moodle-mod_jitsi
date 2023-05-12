@@ -804,7 +804,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "  require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "      var respuesta = ajax.call([{\n";
         echo "          methodname: 'mod_jitsi_update_participants',\n";
-        echo "          args: {jitsi:'".$jitsi->id."', numberofparticipants:api.getNumberOfParticipants()},\n";
+        echo "          args: {jitsi:'".$jitsi->id."', numberofparticipants:api.getNumberOfParticipants(), link: link},\n";
         echo "          fail: notification.exception\n";
         echo "      }]);\n";
         echo "   ;});";
@@ -816,7 +816,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "  require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "      var respuesta = ajax.call([{\n";
         echo "          methodname: 'mod_jitsi_update_participants',\n";
-        echo "          args: {jitsi:'".$jitsi->id."', numberofparticipants:api.getNumberOfParticipants()},\n";
+        echo "          args: {jitsi:'".$jitsi->id."', numberofparticipants:api.getNumberOfParticipants(), link: link},\n";
         echo "          fail: notification.exception\n";
         echo "      }]);\n";
         echo "   ;});";
@@ -840,7 +840,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "  require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "      var respuesta = ajax.call([{\n";
         echo "          methodname: 'mod_jitsi_update_participants',\n";
-        echo "          args: {jitsi:'".$jitsi->id."', numberofparticipants:api.getNumberOfParticipants()},\n";
+        echo "          args: {jitsi:'".$jitsi->id."', numberofparticipants:api.getNumberOfParticipants(), link: link},\n";
         echo "          fail: notification.exception\n";
         echo "      }]);\n";
         echo "   ;});";
