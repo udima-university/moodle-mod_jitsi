@@ -445,7 +445,8 @@ class mod_jitsi_external extends external_api {
         return new external_function_parameters(
             array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
                     'numberofparticipants' =>
-                        new external_value(PARAM_INT, 'Number of participants', VALUE_REQUIRED, '', NULL_NOT_ALLOWED), )
+                        new external_value(PARAM_INT, 'Number of participants', VALUE_REQUIRED, '', NULL_NOT_ALLOWED), 
+                    'link' => new external_value(PARAM_TEXT, 'Jitsi link'))
         );
     }
 
@@ -708,6 +709,7 @@ class mod_jitsi_external extends external_api {
                 $authoralmacenada = $DB->get_record('user', array('id' => $sourcealmacenada->userid));
                 $result['usercomplete'] = $authoralmacenada->firstname.' '.$authoralmacenada->lastname;
                 $result['errorinfo'] = '';
+                $result['link'] = '';
                 return $result;
             }
         }
@@ -782,6 +784,7 @@ class mod_jitsi_external extends external_api {
             $result['user'] = $jitsiob->sourcerecord;
             $result['usercomplete'] = $author->firstname.' '.$author->lastname;
             $result['errorinfo'] = $e->getMessage();
+            $result['link'] = '';
             return $result;
         } catch (Google_Exception $e) {
             $result = array();
@@ -791,11 +794,13 @@ class mod_jitsi_external extends external_api {
             $result['user'] = $jitsiob->sourcerecord;
             $result['usercomplete'] = $author->firstname.' '.$author->lastname;
             $result['errorinfo'] = $e->getMessage();
+            $result['link'] = '';
             return $result;
         }
 
         $source = $DB->get_record('jitsi_source_record', array('id' => $record->source));
         $source->link = $broadcastsresponse['id'];
+        $source->maxparticipants = $jitsiob->numberofparticipants;
         $DB->update_record('jitsi_source_record', $source);
 
         $result = array();
@@ -805,6 +810,7 @@ class mod_jitsi_external extends external_api {
         $result['user'] = $author->id;
         $result['usercomplete'] = $author->firstname.' '.$author->lastname;
         $result['errorinfo'] = '';
+        $result['link'] = $broadcastsresponse['id'];
         return $result;
     }
 
@@ -814,16 +820,23 @@ class mod_jitsi_external extends external_api {
      * @param int $numberofparticipants Number of participants
      * @return array result
      */
-    public static function update_participants($jitsi, $numberofparticipants) {
+    public static function update_participants($jitsi, $numberofparticipants, $link) {
         global $CFG, $DB;
 
         $params = self::validate_parameters(self::update_participants_parameters(),
-                array('jitsi' => $jitsi, 'numberofparticipants' => $numberofparticipants));
+                array('jitsi' => $jitsi, 'numberofparticipants' => $numberofparticipants, 'link' => $link));
         if ($numberofparticipants >= 0) {
             $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
             if ($numberofparticipants != $jitsiob->numberofparticipants) {
                 $jitsiob->numberofparticipants = $numberofparticipants;
                 $DB->update_record('jitsi', $jitsiob);
+                if ($link != null) {
+                    $source = $DB->get_record('jitsi_source_record', array('link' => $link));
+                    if ($source->maxparticipants < $numberofparticipants) {
+                        $source->maxparticipants = $numberofparticipants;
+                        $DB->update_record('jitsi_source_record', $source);
+                    }
+                }
             }
         }
         return $jitsiob->numberofparticipants;
@@ -911,7 +924,8 @@ class mod_jitsi_external extends external_api {
                 'error' => new external_value(PARAM_TEXT, 'error'),
                 'user' => new external_value(PARAM_INT, 'user id'),
                 'usercomplete' => new external_value(PARAM_TEXT, 'user complete name'),
-                'errorinfo' => new external_value(PARAM_TEXT, 'error info')
+                'errorinfo' => new external_value(PARAM_TEXT, 'error info'), 
+                'link' => new external_value(PARAM_TEXT, 'link')
             )
         );
     }
