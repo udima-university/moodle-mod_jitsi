@@ -445,8 +445,7 @@ class mod_jitsi_external extends external_api {
         return new external_function_parameters(
             array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
                     'numberofparticipants' =>
-                        new external_value(PARAM_INT, 'Number of participants', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
-                    'link' => new external_value(PARAM_TEXT, 'Jitsi link'))
+                        new external_value(PARAM_INT, 'Number of participants', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
         );
     }
 
@@ -820,21 +819,21 @@ class mod_jitsi_external extends external_api {
      * @param int $numberofparticipants Number of participants
      * @return array result
      */
-    public static function update_participants($jitsi, $numberofparticipants, $link) {
+    public static function update_participants($jitsi, $numberofparticipants) {
         global $CFG, $DB;
 
         $params = self::validate_parameters(self::update_participants_parameters(),
-                array('jitsi' => $jitsi, 'numberofparticipants' => $numberofparticipants, 'link' => $link));
+                array('jitsi' => $jitsi, 'numberofparticipants' => $numberofparticipants));
         if ($numberofparticipants >= 0) {
             $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
             if ($numberofparticipants != $jitsiob->numberofparticipants) {
                 $jitsiob->numberofparticipants = $numberofparticipants;
                 $DB->update_record('jitsi', $jitsiob);
-                if ($link != null) {
-                    $source = $DB->get_record('jitsi_source_record', array('link' => $link));
+                if ($jitsi->sourcerecord != null) {
+                    $source = $DB->get_record('jitsi_source_record', array('id' => $sourcerecord));
                     $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
                     // if ($source->maxparticipants < $numberofparticipants) {
-                        $source->maxparticipants = $jitsio->numberofparticipants;
+                        $source->maxparticipants = $numberofparticipants;
                         $DB->update_record('jitsi_source_record', $source);
                     // }
                 }
