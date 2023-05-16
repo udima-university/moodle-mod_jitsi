@@ -605,9 +605,13 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         }
         echo  "});\n";
     }
+    echo "if (document.getElementById(\"recordSwitch\") != null) {\n";
     echo "setTimeout(function(){ document.getElementById(\"recordSwitch\").disabled = false }, 5000);\n";
+    echo "}\n";
     echo "function activaGrab(e){";
+    echo "if (document.getElementById(\"recordSwitch\") != null) {\n";
     echo "      document.getElementById(\"recordSwitch\").disabled = true;\n";
+    echo "}\n";
     echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
     echo "       var respuesta = ajax.call([{\n";
     echo "            methodname: 'mod_jitsi_press_record_button',\n";
@@ -645,7 +649,9 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     if ($user == null) {
         echo "api.addEventListener('recordingStatusChanged', function(event) {\n";
         echo "  if (event['on'] && event['mode'] == 'stream'){\n";
+        echo "if (document.getElementById(\"recordSwitch\") != null) {\n";
         echo "    document.getElementById(\"recordSwitch\").checked = true;\n";
+        echo "}\n";
         echo "    document.getElementById('state').innerHTML = ";
         echo "      '<div class=\"alert alert-primary\" role=\"alert\">";
         echo "      <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" fill=\"currentColor\" ";
@@ -668,10 +674,14 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "        fail: notification.exception\n";
         echo "      }]);\n";
         echo "    })\n";
+        echo "if (document.getElementById(\"recordSwitch\") != null) {\n";
         echo "    document.getElementById(\"recordSwitch\").checked = false;\n";
+        echo "}\n";
         echo "    document.getElementById('state').innerHTML = '';";
         if (has_capability('mod/jitsi:record', $PAGE->context) && $universal == false) {
+            echo "if (document.getElementById(\"recordSwitch\") != null) {\n";
             echo "  setTimeout(function(){ document.getElementById(\"recordSwitch\").disabled = false }, 5000);\n";
+            echo "}\n";
         }
         echo "  }\n";
         echo "  require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
@@ -682,7 +692,9 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "      fail: notification.exception\n";
         echo "    }]);\n";
         if (has_capability('mod/jitsi:record', $PAGE->context) && $universal == false) {
+            echo "if (document.getElementById(\"recordSwitch\") != null) {\n";
             echo "  setTimeout(function(){ document.getElementById(\"recordSwitch\").disabled = false }, 5000);\n";
+            echo "}\n";
         }
         echo "    console.log(event['on']);\n";
         echo "  })\n";
@@ -708,8 +720,10 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "      alert(\"".addslashes(get_string('recordingbloquedby', 'jitsi'))."\"+response['usercomplete']);\n";
         echo "      document.getElementById('state').innerHTML = ";
         echo "        '<div class=\"alert alert-light\" role=\"alert\"></div>';";
+        echo "if (document.getElementById(\"recordSwitch\") != null) {\n";
         echo "      document.getElementById(\"recordSwitch\").disabled = false;\n";
         echo "      document.getElementById(\"recordSwitch\").checked = false;\n";
+        echo "}\n";
         echo "    } else if (response['error'] == 'erroryoutube'){\n";
         echo "      var infoerror = response['errorinfo'];\n";
         echo "      console.log(infoerror);\n";
@@ -734,8 +748,10 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
 
         echo "      document.getElementById('state').innerHTML = ";
         echo "        '<div class=\"alert alert-light\" role=\"alert\">ERROR RECORD ACCOUNT</div>';";
+        echo "if (document.getElementById(\"recordSwitch\") != null) {\n";
         echo "      document.getElementById(\"recordSwitch\").disabled = false;\n";
         echo "      document.getElementById(\"recordSwitch\").checked = false;\n";
+        echo "}\n";
         echo "      require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "        ajax.call([{\n";
         echo "          methodname: 'mod_jitsi_stop_stream_byerror',\n";
@@ -767,7 +783,9 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "        fail: notification.exception\n";
         echo "      }]);\n";
         echo "    })\n";
+        echo "if (document.getElementById(\"recordSwitch\") != null) {\n";
         echo "    document.getElementById(\"recordSwitch\").checked = false;\n";
+        echo "}\n";
         echo "    document.getElementById('state').innerHTML = '';";
         echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "      ajax.call([{\n";
@@ -781,8 +799,10 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "    document.getElementById('state').innerHTML = ";
         echo "      '<div class=\"alert alert-light\" role=\"alert\">"
                     .get_string('accountinsufficientprivileges', 'jitsi')."</div>';";
+        echo "if (document.getElementById(\"recordSwitch\") != null) {\n";
         echo "    document.getElementById(\"recordSwitch\").checked = false;\n";
         echo "    document.getElementById(\"recordSwitch\").disabled = false;\n";
+        echo "}\n";
         echo "  });";
         echo "})\n";
         echo "console.log('el link: '+link);\n";
@@ -950,8 +970,10 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "        })\n";
         echo "        document.getElementById('state').innerHTML = ";
         echo "          '<div class=\"alert alert-light\" role=\"alert\"></div>';";
+        echo "if (document.getElementById(\"recordSwitch\") != null) {\n";
         echo "        document.getElementById(\"recordSwitch\").disabled = false;\n";
         echo "        document.getElementById(\"recordSwitch\").checked = true;\n";
+        echo " }\n";
         echo "        document.getElementById('state').innerHTML = ";
         echo "          '<div class=\"alert alert-primary\" role=\"alert\">";
         echo "          <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" fill=\"currentColor\" ";
