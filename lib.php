@@ -376,17 +376,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
                 .addslashes(get_string('streamingandrecording', 'jitsi'))."</label>";
             echo "</div>";
             echo "</div>";
-        } else if ($CFG->jitsi_livebutton == 1 && $account != null
-            && $CFG->jitsi_streamingoption == 1 && $universal == true) {
-            echo "<div class=\"text-right\">";
-            echo "<div class=\"custom-control custom-switch\">";
-            echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\"";
-            echo "onClick=\"activaGrab($(this));\" disabled>";
-            echo "  <label class=\"custom-control-label\" for=\"recordSwitch\">"
-                .addslashes(get_string('streamingandrecording', 'jitsi'))."</label>";
-            echo "</div>";
-            echo "</div>";
-        }
+        } 
     }
 
     echo "</div>";
