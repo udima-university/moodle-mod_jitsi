@@ -832,8 +832,9 @@ class mod_jitsi_external extends external_api {
                 $DB->update_record('jitsi', $jitsiob);
                 if ($link != null) {
                     $source = $DB->get_record('jitsi_source_record', array('link' => $link));
+                    $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi);
                     // if ($source->maxparticipants < $numberofparticipants) {
-                        $source->maxparticipants = $numberofparticipants;
+                        $source->maxparticipants = $jitsio->numberofparticipants;
                         $DB->update_record('jitsi_source_record', $source);
                     // }
                 }
