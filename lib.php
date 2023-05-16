@@ -376,7 +376,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
                 .addslashes(get_string('streamingandrecording', 'jitsi'))."</label>";
             echo "</div>";
             echo "</div>";
-        } 
+        }
     }
 
     echo "</div>";
