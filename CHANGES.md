@@ -7,6 +7,7 @@
   as deleted by teachers and new setting are included to set the retention period. Disable this task
   if you prefer to manually delete YouTube recordings.
 * New section on settings for news and updates information.
+* Max number of participants of a seession recorded is saved in source_record table.
 
 ### Fixed
 * Fixed url for recordings to delete
@@ -19,6 +20,7 @@
 * Google api 2.13.1 version
 * Access buton now is primary button
 * new getclientgoogleapi function to get the google api client
+* Switch to record not visible for users without capability
 
 ---
 
