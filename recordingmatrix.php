@@ -63,8 +63,10 @@ if (is_siteadmin()) {
     $sqljitsilive = 'select {jitsi}.id,
                     {jitsi}.sourcerecord,
                     {jitsi}.numberofparticipants
-                    from {jitsi}
-                    where {jitsi}.sourcerecord > 0';
+                    from {jitsi}, {jitsi_source_record}
+                    where {jitsi}.sourcerecord > 0 and 
+                    {jitsi}.sourcerecord = {jitsi_source_record}.id 
+                    order by {jitsi_source_record}.timecreated desc';
     $jitsilives = $DB->get_records_sql($sqljitsilive);
     if ($jitsilives) {
         echo "<div class=\"container-fluid\">";
