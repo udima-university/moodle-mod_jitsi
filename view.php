@@ -318,7 +318,7 @@ if ($CFG->jitsi_help != null) {
 }
 
 if ($records && isallvisible($records) || has_capability ('mod/jitsi:record', $PAGE->context) && $records ||
- $CFG->jitsi_streamingoption == 1) {    
+ $CFG->jitsi_streamingoption == 1) {
     if ($records && isallvisible($records) || has_capability ('mod/jitsi:record', $PAGE->context) && $records) {
         echo "<br>";
         echo "<div class=\"row\">";
@@ -329,7 +329,7 @@ if ($records && isallvisible($records) || has_capability ('mod/jitsi:record', $P
             $deleteicon = new pix_icon('t/delete', get_string('delete'));
             $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon,
                 new confirm_action(get_string('confirmdeleterecordinactivity', 'jitsi')));
-    
+
             $hideurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&hidejitsirecordid=' .
                      $record->id . '&sesskey=' . sesskey(). '#record');
             $showurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&showjitsirecordid=' .
@@ -338,13 +338,13 @@ if ($records && isallvisible($records) || has_capability ('mod/jitsi:record', $P
             $showicon = new pix_icon('t/show', get_string('show'));
             $hideaction = $OUTPUT->action_icon($hideurl, $hideicon, new confirm_action('Hide?'));
             $showaction = $OUTPUT->action_icon($showurl, $showicon, new confirm_action('Show?'));
-    
+
             $sourcerecord = $DB->get_record('jitsi_source_record', array('id' => $record->source));
             $context = context_module::instance($cm->id);
             if ($sourcerecord->link != null) {
                 if ($record->visible != 0 || (has_capability('mod/jitsi:record', $context)
                     && has_capability('mod/jitsi:hide', $context))) {
-    
+
                     echo "<div class=\"col-sm-6\">";
                     echo "<div class=\"card\" >";
                     echo "<div class=\"card-body\">";
@@ -382,13 +382,13 @@ if ($records && isallvisible($records) || has_capability ('mod/jitsi:record', $P
                         echo "<iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/\"
                             allowfullscreen></iframe>";
                     }
-    
+
                     echo "</div>";
                     echo "<div class=\"row\">";
                     echo "<div class=\"col-sm\">";
                     echo "</div>";
                     echo "  <div class=\"col-sm\">";
-    
+
                     if (has_capability('mod/jitsi:deleterecord', $context) && !has_capability('mod/jitsi:hide', $context)) {
                         echo "<span class=\"align-middle text-right\"><p>".$deleteaction."</p></span>";
                     }
