@@ -249,7 +249,6 @@ if ($jitsi->intro) {
 if ($today[0] < $jitsi->timeclose || $jitsi->timeclose == 0) {
     if ($today[0] > (($jitsi->timeopen)) ||
         has_capability('mod/jitsi:moderation', $context) && $today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))) {
-        // echo $OUTPUT->box(get_string('instruction', 'jitsi'));
         echo "<br><br>";
         $button = new moodle_url('/mod/jitsi/session.php', $urlparams);
         $options = array(
@@ -281,7 +280,7 @@ echo "<ul class=\"nav nav-tabs\" id=\"myTab\" role=\"tablist\">";
     echo "    <a class=\"nav-link active\" id=\"help-tab\" data-toggle=\"tab\" href=\"#help\"
      role=\"tab\" aria-controls=\"help\" aria-selected=\"true\">".get_string('help')."</a>";
     echo "  </li>";
-    
+
 if ($records && isallvisible($records) || has_capability ('mod/jitsi:record', $PAGE->context) && $records ||
  $CFG->jitsi_streamingoption == 1) {
     echo "  <li class=\"nav-item\">";
