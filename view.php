@@ -277,12 +277,11 @@ $usersconnected = $DB->get_records_sql($sqlusersconnected);
 
 // Tabs.
 echo "<ul class=\"nav nav-tabs\" id=\"myTab\" role=\"tablist\">";
-// if ($CFG->jitsi_help != null) {
     echo "  <li class=\"nav-item\">";
     echo "    <a class=\"nav-link active\" id=\"help-tab\" data-toggle=\"tab\" href=\"#help\"
      role=\"tab\" aria-controls=\"help\" aria-selected=\"true\">".get_string('help')."</a>";
     echo "  </li>";
-// }
+    
 if ($records && isallvisible($records) || has_capability ('mod/jitsi:record', $PAGE->context) && $records ||
  $CFG->jitsi_streamingoption == 1) {
     echo "  <li class=\"nav-item\">";
@@ -318,7 +317,6 @@ if ($CFG->jitsi_help != null) {
 } else {
     echo "  <div class=\"tab-pane fade show active\" id=\"help\" role=\"tabpanel\" aria-labelledby=\"help-tab\">";
     echo "  <br>";
-    // echo $CFG->jitsi_help;
     echo $OUTPUT->box(get_string('instruction', 'jitsi'));
     echo "  </div>";
 
@@ -328,7 +326,6 @@ if ($CFG->jitsi_help != null) {
 if ($records && isallvisible($records) || has_capability ('mod/jitsi:record', $PAGE->context) && $records ||
  $CFG->jitsi_streamingoption == 1) {
     if ($records && isallvisible($records) || has_capability ('mod/jitsi:record', $PAGE->context) && $records) {
-        // echo "  <div class=\"tab-pane fade show \" id=\"record\" role=\"tabpanel\" aria-labelledby=\"record-tab\">";
         echo "<br>";
         echo "<div class=\"row\">";
         foreach ($records as $record) {
