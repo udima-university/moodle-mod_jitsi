@@ -21,6 +21,7 @@
 * Access buton now is primary button
 * new getclientgoogleapi function to get the google api client
 * Switch to record not visible for users without capability
+* Help tab is always visible
 
 ---
 
