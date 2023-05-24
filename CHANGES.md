@@ -1,4 +1,10 @@
 # Changelog
+## v3.3.3 (2023052400)
+### Added
+* Add page with live recordings for administrators
+
+---
+
 ## v3.3.2 (2023050300)
 ### Added
 * Add page with live recordings for administrators
