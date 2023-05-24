@@ -82,10 +82,12 @@ if ($timestart == 0) {
 }
 $timestarttimestamp = make_timestamp($timestart['year'], $timestart['month'], $timestart['day'], $timestart['hour'], $timestart['minute']); 
 $timeendtimestamp = make_timestamp($timeend['year'], $timeend['month'], $timeend['day'], $timeend['hour'], $timeend['minute']);
+
 $PAGE->set_title(format_string(get_string('search')));
+$PAGE->set_heading(format_string(get_string('search')));
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('search'));
+// echo $OUTPUT->heading(get_string('search'));
 
 if (is_siteadmin()) {
     $mform = new datesearch_form();
