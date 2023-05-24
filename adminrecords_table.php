@@ -112,8 +112,3 @@ class mod_adminrecords_table extends table_sql {
         }
     }
 }
-
-
-
-
-
