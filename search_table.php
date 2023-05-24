@@ -103,7 +103,7 @@ class mod_search_table extends table_sql {
         return "<a href=".$urljitsi." >".$jitsi->name."</a>";
     }
 
-        /**
+    /**
      * This function is called for each data row to allow processing of the
      * account value.
      *

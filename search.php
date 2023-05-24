@@ -51,7 +51,7 @@ class datesearch_form extends moodleform {
         $mform->addElement('date_time_selector', 'timestart', get_string('from'));
         $mform->addElement('date_time_selector', 'timeend', get_string('to'));
 
-        $buttonarray=array();
+        $buttonarray = array();
         $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('search'));
 
         $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
@@ -80,14 +80,15 @@ if ($timestart == 0) {
     $timestart = array('year' => 2021, 'month' => 1, 'day' => 1, 'hour' => 0, 'minute' => 0);
     $timeend = array('year' => 2021, 'month' => 12, 'day' => 31, 'hour' => 23, 'minute' => 59);
 }
-$timestarttimestamp = make_timestamp($timestart['year'], $timestart['month'], $timestart['day'], $timestart['hour'], $timestart['minute']); 
-$timeendtimestamp = make_timestamp($timeend['year'], $timeend['month'], $timeend['day'], $timeend['hour'], $timeend['minute']);
+$timestarttimestamp = make_timestamp($timestart['year'], $timestart['month'],
+     $timestart['day'], $timestart['hour'], $timestart['minute']); 
+$timeendtimestamp = make_timestamp($timeend['year'], $timeend['month'],
+     $timeend['day'], $timeend['hour'], $timeend['minute']);
 
 $PAGE->set_title(format_string(get_string('search')));
 $PAGE->set_heading(format_string(get_string('search')));
 
 echo $OUTPUT->header();
-// echo $OUTPUT->heading(get_string('search'));
 
 if (is_siteadmin()) {
     $mform = new datesearch_form();
