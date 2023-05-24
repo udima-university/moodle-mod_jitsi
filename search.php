@@ -81,7 +81,7 @@ if ($timestart == 0) {
     $timeend = array('year' => 2021, 'month' => 12, 'day' => 31, 'hour' => 23, 'minute' => 59);
 }
 $timestarttimestamp = make_timestamp($timestart['year'], $timestart['month'],
-     $timestart['day'], $timestart['hour'], $timestart['minute']); 
+     $timestart['day'], $timestart['hour'], $timestart['minute']);
 $timeendtimestamp = make_timestamp($timeend['year'], $timeend['month'],
      $timeend['day'], $timeend['hour'], $timeend['minute']);
 
