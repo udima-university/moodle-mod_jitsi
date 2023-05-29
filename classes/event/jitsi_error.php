@@ -46,6 +46,7 @@ class jitsi_error extends \core\event\base {
             'context' => \context_system::instance(),
             'other' => array(
                 'error' => $error,
+                'account' => $account,
             )
         );
 
@@ -76,7 +77,7 @@ class jitsi_error extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "User with id '$this->userid'. - jitsi activity with course module id '$this->contextinstanceid' get this error: {$this->other['error']}.";
+        return "User with id '$this->userid'. - jitsi activity with course module id '$this->contextinstanceid' get this error: {$this->other['error']} with account with id {$this->other['account']}.";
     }
 
     /**
