@@ -60,7 +60,7 @@ class jitsi_press_button_desktop extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' press desktop button in jitsi with id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' press desktop button in jitsi activity with course module id '$this->contextinstanceid'.";
     }
 
     /**

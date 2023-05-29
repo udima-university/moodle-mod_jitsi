@@ -60,7 +60,7 @@ class jitsi_press_record_button extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' press record button in jitsi with id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' press record button in jitsi activity with course module id '$this->contextinstanceid'.";
     }
 
     /**
