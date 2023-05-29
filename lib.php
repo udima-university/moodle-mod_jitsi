@@ -790,7 +790,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "    })\n";
         echo "    document.getElementById('state').innerHTML = ";
         echo "      '<div class=\"alert alert-light\" role=\"alert\">"
-                    .get_string('accountinsufficientprivileges', 'jitsi')."</div>';";
+                    .get_string('internalerror', 'jitsi')."</div>';";
         echo "if (document.getElementById(\"recordSwitch\") != null) {\n";
         echo "    document.getElementById(\"recordSwitch\").checked = false;\n";
         echo "    document.getElementById(\"recordSwitch\").disabled = false;\n";
