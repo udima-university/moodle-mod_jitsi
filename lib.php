@@ -1641,6 +1641,9 @@ function changeaccount() {
     $sql = 'select * from {jitsi_record_account} where {jitsi_record_account}.inqueue = 1 order by id asc';
     $accounts = $DB->get_records_sql($sql);
     $accountinuse = $DB->get_record('jitsi_record_account', array('inuse' => 1));
+    if ($accounts == null) {
+        return $accountinuse->id;
+    }
     $arrayparaiterar = array_slice($accounts, array_search($accountinuse->id, array_keys($accounts)) + 1);
 
     if (count($arrayparaiterar) == 0) {
