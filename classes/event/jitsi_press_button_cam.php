@@ -60,7 +60,8 @@ class jitsi_press_button_cam extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' press cam button in jitsi activity with course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' press cam button in jitsi
+         activity with course module id '$this->contextinstanceid'.";
     }
 
     /**

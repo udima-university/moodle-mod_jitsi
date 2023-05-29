@@ -1686,7 +1686,7 @@ function senderror($jitsi, $user, $error, $source) {
     foreach ($admins as $admin) {
         email_to_user($admin, $admin, "ERROR JITSI! el usuario: "
             .$user->username." ha tenido un error en el jitsi: ".$jitsi, $mensaje);
-     }
+    }
 
     $event = \mod_jitsi\event\jitsi_error::create(array(
         'objectid' => $cmid,

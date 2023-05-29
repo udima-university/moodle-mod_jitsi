@@ -92,7 +92,7 @@ if ($change && confirm_sesskey($sesskey)) {
     redirect($PAGE->url, get_string('accountconnected', 'jitsi'));
 }
 
-if ($queueaccountid && confirm_sesskey($sesskey)) { // para add to queue
+if ($queueaccountid && confirm_sesskey($sesskey)) {
     $account = $DB->get_record('jitsi_record_account', array('id' => $queueaccountid));
     if ($account->inqueue == 0) {
         $account->inqueue = 1;
@@ -154,7 +154,8 @@ echo $OUTPUT->heading(get_string('accounts', 'jitsi'));
 if (is_siteadmin()) {
     $accounts = $DB->get_records('jitsi_record_account', array());
     $table = new html_table();
-    $table->head = array('ID', get_string('name'), get_string('actions'), get_string('records', 'jitsi'), get_string('inqueue', 'jitsi'));
+    $table->head = array('ID', get_string('name'), get_string('actions'),
+        get_string('records', 'jitsi'), get_string('inqueue', 'jitsi'));
 
     $client = new Google_Client();
     $client->setClientId($CFG->jitsi_oauth_id);
@@ -178,11 +179,13 @@ if (is_siteadmin()) {
         $numrecords = $DB->count_records('jitsi_source_record', array('account' => $account->id));
 
         if ($account->inqueue == 1) {
-            $removefromqueueurl = new moodle_url('/mod/jitsi/adminaccounts.php?&queueaccountid=' . $account->id. '&sesskey=' . sesskey());
+            $removefromqueueurl = new moodle_url('/mod/jitsi/adminaccounts.php?&queueaccountid='
+                .$account->id. '&sesskey=' . sesskey());
             $inqueueicon = new pix_icon('t/switch_minus', get_string('removefromqueue', 'jitsi'));
             $inqueueaction = $OUTPUT->action_icon($removefromqueueurl, $inqueueicon, new confirm_action('Remove?'));
         } else {
-            $addtoqueueurl = new moodle_url('/mod/jitsi/adminaccounts.php?&queueaccountid=' . $account->id. '&sesskey=' . sesskey());
+            $addtoqueueurl = new moodle_url('/mod/jitsi/adminaccounts.php?&queueaccountid='
+                .$account->id. '&sesskey=' . sesskey());
             $inqueueicon = new pix_icon('t/switch_plus', get_string('addtoqueue', 'jitsi'));
             $inqueueaction = $OUTPUT->action_icon($addtoqueueurl, $inqueueicon, new confirm_action('Add?'));
         }
@@ -190,9 +193,11 @@ if (is_siteadmin()) {
         if ($account->clientaccesstoken != null) {
             if ($account->inuse == 1) {
                 if ($numrecords == 0) {
-                    $table->data[] = array($account->id, $account->name.get_string('inuse', 'jitsi'), $deleteaction, $numrecords, $inqueueaction);
+                    $table->data[] = array($account->id, $account->name.get_string('inuse', 'jitsi'),
+                        $deleteaction, $numrecords, $inqueueaction);
                 } else {
-                    $table->data[] = array($account->id, $account->name.get_string('inuse', 'jitsi'), null, $numrecords, $inqueueaction);
+                    $table->data[] = array($account->id, $account->name.get_string('inuse', 'jitsi'),
+                        null, $numrecords, $inqueueaction);
                 }
             } else {
                 if ($numrecords == 0) {

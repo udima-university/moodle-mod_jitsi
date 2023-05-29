@@ -286,7 +286,7 @@ class mod_jitsi_external extends external_api {
      */
     public static function send_error($jitsi, $user, $error, $cmid) {
         global $PAGE, $DB, $CFG;
-        
+
         $PAGE->set_context(context_module::instance($cmid));
         $admins = get_admins();
 
