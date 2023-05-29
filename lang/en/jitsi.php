@@ -249,3 +249,8 @@ $string['news1'] = 'If you have recently upgraded,
  with 8x8 Inc nor with "Jitsi as a service" (jaas).';
 $string['config'] = 'Configuration';
 $string['deleterecord'] = 'Delete record';
+$string['inqueue'] = 'In queue';
+$string['addtoqueue'] = 'Add to queue';
+$string['removefromqueue'] = 'Remove from queue';
+$string['addedtoqueue'] = 'Added to queue';
+$string['removedfromqueue'] = 'Removed from queue';

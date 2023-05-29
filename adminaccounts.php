@@ -39,6 +39,7 @@ global $DB, $CFG;
 $daccountid = optional_param('daccountid', 0, PARAM_INT);
 $change = optional_param('change', 0, PARAM_INT);
 $sesskey = optional_param('sesskey', null, PARAM_TEXT);
+$queueaccountid = optional_param('queueaccountid', 0, PARAM_INT);
 
 /**
  * Guest access form.
@@ -91,6 +92,19 @@ if ($change && confirm_sesskey($sesskey)) {
     redirect($PAGE->url, get_string('accountconnected', 'jitsi'));
 }
 
+if ($queueaccountid && confirm_sesskey($sesskey)) { // para add to queue
+    $account = $DB->get_record('jitsi_record_account', array('id' => $queueaccountid));
+    if ($account->inqueue == 0) {
+        $account->inqueue = 1;
+        $DB->update_record('jitsi_record_account', $account);
+        redirect($PAGE->url, get_string('addedtoqueue', 'jitsi'));
+    } else {
+        $account->inqueue = 0;
+        $DB->update_record('jitsi_record_account', $account);
+        redirect($PAGE->url, get_string('removedfromqueue', 'jitsi'));
+    }
+}
+
 if ($daccountid && confirm_sesskey($sesskey)) {
     $account = $DB->get_record('jitsi_record_account', array('id' => $daccountid));
 
@@ -140,7 +154,7 @@ echo $OUTPUT->heading(get_string('accounts', 'jitsi'));
 if (is_siteadmin()) {
     $accounts = $DB->get_records('jitsi_record_account', array());
     $table = new html_table();
-    $table->head = array(get_string('name'), get_string('actions'), get_string('records', 'jitsi'));
+    $table->head = array('ID', get_string('name'), get_string('actions'), get_string('records', 'jitsi'), get_string('inqueue', 'jitsi'));
 
     $client = new Google_Client();
     $client->setClientId($CFG->jitsi_oauth_id);
@@ -163,22 +177,32 @@ if (is_siteadmin()) {
         $authaction = $OUTPUT->action_icon($authurl, $authicon, new confirm_action(get_string('authq', 'jitsi')));
         $numrecords = $DB->count_records('jitsi_source_record', array('account' => $account->id));
 
+        if ($account->inqueue == 1) {
+            $removefromqueueurl = new moodle_url('/mod/jitsi/adminaccounts.php?&queueaccountid=' . $account->id. '&sesskey=' . sesskey());
+            $inqueueicon = new pix_icon('t/switch_minus', get_string('removefromqueue', 'jitsi'));
+            $inqueueaction = $OUTPUT->action_icon($removefromqueueurl, $inqueueicon, new confirm_action('Remove?'));
+        } else {
+            $addtoqueueurl = new moodle_url('/mod/jitsi/adminaccounts.php?&queueaccountid=' . $account->id. '&sesskey=' . sesskey());
+            $inqueueicon = new pix_icon('t/switch_plus', get_string('addtoqueue', 'jitsi'));
+            $inqueueaction = $OUTPUT->action_icon($addtoqueueurl, $inqueueicon, new confirm_action('Add?'));
+        }
+
         if ($account->clientaccesstoken != null) {
             if ($account->inuse == 1) {
                 if ($numrecords == 0) {
-                    $table->data[] = array($account->name.get_string('inuse', 'jitsi'), $deleteaction, $numrecords);
+                    $table->data[] = array($account->id, $account->name.get_string('inuse', 'jitsi'), $deleteaction, $numrecords, $inqueueaction);
                 } else {
-                    $table->data[] = array($account->name.get_string('inuse', 'jitsi'), null, $numrecords);
+                    $table->data[] = array($account->id, $account->name.get_string('inuse', 'jitsi'), null, $numrecords, $inqueueaction);
                 }
             } else {
                 if ($numrecords == 0) {
-                    $table->data[] = array($account->name, $loginaction.' '.$deleteaction, $numrecords);
+                    $table->data[] = array($account->id, $account->name, $loginaction.' '.$deleteaction, $numrecords, $inqueueaction);
                 } else {
-                    $table->data[] = array($account->name, $loginaction, $numrecords);
+                    $table->data[] = array($account->id, $account->name, $loginaction, $numrecords, $inqueueaction);
                 }
             }
         } else {
-            $table->data[] = array($account->name, $authaction, $numrecords);
+            $table->data[] = array($account->id, $account->name, $authaction, $numrecords, $inqueueaction);
         }
     }
 

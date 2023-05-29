@@ -529,6 +529,21 @@ function xmldb_jitsi_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2023051001, 'jitsi');
     }
 
+    if ($oldversion < 2023052901) {
+
+        // Define field inqueue to be added to jitsi_record_account.
+        $table = new xmldb_table('jitsi_record_account');
+        $field = new xmldb_field('inqueue', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'inuse');
+
+        // Conditionally launch add field inqueue.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Jitsi savepoint reached.
+        upgrade_mod_savepoint(true, 2023052901, 'jitsi');
+    }
+
     /*
      * And that's all. Please, examine and understand the 3 example blocks above. Also
      * it's interesting to look how other modules are using this script. Remember that

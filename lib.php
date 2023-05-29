@@ -33,6 +33,7 @@
 defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__ . '/deprecatedlib.php');
 
+
 /**
  * Returns the information on whether the module supports a feature
  *
@@ -727,15 +728,6 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "    } else if (response['error'] == 'erroryoutube'){\n";
         echo "      var infoerror = response['errorinfo'];\n";
         echo "      console.log(infoerror);\n";
-        echo "      require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
-        echo "        ajax.call([{\n";
-        echo "          methodname: 'mod_jitsi_send_error',\n";
-        echo "          args: {jitsi:'".$jitsi->id."', user: '".$USER->id."',
-                          error: 'error de youtube'+infoerror, cmid:".$cmid."},\n";
-        echo "          done: console.log(\"MAIL ENVIADO!\"),\n";
-        echo "          fail: notification.exception\n";
-        echo "        }]);\n";
-        echo "      })\n";
 
         echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "        ajax.call([{\n";
@@ -747,7 +739,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "    })\n";
 
         echo "      document.getElementById('state').innerHTML = ";
-        echo "        '<div class=\"alert alert-light\" role=\"alert\">ERROR RECORD ACCOUNT</div>';";
+        echo "        '<div class=\"alert alert-light\" role=\"alert\">ERROR RECORD ACCOUNT. TRY AGAIN IN A FEW SECONDS</div>';";
         echo "if (document.getElementById(\"recordSwitch\") != null) {\n";
         echo "      document.getElementById(\"recordSwitch\").disabled = false;\n";
         echo "      document.getElementById(\"recordSwitch\").checked = false;\n";
@@ -791,7 +783,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "      ajax.call([{\n";
         echo "        methodname: 'mod_jitsi_send_error',\n";
         echo "        args: {jitsi:'".$jitsi->id."', user: '".$USER->id."',
-                      error: ex['backtrace'], cmid:".$cmid."},\n";
+                      error: ex['backtrace'], cmid:".$cmid.", account: 'null'},\n";
         echo "        done: console.log(\"MAIL ENVIADO!\"),\n";
         echo "        fail: notification.exception\n";
         echo "      }]);\n";
@@ -917,7 +909,8 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "      ajax.call([{\n";
         echo "        methodname: 'mod_jitsi_send_error',\n";
         echo "        args: {jitsi:'".$jitsi->id."', user: '".$USER->id.
-                    "', error: 'Error de servidor jitsi: ' + event['error'], cmid:".$cmid."},\n";
+                    "', error: 'Error de servidor jitsi: ' + event['error'], cmid:".$cmid.",
+                    account: 'null'},\n";
         echo "        done: console.log(\"MAIL ENVIADO!\"),\n";
         echo "        fail: notification.exception\n";
         echo "      }]);\n";
@@ -1640,4 +1633,67 @@ function getminutesfromlastconexion($cmid, $user) {
          = '.$user.' order by timecreated DESC limit 1';
     $usersconnected = $DB->get_record_sql($sqllastparticipating);
     return $usersconnected->timecreated;
+}
+
+function changeaccount() {
+    global $DB;
+
+    $sql = 'select * from {jitsi_record_account} where {jitsi_record_account}.inqueue = 1 order by id asc';
+    $accounts = $DB->get_records_sql($sql);
+    $accountinuse = $DB->get_record('jitsi_record_account', array('inuse' => 1));
+    $arrayparaiterar = array_slice($accounts, array_search($accountinuse->id, array_keys($accounts)) + 1);
+
+    if (count($arrayparaiterar) == 0) {
+        $arrayparaiterar = array_slice($accounts, 0);
+    }
+    $newaccountinuse = current($arrayparaiterar);
+    $accountinuse->inuse = 0;
+    $newaccountinuse->inuse = 1;
+    $DB->update_record('jitsi_record_account', $accountinuse);
+    $DB->update_record('jitsi_record_account', $newaccountinuse);
+
+    return $newaccountinuse->id;
+}
+
+/**
+ * Returns description of method parameters
+ *
+ * @param int $jitsi Jitsi session id
+ * @param int $user User id
+ * @param string $error Error message
+ * @param int $cmid Course Module id
+ */
+function senderror($jitsi, $user, $error, $source) {
+    global $PAGE, $DB, $CFG;
+    $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
+    $cm = get_coursemodule_from_instance('jitsi', $jitsi);
+    $cmid = $cm->id;
+    $PAGE->set_context(context_module::instance($cmid));
+
+    $admins = get_admins();
+    $account = $DB->get_record('jitsi_record_account', array('id' => $source->account));
+    $DB->update_record('jitsi', $jitsiob);
+
+    $user = $DB->get_record('user', array('id' => $user));
+    $mensaje = "El usuario ".$user->firstname." ".$user->lastname.
+        " ha tenido un error al intentar grabar la sesión de jitsi con id ".$jitsi."\nInfo:\n".$error." en la cuenta: ".
+        $account->name." (id: ".$account->id.")\n
+    Para más información, accede a la sesión de jitsi y mira el log.\n
+    URL: ".$CFG->wwwroot."/mod/jitsi/view.php?id=".$cmid."\n
+    Nombre de la sesión: ".$DB->get_record('jitsi', array('id' => $jitsi))->name."\n
+    Curso: ".$DB->get_record('course', array('id' => $DB->get_record('jitsi', array('id' => $jitsi))->course))->fullname."\n
+    Usuario: ".$user->username."\n";
+    foreach ($admins as $admin) {
+        email_to_user($admin, $admin, "ERROR JITSI! el usuario: "
+            .$user->username." ha tenido un error en el jitsi: ".$jitsi, $mensaje);
+     }
+
+    $event = \mod_jitsi\event\jitsi_error::create(array(
+        'objectid' => $cmid,
+        'context' => $PAGE->context,
+        'other' => array('error' => $error, 'account' => $account->id)
+    ));
+    $event->add_record_snapshot('course', $PAGE->course);
+    $event->add_record_snapshot('jitsi', $jitsi);
+    $event->trigger();
 }

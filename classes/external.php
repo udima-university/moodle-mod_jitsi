@@ -286,6 +286,7 @@ class mod_jitsi_external extends external_api {
      */
     public static function send_error($jitsi, $user, $error, $cmid) {
         global $PAGE, $DB, $CFG;
+        
         $PAGE->set_context(context_module::instance($cmid));
         $admins = get_admins();
 
@@ -309,7 +310,7 @@ class mod_jitsi_external extends external_api {
         $event = \mod_jitsi\event\jitsi_error::create(array(
             'objectid' => $PAGE->cm->instance,
             'context' => $PAGE->context,
-            'other' => array('error' => $error)
+            'other' => array('error' => $error, 'account' => '-')
         ));
         $event->add_record_snapshot('course', $PAGE->course);
         $event->add_record_snapshot('jitsi', $jitsi);
@@ -784,6 +785,8 @@ class mod_jitsi_external extends external_api {
             $result['usercomplete'] = $author->firstname.' '.$author->lastname;
             $result['errorinfo'] = $e->getMessage();
             $result['link'] = '';
+            senderror($jitsi, $userid, 'ERROR DE YOUTUBE: '.$e->getMessage(), $source);
+            changeaccount();
             return $result;
         } catch (Google_Exception $e) {
             $result = array();
@@ -794,6 +797,8 @@ class mod_jitsi_external extends external_api {
             $result['usercomplete'] = $author->firstname.' '.$author->lastname;
             $result['errorinfo'] = $e->getMessage();
             $result['link'] = '';
+            senderror($jitsi, $userid, 'ERROR DE YOUTUBE: '.$e->getMessage(), $source);
+            changeaccount();
             return $result;
         }
 
@@ -810,6 +815,7 @@ class mod_jitsi_external extends external_api {
         $result['usercomplete'] = $author->firstname.' '.$author->lastname;
         $result['errorinfo'] = '';
         $result['link'] = $broadcastsresponse['id'];
+        changeaccount();
         return $result;
     }
 
