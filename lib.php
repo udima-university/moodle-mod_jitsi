@@ -783,7 +783,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "      ajax.call([{\n";
         echo "        methodname: 'mod_jitsi_send_error',\n";
         echo "        args: {jitsi:'".$jitsi->id."', user: '".$USER->id."',
-                      error: ex['backtrace'], cmid:".$cmid.", account: 'null'},\n";
+                      error: ex['backtrace'], cmid:".$cmid."},\n";
         echo "        done: console.log(\"MAIL ENVIADO!\"),\n";
         echo "        fail: notification.exception\n";
         echo "      }]);\n";
@@ -909,8 +909,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "      ajax.call([{\n";
         echo "        methodname: 'mod_jitsi_send_error',\n";
         echo "        args: {jitsi:'".$jitsi->id."', user: '".$USER->id.
-                    "', error: 'Error de servidor jitsi: ' + event['error'], cmid:".$cmid.",
-                    account: 'null'},\n";
+                    "', error: 'Error de servidor jitsi: ' + event['error'], cmid:".$cmid."},\n";
         echo "        done: console.log(\"MAIL ENVIADO!\"),\n";
         echo "        fail: notification.exception\n";
         echo "      }]);\n";
