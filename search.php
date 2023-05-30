@@ -48,7 +48,15 @@ class datesearch_form extends moodleform {
     public function definition() {
         global $CFG;
         $mform = $this->_form; // Don't forget the underscore!.
-        $mform->addElement('date_time_selector', 'timestart', get_string('from'));
+        $defaultTimeStart = array(
+            'year' => date('Y'),
+            'month' => date('n'),
+            'day' => date('j'),
+            'hour' => 0,
+            'minute' => 0
+        );
+        $mform->addElement('date_time_selector', 'timestart', get_string('from'),
+         array('defaulttime' => $defaultTimeStart));
         $mform->addElement('date_time_selector', 'timeend', get_string('to'));
 
         $buttonarray = array();
