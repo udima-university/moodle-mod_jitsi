@@ -106,7 +106,8 @@ if (is_siteadmin()) {
                 {jitsi_source_record}.timecreated > '.$timestarttimestamp.' and
                 {jitsi_source_record}.timecreated < '.$timeendtimestamp;
     $table->set_sql($fields, $from, $where, array('1'));
-    $table->define_baseurl('/mod/jitsi/search.php?'.http_build_query(array('timestart' => $timestart, 'timeend' => $timeend)));
+    $table->define_baseurl('/mod/jitsi/search.php?'.
+        http_build_query(array('timestart' => $timestart, 'timeend' => $timeend)));
     $table->out(10, true);
 } else {
     redirect($CFG->wwwroot, 'Acceso a busquedas no permitido. Solo administradores');
