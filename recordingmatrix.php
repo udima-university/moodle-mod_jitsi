@@ -106,7 +106,9 @@ if (is_siteadmin()) {
                     echo "<iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/"
                         .$sourcelive->link."\"allowfullscreen></iframe>";
                     $author = $DB->get_record('user', array('id' => $sourcelive->userid));
-                    echo "<h6 class=\"card-subtitle mb-2 text-muted\">".$author->firstname." ".$author->lastname."</h6>";
+                    $authorurl = new moodle_url('/user/view.php', array('id' => $sourcelive->userid));
+                    echo "<a href=".$authorurl." target=\"_blank\"><h6 class=\"card-subtitle mb-2 text-muted\">"
+                        .$author->firstname." ".$author->lastname."</h6></a>";
                     echo "</div>";
                     echo "</div>";
                 }
