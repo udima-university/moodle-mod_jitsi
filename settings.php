@@ -126,7 +126,7 @@ if ($ADMIN->fulltree) {
 
     $link = new moodle_url('/mod/jitsi/search.php');
     $settings->add(new admin_setting_heading('jitsi_search', '', '<a href='.$link.' >'.
-            get_string('search').'</a>'));
+            get_string('searchrecords', 'jitsi').'</a>'));
 
     // Jitsi Token Section.
     $settings->add(new admin_setting_heading('jitsitoken',
