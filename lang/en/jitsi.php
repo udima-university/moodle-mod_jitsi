@@ -255,4 +255,4 @@ $string['removefromqueue'] = 'Remove from queue';
 $string['addedtoqueue'] = 'Added to queue';
 $string['removedfromqueue'] = 'Removed from queue';
 $string['internalerror'] = 'Internal error. Contact with the administrator.';
-$string['searchrecords'] = 'Search records';
+$string['searchrecords'] = 'Search recordings';
