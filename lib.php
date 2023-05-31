@@ -1637,7 +1637,7 @@ function getminutesfromlastconexion($cmid, $user) {
 function changeaccount() {
     global $DB;
 
-    $sql = 'select * from {jitsi_record_account} where {jitsi_record_account}.inqueue = 1 order by id asc';
+    $sql = 'select * from {jitsi_record_account} where {jitsi_record_account}.inqueue = 1 and {jitsi_record_account}.clientaccesstoken != \'\' and {jitsi_record_account}.clientrefreshtoken != \'\' order by id asc';
     $accounts = $DB->get_records_sql($sql);
     $accountinuse = $DB->get_record('jitsi_record_account', array('inuse' => 1));
     if ($accounts == null) {
