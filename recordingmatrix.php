@@ -57,7 +57,6 @@ $PAGE->set_title(format_string(get_string('recordsonair', 'jitsi')));
 $PAGE->set_heading(format_string(get_string('recordsonair', 'jitsi')));
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('recordsonair', 'jitsi'));
 
 if (is_siteadmin()) {
     $sqljitsilive = 'select {jitsi}.id,
