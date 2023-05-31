@@ -176,10 +176,11 @@ $string['deprecatedex'] = 'Deprecated params that probably will not work because
 $string['experimental'] = 'Experimental';
 $string['experimentalex'] = 'These are options that we are experimenting with and that may disappear in future versions.';
 $string['adminaccountex'] = 'At least one account is required in order to stream/record sessions with the "Moodle integrated" method for streaming.
- </br>Just one account can be "<b>in use</b>" and will be used to stream/record all your teacher sessions.
+ </br>Just one account can be "<b>in use</b>" and will be used to stream/record the next recording demanded by one teacher.
  </br>When adding new accounts it\'s recommended <b>to name them with real account names</b> because in the future you could be required to re-login in order to re-authorize the account.
  </br>Only accounts with no recordings related to teacher\'s Jitsi activities and no recordings pending to be deleted from the streaming servers can be removed here using the trash icon.
- </br>New accounts without credentials could appear here when Jitsi activities backups from other server are restored in this one with accounts that was not present here.';
+ </br>New accounts without credentials could appear here when Jitsi activities backups from other server are restored in this one with accounts that was not present here.
+ </br>NEW from v3.3.3: a new column called "In queue" allows use all your recorders in round robin. You can add recorders to the queue clicking on "<b>+</b>" and you can remove them from the queue clicking on "<b>-</b>". When a recorder has been used because it was the recorder "<b>in use</b>" (or the next one to be used), the flag "In use" will be set to the next recorder in the queue. This feature allows you to use many recorders in order to avoid YouTube quota limits like the live streams allowed per day.';
 $string['jitsiinterface'] = 'Jitsi interface';
 $string['integrated'] = 'Moodle Integrated';
 $string['deletetooltip'] = 'Delete';
