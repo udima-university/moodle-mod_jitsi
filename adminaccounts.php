@@ -149,7 +149,6 @@ $PAGE->set_title(format_string(get_string('accounts', 'jitsi')));
 $PAGE->set_heading(format_string(get_string('accounts', 'jitsi')));
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('accounts', 'jitsi'));
 
 if (is_siteadmin()) {
     $accounts = $DB->get_records('jitsi_record_account', array());
