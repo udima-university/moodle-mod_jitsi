@@ -57,7 +57,6 @@ $PAGE->set_title(format_string(get_string('records', 'jitsi')));
 $PAGE->set_heading(format_string(get_string('records', 'jitsi')));
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('records', 'jitsi'));
 echo $OUTPUT->box(get_string('tablelistjitsis', 'jitsi'));
 
 if (is_siteadmin()) {
