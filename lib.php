@@ -1423,8 +1423,16 @@ function doembedable($idvideo) {
             }
         }
     } catch (Google_Service_Exception $e) {
+        print_r($e->getMessage());
+        $record = $DB->get_record('jitsi_record', array('source' => $source->id));
+        $jitsi = $DB->get_record('jitsi', array('id' => $record->jitsi));
+        senderror($jitsi->id, $source->userid, 'ERROR doembedable: '.$e->getMessage(), $source);
         return false;
     } catch (Google_Exception $e) {
+        print_r($e->getMessage());
+        $record = $DB->get_record('jitsi_record', array('source' => $source->id));
+        $jitsi = $DB->get_record('jitsi', array('id' => $record->jitsi));
+        senderror($jitsi->id, $source->userid, 'ERROR doembedable: '.$e->getMessage(), $source);
         return false;
     }
     return $updateresponse;
