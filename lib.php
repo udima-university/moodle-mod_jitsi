@@ -1423,13 +1423,11 @@ function doembedable($idvideo) {
             }
         }
     } catch (Google_Service_Exception $e) {
-        print_r($e->getMessage());
         $record = $DB->get_record('jitsi_record', array('source' => $source->id));
         $jitsi = $DB->get_record('jitsi', array('id' => $record->jitsi));
         senderror($jitsi->id, $source->userid, 'ERROR doembedable: '.$e->getMessage(), $source);
         return false;
     } catch (Google_Exception $e) {
-        print_r($e->getMessage());
         $record = $DB->get_record('jitsi_record', array('source' => $source->id));
         $jitsi = $DB->get_record('jitsi', array('id' => $record->jitsi));
         senderror($jitsi->id, $source->userid, 'ERROR doembedable: '.$e->getMessage(), $source);
@@ -1629,7 +1627,8 @@ function getminutesfromlastconexion($cmid, $user) {
 function changeaccount() {
     global $DB;
 
-    $sql = 'select * from {jitsi_record_account} where {jitsi_record_account}.inqueue = 1 and {jitsi_record_account}.clientaccesstoken != \'\' and {jitsi_record_account}.clientrefreshtoken != \'\' order by id asc';
+    $sql = 'select * from {jitsi_record_account} where {jitsi_record_account}.inqueue = 1 and
+     {jitsi_record_account}.clientaccesstoken != \'\' and {jitsi_record_account}.clientrefreshtoken != \'\' order by id asc';
     $accounts = $DB->get_records_sql($sql);
     $accountinuse = $DB->get_record('jitsi_record_account', array('inuse' => 1));
     if ($accounts == null) {
