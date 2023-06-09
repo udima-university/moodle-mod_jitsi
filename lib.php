@@ -1425,11 +1425,15 @@ function doembedable($idvideo) {
     } catch (Google_Service_Exception $e) {
         $record = $DB->get_record('jitsi_record', array('source' => $source->id));
         $jitsi = $DB->get_record('jitsi', array('id' => $record->jitsi));
+        $source->embed = -1;
+        $DB->update_record('jitsi_source_record', $source);
         senderror($jitsi->id, $source->userid, 'ERROR doembedable: '.$e->getMessage(), $source);
         return false;
     } catch (Google_Exception $e) {
         $record = $DB->get_record('jitsi_record', array('source' => $source->id));
         $jitsi = $DB->get_record('jitsi', array('id' => $record->jitsi));
+        $source->embed = -1;
+        $DB->update_record('jitsi_source_record', $source);
         senderror($jitsi->id, $source->userid, 'ERROR doembedable: '.$e->getMessage(), $source);
         return false;
     }
@@ -1687,6 +1691,6 @@ function senderror($jitsi, $user, $error, $source) {
         'other' => array('error' => $error, 'account' => $account->id)
     ));
     $event->add_record_snapshot('course', $PAGE->course);
-    $event->add_record_snapshot('jitsi', $jitsi);
+    $event->add_record_snapshot('jitsi', $jitsiob);
     $event->trigger();
 }
