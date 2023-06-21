@@ -17,7 +17,7 @@
 /**
  * Definition of Forum scheduled tasks.
  *
- * @package    mod_guacamole
+ * @package    mod_jitsi
  * @copyright  2019 Sergio Comerón Sánchez-Paniagua <sergiocomeron@icloud.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
