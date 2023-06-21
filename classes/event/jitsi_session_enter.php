@@ -38,7 +38,7 @@ class jitsi_session_enter extends \core\event\base {
     /**
      * Create instance of event.
      *
-     * @param string $langcode
+     * @param string $navigator
      * @return langpack_updated
      */
     public static function event_with_navigator($navigator) {

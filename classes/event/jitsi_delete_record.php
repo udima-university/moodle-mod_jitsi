@@ -39,6 +39,7 @@ class jitsi_delete_record extends \core\event\base {
      * Create instance of event.
      *
      * @param string $record
+     * @param string $link
      * @return record
      */
     public static function event_with_record($record, $link) {

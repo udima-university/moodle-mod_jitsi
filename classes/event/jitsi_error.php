@@ -38,7 +38,7 @@ class jitsi_error extends \core\event\base {
     /**
      * Create instance of event.
      *
-     * @param string $langcode
+     * @param string $error
      * @return langpack_updated
      */
     public static function event_with_error($error) {

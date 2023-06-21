@@ -147,6 +147,11 @@ class mod_jitsi_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     */
     public static function getminutesfromlastconexion_parameters() {
         return new external_function_parameters(
             array('cmid' => new external_value(PARAM_INT, 'Cm id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
@@ -154,6 +159,13 @@ class mod_jitsi_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @param int $cmid Course module id
+     * @param int $user User id
+     */
     public static function getminutesfromlastconexion($cmid, $user) {
         return getminutesfromlastconexion($cmid, $user);
     }
@@ -617,6 +629,7 @@ class mod_jitsi_external extends external_api {
     /**
      * Stop stream with youtube
      * @param int $jitsi Jitsi session id
+     * @param int $userid User id
      * @return array result
      */
     public static function stop_stream($jitsi, $userid) {
@@ -648,6 +661,7 @@ class mod_jitsi_external extends external_api {
     /**
      * Stop stream with youtube by error
      * @param int $jitsi Jitsi session id
+     * @param int $userid User id
      * @return array result
      */
     public static function stop_stream_byerror($jitsi, $userid) {
@@ -667,6 +681,7 @@ class mod_jitsi_external extends external_api {
     /**
      * Stop stream with youtube by error
      * @param int $jitsi Jitsi session id
+     * @param int $userid User id
      * @return array result
      */
     public static function stop_stream_noauthor($jitsi, $userid) {
@@ -850,7 +865,6 @@ class mod_jitsi_external extends external_api {
     /**
      * Get Number of Participants
      * @param int $jitsi Jitsi session id
-     * @param int $numberofparticipants Number of participants
      * @return array result
      */
     public static function get_participants($jitsi) {
@@ -951,6 +965,10 @@ class mod_jitsi_external extends external_api {
         return new external_value(PARAM_INT, 'Number of partipants');
     }
 
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
     public static function getminutesfromlastconexion_returns() {
         return new external_value(PARAM_INT, 'Last conexion timestamp');
     }
