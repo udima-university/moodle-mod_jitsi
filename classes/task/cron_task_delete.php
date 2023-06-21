@@ -27,6 +27,11 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/mod/jitsi/lib.php');
 
+/**
+ * A scheduled task class.
+ *
+ * @package    mod_jitsi
+ */
 class cron_task_delete extends \core\task\scheduled_task {
 
     /**
