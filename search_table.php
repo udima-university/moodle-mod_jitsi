@@ -33,11 +33,11 @@ class mod_search_table extends table_sql {
     public function __construct($uniqueid) {
         parent::__construct($uniqueid);
         // Define the list of columns to show.
-        $columns = array('id', 'link', 'jitsi', 'account', 'userid', 'timecreated', 'deleted');
+        $columns = array('id', 'link', 'jitsi', 'course', 'account', 'userid', 'timecreated', 'deleted');
         $this->define_columns($columns);
 
         // Define the titles of columns to show in header.
-        $headers = array('Id', 'Link', 'Jitsi', 'Account', 'User', 'Date', 'Deleted');
+        $headers = array('Id', 'Link', 'Jitsi', 'Course', 'Account', 'User', 'Date', 'Deleted');
         $this->define_headers($headers);
     }
 
@@ -73,6 +73,24 @@ class mod_search_table extends table_sql {
         global $DB;
         $acount = $DB->get_record('jitsi_record_account', array('id' => $values->account));
         return $acount->name;
+    }
+
+    /**
+     * This function is called for each data row to allow processing of the
+     * account value.
+     *
+     * @param object $values Contains object with all the values of record.
+     * @return $string Return username with link to profile or username only
+     *     when downloading.
+     */
+    protected function col_course($values) {
+        global $DB;
+        // $jitsi = $DB->get_record('jitsi', array('id' => $values->jitsi));
+        $coursemodule = get_coursemodule_from_instance('jitsi', $values->jitsi);
+        $urlcourse = new moodle_url('/course/view.php', array('id' => $coursemodule->course));
+        $course = $DB->get_record('course', array('id' => $coursemodule->course));
+        return "<a href=".$urlcourse." data-toggle=\"tooltip\" data-placement=\"top\" title=\"".$course->fullname."\">".
+        $course->shortname."</a></h6>";
     }
 
     /**
