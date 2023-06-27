@@ -44,7 +44,8 @@ class mod_search_table extends table_sql {
     protected function col_userid($values) {
         global $DB;
         $user = $DB->get_record('user', array('id' => $values->userid));
-        return $user->username;
+        $url = '<a href="' . new moodle_url('/user/profile.php', array('id' => $user->id)) . '">' . $user->username . '</a>';
+        return $url;
     }
 
     /**
