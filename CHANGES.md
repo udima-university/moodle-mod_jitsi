@@ -1,7 +1,19 @@
 # Changelog
+## v3.3.4 (2023062700)
+### Added
+* Round Robin: Add rotating shift queue for recordings. Recordings are now distributed among all session recordings if they are in the queue.
+* Link to user profile on recording search page
+* Mail to admin when doembeable get an error
+### Fixed
+* Fix problem with log error on doembedable function
+### Changed
+* Google api client to 2.15.0
+* Search page for recordings now show thumbnails
+* Remove heading for better appearence on moodle 4
+
 ## v3.3.3 (2023052400)
 ### Added
-* Add page with live recordings for administrators
+* Add page with search recordings for administrators
 
 ---
 
