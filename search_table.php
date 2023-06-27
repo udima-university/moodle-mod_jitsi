@@ -84,7 +84,8 @@ class mod_search_table extends table_sql {
      *     when downloading.
      */
     protected function col_link($values) {
-        return '<a href="https://youtu.be/'.$values->link.'" target="_blank">'.$values->link.'</a>';
+        $thumb = 'https://img.youtube.com/vi/'.$values->link.'/default_live.jpg';
+        return '<a href="https://youtu.be/'.$values->link.'" target="_blank"><img src="'.$thumb.'" /></a>';
     }
 
     /**
