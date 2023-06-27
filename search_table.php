@@ -33,11 +33,11 @@ class mod_search_table extends table_sql {
     public function __construct($uniqueid) {
         parent::__construct($uniqueid);
         // Define the list of columns to show.
-        $columns = array('id', 'link', 'jitsi', 'course', 'account', 'userid', 'timecreated', 'deleted');
+        $columns = array('id', 'link', 'jitsi', 'course', 'account', 'userid', 'timecreated', 'maxparticipants', 'deleted');
         $this->define_columns($columns);
 
         // Define the titles of columns to show in header.
-        $headers = array('Id', 'Link', 'Jitsi', 'Course', 'Account', 'User', 'Date', 'Deleted');
+        $headers = array('Id', 'Link', 'Jitsi', 'Course', 'Account', 'User', 'Date', 'Max participants','Deleted');
         $this->define_headers($headers);
     }
 

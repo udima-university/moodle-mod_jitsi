@@ -108,6 +108,7 @@ if (is_siteadmin()) {
                 {jitsi_source_record}.account,
                 {jitsi_source_record}.userid,
                 {jitsi_source_record}.timecreated,
+                {jitsi_source_record}.maxparticipants,
                 {jitsi_record}.deleted';
     $from = '{jitsi_source_record}, {jitsi_record}';
     $where = '{jitsi_record}.source = {jitsi_source_record}.id and
