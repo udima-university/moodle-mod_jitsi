@@ -61,6 +61,7 @@ echo $OUTPUT->header();
 if (is_siteadmin()) {
     $sqljitsilive = 'select {jitsi}.id,
                     {jitsi}.sourcerecord,
+                    {jitsi}.course,
                     {jitsi}.numberofparticipants
                     from {jitsi}, {jitsi_source_record}
                     where {jitsi}.sourcerecord > 0 and
@@ -83,6 +84,24 @@ if (is_siteadmin()) {
                                 {jitsi_record}.source = {jitsi_source_record}.id';
             $sourcelives = $DB->get_records_sql($sqlsourcelive);
             foreach ($sourcelives as $sourcelive) {
+                $cm = get_coursemodule_from_instance('jitsi', $jitsilive->id, $jitsilive->course, false, MUST_EXIST);
+                $contextmodule = context_module::instance($cm->id);
+                $sqllastparticipating = 'select timecreated from {logstore_standard_log} where contextid = '
+                    .$contextmodule->id.' and (action = \'participating\' or action = \'enter\') order by timecreated DESC limit 1';
+                $usersconnected = $DB->get_record_sql($sqllastparticipating);
+                if ($usersconnected != null) {
+                    if ((getdate()[0] - $usersconnected->timecreated) > 72 ) {
+                        $jitsilive->numberofparticipants = 0;
+                        $DB->update_record('jitsi', $jitsilive);
+                    }
+                }
+                if ($usersconnected != null) {
+                    if ($jitsilive->numberofparticipants == 0 && (getdate()[0] - $usersconnected->timecreated) > 72 ) {
+                        $jitsilive->sourcerecord = null;
+                        $DB->update_record('jitsi', $jitsilive);
+                    }
+                }
+
                 if ($sourcelive->link != null) {
                     $coursemodule = get_coursemodule_from_instance('jitsi', $jitsilive->id);
                     $urljitsiparams = array('id' => $coursemodule->id);
