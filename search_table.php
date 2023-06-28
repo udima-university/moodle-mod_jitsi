@@ -37,7 +37,7 @@ class mod_search_table extends table_sql {
         $this->define_columns($columns);
 
         // Define the titles of columns to show in header.
-        $headers = array('Id', 'Link', 'Jitsi', 'Course', 'Account', 'User', 'Date', 'Max participants','Deleted');
+        $headers = array('Id', 'Link', 'Jitsi', 'Course', 'Account', 'User', 'Date', 'Max participants', 'Deleted');
         $this->define_headers($headers);
     }
 
@@ -86,7 +86,6 @@ class mod_search_table extends table_sql {
      */
     protected function col_course($values) {
         global $DB;
-        // $jitsi = $DB->get_record('jitsi', array('id' => $values->jitsi));
         $coursemodule = get_coursemodule_from_instance('jitsi', $values->jitsi);
         $urlcourse = new moodle_url('/course/view.php', array('id' => $coursemodule->course));
         $course = $DB->get_record('course', array('id' => $coursemodule->course));
