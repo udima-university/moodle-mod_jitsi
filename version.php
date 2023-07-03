@@ -28,7 +28,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'mod_jitsi';
-$plugin->version = 2023062700;
+$plugin->version = 2023070300;
 $plugin->release = 'v3.3.4';
 $plugin->requires = 2014051200;
 $plugin->maturity = MATURITY_STABLE;
