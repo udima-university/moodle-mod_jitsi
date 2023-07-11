@@ -6,6 +6,7 @@
 * Mail to admin when doembeable get an error
 ### Fixed
 * Fix problem with log error on doembedable function
+* delete mod_jitsi_delete_recordsource service from services (#121)
 ### Changed
 * Google api client to 2.15.0
 * Search page for recordings now show thumbnails
