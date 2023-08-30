@@ -28,70 +28,90 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 
-$id = required_param('id', PARAM_INT); // Course.
+$id = required_param('id', PARAM_INT);   // Course.
 
-$course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
+$PAGE->set_url('/mod/jitsi/index.php', array('id' => $id));
+
+if (! $course = $DB->get_record('course', array('id' => $id))) {
+    throw new \moodle_exception('invalidcourseid');
+}
 
 require_course_login($course);
+$PAGE->set_pagelayout('incourse');
 
 $params = array(
-    'context' => context_course::instance($course->id)
+    'context' => context_course::instance($id)
 );
 $event = \mod_jitsi\event\course_module_instance_list_viewed::create($params);
 $event->add_record_snapshot('course', $course);
 $event->trigger();
 
-$strname = get_string('modulenameplural', 'mod_jitsi');
-$PAGE->set_url('/mod/jitsi/index.php', array('id' => $id));
-$PAGE->navbar->add($strname);
-$PAGE->set_title("$course->shortname: $strname");
+// Get all required strings.
+$strjitsis = get_string('modulenameplural', 'jitsi');
+$strjitsi  = get_string('modulename', 'jitsi');
+
+// Print the header.
+$PAGE->navbar->add($strjitsis);
+$PAGE->set_title($strjitsis);
 $PAGE->set_heading($course->fullname);
-$PAGE->set_pagelayout('incourse');
-
 echo $OUTPUT->header();
-echo $OUTPUT->heading($strname);
+echo $OUTPUT->heading($strjitsis, 2);
 
+// Get all the appropriate data.
 if (! $jitsis = get_all_instances_in_course('jitsi', $course)) {
-    notice(get_string('nojitsis', 'jitsi'), new moodle_url('/course/view.php', array('id' => $course->id)));
+    notice(get_string('thereareno', 'moodle', $strjitsis), "../../course/view.php?id=$course->id");
+    die();
 }
 
 $usesections = course_format_uses_sections($course->format);
 
+// Print the list of instances (your module will probably extend this).
+
+$timenow  = time();
+$strname  = get_string('name');
+
 $table = new html_table();
-$table->attributes['class'] = 'generaltable mod_index';
 
 if ($usesections) {
     $strsectionname = get_string('sectionname', 'format_'.$course->format);
-    $table->head = array ($strsectionname, $strname);
+    $table->head  = array ($strsectionname, $strname);
     $table->align = array ('center', 'left');
 } else {
-    $table->head = array ($strname);
+    $table->head  = array ($strname);
     $table->align = array ('left');
 }
 
-$modinfo = get_fast_modinfo($course);
 $currentsection = '';
-foreach ($modinfo->instances['jitsi'] as $cm) {
-    $row = array();
-    if ($usesections) {
-        if ($cm->sectionnum !== $currentsection) {
-            if ($cm->sectionnum) {
-                $row[] = get_section_name($course, $cm->sectionnum);
-            }
-            if ($currentsection !== '') {
-                $table->data[] = 'hr';
-            }
-            $currentsection = $cm->sectionnum;
-        }
+foreach ($jitsis as $jitsi) {
+    if (!$jitsi->visible) {
+        // Show dimmed if the mod is hidden.
+        $link = "<a class=\"dimmed\" href=\"view.php?id=$jitsi->coursemodule\">".format_string($jitsi->name, true)."</a>";
+    } else {
+        // Show normal if the mod is visible.
+        $link = "<a href=\"view.php?id=$jitsi->coursemodule\">".format_string($jitsi->name, true)."</a>";
     }
-
-    $class = $cm->visible ? null : array('class' => 'dimmed');
-
-    $row[] = html_writer::link(new moodle_url('view.php', array('id' => $cm->id)),
-                $cm->get_formatted_name(), $class);
-    $table->data[] = $row;
+    $printsection = '';
+    if ($jitsi->section !== $currentsection) {
+        if ($jitsi->section) {
+            $printsection = get_section_name($course, $jitsi->section);
+        }
+        if ($currentsection !== '') {
+            $table->data[] = 'hr';
+        }
+        $currentsection = $jitsi->section;
+    }
+    if ($usesections) {
+        $table->data[] = array ($printsection, $link);
+    } else {
+        $table->data[] = array ($link);
+    }
 }
+
+echo '<br />';
 
 echo html_writer::table($table);
 
+// Finish the page.
+
 echo $OUTPUT->footer();
+
