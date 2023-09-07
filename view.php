@@ -190,12 +190,15 @@ $today = getdate();
 
 if (!$deletejitsirecordid) {
     echo $OUTPUT->header();
-    echo $OUTPUT->heading($jitsi->name);
 }
 
 $cm = get_coursemodule_from_id('jitsi', $id, 0, false, MUST_EXIST);
 update_completition($cm);
 if ($CFG->branch == 311) {
+    if (!$deletejitsirecordid) {
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading($jitsi->name);
+    }
     $completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
     $activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
     echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
@@ -242,8 +245,10 @@ if ($jitsi->sourcerecord != null) {
 echo "<p></p>";
 echo get_string('minutesconnected', 'jitsi', getminutes($id, $USER->id));
 
-if ($jitsi->intro) {
-    echo $OUTPUT->box(format_module_intro('jitsi', $jitsi, $cm->id), 'generalbox mod_introbox', 'jitsiintro');
+if ($CFG->branch <= 311) {
+    if ($jitsi->intro) {
+        echo $OUTPUT->box(format_module_intro('jitsi', $jitsi, $cm->id), 'generalbox mod_introbox', 'jitsiintro');
+    }
 }
 
 if ($today[0] < $jitsi->timeclose || $jitsi->timeclose == 0) {
