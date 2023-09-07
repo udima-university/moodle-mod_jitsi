@@ -196,7 +196,6 @@ $cm = get_coursemodule_from_id('jitsi', $id, 0, false, MUST_EXIST);
 update_completition($cm);
 if ($CFG->branch == 311) {
     if (!$deletejitsirecordid) {
-        echo $OUTPUT->header();
         echo $OUTPUT->heading($jitsi->name);
     }
     $completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
