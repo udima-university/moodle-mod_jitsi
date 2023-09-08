@@ -174,10 +174,11 @@ if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
 
         } catch (Google_Service_Exception $e) {
             $htmlbody = sprintf('<p>A service error occurred: <code>%s</code></p>',
-                        htmlspecialchars($e->getMessage()));
+                        htmlspecialchars($e->getMessage(), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401));
+    
         } catch (Google_Exception $e) {
-            $htmlbody = sprintf('<p>An client error occurred: <code>%s</code></p>',
-                        htmlspecialchars($e->getMessage()));
+            $htmlbody = sprintf('<p>A service error occurred: <code>%s</code></p>',
+                        htmlspecialchars($e->getMessage(), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401));
         }
         $_SESSION[$tokensessionkey] = $client->getAccessToken();
 
