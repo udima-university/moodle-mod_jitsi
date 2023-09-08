@@ -182,7 +182,7 @@ $functions = array(
                 'loginrequired' => false,
                 'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'),
         ),
-        
+
         'mod_jitsi_log_error' => array(
                 'classname' => 'mod_jitsi_external',
                 'methodname' => 'log_error',
