@@ -18,6 +18,9 @@
  * Test table class to be put in test_table.php of root of Moodle installation.
  *  for defining some custom column names and proccessing
  * Username and Password feilds using custom and other column methods.
+ * @package    mod_jitsi
+ * @copyright  2023 Sergio Comerón <sergiocomeron@icloud.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
