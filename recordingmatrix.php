@@ -121,8 +121,10 @@ if (is_siteadmin()) {
                         doembedable($sourcelive->link);
                         sleep(1);
                     }
+                    echo "<div class=\"embed-responsive embed-responsive-16by9\">";
                     echo "<iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/"
                         .$sourcelive->link."\"allowfullscreen></iframe>";
+                    echo "</div>";
                     $author = $DB->get_record('user', array('id' => $sourcelive->userid));
                     $authorurl = new moodle_url('/user/view.php', array('id' => $sourcelive->userid));
                     echo "<a href=".$authorurl." target=\"_blank\"><h6 class=\"card-subtitle mb-2 text-muted\">"
