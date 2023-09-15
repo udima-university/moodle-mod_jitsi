@@ -157,5 +157,3 @@ if (!istimedout($sesion)) {
 }
 echo '<p></p>';
 echo $CFG->jitsi_help;
-
-echo $OUTPUT->footer();

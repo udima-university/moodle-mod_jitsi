@@ -105,5 +105,3 @@ if (!istimedout($sesion)) {
 } else {
     echo generateerrortime($sesion);
 }
-
-echo $OUTPUT->footer();
