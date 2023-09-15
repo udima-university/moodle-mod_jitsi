@@ -84,7 +84,7 @@ $PAGE->set_heading(get_string('accesstotitle', 'jitsi', $sesion->name));
 
 echo $OUTPUT->header();
 
-if ($jitsi->intro) {
+if ($jitsi->intro && $CFG->branch < 40) {
     echo $jitsi->intro;
 }
 
@@ -157,3 +157,7 @@ if (!istimedout($sesion)) {
 }
 echo '<p></p>';
 echo $CFG->jitsi_help;
+
+if (isloggedin()) {
+    echo $OUTPUT->footer();
+}

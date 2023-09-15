@@ -105,3 +105,6 @@ if (!istimedout($sesion)) {
 } else {
     echo generateerrortime($sesion);
 }
+if (isloggedin()) {
+    echo $OUTPUT->footer();
+}
