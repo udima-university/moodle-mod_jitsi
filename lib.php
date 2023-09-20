@@ -1286,9 +1286,15 @@ function mod_jitsi_inplace_editable($itemtype, $itemid, $newvalue) {
         $DB->update_record('jitsi_record', array('id' => $itemid, 'name' => $newvalue));
         // Prepare the element for the output.
         $record->name = $newvalue;
-        return new \core\output\inplace_editable('mod_jitsi', 'recordname', $record->id, true,
-            format_string($record->name), $record->name, get_string('editrecordname', 'jitsi'),
-                get_string('newvaluefor', 'jitsi') . format_string($record->name));
+        return new \core\output\inplace_editable(
+            'mod_jitsi', 
+            'recordname', 
+            $record->id, 
+            true,
+            format_string($record->name), 
+            $record->name, 
+            get_string('editrecordname', 'jitsi'),
+            get_string('newvaluefor', 'jitsi') . format_string($record->name));
     }
 }
 
