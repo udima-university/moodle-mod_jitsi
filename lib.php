@@ -1276,11 +1276,19 @@ function mod_jitsi_get_fontawesome_icon_map() {
  */
 function mod_jitsi_inplace_editable($itemtype, $itemid, $newvalue) {
     if ($itemtype === 'recordname') {
-        global $DB;
+        global $DB, $PAGE;
         $record = $DB->get_record('jitsi_record', array('id' => $itemid), '*', MUST_EXIST);
         // Must call validate_context for either system, or course or course module context.
         // This will both check access and set current context.
-        \external_api::validate_context(context_system::instance());
+        $record  = $DB->get_record('jitsi_record', array('id' => $itemid), '*', MUST_EXIST);
+        $jitsi   = $DB->get_record('jitsi', array('id' => $record->jitsi), '*', MUST_EXIST);
+        $course  = $DB->get_record('course', array('id' => $jitsi->course), '*', MUST_EXIST);
+        $cm      = get_coursemodule_from_instance('jitsi', $jitsi->id, $course->id, false, MUST_EXIST);
+        $context = context_module::instance($cm->id);
+
+        $PAGE->set_context($context);
+
+
         // Clean input and update the record.
         $newvalue = clean_param($newvalue, PARAM_NOTAGS);
         $DB->update_record('jitsi_record', array('id' => $itemid, 'name' => $newvalue));
