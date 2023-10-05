@@ -108,6 +108,7 @@ if (is_siteadmin()) {
                     $urljitsi = new moodle_url('/mod/jitsi/view.php', $urljitsiparams);
                     $urlcourse = new moodle_url('/course/view.php', array('id' => $coursemodule->course));
                     $course = $DB->get_record('course', array('id' => $coursemodule->course));
+                    echo "<div class=\"col-sm-4\">";
                     echo "<div class=\"card\" >";
                     echo "<div class=\"card-body\">";
                     echo "<h5 class=\"card-title\">";
@@ -129,6 +130,7 @@ if (is_siteadmin()) {
                     $authorurl = new moodle_url('/user/view.php', array('id' => $sourcelive->userid));
                     echo "<a href=".$authorurl." target=\"_blank\"><h6 class=\"card-subtitle mb-2 text-muted\">"
                         .$author->firstname." ".$author->lastname."</h6></a>";
+                    echo "</div>";
                     echo "</div>";
                     echo "</div>";
                 }
