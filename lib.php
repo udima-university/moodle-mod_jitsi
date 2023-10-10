@@ -281,7 +281,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         $user = null) {
     global $CFG, $DB, $PAGE, $USER;
     $sessionnorm = str_replace(array(' ', ':', '"', 'º', 'ª', '{', '}', '@', '[', ']', '^', '_', '{',
-            '|', '}', '~', '@', '·', '#', '4', '$', '~', '%', '½', '5', '½', '%'), '', $session);
+            '|', '}', '~', '@', '·', '#', '$', '~', '%', '½', '½', '%'), '', $session);
     if ($teacher == 1) {
         $teacher = true;
         $affiliation = "owner";
