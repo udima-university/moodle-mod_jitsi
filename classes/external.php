@@ -760,7 +760,7 @@ class mod_jitsi_external extends external_api {
 
             $status = new Google_Service_YouTube_LiveBroadcastStatus();
             $status->setPrivacyStatus('unlisted');
-            if (get_config('mod_jitsi', 'numbervideosdeleted') == 0) {
+            if (get_config('mod_jitsi', 'selfdeclaredmadeforkids') == 0) {
                 $status->setSelfDeclaredMadeForKids('false');
             } else {
                 $status->setSelfDeclaredMadeForKids('true');
