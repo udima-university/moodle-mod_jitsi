@@ -257,3 +257,5 @@ $string['addedtoqueue'] = 'Added to queue';
 $string['removedfromqueue'] = 'Removed from queue';
 $string['internalerror'] = 'Internal error. Contact with the administrator.';
 $string['searchrecords'] = 'Search recordings';
+$string['forkids'] = 'For kids';
+$string['forkidsex'] = 'Recordings will be deemed to have been created for children.';

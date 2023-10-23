@@ -86,6 +86,9 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('jitsi_whiteboard', get_string('whiteboard', 'jitsi'),
         get_string('whiteboardex', 'jitsi'), 1));
 
+    $settings->add(new admin_setting_configcheckbox('mod_jitsi/selfdeclaredmadeforkids', get_string('forkids', 'jitsi'),
+        get_string('forkidsex', 'jitsi'), 0));
+
     $settings->add(new admin_setting_heading('jitsistreaming',
             get_string('streamingconfig', 'jitsi'), get_string('streamingconfigex', 'jitsi')));
     $settings->add(new admin_setting_configcheckbox('jitsi_livebutton', get_string('streamingbutton', 'jitsi'),
