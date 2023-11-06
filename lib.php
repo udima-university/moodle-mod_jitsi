@@ -1690,7 +1690,7 @@ function senderror($jitsi, $user, $error, $source) {
         " ha tenido un error al intentar grabar la sesión de jitsi con id ".$jitsi."\nInfo:\n".$error." en la cuenta: ".
         $account->name." (id: ".$account->id.")\n
     Para más información, mira el log:\n
-    LOG: ".$CFG->dataroot."/report/log/index.php?chooselog=1&id=".$jitsiob->course."&modid=".$cmid."\n
+    LOG: ".$CFG->wwwroot."/report/log/index.php?chooselog=1&id=".$jitsiob->course."&modid=".$cmid."\n
     URL: ".$CFG->wwwroot."/mod/jitsi/view.php?id=".$cmid."\n
     Nombre de la sesión: ".$DB->get_record('jitsi', array('id' => $jitsi))->name."\n
     Curso: ".$DB->get_record('course', array('id' => $DB->get_record('jitsi', array('id' => $jitsi))->course))->fullname."\n
