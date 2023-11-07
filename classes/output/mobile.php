@@ -54,8 +54,8 @@ class mobile {
 
         if ($id) {
             $cm = get_coursemodule_from_id('jitsi', $id, 0, false, MUST_EXIST);
-            $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-            $jitsi = $DB->get_record('jitsi', array('id' => $cm->instance), '*', MUST_EXIST);
+            $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+            $jitsi = $DB->get_record('jitsi', ['id' => $cm->instance], '*', MUST_EXIST);
         } else {
             throw new \moodle_exception('You must specify a course_module ID');
         }
@@ -80,11 +80,11 @@ class mobile {
         if ($jitsi->intro) {
             $intro = format_module_intro('jitsi', $jitsi, $cm->id);
 
-            $intro = str_replace(array('<h2', '<h3'), '<h1', $intro);
-            $intro = str_replace(array('</h2>', '</h3>'), '</h1>', $intro);
+            $intro = str_replace(['<h2', '<h3'], '<h1', $intro);
+            $intro = str_replace(['</h2>', '</h3>'], '</h1>', $intro);
 
-            $intro = str_replace(array('<h4', '<h5', '<h6'), '<h2', $intro);
-            $intro = str_replace(array('</h4>', '</h5>', '</h6>'), '</h2>', $intro);
+            $intro = str_replace(['<h4', '<h5', '<h6'], '<h2', $intro);
+            $intro = str_replace(['</h4>', '</h5>', '</h6>'], '</h2>', $intro);
 
         } else {
             $intro = "";
@@ -136,17 +136,17 @@ class mobile {
 
         $help = "";
         if ($CFG->jitsi_help) {
-            $help = str_replace(array('<h2', '<h3'), '<h1', $CFG->jitsi_help);
-            $help = str_replace(array('</h2>', '</h3>'), '</h1>', $help);
+            $help = str_replace(['<h2', '<h3'], '<h1', $CFG->jitsi_help);
+            $help = str_replace(['</h2>', '</h3>'], '</h1>', $help);
 
-            $help = str_replace(array('<h4', '<h5', '<h6'), '<h2>', $help);
-            $help = str_replace(array('</h4>', '</h5>', '</h6>'), '</h2>', $help);
+            $help = str_replace(['<h4', '<h5', '<h6'], '<h2>', $help);
+            $help = str_replace(['</h4>', '</h5>', '</h6>'], '</h2>', $help);
         }
 
-        $contextuserpic = $DB->get_record('context', array('instanceid' => $USER->id, 'contextlevel' => 30));
+        $contextuserpic = $DB->get_record('context', ['instanceid' => $USER->id, 'contextlevel' => 30]);
         $avatar = $CFG->wwwroot.'/pluginfile.php/'.$contextuserpic->id.'/user/icon/boost/f1';
 
-        $data = array(
+        $data = [
             'avatar' => $avatar,
             'nom' => $nom,
             'ses' => $sesparam,
@@ -156,9 +156,9 @@ class mobile {
             'help' => $help,
             'intro' => $intro,
             'title' => format_string($jitsi->name),
-            'room' => str_replace(array(' ', ':', '"'), '', $sesparam),
+            'room' => str_replace([' ', ':', '"'], '', $sesparam),
             'minpretime' => $jitsi->minpretime,
-        );
+        ];
 
         $today = getdate();
         if ($today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))) {
@@ -203,7 +203,7 @@ class mobile {
         $cmid = $args['cmid'];
         $nombre = $args['nom'];
         $session = $args['ses'];
-        $sessionnorm = str_replace(array(' ', ':', '"'), '', $session);
+        $sessionnorm = str_replace([' ', ':', '"'], '', $session);
         $avatar = $args['avatar'];
         $teacher = $args['t'];
 
@@ -224,30 +224,29 @@ class mobile {
         }
 
         $header = json_encode([
-        "kid" => "jitsi/custom_key_name",
-        "typ" => "JWT",
-        "alg" => "HS256"
+            "kid" => "jitsi/custom_key_name",
+            "typ" => "JWT",
+            "alg" => "HS256",
         ], JSON_UNESCAPED_SLASHES);
         $base64urlheader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
 
         $payload = json_encode([
-        "context" => [
-            "user" => [
-                "affiliation" => $affiliation,
-                "avatar" => $avatar,
-                "name" => $nombre,
-                "email" => "",
-                "id" => ""
+            "context" => [
+                "user" => [
+                    "affiliation" => $affiliation,
+                    "avatar" => $avatar,
+                    "name" => $nombre,
+                    "email" => "",
+                    "id" => "",
+                ],
+                "group" => "",
             ],
-            "group" => ""
-        ],
-        "aud" => "jitsi",
-        "iss" => $CFG->jitsi_app_id,
-        "sub" => $CFG->jitsi_domain,
-        "room" => urlencode($sessionnorm),
-        "exp" => time() + 24 * 3600,
-        "moderator" => $teacher
-
+            "aud" => "jitsi",
+            "iss" => $CFG->jitsi_app_id,
+            "sub" => $CFG->jitsi_domain,
+            "room" => urlencode($sessionnorm),
+            "exp" => time() + 24 * 3600,
+            "moderator" => $teacher,
         ], JSON_UNESCAPED_SLASHES);
         $base64urlpayload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
 
@@ -294,7 +293,7 @@ class mobile {
         $buttons .= "\"".$invite."\",\"feedback\",\"stats\",\"shortcuts\",\"tileview\",\"".$bluroption."\",";
         $buttons .= "\"download\",\"help\",\"".$muteeveryone."\",\"".$mutevideoeveryone."\",\"".$security."\"]";
 
-        $data = array();
+        $data = [];
         if ($CFG->jitsi_app_id != null && $CFG->jitsi_secret != null) {
             $data['jwt'] = 'jwt='.$jwt;
         }
@@ -338,10 +337,11 @@ class mobile {
  * @param boolean $anal - If set to *true*, will remove all non-alphanumeric characters.
  */
 function string_sanitize($string, $forcelowercase = true, $anal = false) {
-    $strip = array("~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")",
+    $strip = ["~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")",
             "_", "=", "+", "[", "{", "]", "}", "\\", "|", ";", ":", "\"",
             "'", "&#8216;", "&#8217;", "&#8220;", "&#8221;", "&#8211;", "&#8212;",
-            "â€”", "â€“", ",", "<", ".", ">", "/", "?");
+            "â€”", "â€“", ",", "<", ".", ">", "/", "?",
+        ];
     $clean = trim(str_replace($strip, "", strip_tags($string)));
     $clean = preg_replace('/\s+/', "-", $clean);
     $clean = ($anal) ? preg_replace("/[^a-zA-Z0-9]/", "", $clean) : $clean;

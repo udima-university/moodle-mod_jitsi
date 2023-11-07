@@ -45,7 +45,7 @@ class mod_jitsi_mod_form extends moodleform_mod {
         global $CFG;
         $mform = $this->_form;
         $mform->addElement('header', 'general', get_string('general', 'form'));
-        $mform->addElement('text', 'name', get_string('jitsiname', 'jitsi'), array('size' => '64'));
+        $mform->addElement('text', 'name', get_string('jitsiname', 'jitsi'), ['size' => '64']);
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
         } else {
@@ -60,28 +60,28 @@ class mod_jitsi_mod_form extends moodleform_mod {
         $mform->addElement('header', 'availability', get_string('availability', 'assign'));
 
         $name = get_string('allow', 'jitsi');
-        $options = array('optional' => true);
+        $options = ['optional' => true];
         $mform->addElement('date_time_selector', 'timeopen', $name, $options);
 
         $name = get_string('close', 'jitsi');
-        $options = array('optional' => true);
+        $options = ['optional' => true];
         $mform->addElement('date_time_selector', 'timeclose', $name, $options);
 
-        $choicesminspre = array(
+        $choicesminspre = [
             5 => 5,
             10 => 10,
             15 => 15,
             20 => 20,
-            30 => 30
-        );
+            30 => 30,
+        ];
         $mform->addElement('select', 'minpretime', get_string('minpretime', 'jitsi'), $choicesminspre);
         $mform->disabledIf('minpretime', 'timeopen[enabled]');
         $mform->addHelpButton('minpretime', 'minpretime', 'jitsi');
 
         if ($CFG->jitsi_invitebuttons == 1) {
-            $optionsinvitation = array('defaulttime' => time() + 86400, 'optional' => true);
+            $optionsinvitation = ['defaulttime' => time() + 86400, 'optional' => true];
             $mform->addElement('header', 'invitations', get_string('invitations', 'jitsi'));
-            $options = array('optional' => true);
+            $options = ['optional' => true];
             $mform->addElement('static', 'description', get_string('staticinvitationlink', 'jitsi'),
                 get_string('staticinvitationlinkex', 'jitsi'));
             $mform->addElement('date_time_selector', 'validitytime',

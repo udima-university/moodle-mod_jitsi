@@ -44,9 +44,9 @@ class mod_jitsi_external extends external_api {
      */
     public static function view_jitsi_parameters() {
         return new external_function_parameters(
-            array(
-                'cmid' => new external_value(PARAM_INT, 'course module instance id')
-            )
+            [
+                'cmid' => new external_value(PARAM_INT, 'course module instance id'),
+            ]
         );
     }
 
@@ -57,8 +57,9 @@ class mod_jitsi_external extends external_api {
      */
     public static function state_record_parameters() {
         return new external_function_parameters(
-            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
-                  'state' => new external_value(PARAM_TEXT, 'State', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+            ['jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                  'state' => new external_value(PARAM_TEXT, 'State', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+            ]
         );
     }
 
@@ -69,9 +70,10 @@ class mod_jitsi_external extends external_api {
      */
     public static function create_stream_parameters() {
         return new external_function_parameters(
-            array('session' => new external_value(PARAM_TEXT, 'Session object from google', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+            ['session' => new external_value(PARAM_TEXT, 'Session object from google', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
                   'jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
-                  'userid' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+                  'userid' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+            ]
         );
     }
 
@@ -82,8 +84,9 @@ class mod_jitsi_external extends external_api {
      */
     public static function enter_session_parameters() {
         return new external_function_parameters(
-            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
-                    'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+            ['jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                    'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+            ]
         );
     }
 
@@ -94,9 +97,10 @@ class mod_jitsi_external extends external_api {
      */
     public static function press_record_button_parameters() {
         return new external_function_parameters(
-            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+            ['jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
                     'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
-                    'cmid' => new external_value(PARAM_INT, 'Course Module id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+                    'cmid' => new external_value(PARAM_INT, 'Course Module id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+            ]
         );
     }
 
@@ -107,7 +111,7 @@ class mod_jitsi_external extends external_api {
      */
     public static function delete_record_youtube_parameters() {
         return new external_function_parameters(
-            array('idsource' => new external_value(PARAM_INT, 'Record session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+            ['idsource' => new external_value(PARAM_INT, 'Record session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED)]
         );
     }
 
@@ -118,8 +122,9 @@ class mod_jitsi_external extends external_api {
      */
     public static function stop_stream_parameters() {
         return new external_function_parameters(
-            array('jitsi' => new external_value(PARAM_TEXT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
-                  'userid' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+            ['jitsi' => new external_value(PARAM_TEXT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                  'userid' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+            ]
         );
     }
 
@@ -130,8 +135,9 @@ class mod_jitsi_external extends external_api {
      */
     public static function stop_stream_byerror_parameters() {
         return new external_function_parameters(
-            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
-                  'userid' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+            ['jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                  'userid' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+            ]
         );
     }
 
@@ -142,8 +148,9 @@ class mod_jitsi_external extends external_api {
      */
     public static function stop_stream_noauthor_parameters() {
         return new external_function_parameters(
-            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
-                  'userid' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+            ['jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                  'userid' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+            ]
         );
     }
 
@@ -154,8 +161,9 @@ class mod_jitsi_external extends external_api {
      */
     public static function getminutesfromlastconexion_parameters() {
         return new external_function_parameters(
-            array('cmid' => new external_value(PARAM_INT, 'Cm id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
-                  'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+            ['cmid' => new external_value(PARAM_INT, 'Cm id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+                  'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+            ]
         );
     }
 
@@ -178,7 +186,7 @@ class mod_jitsi_external extends external_api {
      */
     public static function delete_record_youtube($idsource) {
         global $DB;
-        $record = $DB->get_record('jitsi_record', array('source' => $idsource));
+        $record = $DB->get_record('jitsi_record', ['source' => $idsource]);
         $record->deleted = 1;
         $DB->update_record('jitsi_record', $record);
         return deleterecordyoutube($idsource);
@@ -192,11 +200,11 @@ class mod_jitsi_external extends external_api {
      */
     public static function enter_session($jitsi, $user) {
         global $DB;
-        $event = \mod_jitsi\event\jitsi_session_enter::create(array(
+        $event = \mod_jitsi\event\jitsi_session_enter::create([
             'objectid' => $PAGE->cm->instance,
             'context' => $PAGE->context,
-          ));
-          $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
+          ]);
+          $jitsiob = $DB->get_record('jitsi', ['id' => $jitsi]);
           $event->add_record_snapshot('course', $jitsi->course);
           $event->add_record_snapshot('jitsi', $jitsiob);
           $event->trigger();
@@ -212,10 +220,10 @@ class mod_jitsi_external extends external_api {
     public static function press_record_button($jitsi, $user, $cmid) {
           global $DB;
           $context = context_module::instance($cmid);
-          $event = \mod_jitsi\event\jitsi_press_record_button::create(array(
+          $event = \mod_jitsi\event\jitsi_press_record_button::create([
               'objectid' => $jitsi,
               'context' => $context,
-          ));
+          ]);
           $event->add_record_snapshot('course', $jitsi->course);
           $event->add_record_snapshot('jitsi', $jitsiob);
           $event->trigger();
@@ -228,9 +236,10 @@ class mod_jitsi_external extends external_api {
      */
     public static function press_button_cam_parameters() {
         return new external_function_parameters(
-            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+            ['jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
                     'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
-                    'cmid' => new external_value(PARAM_INT, 'Course Module id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+                    'cmid' => new external_value(PARAM_INT, 'Course Module id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+            ]
         );
     }
 
@@ -244,10 +253,10 @@ class mod_jitsi_external extends external_api {
     public static function press_button_cam($jitsi, $user, $cmid) {
         global $DB;
         $context = context_module::instance($cmid);
-        $event = \mod_jitsi\event\jitsi_press_button_cam::create(array(
+        $event = \mod_jitsi\event\jitsi_press_button_cam::create([
             'objectid' => $jitsi,
             'context' => $context,
-        ));
+        ]);
         $event->add_record_snapshot('course', $jitsi->course);
         $event->add_record_snapshot('jitsi', $jitsiob);
         $event->trigger();
@@ -268,9 +277,10 @@ class mod_jitsi_external extends external_api {
      */
     public static function press_button_desktop_parameters() {
         return new external_function_parameters(
-            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+            ['jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
                     'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
-                    'cmid' => new external_value(PARAM_INT, 'Course Module id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+                    'cmid' => new external_value(PARAM_INT, 'Course Module id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+            ]
         );
     }
 
@@ -281,10 +291,11 @@ class mod_jitsi_external extends external_api {
      */
     public static function send_error_parameters() {
         return new external_function_parameters(
-            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+            ['jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
                     'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
                     'error' => new external_value(PARAM_TEXT, 'Error', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
-                    'cmid' => new external_value(PARAM_INT, 'Course Module id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+                    'cmid' => new external_value(PARAM_INT, 'Course Module id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+            ]
         );
     }
 
@@ -302,16 +313,16 @@ class mod_jitsi_external extends external_api {
         $PAGE->set_context(context_module::instance($cmid));
         $admins = get_admins();
 
-        $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
+        $jitsiob = $DB->get_record('jitsi', ['id' => $jitsi]);
         $DB->update_record('jitsi', $jitsiob);
 
-        $user = $DB->get_record('user', array('id' => $user));
+        $user = $DB->get_record('user', ['id' => $user]);
         $mensaje = "El usuario ".$user->firstname." ".$user->lastname.
             " ha tenido un error al intentar grabar la sesión de jitsi con id ".$jitsi."\nInfo:\n".$error."\n
         Para más información, accede a la sesión de jitsi y mira el log.\n
         URL: ".$CFG->wwwroot."/mod/jitsi/view.php?id=".$cmid."\n
-        Nombre de la sesión: ".$DB->get_record('jitsi', array('id' => $jitsi))->name."\n
-        Curso: ".$DB->get_record('course', array('id' => $DB->get_record('jitsi', array('id' => $jitsi))->course))->fullname."\n
+        Nombre de la sesión: ".$DB->get_record('jitsi', ['id' => $jitsi])->name."\n
+        Curso: ".$DB->get_record('course', ['id' => $DB->get_record('jitsi', ['id' => $jitsi])->course])->fullname."\n
         Usuario: ".$user->username."\n";
         foreach ($admins as $admin) {
             email_to_user($admin, $admin, "ERROR JITSI! el usuario: "
@@ -319,11 +330,11 @@ class mod_jitsi_external extends external_api {
         }
 
         $cm = get_coursemodule_from_id('jitsi', $cmid, 0, false, MUST_EXIST);
-        $event = \mod_jitsi\event\jitsi_error::create(array(
+        $event = \mod_jitsi\event\jitsi_error::create([
             'objectid' => $PAGE->cm->instance,
             'context' => $PAGE->context,
-            'other' => array('error' => $error, 'account' => '-')
-        ));
+            'other' => ['error' => $error, 'account' => '-'],
+        ]);
         $event->add_record_snapshot('course', $PAGE->course);
         $event->add_record_snapshot('jitsi', $jitsi);
         $event->trigger();
@@ -339,10 +350,10 @@ class mod_jitsi_external extends external_api {
     public static function press_button_desktop($jitsi, $user, $cmid) {
         global $DB;
         $context = context_module::instance($cmid);
-        $event = \mod_jitsi\event\jitsi_press_button_desktop::create(array(
+        $event = \mod_jitsi\event\jitsi_press_button_desktop::create([
             'objectid' => $jitsi,
             'context' => $context,
-        ));
+        ]);
         $event->add_record_snapshot('course', $jitsi->course);
         $event->add_record_snapshot('jitsi', $jitsiob);
         $event->trigger();
@@ -363,9 +374,10 @@ class mod_jitsi_external extends external_api {
      */
     public static function press_button_end_parameters() {
         return new external_function_parameters(
-            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+            ['jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
                     'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
-                    'cmid' => new external_value(PARAM_INT, 'Course Module id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+                    'cmid' => new external_value(PARAM_INT, 'Course Module id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+            ]
         );
     }
 
@@ -376,9 +388,10 @@ class mod_jitsi_external extends external_api {
      */
     public static function log_error_parameters() {
         return new external_function_parameters(
-            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+            ['jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
                     'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
-                    'cmid' => new external_value(PARAM_INT, 'Course Module id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+                    'cmid' => new external_value(PARAM_INT, 'Course Module id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+            ]
         );
     }
 
@@ -392,10 +405,10 @@ class mod_jitsi_external extends external_api {
     public static function press_button_end($jitsi, $user, $cmid) {
         global $DB;
         $context = context_module::instance($cmid);
-        $event = \mod_jitsi\event\jitsi_press_button_end::create(array(
+        $event = \mod_jitsi\event\jitsi_press_button_end::create([
             'objectid' => $jitsi,
             'context' => $context,
-        ));
+        ]);
         $event->add_record_snapshot('course', $jitsi->course);
         $event->add_record_snapshot('jitsi', $jitsiob);
         $event->trigger();
@@ -411,10 +424,10 @@ class mod_jitsi_external extends external_api {
     public static function log_error($jitsi, $user, $cmid) {
         global $DB;
         $context = context_module::instance($cmid);
-        $event = \mod_jitsi\event\jitsi_error::create(array(
+        $event = \mod_jitsi\event\jitsi_error::create([
             'objectid' => $jitsi,
             'context' => $context,
-        ));
+        ]);
         $event->add_record_snapshot('course', $jitsi->course);
         $event->add_record_snapshot('jitsi', $jitsiob);
         $event->trigger();
@@ -443,9 +456,10 @@ class mod_jitsi_external extends external_api {
      */
     public static function press_button_microphone_parameters() {
         return new external_function_parameters(
-            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+            ['jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
                     'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
-                    'cmid' => new external_value(PARAM_INT, 'Course Module id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+                    'cmid' => new external_value(PARAM_INT, 'Course Module id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+            ]
         );
     }
 
@@ -456,9 +470,10 @@ class mod_jitsi_external extends external_api {
      */
     public static function update_participants_parameters() {
         return new external_function_parameters(
-            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+            ['jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
                     'numberofparticipants' =>
-                        new external_value(PARAM_INT, 'Number of participants', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+                        new external_value(PARAM_INT, 'Number of participants', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+            ]
         );
     }
 
@@ -469,7 +484,7 @@ class mod_jitsi_external extends external_api {
      */
     public static function get_participants_parameters() {
         return new external_function_parameters(
-            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+            ['jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED)]
         );
     }
 
@@ -483,10 +498,10 @@ class mod_jitsi_external extends external_api {
     public static function press_button_microphone($jitsi, $user, $cmid) {
         global $DB;
         $context = context_module::instance($cmid);
-        $event = \mod_jitsi\event\jitsi_press_button_microphone::create(array(
+        $event = \mod_jitsi\event\jitsi_press_button_microphone::create([
             'objectid' => $jitsi,
             'context' => $context,
-        ));
+        ]);
         $event->add_record_snapshot('course', $jitsi->course);
         $event->add_record_snapshot('jitsi', $jitsiob);
         $event->trigger();
@@ -522,9 +537,10 @@ class mod_jitsi_external extends external_api {
      */
     public static function participating_session_parameters() {
         return new external_function_parameters(
-            array('jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+            ['jitsi' => new external_value(PARAM_INT, 'Jitsi session id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
                     'user' => new external_value(PARAM_INT, 'User id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
-                    'cmid' => new external_value(PARAM_INT, 'Course Module id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED))
+                    'cmid' => new external_value(PARAM_INT, 'Course Module id', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+            ]
         );
     }
 
@@ -537,10 +553,10 @@ class mod_jitsi_external extends external_api {
     public static function participating_session($jitsi, $user, $cmid) {
         global $DB;
         $context = context_module::instance($cmid);
-        $event = \mod_jitsi\event\jitsi_session_participating::create(array(
+        $event = \mod_jitsi\event\jitsi_session_participating::create([
             'objectid' => $jitsi,
             'context' => $context,
-        ));
+        ]);
         $event->add_record_snapshot('course', $jitsi->course);
         $event->add_record_snapshot('jitsi', $jitsiob);
         $event->trigger();
@@ -582,11 +598,8 @@ class mod_jitsi_external extends external_api {
         global $DB;
 
         $params = self::validate_parameters(self::view_jitsi_parameters(),
-                                            array(
-                                                'cmid' => $cmid
-                                            )
-        );
-        $warnings = array();
+            ['cmid' => $cmid]);
+        $warnings = [];
 
         $cm = get_coursemodule_from_id('jitsi', $cmid, 0, false, MUST_EXIST);
 
@@ -594,17 +607,15 @@ class mod_jitsi_external extends external_api {
         self::validate_context($context);
         require_capability('mod/jitsi:view', $context);
 
-        $event = \mod_jitsi\event\course_module_viewed::create(
-            array(
+        $event = \mod_jitsi\event\course_module_viewed::create([
                 'objectid' => $cm->instance,
                 'context' => $context,
-            )
-        );
+            ]);
         $event->add_record_snapshot('course', $course);
         $event->add_record_snapshot($cm->modname, $jitsi);
         $event->trigger();
 
-        $result = array();
+        $result = [];
         $result['status'] = true;
         $result['warnings'] = $warnings;
         return $result;
@@ -620,8 +631,8 @@ class mod_jitsi_external extends external_api {
         global $USER, $DB;
 
         $params = self::validate_parameters(self::state_record_parameters(),
-                array('jitsi' => $jitsi, 'state' => $state));
-        $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
+                ['jitsi' => $jitsi, 'state' => $state]);
+        $jitsiob = $DB->get_record('jitsi', ['id' => $jitsi]);
         $DB->update_record('jitsi', $jitsiob);
         return 'recording'.$jitsiob->recording;
     }
@@ -636,13 +647,13 @@ class mod_jitsi_external extends external_api {
         global $CFG, $DB;
 
         $params = self::validate_parameters(self::stop_stream_parameters(),
-                array('jitsi' => $jitsi, 'userid' => $userid));
-        $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
-        $sourcealmacenada = $DB->get_record('jitsi_source_record', array('id' => $jitsiob->sourcerecord));
-        $author = $DB->get_record('user', array('id' => $sourcealmacenada->userid));
+                ['jitsi' => $jitsi, 'userid' => $userid]);
+        $jitsiob = $DB->get_record('jitsi', ['id' => $jitsi]);
+        $sourcealmacenada = $DB->get_record('jitsi_source_record', ['id' => $jitsiob->sourcerecord]);
+        $author = $DB->get_record('user', ['id' => $sourcealmacenada->userid]);
 
         if ($sourcealmacenada->userid != $userid && $jitsiob->sourcerecord != null) {
-            $result = array();
+            $result = [];
             $result['error'] = 'errorauthor';
             $result['user'] = $author->id;
             $result['usercomplete'] = $author->firstname.' '.$author->lastname;
@@ -650,7 +661,7 @@ class mod_jitsi_external extends external_api {
         }
         $jitsiob->sourcerecord = null;
         $DB->update_record('jitsi', $jitsiob);
-        $result = array();
+        $result = [];
 
         $result['error'] = '';
         $result['user'] = $author->id;
@@ -668,8 +679,8 @@ class mod_jitsi_external extends external_api {
         global $CFG, $DB;
 
         $params = self::validate_parameters(self::stop_stream_byerror_parameters(),
-                array('jitsi' => $jitsi, 'userid' => $userid));
-        $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
+                ['jitsi' => $jitsi, 'userid' => $userid]);
+        $jitsiob = $DB->get_record('jitsi', ['id' => $jitsi]);
         if ($userid != $jitsiob->sourcerecord) {
             $jitsiob->sourcerecord = null;
             $DB->update_record('jitsi', $jitsiob);
@@ -688,8 +699,8 @@ class mod_jitsi_external extends external_api {
         global $CFG, $DB;
 
         $params = self::validate_parameters(self::stop_stream_byerror_parameters(),
-                array('jitsi' => $jitsi, 'userid' => $userid));
-        $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
+                ['jitsi' => $jitsi, 'userid' => $userid]);
+        $jitsiob = $DB->get_record('jitsi', ['id' => $jitsi]);
         if ($userid != $jitsiob->sourcerecord) {
             $jitsiob->sourcerecord = null;
             $DB->update_record('jitsi', $jitsiob);
@@ -709,19 +720,19 @@ class mod_jitsi_external extends external_api {
         global $CFG, $DB;
 
         $params = self::validate_parameters(self::create_stream_parameters(),
-                array('session' => $session, 'jitsi' => $jitsi, 'userid' => $userid));
+                ['session' => $session, 'jitsi' => $jitsi, 'userid' => $userid]);
 
-        $author = $DB->get_record('user', array('id' => $userid));
-        $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
+        $author = $DB->get_record('user', ['id' => $userid]);
+        $jitsiob = $DB->get_record('jitsi', ['id' => $jitsi]);
         if ($jitsiob->sourcerecord != null) {
-            $sourcealmacenada = $DB->get_record('jitsi_source_record', array('id' => $jitsiob->sourcerecord));
+            $sourcealmacenada = $DB->get_record('jitsi_source_record', ['id' => $jitsiob->sourcerecord]);
             if ($sourcealmacenada->userid != $userid) {
-                $result = array();
+                $result = [];
                 $result['stream'] = 'nodata';
                 $result['idsource'] = 0;
                 $result['error'] = 'errorauthor';
                 $result['user'] = $sourcealmacenada->userid;
-                $authoralmacenada = $DB->get_record('user', array('id' => $sourcealmacenada->userid));
+                $authoralmacenada = $DB->get_record('user', ['id' => $sourcealmacenada->userid]);
                 $result['usercomplete'] = $authoralmacenada->firstname.' '.$authoralmacenada->lastname;
                 $result['errorinfo'] = '';
                 $result['link'] = '';
@@ -732,7 +743,7 @@ class mod_jitsi_external extends external_api {
         $client = getclientgoogleapi();
         $youtube = new Google_Service_YouTube($client);
 
-        $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
+        $account = $DB->get_record('jitsi_record_account', ['inuse' => 1]);
         $source = new stdClass();
         $source->account = $account->id;
         $source->timecreated = time();
@@ -747,7 +758,7 @@ class mod_jitsi_external extends external_api {
         $record->name = get_string('recordtitle', 'jitsi').' '.mb_substr($jitsiob->name, 0, 30);
 
         $DB->insert_record('jitsi_record', $record);
-        $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
+        $jitsiob = $DB->get_record('jitsi', ['id' => $jitsi]);
         $jitsiob->sourcerecord = $record->source;
         $DB->update_record('jitsi', $jitsiob);
 
@@ -776,7 +787,7 @@ class mod_jitsi_external extends external_api {
             $broadcastinsert->setContentDetails($contentdetails);
             sleep(rand(1, 2));
             $broadcastsresponse = $youtube->liveBroadcasts->insert('snippet,status,contentDetails',
-                $broadcastinsert, array());
+                $broadcastinsert, []);
 
             $streamsnippet = new Google_Service_YouTube_LiveStreamSnippet();
             $streamsnippet->setTitle("Record ".date('l jS \of F', $testdate));
@@ -791,12 +802,12 @@ class mod_jitsi_external extends external_api {
             $streaminsert->setCdn($cdn);
             $streaminsert->setKind('youtube#liveStream');
             sleep(rand(1, 2));
-            $streamsresponse = $youtube->liveStreams->insert('snippet,cdn', $streaminsert, array());
+            $streamsresponse = $youtube->liveStreams->insert('snippet,cdn', $streaminsert, []);
             sleep(rand(1, 2));
             $bindbroadcastresponse = $youtube->liveBroadcasts->bind($broadcastsresponse['id'], 'id,contentDetails',
-                array('streamId' => $streamsresponse['id'], ));
+                ['streamId' => $streamsresponse['id']]);
         } catch (Google_Service_Exception $e) {
-            $result = array();
+            $result = [];
             $result['stream'] = $streamsresponse['cdn']['ingestionInfo']['streamName'];
             $result['idsource'] = $record->source;
             $result['error'] = 'erroryoutube';
@@ -808,7 +819,7 @@ class mod_jitsi_external extends external_api {
             changeaccount();
             return $result;
         } catch (Google_Exception $e) {
-            $result = array();
+            $result = [];
             $result['stream'] = $streamsresponse['cdn']['ingestionInfo']['streamName'];
             $result['idsource'] = $record->source;
             $result['error'] = 'erroryoutube';
@@ -821,12 +832,12 @@ class mod_jitsi_external extends external_api {
             return $result;
         }
 
-        $source = $DB->get_record('jitsi_source_record', array('id' => $record->source));
+        $source = $DB->get_record('jitsi_source_record', ['id' => $record->source]);
         $source->link = $broadcastsresponse['id'];
         $source->maxparticipants = $jitsiob->numberofparticipants;
         $DB->update_record('jitsi_source_record', $source);
 
-        $result = array();
+        $result = [];
         $result['stream'] = $streamsresponse['cdn']['ingestionInfo']['streamName'];
         $result['idsource'] = $record->source;
         $result['error'] = '';
@@ -848,14 +859,14 @@ class mod_jitsi_external extends external_api {
         global $CFG, $DB;
 
         $params = self::validate_parameters(self::update_participants_parameters(),
-                array('jitsi' => $jitsi, 'numberofparticipants' => $numberofparticipants));
+                ['jitsi' => $jitsi, 'numberofparticipants' => $numberofparticipants]);
         if ($numberofparticipants >= 0) {
-            $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
+            $jitsiob = $DB->get_record('jitsi', ['id' => $jitsi]);
             if ($numberofparticipants != $jitsiob->numberofparticipants) {
                 $jitsiob->numberofparticipants = $numberofparticipants;
                 $DB->update_record('jitsi', $jitsiob);
                 if ($jitsiob->sourcerecord != null) {
-                    $source = $DB->get_record('jitsi_source_record', array('id' => $jitsiob->sourcerecord));
+                    $source = $DB->get_record('jitsi_source_record', ['id' => $jitsiob->sourcerecord]);
                     if ($source->maxparticipants < $numberofparticipants) {
                         $source->maxparticipants = $numberofparticipants;
                         $DB->update_record('jitsi_source_record', $source);
@@ -875,8 +886,8 @@ class mod_jitsi_external extends external_api {
         global $CFG, $DB;
 
         $params = self::validate_parameters(self::update_participants_parameters(),
-                array('jitsi' => $jitsi));
-        $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
+                ['jitsi' => $jitsi]);
+        $jitsiob = $DB->get_record('jitsi', ['id' => $jitsi]);
         $jitsiob->name = 'modificado';
         $DB->update_record('jitsi', $jitsiob);
         return $jitsiob->numberofparticipants;
@@ -895,12 +906,11 @@ class mod_jitsi_external extends external_api {
      * @return external_description
      */
     public static function stop_stream_returns() {
-        return new external_single_structure(
-            array(
+        return new external_single_structure([
                 'error' => new external_value(PARAM_TEXT, 'error'),
                 'user' => new external_value(PARAM_INT, 'user id'),
                 'usercomplete' => new external_value(PARAM_TEXT, 'user complete name'),
-            )
+            ]
         );
     }
 
@@ -926,11 +936,10 @@ class mod_jitsi_external extends external_api {
      * @return external_description
      */
     public static function view_jitsi_returns() {
-        return new external_single_structure(
-            array(
+        return new external_single_structure([
                 'status' => new external_value(PARAM_BOOL, 'status: true if success'),
-                'warnings' => new external_warnings()
-            )
+                'warnings' => new external_warnings(),
+            ]
         );
     }
 
@@ -940,16 +949,15 @@ class mod_jitsi_external extends external_api {
      * @return external_description
      */
     public static function create_stream_returns() {
-        return new external_single_structure(
-            array(
+        return new external_single_structure([
                 'stream' => new external_value(PARAM_TEXT, 'stream'),
                 'idsource' => new external_value(PARAM_INT, 'source instance id'),
                 'error' => new external_value(PARAM_TEXT, 'error'),
                 'user' => new external_value(PARAM_INT, 'user id'),
                 'usercomplete' => new external_value(PARAM_TEXT, 'user complete name'),
                 'errorinfo' => new external_value(PARAM_TEXT, 'error info'),
-                'link' => new external_value(PARAM_TEXT, 'link')
-            )
+                'link' => new external_value(PARAM_TEXT, 'link'),
+            ]
         );
     }
 

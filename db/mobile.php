@@ -51,7 +51,7 @@ $addons = [
             ['appaccessinfo', 'jitsi'],
             ['appinstalledtext', 'jitsi'],
             ['appnotinstalledtext', 'jitsi'],
-            ['desktopaccessinfo', 'jitsi']
+            ['desktopaccessinfo', 'jitsi'],
         ],
     ],
 ];

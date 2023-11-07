@@ -33,14 +33,15 @@ class backup_jitsi_activity_structure_step extends backup_activity_structure_ste
 
         $userinfo = $this->get_setting_value('userinfo');
 
-        $jitsi = new backup_nested_element('jitsi', array('id'), array('name', 'intro', 'introformat',
-            'timeopen', 'timeclose', 'validitytime', 'minpretime', 'token', 'completionminutes'));
+        $jitsi = new backup_nested_element('jitsi', ['id'], ['name', 'intro', 'introformat',
+            'timeopen', 'timeclose', 'validitytime', 'minpretime', 'token', 'completionminutes',
+        ]);
         $sources = new backup_nested_element('sources');
-        $source = new backup_nested_element('source', array('id'), array('link', 'account', 'timecreated', 'userid'));
+        $source = new backup_nested_element('source', ['id'], ['link', 'account', 'timecreated', 'userid']);
         $records = new backup_nested_element('records');
-        $record = new backup_nested_element('record', array('id'), array('deleted', 'source', 'visible', 'name'));
+        $record = new backup_nested_element('record', ['id'], ['deleted', 'source', 'visible', 'name']);
         $accounts = new backup_nested_element('accounts');
-        $account = new backup_nested_element('account', array('id'), array('name'));
+        $account = new backup_nested_element('account', ['id'], ['name']);
 
         // Build the tree.
         $jitsi->add_child($records);
@@ -52,12 +53,12 @@ class backup_jitsi_activity_structure_step extends backup_activity_structure_ste
         $source->add_child($accounts);
         $accounts->add_child($account);
 
-        $jitsi->set_source_table('jitsi', array('id' => backup::VAR_ACTIVITYID));
+        $jitsi->set_source_table('jitsi', ['id' => backup::VAR_ACTIVITYID]);
 
         if ($userinfo) {
-            $source->set_source_table('jitsi_source_record', array('id' => '../../source'));
-            $record->set_source_table('jitsi_record', array('jitsi' => '../../id'));
-            $account->set_source_table('jitsi_record_account', array('id' => '../../account'));
+            $source->set_source_table('jitsi_source_record', ['id' => '../../source']);
+            $record->set_source_table('jitsi_record', ['jitsi' => '../../id']);
+            $account->set_source_table('jitsi_record_account', ['id' => '../../account']);
         }
 
         $source->annotate_ids('user', 'userid');

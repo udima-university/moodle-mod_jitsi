@@ -64,7 +64,7 @@ class custom_completion extends activity_custom_completion {
      */
     public static function get_defined_custom_rules(): array {
         return [
-            'completionminutes'
+            'completionminutes',
         ];
     }
 
@@ -77,8 +77,7 @@ class custom_completion extends activity_custom_completion {
         $completionminutes = $this->cm->customdata['customcompletionrules']['completionminutes'] ?? 0;
 
         return [
-            'completionminutes' => get_string('completiondetail:minutes', 'jitsi', $completionminutes)
-
+            'completionminutes' => get_string('completiondetail:minutes', 'jitsi', $completionminutes),
         ];
     }
 
@@ -89,7 +88,7 @@ class custom_completion extends activity_custom_completion {
      */
     public function get_sort_order(): array {
         return [
-            'completionminutes'
+            'completionminutes',
         ];
     }
 

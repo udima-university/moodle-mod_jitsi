@@ -35,8 +35,8 @@ $token = required_param('t', PARAM_TEXT);
 
 $sql = "select * from {jitsi} where token = '".$token."'";
 $jitsi = $DB->get_record_sql($sql);
-$module = $DB->get_record ('modules', array('name' => 'jitsi'));
-$cm = $DB->get_record ('course_modules', array('instance' => $jitsi->id, 'module' => $module->id));
+$module = $DB->get_record ('modules', ['name' => 'jitsi']);
+$cm = $DB->get_record ('course_modules', ['instance' => $jitsi->id, 'module' => $module->id]);
 $id = $cm->id;
 
 $sessionid = $cm->instance;
@@ -56,7 +56,7 @@ class name_form extends moodleform {
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', get_string('required'), 'required', '', 'client', false, false);
 
-        $buttonarray = array();
+        $buttonarray = [];
         $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('continue'));
         $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
     }
@@ -70,12 +70,12 @@ class name_form extends moodleform {
      *         or an empty array if everything is OK (true allowed for backwards compatibility too).
      */
     public function validation($data, $files) {
-        return array();
+        return [];
     }
 }
 
 $PAGE->set_url($CFG->wwwroot.'/mod/jitsi/formuniversal.php');
-$sesion = $DB->get_record('jitsi', array('id' => $sessionid));
+$sesion = $DB->get_record('jitsi', ['id' => $sessionid]);
 $PAGE->set_cm($cm);
 $PAGE->set_context(context_module::instance($id));
 
@@ -88,10 +88,10 @@ if ($jitsi->intro && $CFG->branch < 40) {
     echo $jitsi->intro;
 }
 
-$event = \mod_jitsi\event\jitsi_session_guest_form::create(array(
+$event = \mod_jitsi\event\jitsi_session_guest_form::create([
   'objectid' => $PAGE->cm->instance,
   'context' => $PAGE->context,
-));
+]);
 $event->add_record_snapshot('course', $PAGE->course);
 $event->add_record_snapshot($PAGE->cm->modname, $sesion);
 
@@ -103,7 +103,7 @@ if (!istimedout($sesion)) {
             $today = getdate();
             if ($today[0] < $sesion->timeclose || $sesion->timeclose == 0) {
                 if ($today[0] > (($sesion->timeopen) - ($sesion->minpretime * 60))) {
-                    $urlparamsform = array('ses' => $sessionid, 'id' => $id);
+                    $urlparamsform = ['ses' => $sessionid, 'id' => $id];
                     $urlform = new moodle_url('/mod/jitsi/universal.php', $urlparamsform);
                     $mform = new name_form($urlform);
                     if ($mform->is_cancelled()) {
@@ -137,8 +137,13 @@ if (!istimedout($sesion)) {
                 }
                 $avatar = $CFG->wwwroot.'/user/pix.php/'.$USER->id.'/f1.jpg';
                 $mail = '';
-                $urlparams = array('avatar' => $avatar, 'name' => $nom, 'ses' => $sessionid,
-                                    'mail' => $mail, 'id' => $id);
+                $urlparams = [
+                    'avatar' => $avatar,
+                    'name' => $nom,
+                    'ses' => $sessionid,
+                    'mail' => $mail,
+                    'id' => $id,
+                ];
                 echo $OUTPUT->box(get_string('instruction', 'jitsi'));
                 echo $OUTPUT->single_button(new moodle_url('/mod/jitsi/universal.php', $urlparams),
                     get_string('access', 'jitsi'), 'post');

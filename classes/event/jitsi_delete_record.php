@@ -43,13 +43,13 @@ class jitsi_delete_record extends \core\event\base {
      * @return record
      */
     public static function event_with_record($record, $link) {
-        $data = array(
+        $data = [
             'context' => \context_system::instance(),
-            'other' => array(
+            'other' => [
                 'record' => $record,
                 'link' => $link,
-            )
-        );
+            ],
+        ];
 
         return self::create($data);
     }
@@ -88,7 +88,7 @@ class jitsi_delete_record extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/jitsi/view.php', array('id' => $this->contextinstanceid));
+        return new \moodle_url('/mod/jitsi/view.php', ['id' => $this->contextinstanceid]);
     }
 
     /**

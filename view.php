@@ -42,12 +42,12 @@ $showjitsirecordid = optional_param('showjitsirecordid', 0, PARAM_INT);
 
 if ($id) {
     $cm = get_coursemodule_from_id('jitsi', $id, 0, false, MUST_EXIST);
-    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $jitsi = $DB->get_record('jitsi', array('id' => $cm->instance), '*', MUST_EXIST);
+    $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+    $jitsi = $DB->get_record('jitsi', ['id' => $cm->instance], '*', MUST_EXIST);
     $sesskey = optional_param('sesskey', null, PARAM_TEXT);
 } else if ($n) {
-    $jitsi = $DB->get_record('jitsi', array('id' => $n), '*', MUST_EXIST);
-    $course = $DB->get_record('course', array('id' => $jitsi->course), '*', MUST_EXIST);
+    $jitsi = $DB->get_record('jitsi', ['id' => $n], '*', MUST_EXIST);
+    $course = $DB->get_record('course', ['id' => $jitsi->course], '*', MUST_EXIST);
     $cm = get_coursemodule_from_instance('jitsi', $jitsi->id, $course->id, false, MUST_EXIST);
 } else if ($state) {
     $paramdecode = base64urldecode($state);
@@ -71,35 +71,35 @@ if ($id) {
     $sesskey = $sesskeya[1];
     $stateses = $statesesa[1];
     $cm = get_coursemodule_from_id('jitsi', $id, 0, false, MUST_EXIST);
-    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $jitsi = $DB->get_record('jitsi', array('id' => $cm->instance), '*', MUST_EXIST);
+    $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+    $jitsi = $DB->get_record('jitsi', ['id' => $cm->instance], '*', MUST_EXIST);
 } else {
     throw new \moodle_exception('Unable to find jitsi');
 }
 
 require_login($course, true, $cm);
-$event = \mod_jitsi\event\course_module_viewed::create(array(
+$event = \mod_jitsi\event\course_module_viewed::create([
   'objectid' => $PAGE->cm->instance,
   'context' => $PAGE->context,
-));
+]);
 
 $event->add_record_snapshot('course', $PAGE->course);
 $event->add_record_snapshot($PAGE->cm->modname, $jitsi);
 $event->trigger();
-$PAGE->set_url('/mod/jitsi/view.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/jitsi/view.php', ['id' => $cm->id]);
 
 $PAGE->set_title(format_string($jitsi->name));
 $PAGE->set_heading(format_string($course->fullname));
 
 if ($deletejitsirecordid && confirm_sesskey($sesskey)) {
     marktodelete($deletejitsirecordid, 1);
-    $record = $DB->get_record('jitsi_record', array('id' => $deletejitsirecordid));
-    $source = $DB->get_record('jitsi_source_record', array('id' => $record->source));
-    $event = \mod_jitsi\event\jitsi_delete_record::create(array(
+    $record = $DB->get_record('jitsi_record', ['id' => $deletejitsirecordid]);
+    $source = $DB->get_record('jitsi_source_record', ['id' => $record->source]);
+    $event = \mod_jitsi\event\jitsi_delete_record::create([
         'objectid' => $PAGE->cm->instance,
         'context' => $PAGE->context,
-        'other' => array('record' => $deletejitsirecordid, 'link' => $source->link)
-      ));
+        'other' => ['record' => $deletejitsirecordid, 'link' => $source->link],
+    ]);
     $event->add_record_snapshot('course', $PAGE->course);
     $event->add_record_snapshot($PAGE->cm->modname, $jitsi);
     $event->trigger();
@@ -108,14 +108,14 @@ if ($deletejitsirecordid && confirm_sesskey($sesskey)) {
 }
 
 if ($hidejitsirecordid && confirm_sesskey($sesskey)) {
-    $record = $DB->get_record('jitsi_record', array('id' => $hidejitsirecordid));
+    $record = $DB->get_record('jitsi_record', ['id' => $hidejitsirecordid]);
     $record->visible = 0;
     $DB->update_record('jitsi_record', $record);
     redirect($PAGE->url, get_string('updated', 'jitsi'));
 }
 
 if ($showjitsirecordid && confirm_sesskey($sesskey)) {
-    $record = $DB->get_record('jitsi_record', array('id' => $showjitsirecordid));
+    $record = $DB->get_record('jitsi_record', ['id' => $showjitsirecordid]);
     $record->visible = 1;
     $DB->update_record('jitsi_record', $record);
     redirect($PAGE->url, get_string('updated', 'jitsi'));
@@ -183,8 +183,14 @@ for ($i = 0; $i < $max; $i++) {
 }
 
 $avatar = $CFG->wwwroot.'/user/pix.php/'.$USER->id.'/f1.jpg';
-$urlparams = array('avatar' => $avatar, 'nom' => $nom, 'ses' => $sesparam,
-    'courseid' => $course->id, 'cmid' => $id, 't' => $moderation);
+$urlparams = [
+    'avatar' => $avatar,
+    'nom' => $nom,
+    'ses' => $sesparam,
+    'courseid' => $course->id,
+    'cmid' => $id,
+    't' => $moderation,
+];
 
 $today = getdate();
 
@@ -237,8 +243,8 @@ if ($jitsi->sourcerecord != null) {
     echo "<path d=\"M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z\"/>";
     echo "<path d=\"M11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0z\"/>";
     echo "</svg> ";
-    $source = $DB->get_record('jitsi_source_record', array('id' => $jitsi->sourcerecord));
-    $author = $DB->get_record('user', array('id' => $source->userid));
+    $source = $DB->get_record('jitsi_source_record', ['id' => $jitsi->sourcerecord]);
+    $author = $DB->get_record('user', ['id' => $source->userid]);
     echo addslashes(get_string('sessionisbeingrecordingby', 'jitsi', $author->firstname." ".$author->lastname));
 }
 echo "<p></p>";
@@ -255,10 +261,10 @@ if ($today[0] < $jitsi->timeclose || $jitsi->timeclose == 0) {
         has_capability('mod/jitsi:moderation', $context) && $today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))) {
         echo "<br><br>";
         $button = new moodle_url('/mod/jitsi/session.php', $urlparams);
-        $options = array(
+        $options = [
             'class' => 'btn btn-primary',
             'title' => get_string('access', 'jitsi'),
-        );
+        ];
         $boton = \html_writer::link($button, get_string('access', 'jitsi'), $options);
         echo $boton;
     } else {
@@ -348,7 +354,7 @@ if ($records && isallvisible($records) || has_capability ('mod/jitsi:record', $P
             $hideaction = $OUTPUT->action_icon($hideurl, $hideicon, new confirm_action('Hide?'));
             $showaction = $OUTPUT->action_icon($showurl, $showicon, new confirm_action('Show?'));
 
-            $sourcerecord = $DB->get_record('jitsi_source_record', array('id' => $record->source));
+            $sourcerecord = $DB->get_record('jitsi_source_record', ['id' => $record->source]);
             $context = context_module::instance($cm->id);
             if ($sourcerecord->link != null) {
                 if ($record->visible != 0 || (has_capability('mod/jitsi:record', $context)
@@ -377,7 +383,7 @@ if ($records && isallvisible($records) || has_capability ('mod/jitsi:record', $P
                     } else {
                         echo "<h6 class=\"card-subtitle mb-2 text-muted\">".get_string('error')."</h6>";
                     }
-                    $account = $DB->get_record('jitsi_record_account', array('id' => $sourcerecord->account));
+                    $account = $DB->get_record('jitsi_record_account', ['id' => $sourcerecord->account]);
                     echo "<div class=\"embed-responsive embed-responsive-16by9\">";
                     if ($sourcerecord && $sourcerecord->link != null) {
                         if ($account->clientaccesstoken != null && $sourcerecord->timecreated != 0) {
@@ -438,12 +444,12 @@ echo "  <div class=\"tab-pane fade\" id=\"attendees\" role=\"tabpanel\" aria-lab
 echo "<br>";
 
 $table = new html_table();
-$table->head = array(get_string('name'), get_string('minutes'));
-$table->data = array();
+$table->head = [get_string('name'), get_string('minutes')];
+$table->data = [];
 foreach ($usersconnected as $userconnected) {
     if ($userconnected->userid != 0) {
-        $user = $DB->get_record('user', array('id' => $userconnected->userid));
-        $table->data[] = array(fullname($user), getminutes($id, $user->id));
+        $user = $DB->get_record('user', ['id' => $userconnected->userid]);
+        $table->data[] = [fullname($user), getminutes($id, $user->id)];
     }
 }
 echo html_writer::table($table);

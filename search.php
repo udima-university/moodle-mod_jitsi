@@ -48,18 +48,18 @@ class datesearch_form extends moodleform {
     public function definition() {
         global $CFG;
         $mform = $this->_form; // Don't forget the underscore!.
-        $defaulttimestart = array(
+        $defaulttimestart = [
             'year' => date('Y'),
             'month' => date('n'),
             'day' => date('j'),
             'hour' => 0,
-            'minute' => 0
-        );
+            'minute' => 0,
+        ];
         $mform->addElement('date_time_selector', 'timestart', get_string('from'),
-         array('defaulttime' => $defaulttimestart));
+            ['defaulttime' => $defaulttimestart]);
         $mform->addElement('date_time_selector', 'timeend', get_string('to'));
 
-        $buttonarray = array();
+        $buttonarray = [];
         $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('search'));
 
         $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
@@ -73,7 +73,7 @@ class datesearch_form extends moodleform {
      * @return array Errors found
      */
     public function validation($data, $files) {
-        return array();
+        return [];
     }
 }
 
@@ -85,8 +85,8 @@ require_login();
 $timestart = optional_param_array('timestart', 0, PARAM_INT);
 $timeend = optional_param_array('timeend', 0, PARAM_INT);
 if ($timestart == 0) {
-    $timestart = array('year' => 2021, 'month' => 1, 'day' => 1, 'hour' => 0, 'minute' => 0);
-    $timeend = array('year' => 2021, 'month' => 12, 'day' => 31, 'hour' => 23, 'minute' => 59);
+    $timestart = ['year' => 2021, 'month' => 1, 'day' => 1, 'hour' => 0, 'minute' => 0];
+    $timeend = ['year' => 2021, 'month' => 12, 'day' => 31, 'hour' => 23, 'minute' => 59];
 }
 $timestarttimestamp = make_timestamp($timestart['year'], $timestart['month'],
      $timestart['day'], $timestart['hour'], $timestart['minute']);
@@ -114,9 +114,9 @@ if (is_siteadmin()) {
     $where = '{jitsi_record}.source = {jitsi_source_record}.id and
                 {jitsi_source_record}.timecreated > '.$timestarttimestamp.' and
                 {jitsi_source_record}.timecreated < '.$timeendtimestamp;
-    $table->set_sql($fields, $from, $where, array('1'));
+    $table->set_sql($fields, $from, $where, ['1']);
     $table->define_baseurl('/mod/jitsi/search.php?'.
-        http_build_query(array('timestart' => $timestart, 'timeend' => $timeend)));
+        http_build_query(['timestart' => $timestart, 'timeend' => $timeend]));
     $table->out(10, true);
 } else {
     redirect($CFG->wwwroot, 'Acceso a busquedas no permitido. Solo administradores');

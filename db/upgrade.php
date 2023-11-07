@@ -128,7 +128,7 @@ function xmldb_jitsi_upgrade($oldversion) {
 
         // Define index course (not unique) to be added to jitsi.
         $table = new xmldb_table('jitsi');
-        $index = new xmldb_index('courseindex', XMLDB_INDEX_NOTUNIQUE, array('course'));
+        $index = new xmldb_index('courseindex', XMLDB_INDEX_NOTUNIQUE, ['course']);
 
         // Add index to course field.
         if (!$dbman->index_exists($table, $index)) {
@@ -200,13 +200,17 @@ function xmldb_jitsi_upgrade($oldversion) {
     }
 
     if ($oldversion < 2021092003) {
-        if ($onprivatesessionloggedin = $DB->get_record('config_plugins', array('name' =>
-            'message_provider_mod_jitsi_onprivatesession_loggedin'))) {
+        if ($onprivatesessionloggedin = $DB->get_record('config_plugins',
+            [
+                'name' => 'message_provider_mod_jitsi_onprivatesession_loggedin',
+            ])) {
             $onprivatesessionloggedin->value = 'airnotifier,popup';
             $DB->update_record('config_plugins', $onprivatesessionloggedin);
         }
-        if ($onprivatesessionloggedoff = $DB->get_record('config_plugins', array('name' =>
-            'message_provider_mod_jitsi_onprivatesession_loggedoff'))) {
+        if ($onprivatesessionloggedoff = $DB->get_record('config_plugins',
+            [
+                'name' => 'message_provider_mod_jitsi_onprivatesession_loggedoff',
+            ])) {
             $onprivatesessionloggedoff->value = 'airnotifier,popup';
             $DB->update_record('config_plugins', $onprivatesessionloggedoff);
         }
@@ -292,7 +296,7 @@ function xmldb_jitsi_upgrade($oldversion) {
             $dbman->add_field($tablerecord, $fieldsource);
         }
 
-        $records = $DB->get_records('jitsi_record', array());
+        $records = $DB->get_records('jitsi_record', []);
 
         foreach ($records as $record) {
             $source = new stdClass();
@@ -356,11 +360,11 @@ function xmldb_jitsi_upgrade($oldversion) {
         }
         upgrade_mod_savepoint(true, 2021110400, 'jitsi');
 
-        $records = $DB->get_records('jitsi_record', array());
+        $records = $DB->get_records('jitsi_record', []);
         if ($records) {
-            $accesstoken = $DB->get_record('config_plugins', array('name' => 'jitsi_clientaccesstoken'));
-            $refreshtoken = $DB->get_record('config_plugins', array('name' => 'jitsi_clientrefreshtoken'));
-            $tokencreated = $DB->get_record('config_plugins', array('name' => 'jitsi_tokencreated'));
+            $accesstoken = $DB->get_record('config_plugins', ['name' => 'jitsi_clientaccesstoken']);
+            $refreshtoken = $DB->get_record('config_plugins', ['name' => 'jitsi_clientrefreshtoken']);
+            $tokencreated = $DB->get_record('config_plugins', ['name' => 'jitsi_tokencreated']);
 
             $account = new stdClass();
             $account->name = 'Migrated';

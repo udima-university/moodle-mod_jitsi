@@ -47,95 +47,93 @@
 defined('MOODLE_INTERNAL') || die();
 
 // Modify capabilities as needed and remove this comment.
-$capabilities = array(
-    'mod/jitsi:addinstance' => array(
+$capabilities = [
+    'mod/jitsi:addinstance' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
+        'archetypes' => [
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ),
-        'clonepermissionsfrom' => 'moodle/course:manageactivities'
-    ),
+            'manager' => CAP_ALLOW,
+        ],
+        'clonepermissionsfrom' => 'moodle/course:manageactivities',
+    ],
 
-    'mod/jitsi:view' => array(
+    'mod/jitsi:view' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'guest' => CAP_ALLOW,
             'user' => CAP_ALLOW,
-        )
-    ),
+        ],
+    ],
 
-    'mod/jitsi:moderation' => array(
+    'mod/jitsi:moderation' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW
-      )
-    ),
+            'teacher' => CAP_ALLOW,
+        ],
+    ],
 
-    'mod/jitsi:record' => array(
+    'mod/jitsi:record' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW
+            'teacher' => CAP_ALLOW,
+        ],
+    ],
 
-      )
-    ),
-
-    'mod/jitsi:viewusersonsession' => array(
+    'mod/jitsi:viewusersonsession' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW
+            'teacher' => CAP_ALLOW,
+        ],
+    ],
 
-      )
-    ),
-
-    'mod/jitsi:hide' => array(
+    'mod/jitsi:hide' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW
-      )
-    ),
+            'teacher' => CAP_ALLOW,
+        ],
+    ],
 
-    'mod/jitsi:deleterecord' => array(
+    'mod/jitsi:deleterecord' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW
-      )
-    ),
+            'teacher' => CAP_ALLOW,
+        ],
+    ],
 
-    'mod/jitsi:editrecordname' => array(
+    'mod/jitsi:editrecordname' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW
-      )
-    ),
+            'teacher' => CAP_ALLOW,
+        ],
+    ],
 
-    'mod/jitsi:createlink' => array(
+    'mod/jitsi:createlink' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW
-      )
-    )
-);
+            'teacher' => CAP_ALLOW,
+        ],
+    ],
+];

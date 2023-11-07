@@ -42,13 +42,13 @@ class jitsi_error extends \core\event\base {
      * @return langpack_updated
      */
     public static function event_with_error($error) {
-        $data = array(
+        $data = [
             'context' => \context_system::instance(),
-            'other' => array(
+            'other' => [
                 'error' => $error,
                 'account' => $account,
-            )
-        );
+            ],
+        ];
 
         return self::create($data);
     }
@@ -87,7 +87,7 @@ class jitsi_error extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/jitsi/view.php', array('id' => $this->contextinstanceid));
+        return new \moodle_url('/mod/jitsi/view.php', ['id' => $this->contextinstanceid]);
     }
 
     /**

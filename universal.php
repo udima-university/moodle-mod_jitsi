@@ -36,8 +36,8 @@ $id = required_param('id', PARAM_INT);
 
 global $DB, $CFG;
 $PAGE->set_url($CFG->wwwroot.'/mod/jitsi/universal.php');
-$sesion = $DB->get_record('jitsi', array('id' => $sessionid));
-$course = $DB->get_record('course', array('id' => $sesion->course));
+$sesion = $DB->get_record('jitsi', ['id' => $sessionid]);
+$course = $DB->get_record('course', ['id' => $sesion->course]);
 $cm = get_coursemodule_from_id('jitsi', $id, 0, false, MUST_EXIST);
 $PAGE->set_cm($cm);
 
@@ -45,16 +45,16 @@ $PAGE->set_context(context_module::instance($cm->id));
 
 $navigator = $_SERVER['HTTP_USER_AGENT'];
 
-$event = \mod_jitsi\event\jitsi_session_enter::create(array(
+$event = \mod_jitsi\event\jitsi_session_enter::create([
   'objectid' => $PAGE->cm->instance,
   'context' => $PAGE->context,
-  'other' => array('navigator' => $navigator)
-));
+  'other' => ['navigator' => $navigator],
+]);
 $event->add_record_snapshot('course', $PAGE->course);
 $event->add_record_snapshot($PAGE->cm->modname, $sesion);
 
 $event->trigger();
-$jitsi = $DB->get_record('jitsi', array('id' => $cm->instance));
+$jitsi = $DB->get_record('jitsi', ['id' => $cm->instance]);
 echo "<script>";
 echo "function participating () {";
 echo "  console.log(\"RUNNING\");";

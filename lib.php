@@ -142,11 +142,11 @@ function jitsi_refresh_events($courseid = 0, $instance = null, $cm = null) {
 
     if (isset($instance)) {
         if (!is_object($instance)) {
-            $instance = $DB->get_record('jitsi', array('id' => $instance), '*', MUST_EXIST);
+            $instance = $DB->get_record('jitsi', ['id' => $instance], '*', MUST_EXIST);
         }
         if (isset($cm)) {
             if (!is_object($cm)) {
-                $cm = (object)array('id' => $cm);
+                $cm = (object) ['id' => $cm];
             }
         } else {
             $cm = get_coursemodule_from_instance('jitsi', $instance->id);
@@ -159,7 +159,7 @@ function jitsi_refresh_events($courseid = 0, $instance = null, $cm = null) {
         if (!is_numeric($courseid)) {
             return false;
         }
-        if (!$jitsis = $DB->get_records('jitsi', array('course' => $courseid))) {
+        if (!$jitsis = $DB->get_records('jitsi', ['course' => $courseid])) {
             return true;
         }
     } else {
@@ -187,14 +187,14 @@ function jitsi_refresh_events($courseid = 0, $instance = null, $cm = null) {
 function jitsi_delete_instance($id) {
     global $CFG, $DB;
 
-    if (! $jitsi = $DB->get_record('jitsi', array('id' => $id))) {
+    if (! $jitsi = $DB->get_record('jitsi', ['id' => $id])) {
         return false;
     }
 
     $result = true;
-    $DB->delete_records('jitsi_record', array('jitsi' => $jitsi->id));
+    $DB->delete_records('jitsi_record', ['jitsi' => $jitsi->id]);
 
-    if (! $DB->delete_records('jitsi', array('id' => $jitsi->id))) {
+    if (! $DB->delete_records('jitsi', ['id' => $jitsi->id])) {
         $result = false;
     }
 
@@ -211,7 +211,7 @@ function jitsi_delete_instance($id) {
 function jitsi_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser) {
     global $DB, $CFG, $USER;
     if ($CFG->jitsi_privatesessions == 1) {
-        $urlparams = array('user' => $user->id);
+        $urlparams = ['user' => $user->id];
         $url = new moodle_url('/mod/jitsi/viewpriv.php', $urlparams);
         $category = new core_user\output\myprofile\category('jitsi',
             get_string('jitsi', 'jitsi'), null);
@@ -251,10 +251,10 @@ function base64urldecode($inputstr) {
  * @param boolean $anal - If set to *true*, will remove all non-alphanumeric characters.
  */
 function string_sanitize($string, $forcelowercase = true, $anal = false) {
-    $strip = array("~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")",
+    $strip = ["~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")",
             "_", "=", "+", "[", "{", "]", "}", "\\", "|", ";", ":", "\"",
             "'", "&#8216;", "&#8217;", "&#8220;", "&#8221;", "&#8211;", "&#8212;",
-            "â€”", "â€“", ",", "<", ".", ">", "/", "?");
+            "â€”", "â€“", ",", "<", ".", ">", "/", "?", ];
     $clean = trim(str_replace($strip, "", strip_tags($string)));
     $clean = preg_replace('/\s+/', "-", $clean);
     $clean = ($anal) ? preg_replace("/[^a-zA-Z0-9]/", "", $clean) : $clean;
@@ -280,8 +280,8 @@ function string_sanitize($string, $forcelowercase = true, $anal = false) {
 function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jitsi, $universal = false,
         $user = null) {
     global $CFG, $DB, $PAGE, $USER;
-    $sessionnorm = str_replace(array(' ', ':', '"', 'º', 'ª', '{', '}', '@', '[', ']', '^', '_', '{',
-            '|', '}', '~', '@', '·', '#', '$', '~', '%', '½', '½', '%'), '', $session);
+    $sessionnorm = str_replace([' ', ':', '"', 'º', 'ª', '{', '}', '@', '[', ']', '^', '_', '{',
+            '|', '}', '~', '@', '·', '#', '$', '~', '%', '½', '½', '%', ], '', $session);
     if ($teacher == 1) {
         $teacher = true;
         $affiliation = "owner";
@@ -358,7 +358,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "<div class=\"row\">";
     echo "<div class=\"col-sm\">";
 
-    $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
+    $account = $DB->get_record('jitsi_record_account', ['inuse' => 1]);
 
     echo "<div class=\"row\">";
     echo "<div class=\"col-sm-9\">";
@@ -472,7 +472,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         $header = json_encode([
             "kid" => get_config('jitsi', '8x8apikey_id'),
             "typ" => "JWT",
-            "alg" => "RS256"
+            "alg" => "RS256",
         ]);
 
         $payload = json_encode([
@@ -488,15 +488,15 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
                     'email' => $mail,
                     'name' => $nombre,
                     'avatar' => $avatar,
-                    'id' => ""
+                    'id' => "",
                 ],
                 'features' => [
                     'recording' => $teacher,
                     'livestreaming' => $teacher,
                     'transcription' => $teacher,
-                    'outbound-call' => $teacher
-                ]
-            ]
+                    'outbound-call' => $teacher,
+                ],
+            ],
         ]);
         echo "roomName: \"".$appid8x8."/".urlencode($sessionnorm)."\",\n";
         $payloadencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
@@ -506,7 +506,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         $header = json_encode([
             "kid" => "jitsi/custom_key_name",
             "typ" => "JWT",
-            "alg" => "HS256"
+            "alg" => "HS256",
         ], JSON_UNESCAPED_SLASHES);
         $base64urlheader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
         $payload = json_encode([
@@ -516,16 +516,16 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
                     "avatar" => $avatar,
                     "name" => $nombre,
                     "email" => $mail,
-                    "id" => ""
+                    "id" => "",
                 ],
-                "group" => ""
+                "group" => "",
             ],
             "aud" => "jitsi",
             "iss" => $CFG->jitsi_app_id,
             "sub" => $CFG->jitsi_domain,
             "room" => urlencode($sessionnorm),
             "exp" => time() + 24 * 3600,
-            "moderator" => has_capability('mod/jitsi:moderation', $PAGE->context)
+            "moderator" => has_capability('mod/jitsi:moderation', $PAGE->context),
         ], JSON_UNESCAPED_SLASHES);
         echo "roomName: \"".urlencode($sessionnorm)."\",\n";
         $payloadencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
@@ -566,11 +566,11 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     $navigator = $_SERVER['HTTP_USER_AGENT'];
 
     $cm = get_coursemodule_from_id('jitsi', $cmid, 0, false, MUST_EXIST);
-    $event = \mod_jitsi\event\jitsi_session_enter::create(array(
+    $event = \mod_jitsi\event\jitsi_session_enter::create([
         'objectid' => $PAGE->cm->instance,
         'context' => $PAGE->context,
-        'other' => array('navigator' => $navigator)
-      ));
+        'other' => ['navigator' => $navigator],
+    ]);
     $event->add_record_snapshot('course', $PAGE->course);
     $event->add_record_snapshot($PAGE->cm->modname, $jitsi);
     $event->trigger();
@@ -1069,13 +1069,13 @@ function sendnotificationprivatesession($fromuser, $touser) {
     $message->fullmessagehtml = get_string('user').' <a href='.$CFG->wwwroot.'/user/profile.php?id='.$fromuser->id.'> '
     . $fromuser->firstname .' '. $fromuser->lastname
     . '</a> '.get_string('hasentered', 'jitsi').'. '.get_string('click', 'jitsi').'<a href='
-    . new moodle_url('/mod/jitsi/viewpriv.php', array('user' => $touser->id, 'fromuser' => $fromuser->id))
+    . new moodle_url('/mod/jitsi/viewpriv.php', ['user' => $touser->id, 'fromuser' => $fromuser->id])
     .'> '.get_string('here', 'jitsi').'</a> '.get_string('toenter', 'jitsi');
     $message->smallmessage = get_string('userenter', 'jitsi', $fromuser->firstname .' '. $fromuser->lastname);
     $message->notification = 1;
-    $message->contexturl = new moodle_url('/mod/jitsi/viewpriv.php', array('user' => $touser->id, 'fromuser' => $fromuser->id));
+    $message->contexturl = new moodle_url('/mod/jitsi/viewpriv.php', ['user' => $touser->id, 'fromuser' => $fromuser->id]);
     $message->contexturlname = 'Private session';
-    $content = array('*' => array('header' => '', 'footer' => ''));
+    $content = ['*' => ['header' => '', 'footer' => '']];
     $message->set_additional_content('email', $content);
     $messageid = message_send($message);
 }
@@ -1098,13 +1098,13 @@ function sendcallprivatesession($fromuser, $touser) {
     $message->fullmessagehtml = get_string('user').' <a href='.$CFG->wwwroot.'/user/profile.php?id='.$fromuser->id.'> '
     . $fromuser->firstname .' '. $fromuser->lastname
     . '</a> '.get_string('iscalling', 'jitsi').'. '.get_string('click', 'jitsi').'<a href='
-    . new moodle_url('/mod/jitsi/viewpriv.php', array('user' => $fromuser->id))
+    . new moodle_url('/mod/jitsi/viewpriv.php', ['user' => $fromuser->id])
     .'> '.get_string('here', 'jitsi').'</a> '.get_string('toenter', 'jitsi');
     $message->smallmessage = get_string('usercall', 'jitsi', $fromuser->firstname .' '. $fromuser->lastname);
     $message->notification = 1;
-    $message->contexturl = new moodle_url('/mod/jitsi/viewpriv.php', array('user' => $fromuser->id));
+    $message->contexturl = new moodle_url('/mod/jitsi/viewpriv.php', ['user' => $fromuser->id]);
     $message->contexturlname = 'Private session';
-    $content = array('*' => array('header' => '', 'footer' => ''));
+    $content = ['*' => ['header' => '', 'footer' => '']];
     $message->set_additional_content('email', $content);
     $messageid = message_send($message);
 }
@@ -1116,14 +1116,14 @@ function sendcallprivatesession($fromuser, $touser) {
  */
 function marktodelete($idrecord, $option) {
     global $DB;
-    $record = $DB->get_record('jitsi_record', array('id' => $idrecord));
-    $source = $DB->get_record('jitsi_source_record', array('id' => $record->source));
+    $record = $DB->get_record('jitsi_record', ['id' => $idrecord]);
+    $source = $DB->get_record('jitsi_source_record', ['id' => $record->source]);
     if ($option == 1) {
         $record->deleted = 1;
     } else if ($option == 2) {
         $record->deleted = 2;
     }
-    $records = $DB->get_records('jitsi_record', array('source' => $record->source));
+    $records = $DB->get_records('jitsi_record', ['source' => $record->source]);
     if (count($records) == 1) {
         togglestate($source->link);
     }
@@ -1136,8 +1136,8 @@ function marktodelete($idrecord, $option) {
  */
 function delete_jitsi_record($source) {
     global $DB;
-    $DB->delete_records('jitsi_record', array('source' => $source));
-    $DB->delete_records('jitsi_source_record', array('id' => $source));
+    $DB->delete_records('jitsi_record', ['source' => $source]);
+    $DB->delete_records('jitsi_source_record', ['id' => $source]);
 }
 
 /**
@@ -1147,7 +1147,7 @@ function delete_jitsi_record($source) {
 function isdeletable($sourcerecord) {
     $res = true;
     global $DB;
-    $records = $DB->get_records('jitsi_record', array('source' => $sourcerecord, 'deleted' => 0));
+    $records = $DB->get_records('jitsi_record', ['source' => $sourcerecord, 'deleted' => 0]);
     if (!$records == null) {
         $res = false;
     }
@@ -1161,8 +1161,8 @@ function isdeletable($sourcerecord) {
 function deleterecordyoutube($idsource) {
     global $CFG, $DB, $PAGE;
     $res = false;
-    $source = $DB->get_record('jitsi_source_record', array('id' => $idsource));
-    $account = $DB->get_record('jitsi_record_account', array('id' => $source->account));
+    $source = $DB->get_record('jitsi_source_record', ['id' => $idsource]);
+    $account = $DB->get_record('jitsi_record_account', ['id' => $source->account]);
     if (isdeletable($idsource)) {
         if ($source->link != null) {
             if (!file_exists(__DIR__ . '/api/vendor/autoload.php')) {
@@ -1213,7 +1213,7 @@ function deleterecordyoutube($idsource) {
             }
             $youtube = new Google_Service_YouTube($client);
             try {
-                $listresponse = $youtube->videos->listVideos("snippet", array('id' => $source->link));
+                $listresponse = $youtube->videos->listVideos("snippet", ['id' => $source->link]);
             } catch (Google_Service_Exception $e) {
                 if ($account->inuse == 1) {
                     $account->inuse = 0;
@@ -1277,30 +1277,27 @@ function mod_jitsi_get_fontawesome_icon_map() {
 function mod_jitsi_inplace_editable($itemtype, $itemid, $newvalue) {
     if ($itemtype === 'recordname') {
         global $DB, $PAGE;
-        $record = $DB->get_record('jitsi_record', array('id' => $itemid), '*', MUST_EXIST);
+        $record = $DB->get_record('jitsi_record', ['id' => $itemid], '*', MUST_EXIST);
         // Must call validate_context for either system, or course or course module context.
         // This will both check access and set current context.
-        $record  = $DB->get_record('jitsi_record', array('id' => $itemid), '*', MUST_EXIST);
-        $jitsi   = $DB->get_record('jitsi', array('id' => $record->jitsi), '*', MUST_EXIST);
-        $course  = $DB->get_record('course', array('id' => $jitsi->course), '*', MUST_EXIST);
+        $record  = $DB->get_record('jitsi_record', ['id' => $itemid], '*', MUST_EXIST);
+        $jitsi   = $DB->get_record('jitsi', ['id' => $record->jitsi], '*', MUST_EXIST);
+        $course  = $DB->get_record('course', ['id' => $jitsi->course], '*', MUST_EXIST);
         $cm      = get_coursemodule_from_instance('jitsi', $jitsi->id, $course->id, false, MUST_EXIST);
         $context = context_module::instance($cm->id);
-
         $PAGE->set_context($context);
-
-
         // Clean input and update the record.
         $newvalue = clean_param($newvalue, PARAM_NOTAGS);
-        $DB->update_record('jitsi_record', array('id' => $itemid, 'name' => $newvalue));
+        $DB->update_record('jitsi_record', ['id' => $itemid, 'name' => $newvalue]);
         // Prepare the element for the output.
         $record->name = $newvalue;
         return new \core\output\inplace_editable(
-            'mod_jitsi', 
-            'recordname', 
-            $record->id, 
+            'mod_jitsi',
+            'recordname',
+            $record->id,
             true,
-            format_string($record->name), 
-            $record->name, 
+            format_string($record->name),
+            $record->name,
             get_string('editrecordname', 'jitsi'),
             get_string('newvaluefor', 'jitsi') . format_string($record->name));
     }
@@ -1396,8 +1393,8 @@ function mod_jitsi_get_completion_active_rule_descriptions($cm) {
  */
 function update_completition($cm) {
     global $DB;
-    $jitsi = $DB->get_record('jitsi', array('id' => $cm->instance), '*', MUST_EXIST);
-    if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
+    $jitsi = $DB->get_record('jitsi', ['id' => $cm->instance], '*', MUST_EXIST);
+    if (! $course = $DB->get_record("course", ["id" => $cm->course])) {
         throw new \Exception("Course is misconfigured");
     }
     $completion = new completion_info($course);
@@ -1416,11 +1413,11 @@ function doembedable($idvideo) {
     $client = getclientgoogleapi();
     $youtube = new Google_Service_YouTube($client);
 
-    $source = $DB->get_record('jitsi_source_record', array('link' => $idvideo));
-    $account = $DB->get_record('jitsi_record_account', array('id' => $source->account));
+    $source = $DB->get_record('jitsi_source_record', ['link' => $idvideo]);
+    $account = $DB->get_record('jitsi_record_account', ['id' => $source->account]);
 
     try {
-        $listresponse = $youtube->videos->listVideos("status", array('id' => $idvideo));
+        $listresponse = $youtube->videos->listVideos("status", ['id' => $idvideo]);
         $video = $listresponse[0];
 
         $videostatus = $video['status'];
@@ -1437,15 +1434,15 @@ function doembedable($idvideo) {
             }
         }
     } catch (Google_Service_Exception $e) {
-        $record = $DB->get_record('jitsi_record', array('source' => $source->id));
-        $jitsi = $DB->get_record('jitsi', array('id' => $record->jitsi));
+        $record = $DB->get_record('jitsi_record', ['source' => $source->id]);
+        $jitsi = $DB->get_record('jitsi', ['id' => $record->jitsi]);
         $source->embed = -1;
         $DB->update_record('jitsi_source_record', $source);
         senderror($jitsi->id, $source->userid, 'ERROR doembedable: '.$e->getMessage(), $source);
         return false;
     } catch (Google_Exception $e) {
-        $record = $DB->get_record('jitsi_record', array('source' => $source->id));
-        $jitsi = $DB->get_record('jitsi', array('id' => $record->jitsi));
+        $record = $DB->get_record('jitsi_record', ['source' => $source->id]);
+        $jitsi = $DB->get_record('jitsi', ['id' => $record->jitsi]);
         $source->embed = -1;
         $DB->update_record('jitsi_source_record', $source);
         senderror($jitsi->id, $source->userid, 'ERROR doembedable: '.$e->getMessage(), $source);
@@ -1472,8 +1469,8 @@ function togglestate($idvideo) {
 
     $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
 
-    $source = $DB->get_record('jitsi_source_record', array('link' => $idvideo));
-    $account = $DB->get_record('jitsi_record_account', array('id' => $source->account));
+    $source = $DB->get_record('jitsi_source_record', ['link' => $idvideo]);
+    $account = $DB->get_record('jitsi_record_account', ['id' => $source->account]);
 
     $_SESSION[$tokensessionkey] = $account->clientaccesstoken;
     $client->setAccessToken($_SESSION[$tokensessionkey]);
@@ -1517,7 +1514,7 @@ function togglestate($idvideo) {
     $youtube = new Google_Service_YouTube($client);
 
     try {
-        $listresponse = $youtube->videos->listVideos("status", array('id' => $idvideo));
+        $listresponse = $youtube->videos->listVideos("status", ['id' => $idvideo]);
         $video = $listresponse[0];
 
         $videostatus = $video['status'];
@@ -1586,7 +1583,7 @@ function getclientgoogleapi() {
 
     $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
 
-    $account = $DB->get_record('jitsi_record_account', array('inuse' => 1));
+    $account = $DB->get_record('jitsi_record_account', ['inuse' => 1]);
     $_SESSION[$tokensessionkey] = $account->clientaccesstoken;
     $client->setAccessToken($_SESSION[$tokensessionkey]);
 
@@ -1648,7 +1645,7 @@ function changeaccount() {
     $sql = 'select * from {jitsi_record_account} where {jitsi_record_account}.inqueue = 1 and
      {jitsi_record_account}.clientaccesstoken != \'\' and {jitsi_record_account}.clientrefreshtoken != \'\' order by id asc';
     $accounts = $DB->get_records_sql($sql);
-    $accountinuse = $DB->get_record('jitsi_record_account', array('inuse' => 1));
+    $accountinuse = $DB->get_record('jitsi_record_account', ['inuse' => 1]);
     if ($accounts == null) {
         return $accountinuse->id;
     }
@@ -1676,35 +1673,35 @@ function changeaccount() {
  */
 function senderror($jitsi, $user, $error, $source) {
     global $PAGE, $DB, $CFG;
-    $jitsiob = $DB->get_record('jitsi', array('id' => $jitsi));
+    $jitsiob = $DB->get_record('jitsi', ['id' => $jitsi]);
     $cm = get_coursemodule_from_instance('jitsi', $jitsi);
     $cmid = $cm->id;
     $PAGE->set_context(context_module::instance($cmid));
 
     $admins = get_admins();
-    $account = $DB->get_record('jitsi_record_account', array('id' => $source->account));
+    $account = $DB->get_record('jitsi_record_account', ['id' => $source->account]);
     $DB->update_record('jitsi', $jitsiob);
 
-    $user = $DB->get_record('user', array('id' => $user));
+    $user = $DB->get_record('user', ['id' => $user]);
     $mensaje = "El usuario ".$user->firstname." ".$user->lastname.
         " ha tenido un error al intentar grabar la sesión de jitsi con id ".$jitsi."\nInfo:\n".$error." en la cuenta: ".
         $account->name." (id: ".$account->id.")\n
     Para más información, mira el log:\n
     LOG: ".$CFG->wwwroot."/report/log/index.php?chooselog=1&id=".$jitsiob->course."&modid=".$cmid."\n
     URL: ".$CFG->wwwroot."/mod/jitsi/view.php?id=".$cmid."\n
-    Nombre de la sesión: ".$DB->get_record('jitsi', array('id' => $jitsi))->name."\n
-    Curso: ".$DB->get_record('course', array('id' => $DB->get_record('jitsi', array('id' => $jitsi))->course))->fullname."\n
+    Nombre de la sesión: ".$DB->get_record('jitsi', ['id' => $jitsi])->name."\n
+    Curso: ".$DB->get_record('course', ['id' => $DB->get_record('jitsi', ['id' => $jitsi])->course])->fullname."\n
     Usuario: ".$user->username."\n";
     foreach ($admins as $admin) {
         email_to_user($admin, $admin, "ERROR JITSI! el usuario: "
             .$user->username." ha tenido un error en el jitsi: ".$jitsi, $mensaje);
     }
 
-    $event = \mod_jitsi\event\jitsi_error::create(array(
+    $event = \mod_jitsi\event\jitsi_error::create([
         'objectid' => $cmid,
         'context' => $PAGE->context,
-        'other' => array('error' => $error, 'account' => $account->id)
-    ));
+        'other' => ['error' => $error, 'account' => $account->id],
+    ]);
     $event->add_record_snapshot('course', $PAGE->course);
     $event->add_record_snapshot('jitsi', $jitsiob);
     $event->trigger();

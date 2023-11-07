@@ -104,10 +104,10 @@ if (is_siteadmin()) {
 
                 if ($sourcelive->link != null) {
                     $coursemodule = get_coursemodule_from_instance('jitsi', $jitsilive->id);
-                    $urljitsiparams = array('id' => $coursemodule->id);
+                    $urljitsiparams = ['id' => $coursemodule->id];
                     $urljitsi = new moodle_url('/mod/jitsi/view.php', $urljitsiparams);
-                    $urlcourse = new moodle_url('/course/view.php', array('id' => $coursemodule->course));
-                    $course = $DB->get_record('course', array('id' => $coursemodule->course));
+                    $urlcourse = new moodle_url('/course/view.php', ['id' => $coursemodule->course]);
+                    $course = $DB->get_record('course', ['id' => $coursemodule->course]);
                     echo "<div class=\"col-sm-4\">";
                     echo "<div class=\"card\" >";
                     echo "<div class=\"card-body\">";
@@ -126,8 +126,8 @@ if (is_siteadmin()) {
                     echo "<iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/"
                         .$sourcelive->link."\"allowfullscreen></iframe>";
                     echo "</div>";
-                    $author = $DB->get_record('user', array('id' => $sourcelive->userid));
-                    $authorurl = new moodle_url('/user/view.php', array('id' => $sourcelive->userid));
+                    $author = $DB->get_record('user', ['id' => $sourcelive->userid]);
+                    $authorurl = new moodle_url('/user/view.php', ['id' => $sourcelive->userid]);
                     echo "<a href=".$authorurl." target=\"_blank\"><h6 class=\"card-subtitle mb-2 text-muted\">"
                         .$author->firstname." ".$author->lastname."</h6></a>";
                     echo "</div>";

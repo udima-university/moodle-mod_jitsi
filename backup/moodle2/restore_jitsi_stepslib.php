@@ -31,7 +31,7 @@ class restore_jitsi_activity_structure_step extends restore_activity_structure_s
      */
     protected function define_structure() {
 
-        $paths = array();
+        $paths = [];
         $userinfo = $this->get_setting_value('userinfo');
 
         $paths[] = new restore_path_element('jitsi', '/activity/jitsi');
@@ -81,7 +81,7 @@ class restore_jitsi_activity_structure_step extends restore_activity_structure_s
         global $DB;
         $data = (object)$data;
         $oldid = $data->id;
-        $account = $DB->get_record('jitsi_record_account', array('name' => $data->name));
+        $account = $DB->get_record('jitsi_record_account', ['name' => $data->name]);
         if (!$account) {
             $newitemid = $DB->insert_record('jitsi_record_account', $data);
             $this->set_mapping('jitsi_record_account', $data->id, $newitemid);

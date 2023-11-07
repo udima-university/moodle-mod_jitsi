@@ -30,18 +30,18 @@ require_once(dirname(__FILE__).'/lib.php');
 
 $id = required_param('id', PARAM_INT);   // Course.
 
-$PAGE->set_url('/mod/jitsi/index.php', array('id' => $id));
+$PAGE->set_url('/mod/jitsi/index.php', ['id' => $id]);
 
-if (! $course = $DB->get_record('course', array('id' => $id))) {
+if (! $course = $DB->get_record('course', ['id' => $id])) {
     throw new \moodle_exception('invalidcourseid');
 }
 
 require_course_login($course);
 $PAGE->set_pagelayout('incourse');
 
-$params = array(
-    'context' => context_course::instance($id)
-);
+$params = [
+    'context' => context_course::instance($id),
+];
 $event = \mod_jitsi\event\course_module_instance_list_viewed::create($params);
 $event->add_record_snapshot('course', $course);
 $event->trigger();
@@ -74,11 +74,11 @@ $table = new html_table();
 
 if ($usesections) {
     $strsectionname = get_string('sectionname', 'format_'.$course->format);
-    $table->head  = array ($strsectionname, $strname);
-    $table->align = array ('center', 'left');
+    $table->head  = [$strsectionname, $strname];
+    $table->align = ['center', 'left'];
 } else {
-    $table->head  = array ($strname);
-    $table->align = array ('left');
+    $table->head  = [$strname];
+    $table->align = ['left'];
 }
 
 $currentsection = '';
@@ -101,9 +101,9 @@ foreach ($jitsis as $jitsi) {
         $currentsection = $jitsi->section;
     }
     if ($usesections) {
-        $table->data[] = array ($printsection, $link);
+        $table->data[] = [$printsection, $link];
     } else {
-        $table->data[] = array ($link);
+        $table->data[] = [$link];
     }
 }
 

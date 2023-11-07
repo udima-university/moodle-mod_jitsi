@@ -68,12 +68,12 @@ if ($state == null) {
 }
 
 $cm = get_coursemodule_from_id('jitsi', $cmid, 0, false, MUST_EXIST);
-$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 require_login($course, true, $cm);
 
-$module = $DB->get_record('modules', array('name' => 'jitsi'));
+$module = $DB->get_record('modules', ['name' => 'jitsi']);
 
-$jitsi = $DB->get_record('jitsi', array('id' => $cm->instance));
+$jitsi = $DB->get_record('jitsi', ['id' => $cm->instance]);
 
 $PAGE->set_title($jitsi->name);
 $PAGE->set_heading($jitsi->name);

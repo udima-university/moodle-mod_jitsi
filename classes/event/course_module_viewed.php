@@ -48,6 +48,6 @@ class course_module_viewed extends \core\event\course_module_viewed {
      * Mapping between log fields and event properties.
      */
     public static function get_objectid_mapping() {
-        return array('db' => 'jitsi', 'restore' => 'jitsi');
+        return ['db' => 'jitsi', 'restore' => 'jitsi'];
     }
 }

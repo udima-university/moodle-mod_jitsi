@@ -40,9 +40,11 @@ function jitsi_update_calendar(stdClass $jitsi, $cmid) {
     $event->eventtype = 'open';
     $event->type = CALENDAR_EVENT_TYPE_STANDARD;
 
-    if ($event->id = $DB->get_field('event', 'id',
-            array('modulename' => 'jitsi', 'instance' => $jitsi->id,
-            'eventtype' => $event->eventtype))) {
+    if ($event->id = $DB->get_field('event', 'id', [
+            'modulename' => 'jitsi',
+            'instance' => $jitsi->id,
+            'eventtype' => $event->eventtype,
+        ])) {
         if ((!empty($jitsi->timeopen)) && ($jitsi->timeopen > 0)) {
             $event->name = get_string('calendarstart', 'jitsi', $jitsi->name);
             $event->timestart = $jitsi->timeopen;
@@ -56,7 +58,6 @@ function jitsi_update_calendar(stdClass $jitsi, $cmid) {
             $calendarevent = calendar_event::load($event->id);
             $calendarevent->delete();
         }
-
     } else {
         if ((!empty($jitsi->timeopen)) && ($jitsi->timeopen > 0)) {
             $event->name = get_string('calendarstart', 'jitsi', $jitsi->name);

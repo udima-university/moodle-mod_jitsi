@@ -40,12 +40,12 @@ class userstocall_form extends moodleform {
         global $CFG;
         $mform = $this->_form; // Don't forget the underscore!.
 
-        $options = array(
+        $options = [
             'ajax' => 'core_user/form_user_selector',
-            'multiple' => true
-        );
-        $mform->addElement('autocomplete', 'userstocall', 'Users', array(), $options);
-        $buttonarray = array();
+            'multiple' => true,
+        ];
+        $mform->addElement('autocomplete', 'userstocall', 'Users', [], $options);
+        $buttonarray = [];
         $buttonarray[] = $mform->createElement('submit', 'submitbutton', 'Call');
         $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
     }
@@ -55,7 +55,7 @@ class userstocall_form extends moodleform {
      * @param array $files - array files
      */
     public function validation($data, $files) {
-        return array();
+        return [];
     }
 }
 
@@ -65,18 +65,18 @@ $userid = required_param('user', PARAM_INT);
 $fromuserid = optional_param('fromuser', null, PARAM_INT);
 $userstocall = optional_param_array('userstocall', null, PARAM_RAW);
 
-$user = $DB->get_record('user', array('id' => $userid));
+$user = $DB->get_record('user', ['id' => $userid]);
 
 $PAGE->set_context(context_system::instance());
 require_login();
-$PAGE->set_url('/mod/jitsi/viewpriv.php', array('user' => $user->id));
+$PAGE->set_url('/mod/jitsi/viewpriv.php', ['user' => $user->id]);
 require_login();
 $PAGE->set_title(format_string($user->firstname));
 $PAGE->set_heading(format_string($user->firstname));
 
 if ($userstocall != null) {
     foreach ($userstocall as $usertocall) {
-        $usertocallob = $DB->get_record('user', array('id' => $usertocall));
+        $usertocallob = $DB->get_record('user', ['id' => $usertocall]);
         sendcallprivatesession($user, $usertocallob);
     }
 }
@@ -116,8 +116,13 @@ if ($CFG->jitsi_privatesessions) {
     }
     $avatar = $CFG->wwwroot.'/user/pix.php/'.$USER->id.'/f1.jpg';
 
-    $urlparams = array('avatar' => $avatar, 'nom' => $nom, 'ses' => $sesparam,
-        't' => $moderation, 'u' => $userid);
+    $urlparams = [
+        'avatar' => $avatar,
+        'nom' => $nom,
+        'ses' => $sesparam,
+        't' => $moderation,
+        'u' => $userid,
+    ];
 
     if ($USER->id != $user->id) {
         echo "<div class=\"alert alert-warning\" role=\"alert\">";

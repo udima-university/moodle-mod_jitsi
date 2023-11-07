@@ -59,7 +59,7 @@ class accountname_form extends moodleform {
 
         $mform->addElement('text', 'name', get_string('name')); // Add elements to your form.
         $mform->setType('name', PARAM_TEXT);        // Set type of element.
-        $buttonarray = array();
+        $buttonarray = [];
         $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('addaccount', 'jitsi'));
         $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
     }
@@ -72,7 +72,7 @@ class accountname_form extends moodleform {
      * @return array Errors found
      */
     public function validation($data, $files) {
-        return array();
+        return [];
     }
 }
 
@@ -81,9 +81,9 @@ $PAGE->set_context(context_system::instance());
 $PAGE->set_url('/mod/jitsi/adminaccounts.php');
 require_login();
 if ($change && confirm_sesskey($sesskey)) {
-    $accounttouse = $DB->get_record('jitsi_record_account', array('id' => $change));
+    $accounttouse = $DB->get_record('jitsi_record_account', ['id' => $change]);
     $accounttouse->inuse = 1;
-    $accountinuse = $DB->get_record('jitsi_record_account', array('inuse' => 1));
+    $accountinuse = $DB->get_record('jitsi_record_account', ['inuse' => 1]);
     if ($accountinuse) {
         $accountinuse->inuse = 0;
         $DB->update_record('jitsi_record_account', $accountinuse);
@@ -93,7 +93,7 @@ if ($change && confirm_sesskey($sesskey)) {
 }
 
 if ($queueaccountid && confirm_sesskey($sesskey)) {
-    $account = $DB->get_record('jitsi_record_account', array('id' => $queueaccountid));
+    $account = $DB->get_record('jitsi_record_account', ['id' => $queueaccountid]);
     if ($account->inqueue == 0) {
         $account->inqueue = 1;
         $DB->update_record('jitsi_record_account', $account);
@@ -106,7 +106,7 @@ if ($queueaccountid && confirm_sesskey($sesskey)) {
 }
 
 if ($daccountid && confirm_sesskey($sesskey)) {
-    $account = $DB->get_record('jitsi_record_account', array('id' => $daccountid));
+    $account = $DB->get_record('jitsi_record_account', ['id' => $daccountid]);
 
     if ($account == null) {
         echo "First log in";
@@ -138,7 +138,7 @@ if ($daccountid && confirm_sesskey($sesskey)) {
 
         $client->revokeToken($account->clientaccesstoken);
 
-        $account = $DB->delete_records('jitsi_record_account', array('id' => $daccountid));
+        $account = $DB->delete_records('jitsi_record_account', ['id' => $daccountid]);
 
         echo "Log Out OK. You can close this page";
     }
@@ -151,10 +151,11 @@ $PAGE->set_heading(format_string(get_string('accounts', 'jitsi')));
 echo $OUTPUT->header();
 
 if (is_siteadmin()) {
-    $accounts = $DB->get_records('jitsi_record_account', array());
+    $accounts = $DB->get_records('jitsi_record_account', []);
     $table = new html_table();
-    $table->head = array('ID', get_string('name'), get_string('actions'),
-        get_string('records', 'jitsi'), get_string('inqueue', 'jitsi'));
+    $table->head = ['ID', get_string('name'), get_string('actions'),
+        get_string('records', 'jitsi'), get_string('inqueue', 'jitsi'),
+    ];
 
     $client = new Google_Client();
     $client->setClientId($CFG->jitsi_oauth_id);
@@ -175,7 +176,7 @@ if (is_siteadmin()) {
         $authurl = new moodle_url('/mod/jitsi/auth.php?&name=' . $account->name);
         $authicon = new pix_icon('i/assignroles', get_string('logintooltip', 'jitsi'));
         $authaction = $OUTPUT->action_icon($authurl, $authicon, new confirm_action(get_string('authq', 'jitsi')));
-        $numrecords = $DB->count_records('jitsi_source_record', array('account' => $account->id));
+        $numrecords = $DB->count_records('jitsi_source_record', ['account' => $account->id]);
 
         if ($account->inqueue == 1) {
             $removefromqueueurl = new moodle_url('/mod/jitsi/adminaccounts.php?&queueaccountid='
@@ -192,22 +193,25 @@ if (is_siteadmin()) {
         if ($account->clientaccesstoken != null) {
             if ($account->inuse == 1) {
                 if ($numrecords == 0) {
-                    $table->data[] = array($account->id, $account->name.get_string('inuse', 'jitsi'),
-                        $deleteaction, $numrecords, $inqueueaction);
+                    $table->data[] = [$account->id, $account->name.get_string('inuse', 'jitsi'),
+                        $deleteaction, $numrecords, $inqueueaction,
+                    ];
                 } else {
-                    $table->data[] = array($account->id, $account->name.get_string('inuse', 'jitsi'),
-                        null, $numrecords, $inqueueaction);
+                    $table->data[] = [$account->id, $account->name.get_string('inuse', 'jitsi'),
+                        null, $numrecords, $inqueueaction,
+                    ];
                 }
             } else {
                 if ($numrecords == 0) {
-                    $table->data[] = array($account->id, $account->name, $loginaction.' '.$deleteaction,
-                     $numrecords, $inqueueaction);
+                    $table->data[] = [$account->id, $account->name, $loginaction.' '.$deleteaction,
+                        $numrecords, $inqueueactio,
+                    ];
                 } else {
-                    $table->data[] = array($account->id, $account->name, $loginaction, $numrecords, $inqueueaction);
+                    $table->data[] = [$account->id, $account->name, $loginaction, $numrecords, $inqueueaction];
                 }
             }
         } else {
-            $table->data[] = array($account->id, $account->name, $authaction, $numrecords, $inqueueaction);
+            $table->data[] = [$account->id, $account->name, $authaction, $numrecords, $inqueueaction];
         }
     }
 

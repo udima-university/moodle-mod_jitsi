@@ -29,7 +29,7 @@ if ($ADMIN->fulltree) {
     require_once($CFG->dirroot.'/mod/jitsi/lib.php');
     $settings->add(new admin_setting_heading('jitsi/news', get_string('news', 'jitsi'),
     html_writer::tag('div class="alert alert-info" role="alert"', get_string('news1', 'jitsi'),
-        array('style' => 'text-align: center;'))));
+        ['style' => 'text-align: center;'])));
     $settings->add(new admin_setting_heading('jitsi/config', get_string('config', 'jitsi'),
     ''));
     $settings->add(new admin_setting_configtext('jitsi_domain', 'Domain', 'Domain Jitsi Server', 'meet.jit.si'));
@@ -39,7 +39,8 @@ if ($ADMIN->fulltree) {
         get_string('helpex', 'jitsi'), null));
     $options = ['username' => get_string('username', 'jitsi'),
         'nameandsurname' => get_string('nameandsurname', 'jitsi'),
-        'alias' => get_string('alias', 'jitsi')];
+        'alias' => get_string('alias', 'jitsi'),
+    ];
     $settings->add(new admin_setting_configselect('jitsi_id', get_string('identification', 'jitsi'),
         get_string('identificationex', 'jitsi'), 'username', $options));
     $sessionoptions = ['Course Shortname', 'Session ID', 'Session Name'];

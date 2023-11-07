@@ -34,8 +34,8 @@ require_login();
 $nombre = required_param('nom', PARAM_USERNAME);
 $userid = required_param('u', PARAM_INT);
 $session = required_param('ses', PARAM_TEXT);
-$user = $DB->get_record('user', array('id' => $userid));
-$sessionnorm = str_replace(array(' ', ':', '"'), '', $user->username);
+$user = $DB->get_record('user', ['id' => $userid]);
+$sessionnorm = str_replace([' ', ':', '"'], '', $user->username);
 $avatar = $CFG->jitsi_showavatars == true ? required_param('avatar', PARAM_TEXT) : null;
 
 $PAGE->set_title(get_string('privatesession', 'jitsi', $user->firstname));

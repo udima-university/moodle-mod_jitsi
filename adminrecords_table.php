@@ -38,11 +38,11 @@ class mod_adminrecords_table extends table_sql {
     public function __construct($uniqueid) {
         parent::__construct($uniqueid);
         // Define the list of columns to show.
-        $columns = array('id', 'link', 'account', 'userid', 'timecreated', 'delete');
+        $columns = ['id', 'link', 'account', 'userid', 'timecreated', 'delete'];
         $this->define_columns($columns);
 
         // Define the titles of columns to show in header.
-        $headers = array('Id', 'Link', 'Account', 'User', 'Date', 'Delete');
+        $headers = ['Id', 'Link', 'Account', 'User', 'Date', 'Delete'];
         $this->define_headers($headers);
     }
 
@@ -56,7 +56,7 @@ class mod_adminrecords_table extends table_sql {
      */
     protected function col_userid($values) {
         global $DB;
-        $user = $DB->get_record('user', array('id' => $values->userid));
+        $user = $DB->get_record('user', ['id' => $values->userid]);
         return $user->username;
     }
 
@@ -83,7 +83,7 @@ class mod_adminrecords_table extends table_sql {
      */
     protected function col_account($values) {
         global $DB;
-        $acount = $DB->get_record('jitsi_record_account', array('id' => $values->account));
+        $acount = $DB->get_record('jitsi_record_account', ['id' => $values->account]);
         return $acount->name;
     }
 
@@ -110,7 +110,7 @@ class mod_adminrecords_table extends table_sql {
     protected function col_delete($values) {
         global $DB, $OUTPUT;
 
-        $acount = $DB->get_record('jitsi_record_account', array('id' => $values->account));
+        $acount = $DB->get_record('jitsi_record_account', ['id' => $values->account]);
         if (isDeletable($values->id)) {
             if ($acount->clientaccesstoken != null) {
                 $deleteurl = new moodle_url('/mod/jitsi/adminrecord.php?&deletejitsisourceid='.

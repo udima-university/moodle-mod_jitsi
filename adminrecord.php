@@ -69,7 +69,7 @@ if (is_siteadmin()) {
     $from = '{jitsi_source_record}, {jitsi_record}';
     $where = '{jitsi_record}.source = {jitsi_source_record}.id and
                 {jitsi_record}.deleted = 1';
-    $table->set_sql($fields, $from, $where, array('1'));
+    $table->set_sql($fields, $from, $where, ['1']);
     $table->define_baseurl('/mod/jitsi/adminrecord.php');
     $table->out(10, true);
 }

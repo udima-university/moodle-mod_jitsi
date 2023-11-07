@@ -36,18 +36,18 @@ class mod_search_table extends table_sql {
     public function __construct($uniqueid) {
         parent::__construct($uniqueid);
         // Define the list of columns to show.
-        $columns = array('id', 'link', 'jitsi', 'course', 'account', 'userid', 'timecreated', 'maxparticipants', 'deleted');
+        $columns = ['id', 'link', 'jitsi', 'course', 'account', 'userid', 'timecreated', 'maxparticipants', 'deleted'];
         $this->define_columns($columns);
 
         // Define the titles of columns to show in header.
-        $headers = array('Id', 'Link', 'Jitsi', 'Course', 'Account', 'User', 'Date', 'Max participants', 'Deleted');
+        $headers = ['Id', 'Link', 'Jitsi', 'Course', 'Account', 'User', 'Date', 'Max participants', 'Deleted'];
         $this->define_headers($headers);
     }
 
     protected function col_userid($values) {
         global $DB;
-        $user = $DB->get_record('user', array('id' => $values->userid));
-        $urluser = new moodle_url('/user/profile.php', array('id' => $user->id));
+        $user = $DB->get_record('user', ['id' => $values->userid]);
+        $urluser = new moodle_url('/user/profile.php', ['id' => $user->id]);
         return "<a href=".$urluser." data-toggle=\"tooltip\" data-placement=\"top\" title=\""
             .$user->username."\">" . $user->firstname . " ".$user->lastname.'</a>';
     }
@@ -75,7 +75,7 @@ class mod_search_table extends table_sql {
      */
     protected function col_account($values) {
         global $DB;
-        $acount = $DB->get_record('jitsi_record_account', array('id' => $values->account));
+        $acount = $DB->get_record('jitsi_record_account', ['id' => $values->account]);
         return $acount->name;
     }
 
@@ -90,8 +90,8 @@ class mod_search_table extends table_sql {
     protected function col_course($values) {
         global $DB;
         $coursemodule = get_coursemodule_from_instance('jitsi', $values->jitsi);
-        $urlcourse = new moodle_url('/course/view.php', array('id' => $coursemodule->course));
-        $course = $DB->get_record('course', array('id' => $coursemodule->course));
+        $urlcourse = new moodle_url('/course/view.php', ['id' => $coursemodule->course]);
+        $course = $DB->get_record('course', ['id' => $coursemodule->course]);
         return "<a href=".$urlcourse." data-toggle=\"tooltip\" data-placement=\"top\" title=\"".$course->fullname."\">".
         $course->shortname."</a></h6>";
     }
@@ -119,9 +119,9 @@ class mod_search_table extends table_sql {
      */
     protected function col_jitsi($values) {
         global $DB, $OUTPUT;
-        $jitsi = $DB->get_record('jitsi', array('id' => $values->jitsi));
+        $jitsi = $DB->get_record('jitsi', ['id' => $values->jitsi]);
         $coursemodule = get_coursemodule_from_instance('jitsi', $values->jitsi);
-        $urljitsiparams = array('id' => $coursemodule->id);
+        $urljitsiparams = ['id' => $coursemodule->id];
         $urljitsi = new moodle_url('/mod/jitsi/view.php', $urljitsiparams);
         return "<a href=".$urljitsi." >".$jitsi->name."</a>";
     }
