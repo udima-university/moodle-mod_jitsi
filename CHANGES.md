@@ -1,4 +1,28 @@
 # Changelog
+## v3.3.9 (2023102300)
+### Added 
+* Show course on search videos page
+* Add max participants assistant in search result
+* Add log url in error mail
+* New set recordings not for kids #122
+### Fixed
+* Delete mod_jitsi_delete_recordsource service from services #121
+* Index.php corrections. (visibility, table, etc...)
+* Delete title and description for v4.0
+* Fix for cross-version compatibility, the $flags parameter should be explicitly set
+* Add boostrap video responsive for videos on search page
+* Fix redirect to login page when enter with link.
+* Fix problem when edit record title
+* Fix error with str_replace. Replace numbers.
+### Changed
+* User on search page is firstname and lastname. Username is on tooltip
+* Update records with no participants on recordings on air page
+* Add footer for link pages if is loggedin and delete intro for 4
+* Order at mod_jitsi_inplace_editable.
+* Better presentation videos recording on search page
+
+---
+
 ## v3.3.4 (2023062700)
 ### Added
 * Round Robin: Add rotating shift queue for recordings. Recordings are now distributed among all session recordings if they are in the queue.
