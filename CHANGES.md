@@ -4,7 +4,7 @@
 * Show course on search videos page
 * Add max participants assistant in search result
 * Add log url in error mail
-* New set recordings not for kids #122
+* New set recordings not for kids #122. (Pay attention to this new parameter. Before this update the videos were marked as suitable for children. If you want to continue marking videos with this restriction, please activate this option. By default it is disabled.)
 ### Fixed
 * Delete mod_jitsi_delete_recordsource service from services #121
 * Index.php corrections. (visibility, table, etc...)
