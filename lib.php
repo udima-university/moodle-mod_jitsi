@@ -1667,13 +1667,13 @@ function changeaccount() {
 }
 
 /**
- * Returns description of method parameters
- *
- * @param int $jitsi Jitsi session id
- * @param int $user User id
- * @param string $error Error message
- * @param int $cmid Course Module id
- */
+  * Send an error message to a user in a Jitsi session.
+  *
+  * @param object $jitsi Object representing the Jitsi session.
+  * @param object $user Object representing the user to whom the error message will be sent.
+  * @param string $error Error message to be sent to the user.
+  * @param string $source Source of the error.
+  */
 function senderror($jitsi, $user, $error, $source) {
     global $PAGE, $DB, $CFG;
     $jitsiob = $DB->get_record('jitsi', ['id' => $jitsi]);
