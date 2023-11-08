@@ -15,11 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Test table class to be put in test_table.php of root of Moodle installation.
- *  for defining some custom column names and proccessing
- * Username and Password feilds using custom and other column methods.
+ * Defines the accept event.
+ *
  * @package    mod_jitsi
- * @copyright  2023 Sergio Comerón <sergiocomeron@icloud.com>
+ * @copyright  2023 Sergio Comerón Sánchez-Paniagua <sergiocomeron@icloud.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,6 +26,9 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/tablelib.php');
 require_once($CFG->libdir.'/adminlib.php');
 
+/**
+ * Extend the standard table class for jitsi.
+ */
 class mod_search_table extends table_sql {
     /**
      * Constructor
@@ -43,7 +45,15 @@ class mod_search_table extends table_sql {
         $headers = ['Id', 'Link', 'Jitsi', 'Course', 'Account', 'User', 'Date', 'Max participants', 'Deleted'];
         $this->define_headers($headers);
     }
-
+    
+    /**
+     * This function is called for each data row to allow processing of the
+     * username value.
+     *
+     * @param object $values Contains object with all the values of record.
+     * @return $string Return username with link to profile or username only
+     *     when downloading.
+     */
     protected function col_userid($values) {
         global $DB;
         $user = $DB->get_record('user', ['id' => $values->userid]);
