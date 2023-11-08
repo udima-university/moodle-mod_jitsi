@@ -39,6 +39,7 @@ if ($state == null) {
     $nombre = required_param('nom', PARAM_TEXT);
     $session = required_param('ses', PARAM_TEXT);
     $avatar = $CFG->jitsi_showavatars == true ? required_param('avatar', PARAM_TEXT) : null;
+    $editingteacher = required_param('t', PARAM_BOOL);
     $teacher = required_param('t', PARAM_BOOL);
 
 } else {
@@ -66,6 +67,13 @@ if ($state == null) {
     $teacher = $teachera[1];
     $stateses = $statesesa[1];
 }
+// start jitsi-group-room parameters
+    $groupeNameSeleted = '';
+    $mygrouproomselected = $_POST['mygrouproom'];
+    $urlparams1 = array('avatar' => $avatar, 'nom' => $nombre, 'ses' => $session, 'userid' => $USER->id, 'courseid' => $courseid, 'cmid' => $cmid, 't' => $teacher);
+    $choosegroup = get_string('access', 'jitsi');
+    $nogroup = get_string('nogroup', 'group');
+// end jitsi-group-room parameters
 
 $cm = get_coursemodule_from_id('jitsi', $cmid, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
@@ -95,6 +103,47 @@ if ($jitsi->sourcerecord != null) {
     }
 }
 
-createsession($teacher, $cmid, $avatar, $nombre, $session, null, $jitsi);
+// start jitsi-group-room
+echo '<script>function changemygrouproom() {document.getElementById("SelectGroupRoomForm").submit();} </script>';	
+if($editingteacher){
+$results = $DB->get_records_sql("SELECT * FROM {groups} WHERE courseid='$courseid' ORDER BY name ASC");
+echo '<div style="text-align:center;">
+<form name="SelectGroupRoomForm" action="'.new moodle_url('/mod/jitsi/session.php', $urlparams1).'" method="POST" id="SelectGroupRoomForm">
+<select class="custom-select" type="text" name="mygrouproom" id="mygrouproom_ID" onchange="changemygrouproom()">
+<option value="" disabled selected>'.$choosegroup.'</option>
+<option value="" >'.$nogroup.'</option>';
+foreach ($results as $row) {
+	$groupeNameSeleted = $row->name;
+echo'<option value="'.$groupeNameSeleted.'">'.$groupeNameSeleted.'</option>';
+    }
+echo '</select></form></div>'; 
+	createsession($teacher, $cmid, $avatar, $nombre, $session.' '.$mygrouproomselected, null, $jitsi);
+}else{
+	$results = $DB->get_records_sql("SELECT * FROM {groups_members} gm JOIN {groups} g
+                                    ON g.id = gm.groupid
+                                  WHERE gm.userid = ? AND courseid='$courseid'
+                                   ORDER BY name ASC", array($USER->id));
+$row_cnt = count($results);
+if($row_cnt > 1){
+echo '<div style="text-align:center;">
+<form name="SelectGroupRoomForm" action="'.new moodle_url('/mod/jitsi/session.php', $urlparams1).'" method="POST" id="SelectGroupRoomForm">
+<select class="custom-select" type="text" name="mygrouproom" id="mygrouproom_ID" onchange="changemygrouproom()">
+<option value="" disabled selected>'.$choosegroup.'</option>';
+foreach ($results as $row) {
+	$groupeNameSeleted = $row->name;
+echo'<option value="'.$groupeNameSeleted.'">'.$groupeNameSeleted.'</option>';
+    }
+echo '</select></form></div>'; 
+
+	createsession($teacher, $cmid, $avatar, $nombre, $session.' '.$mygrouproomselected, null, $jitsi);
+}
+elseif ($row_cnt <= 1) {
+foreach ($results as $row) {
+	$groupeNameSeleted = $row->name;
+    }
+	createsession($teacher, $cmid, $avatar, $nombre, $session.' '.$groupeNameSeleted, null, $jitsi);
+}
+}
+// end jitsi-group-room
 
 echo $OUTPUT->footer();
