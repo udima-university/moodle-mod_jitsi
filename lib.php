@@ -1639,6 +1639,9 @@ function getminutesfromlastconexion($cmid, $user) {
     return $usersconnected->timecreated;
 }
 
+/**
+ * Change account.
+ */
 function changeaccount() {
     global $DB;
 
