@@ -45,7 +45,7 @@ class mod_search_table extends table_sql {
         $headers = ['Id', 'Link', 'Jitsi', 'Course', 'Account', 'User', 'Date', 'Max participants', 'Deleted'];
         $this->define_headers($headers);
     }
-    
+
     /**
      * This function is called for each data row to allow processing of the
      * username value.
