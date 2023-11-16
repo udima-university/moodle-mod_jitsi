@@ -55,13 +55,39 @@ class mod_jitsi_mod_form extends moodleform_mod {
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('name', 'modulename', 'jitsi');
 
+        $mform->addElement('advcheckbox', 'sessionwithtoken', 'Session con token');
+
+        $mform->addElement('text', 'token', get_string('token', 'jitsi'), ['size' => '70']);
+        if ($data = $this->_customdata) {
+            $mform->setDefault('token', $data->token);
+        } else {
+            if (!isset($_SESSION["random"])) {
+                $_SESSION["random"] = random_bytes(32);
+            }
+            $tokennuevo = bin2hex($_SESSION["random"]);
+            $mform->setDefault('token', $tokennuevo);
+        }
+
+        $mform->setType('token', PARAM_TEXT);
+
+        $mform->addElement('text', 'tokeninvitacion', get_string('tokeninvitacion', 'jitsi'), ['size' => '70']);
+        $mform->disabledIf('tokeninvitacion', 'sessionwithtoken', 'notchecked');
+        $mform->hardFreeze('token');
+        $mform->disabledIf('tokeninvitacion', 'sessionwithtoken', 'notchecked');
+        $mform->hideIf('tokeninvitacion', 'sessionwithtoken', 'notchecked');
+        $mform->hideIf('tokenmasterstring', 'sessionwithtoken', 'notchecked');
+
+        $mform->addHelpButton('tokeninvitacion', 'tokeninvitacion', 'jitsi');
+        $mform->setType('tokeninvitacion', PARAM_TEXT);
+
         $this->standard_intro_elements();
 
         $mform->addElement('header', 'availability', get_string('availability', 'assign'));
-
         $name = get_string('allow', 'jitsi');
         $options = ['optional' => true];
         $mform->addElement('date_time_selector', 'timeopen', $name, $options);
+        $mform->disabledIf('timeopen', 'sessionwithtoken', 'checked');
+        $mform->disabledIf('timeclose', 'sessionwithtoken', 'checked');
 
         $name = get_string('close', 'jitsi');
         $options = ['optional' => true];
@@ -86,6 +112,8 @@ class mod_jitsi_mod_form extends moodleform_mod {
                 get_string('staticinvitationlinkex', 'jitsi'));
             $mform->addElement('date_time_selector', 'validitytime',
                 get_string('finishinvitation', 'jitsi'), $optionsinvitation);
+            $mform->disabledIf('validitytime', 'sessionwithtoken', 'checked');
+
         }
 
         $this->standard_coursemodule_elements();
@@ -149,6 +177,7 @@ class mod_jitsi_mod_form extends moodleform_mod {
      * @return String error message, if any.
      */
     public function validation($data, $files) {
+        global $DB;
         $errors = parent::validation($data, $files);
 
         // Check open and close times are consistent.
@@ -162,6 +191,12 @@ class mod_jitsi_mod_form extends moodleform_mod {
             if (($data['timeopen'] != 0 && $data['validitytime'] < $data['timeopen']) ||
                 ($data['timeclose'] != 0 && $data['validitytime'] > $data['timeclose'])) {
                 $errors['validitytime'] = get_string('validitytimevalidation', 'jitsi');
+            }
+        }
+        if ($data['sessionwithtoken'] == 1) {
+            $sql = "select * from {jitsi} where token = '".$data['tokeninvitacion']."'";
+            if ($DB->get_record_sql($sql) == null) {
+                $errors['tokeninvitacion'] = get_string('tokeninvitationvalidation', 'jitsi');
             }
         }
 

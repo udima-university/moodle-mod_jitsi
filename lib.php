@@ -93,7 +93,7 @@ function jitsi_add_instance($jitsi,  $mform = null) {
     $time = time();
     $jitsi->timecreated = $time;
     $cmid = $jitsi->coursemodule;
-    $jitsi->token = bin2hex(random_bytes(32));
+    unset($_SESSION["random"]);
     $jitsi->id = $DB->insert_record('jitsi', $jitsi);
     jitsi_update_calendar($jitsi, $cmid);
 

@@ -161,23 +161,37 @@ $allowed = explode(',', $fieldssessionname);
 $max = count($allowed);
 
 $sesparam = '';
+
+if ($jitsi->sessionwithtoken == 0) {
+    $courseshortname = $course->shortname;
+    $jitsiid = $jitsi->id;
+    $jitsiname = $jitsi->name;
+} else {
+    $sql = "select * from {jitsi} where token = '".$jitsi->tokeninvitacion."'";
+    $jitsiinvitado = $DB->get_record_sql($sql);
+    $courseinvitado = $DB->get_record('course', ['id' => $jitsiinvitado->course]);
+    $courseshortname = $courseinvitado->shortname;
+    $jitsiid = $jitsiinvitado->id;
+    $jitsiname = $jitsiinvitado->name;
+}
+
 $optionsseparator = ['.', '-', '_', ''];
 for ($i = 0; $i < $max; $i++) {
     if ($i != $max - 1) {
         if ($allowed[$i] == 0) {
-            $sesparam .= string_sanitize($course->shortname).$optionsseparator[$CFG->jitsi_separator];
+            $sesparam .= string_sanitize($courseshortname).$optionsseparator[$CFG->jitsi_separator];
         } else if ($allowed[$i] == 1) {
-            $sesparam .= $jitsi->id.$optionsseparator[$CFG->jitsi_separator];
+            $sesparam .= $jitsiid.$optionsseparator[$CFG->jitsi_separator];
         } else if ($allowed[$i] == 2) {
-            $sesparam .= string_sanitize($jitsi->name).$optionsseparator[$CFG->jitsi_separator];
+            $sesparam .= string_sanitize($jitsiname).$optionsseparator[$CFG->jitsi_separator];
         }
     } else {
         if ($allowed[$i] == 0) {
-            $sesparam .= string_sanitize($course->shortname);
+            $sesparam .= string_sanitize($courseshortname);
         } else if ($allowed[$i] == 1) {
-            $sesparam .= $jitsi->id;
+            $sesparam .= $jitsiid;
         } else if ($allowed[$i] == 2) {
-            $sesparam .= string_sanitize($jitsi->name);
+            $sesparam .= string_sanitize($jitsiname);
         }
     }
 }
@@ -235,8 +249,21 @@ echo "<path d=\"M2 1a2 2 0 0 0-2 2v9.5A1.5 1.5 0 0 0 1.5 14h.653a5.373 5.373 0 0
      1 1v9h-2.219c.554.654.89 1.373 1.066 2h.653a1.5 1.5 0 0 0 1.5-1.5V3a2 2 0 0 0-2-2H2Z\"/>";
 echo "</svg>";
 echo (" ".$jitsi->numberofparticipants." ".get_string('connectedattendeesnow', 'jitsi'));
-
 echo "<p></p>";
+if ($jitsi->sessionwithtoken) {
+    echo "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\"
+        class=\"bi bi-share\" viewBox=\"0 0 16 16\">";
+    echo "<path d=\"M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1
+        0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5
+        1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z\"/>";
+    echo "</svg> ";
+    $sql = "select * from {jitsi} where token = '".$jitsi->tokeninvitacion."'";
+    $jitsimaster = $DB->get_record_sql($sql);
+    $coursemaster = $DB->get_record('course', ['id' => $jitsimaster->course]);
+    echo get_string('sessionshared', 'jitsi', $coursemaster->shortname);
+    echo "<p></p>";
+}
+
 if ($jitsi->sourcerecord != null) {
     echo "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"red\"
         class=\"bi bi-record-circle\" viewBox=\"0 0 16 16\">";
@@ -276,7 +303,7 @@ if ($today[0] < $jitsi->timeclose || $jitsi->timeclose == 0) {
 
 echo "<br><br>";
 
-$sql = 'select * from {jitsi_record} where jitsi = '.$jitsi->id.' and deleted = 0 order by id desc';
+$sql = 'select * from {jitsi_record} where jitsi = '.$jitsiid.' and deleted = 0 order by id desc';
 $records = $DB->get_records_sql($sql);
 
 $sqlusersconnected = 'select distinct userid from {logstore_standard_log} where contextid = '
