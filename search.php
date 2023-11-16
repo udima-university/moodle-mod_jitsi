@@ -46,7 +46,7 @@ class datesearch_form extends moodleform {
      * Defines forms elements
      */
     public function definition() {
-        global $CFG;
+        global $CFG, $DB;
         $mform = $this->_form; // Don't forget the underscore!.
         $defaulttimestart = [
             'year' => date('Y'),
@@ -59,6 +59,13 @@ class datesearch_form extends moodleform {
             ['defaulttime' => $defaulttimestart]);
         $mform->addElement('date_time_selector', 'timeend', get_string('to'));
 
+        $recorders = $DB->get_records('jitsi_record_account');
+        $mform->addElement('select', 'recorder', get_string('recorders', 'jitsi'), array_column($recorders, 'name'));
+        $mform->getElement('recorder')->setMultiple(true);
+
+        $indices = range(0, count($recorders));
+        $mform->getElement('recorder')->setSelected($indices);
+        $mform->getElement('recorder')->setSelected($indices);
         $buttonarray = [];
         $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('search'));
 
@@ -84,6 +91,9 @@ require_login();
 
 $timestart = optional_param_array('timestart', 0, PARAM_INT);
 $timeend = optional_param_array('timeend', 0, PARAM_INT);
+$recorder = optional_param_array('recorder', 0, PARAM_INT);
+$recorders = $DB->get_records('jitsi_record_account');
+
 if ($timestart == 0) {
     $timestart = ['year' => 2021, 'month' => 1, 'day' => 1, 'hour' => 0, 'minute' => 0];
     $timeend = ['year' => 2021, 'month' => 12, 'day' => 31, 'hour' => 23, 'minute' => 59];
@@ -95,7 +105,6 @@ $timeendtimestamp = make_timestamp($timeend['year'], $timeend['month'],
 
 $PAGE->set_title(format_string(get_string('search')));
 $PAGE->set_heading(format_string(get_string('search')));
-
 echo $OUTPUT->header();
 
 if (is_siteadmin()) {
@@ -114,6 +123,12 @@ if (is_siteadmin()) {
     $where = '{jitsi_record}.source = {jitsi_source_record}.id and
                 {jitsi_source_record}.timecreated > '.$timestarttimestamp.' and
                 {jitsi_source_record}.timecreated < '.$timeendtimestamp;
+
+    // Add a WHERE clause to filter by the selected recorders.
+    if (!empty($recorder)) {
+        $recorderlist = implode(',', $recorder);
+        $where .= ' AND {jitsi_source_record}.account IN ('.$recorderlist.')';
+    }
     $table->set_sql($fields, $from, $where, ['1']);
     $table->define_baseurl('/mod/jitsi/search.php?'.
         http_build_query(['timestart' => $timestart, 'timeend' => $timeend]));

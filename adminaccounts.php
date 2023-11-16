@@ -204,7 +204,7 @@ if (is_siteadmin()) {
             } else {
                 if ($numrecords == 0) {
                     $table->data[] = [$account->id, $account->name, $loginaction.' '.$deleteaction,
-                        $numrecords, $inqueueactio,
+                        $numrecords, $inqueueaction,
                     ];
                 } else {
                     $table->data[] = [$account->id, $account->name, $loginaction, $numrecords, $inqueueaction];

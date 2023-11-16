@@ -265,3 +265,4 @@ $string['tokeninvitadovalidation'] = 'Token not valid';
 $string['token'] = 'Token for add this session on other course';
 $string['tokeninvitationvalidation'] = 'Token not valid. There is no session with this token';
 $string['sessionshared'] = 'Session shared with \'{$a}\' course';
+$string['recorders'] = 'Recorders';
