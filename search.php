@@ -69,8 +69,7 @@ class datesearch_form extends moodleform {
 
         $mform->getElement('recorder')->setMultiple(true);
 
-        $indices = range(0, count($recorders));
-        $mform->getElement('recorder')->setSelected($indices);
+        $indices = array_column($recorders, 'id');
         $mform->getElement('recorder')->setSelected($indices);
         $buttonarray = [];
         $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('search'));
