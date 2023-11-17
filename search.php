@@ -59,8 +59,14 @@ class datesearch_form extends moodleform {
             ['defaulttime' => $defaulttimestart]);
         $mform->addElement('date_time_selector', 'timeend', get_string('to'));
 
-        $recorders = $DB->get_records('jitsi_record_account');
-        $mform->addElement('select', 'recorder', get_string('recorders', 'jitsi'), array_column($recorders, 'name'));
+        $recorders = $DB->get_records('jitsi_record_account', null, '', 'id, name');
+        $recordersidnombre = [];
+        foreach ($recorders as $recorder) {
+            $recordersidnombre[$recorder->id] = $recorder->name;
+        }
+
+        $mform->addElement('select', 'recorder', get_string('recorders', 'jitsi'), $recordersidnombre);
+
         $mform->getElement('recorder')->setMultiple(true);
 
         $indices = range(0, count($recorders));
@@ -124,7 +130,6 @@ if (is_siteadmin()) {
                 {jitsi_source_record}.timecreated > '.$timestarttimestamp.' and
                 {jitsi_source_record}.timecreated < '.$timeendtimestamp;
 
-    // Add a WHERE clause to filter by the selected recorders.
     if (!empty($recorder)) {
         $recorderlist = implode(',', $recorder);
         $where .= ' AND {jitsi_source_record}.account IN ('.$recorderlist.')';
