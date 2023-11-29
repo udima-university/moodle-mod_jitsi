@@ -32,6 +32,8 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once("$CFG->libdir/formslib.php");
 require_once('search_table.php');
+require_once($CFG->dirroot.'/user/selector/lib.php');
+
 
 /**
  * Guest access form.
@@ -59,6 +61,24 @@ class datesearch_form extends moodleform {
             ['defaulttime' => $defaulttimestart]);
         $mform->addElement('date_time_selector', 'timeend', get_string('to'));
 
+        $mform->addElement('checkbox', 'searchuser', 'user');
+        $usersid = $DB->get_records_sql('SELECT DISTINCT userid FROM {jitsi_source_record}');
+        $users = [];
+        foreach ($usersid as $userid) {
+            $user = $DB->get_record('user', ['id' => $userid->userid]);
+            $users[$user->id] = $user->firstname.' '.$user->lastname;
+        }
+        $options = [
+            'multiple' => true,
+            'noselectionstring' => 'Todos los usuarios',
+            'casesensitive' => false,
+        ];
+        $mform->addElement('autocomplete', 'userselected', 'Usuario', $users, $options);
+        
+        $mform->setType('userselected', PARAM_INT);
+
+        $mform->disabledIf('userselected', 'searchuser', 'notchecked');
+
         $recorders = $DB->get_records('jitsi_record_account', null, '', 'id, name');
         $recordersidnombre = [];
         foreach ($recorders as $recorder) {
@@ -68,9 +88,11 @@ class datesearch_form extends moodleform {
         $mform->addElement('select', 'recorder', get_string('recorders', 'jitsi'), $recordersidnombre);
 
         $mform->getElement('recorder')->setMultiple(true);
+        $mform->addRule('recorder', null, 'required', null, 'client');
 
         $indices = array_column($recorders, 'id');
         $mform->getElement('recorder')->setSelected($indices);
+
         $buttonarray = [];
         $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('search'));
 
@@ -87,6 +109,36 @@ class datesearch_form extends moodleform {
     public function validation($data, $files) {
         return [];
     }
+    // public function validation($data, $files) {
+    //     global $DB;
+    //     $errors = [];
+
+    //     // Check open and close times are consistent.
+    //     if ($data['timestart'] != 0 && $data['timeend'] != 0 &&
+    //             $data['timeend'] < $data['timestart']) {
+    //         $errors['timeend'] = get_string('closebeforeopen', 'jitsi');
+    //     }
+
+    //     if (empty($data['record'])){
+    //         $errors['record'] = 'vacio';
+    //     }
+
+    //     // Check validitity time is consistent with open and close times.
+    //     // if (isset($data['validitytime']) && $data['validitytime'] != 0) {
+    //     //     if (($data['timeopen'] != 0 && $data['validitytime'] < $data['timeopen']) ||
+    //     //         ($data['timeclose'] != 0 && $data['validitytime'] > $data['timeclose'])) {
+    //     //         $errors['validitytime'] = get_string('validitytimevalidation', 'jitsi');
+    //     //     }
+    //     // }
+    //     // if ($data['sessionwithtoken'] == 1) {
+    //     //     $sql = "select * from {jitsi} where token = '".$data['tokeninvitacion']."'";
+    //     //     if ($DB->get_record_sql($sql) == null) {
+    //     //         $errors['tokeninvitacion'] = get_string('tokeninvitationvalidation', 'jitsi');
+    //     //     }
+    //     // }
+
+    //     return $errors;
+    // }
 }
 
 $PAGE->set_context(context_system::instance());
@@ -96,7 +148,9 @@ require_login();
 
 $timestart = optional_param_array('timestart', 0, PARAM_INT);
 $timeend = optional_param_array('timeend', 0, PARAM_INT);
-$recorder = optional_param_array('recorder', 0, PARAM_INT);
+$recorder = optional_param_array('recorder', [], PARAM_INT);
+$userselected = optional_param_array('userselected', [], PARAM_INT);
+
 $recorders = $DB->get_records('jitsi_record_account');
 
 if ($timestart == 0) {
@@ -132,6 +186,10 @@ if (is_siteadmin()) {
     if (!empty($recorder)) {
         $recorderlist = implode(',', $recorder);
         $where .= ' AND {jitsi_source_record}.account IN ('.$recorderlist.')';
+    }
+    if (!empty($userselected)) {
+        $userlist = implode(',', $userselected);
+        $where .= ' AND {jitsi_source_record}.userid IN ('.$userlist.')';
     }
     $table->set_sql($fields, $from, $where, ['1']);
     $table->define_baseurl('/mod/jitsi/search.php?'.
