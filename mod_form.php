@@ -42,7 +42,7 @@ class mod_jitsi_mod_form extends moodleform_mod {
      * Defines forms elements
      */
     public function definition() {
-        global $CFG;
+        global $CFG, $PAGE;
         $mform = $this->_form;
         $mform->addElement('header', 'general', get_string('general', 'form'));
         $mform->addElement('text', 'name', get_string('jitsiname', 'jitsi'), ['size' => '64']);
@@ -55,7 +55,7 @@ class mod_jitsi_mod_form extends moodleform_mod {
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('name', 'modulename', 'jitsi');
 
-        $mform->addElement('advcheckbox', 'sessionwithtoken', 'Session con token');
+        $mform->addElement('advcheckbox', 'sessionwithtoken', get_string('sharedsessionwithtoken', 'jitsi'));
 
         $mform->addElement('text', 'token', get_string('token', 'jitsi'), ['size' => '70']);
         if ($data = $this->_customdata) {
@@ -73,9 +73,8 @@ class mod_jitsi_mod_form extends moodleform_mod {
         $mform->addElement('text', 'tokeninvitacion', get_string('tokeninvitacion', 'jitsi'), ['size' => '70']);
         $mform->disabledIf('tokeninvitacion', 'sessionwithtoken', 'notchecked');
         $mform->hardFreeze('token');
-        $mform->disabledIf('tokeninvitacion', 'sessionwithtoken', 'notchecked');
         $mform->hideIf('tokeninvitacion', 'sessionwithtoken', 'notchecked');
-        $mform->hideIf('tokenmasterstring', 'sessionwithtoken', 'notchecked');
+        $mform->hideIf('token', 'sessionwithtoken', 'notchecked');
 
         $mform->addHelpButton('tokeninvitacion', 'tokeninvitacion', 'jitsi');
         $mform->setType('tokeninvitacion', PARAM_TEXT);
@@ -104,7 +103,7 @@ class mod_jitsi_mod_form extends moodleform_mod {
         $mform->disabledIf('minpretime', 'timeopen[enabled]');
         $mform->addHelpButton('minpretime', 'minpretime', 'jitsi');
 
-        if ($CFG->jitsi_invitebuttons == 1) {
+        if ($CFG->jitsi_invitebuttons == 1 && has_capability('mod/jitsi:createlink', $PAGE->context)) {
             $optionsinvitation = ['defaulttime' => time() + 86400, 'optional' => true];
             $mform->addElement('header', 'invitations', get_string('invitations', 'jitsi'));
             $options = ['optional' => true];
