@@ -121,36 +121,11 @@ if (!istimedout($sesion)) {
                 echo $OUTPUT->box(get_string('finish', 'jitsi'));
             }
         } else {
-            echo get_string('accesstowithlogin', 'jitsi', $sesion->name);
-            $today = getdate();
-            if ($today[0] > (($sesion->timeopen) - ($sesion->minpretime * 60))) {
-                $nom = null;
-                switch ($CFG->jitsi_id) {
-                    case 'username':
-                        $nom = $USER->username;
-                        break;
-                    case 'nameandsurname':
-                        $nom = $USER->firstname.' '.$USER->lastname;
-                        break;
-                    case 'alias':
-                        break;
-                }
-                $avatar = $CFG->wwwroot.'/user/pix.php/'.$USER->id.'/f1.jpg';
-                $mail = '';
-                $urlparams = [
-                    'avatar' => $avatar,
-                    'name' => $nom,
-                    'ses' => $sessionid,
-                    'mail' => $mail,
-                    'id' => $id,
-                ];
-                echo $OUTPUT->box(get_string('instruction', 'jitsi'));
-                echo $OUTPUT->single_button(new moodle_url('/mod/jitsi/universal.php', $urlparams),
-                    get_string('access', 'jitsi'), 'post');
-            } else {
-                echo $OUTPUT->box(get_string('nostart', 'jitsi',
-                        date("d-m-Y H:i", ($sesion->timeopen - ($sesion->minpretime * 60)))));
-            }
+            $urlsession = new moodle_url('/mod/jitsi/view.php', ['id' => $id]);
+            echo "<div class=\"alert alert-warning\" role=\"alert\">";
+            echo get_string('alertacceswithlogin', 'jitsi');
+            echo "<a href=\"".$urlsession."\" class=\"alert-link\">".get_string('link', 'jitsi')."</a>.";
+            echo "</div>";
         }
     } else {
         echo get_string('noinviteaccess', 'jitsi');
