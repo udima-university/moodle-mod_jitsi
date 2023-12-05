@@ -49,7 +49,7 @@ if ($CFG->jitsi_privatesessions == 1) {
     if ($USER->id != $user->id) {
         sendnotificationprivatesession($USER, $user);
     }
-    createsession($teacher, 0, $avatar, $nombre, $session, null, 0, false , $user->id);
+    createsessionpriv($teacher, 0, $avatar, $nombre, $session, null, 0, false , $user->id);
 } else {
     echo get_string('privatesessiondisabled', 'jitsi');
 }
