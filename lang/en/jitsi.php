@@ -267,5 +267,5 @@ $string['tokeninvitationvalidation'] = 'Token not valid. There is no session wit
 $string['sessionshared'] = 'Session shared with \'{$a}\' course';
 $string['recorders'] = 'Recorders';
 $string['sharedsessionwithtoken'] = 'Session shared with token';
-$string['alertacceswithlogin']= 'You are accessing through an external link and you are logged in, please access from this  ';
+$string['alertacceswithlogin'] = 'You are accessing through an external link and you are logged in, please access from this ';
 $string['link'] = 'link';
