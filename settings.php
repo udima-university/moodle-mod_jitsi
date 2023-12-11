@@ -116,6 +116,9 @@ if ($ADMIN->fulltree) {
         WEEKSECS
     ));
 
+    $settings->add(new admin_setting_configselect('mod_jitsi/latency', get_string('latency', 'jitsi'),
+    get_string('latencyex', 'jitsi'), '0', ['0' => 'Normal', '1' => 'Low', '2' => 'Ultra Low']));
+
     $link = new moodle_url('/mod/jitsi/adminaccounts.php');
     $settings->add(new admin_setting_heading('jitsi_loginoutyoutube', '', '<a href='.$link.' >'.
     get_string('accounts', 'jitsi').'</a>'));

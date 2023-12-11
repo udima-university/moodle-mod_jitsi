@@ -269,3 +269,5 @@ $string['recorders'] = 'Recorders';
 $string['sharedsessionwithtoken'] = 'Session shared with token';
 $string['alertacceswithlogin'] = 'You are accessing through an external link and you are logged in, please access from this ';
 $string['link'] = 'link';
+$string['latency'] = 'Latency';
+$string['latencyex'] = 'Select latency level for streaming.';
