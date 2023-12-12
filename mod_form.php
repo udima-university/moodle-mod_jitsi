@@ -74,7 +74,6 @@ class mod_jitsi_mod_form extends moodleform_mod {
         $mform->disabledIf('tokeninvitacion', 'sessionwithtoken', 'notchecked');
         $mform->hardFreeze('token');
         $mform->hideIf('tokeninvitacion', 'sessionwithtoken', 'notchecked');
-        $mform->hideIf('token', 'sessionwithtoken', 'notchecked');
 
         $mform->addHelpButton('tokeninvitacion', 'tokeninvitacion', 'jitsi');
         $mform->setType('tokeninvitacion', PARAM_TEXT);
