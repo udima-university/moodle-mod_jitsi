@@ -1755,7 +1755,7 @@ function doembedable($idvideo) {
         senderror($jitsi->id, $source->userid, 'ERROR doembedable: '.$e->getMessage(), $source);
         return false;
     }
-    
+
     return $updateresponse;
 }
 
