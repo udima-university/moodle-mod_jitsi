@@ -365,6 +365,17 @@ if ($records && isallvisible($records) || has_capability ('mod/jitsi:record', $P
         echo "<br>";
         echo "<div class=\"row\">";
         foreach ($records as $record) {
+            $sourcerecord = $DB->get_record('jitsi_source_record', ['id' => $record->source]);
+            if ($sourcerecord->embed != 1) {
+                $account = $DB->get_record('jitsi_record_account', ['id' => $sourcerecord->account]);
+                if ($account->clientaccesstoken != null && $sourcerecord->timecreated != 0) {
+                    if ($sourcerecord->embed == 0) {
+                        doembedable($sourcerecord->link);
+                    }
+                }
+            }
+        }
+        foreach ($records as $record) {
             // Para borrar grabaciones.
             $deleteurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&deletejitsirecordid=' .
                      $record->id . '&sesskey=' . sesskey() . '#record');
@@ -410,14 +421,9 @@ if ($records && isallvisible($records) || has_capability ('mod/jitsi:record', $P
                     } else {
                         echo "<h6 class=\"card-subtitle mb-2 text-muted\">".get_string('error')."</h6>";
                     }
-                    $account = $DB->get_record('jitsi_record_account', ['id' => $sourcerecord->account]);
                     echo "<div class=\"embed-responsive embed-responsive-16by9\">";
                     if ($sourcerecord && $sourcerecord->link != null) {
-                        if ($account->clientaccesstoken != null && $sourcerecord->timecreated != 0) {
-                            if ($sourcerecord->embed == 0) {
-                                doembedable($sourcerecord->link);
-                            }
-                        }
+
                         echo "<iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/".$sourcerecord->link."\"
                             allowfullscreen></iframe>";
                     } else {
