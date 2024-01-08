@@ -666,6 +666,7 @@ class mod_jitsi_external extends external_api {
         $result['error'] = '';
         $result['user'] = $author->id;
         $result['usercomplete'] = $author->firstname.' '.$author->lastname;
+        doembedable($sourcealmacenada->link);
         return $result;
     }
 
