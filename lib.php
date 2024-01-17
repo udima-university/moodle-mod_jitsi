@@ -94,6 +94,7 @@ function jitsi_add_instance($jitsi,  $mform = null) {
     $jitsi->timecreated = $time;
     $cmid = $jitsi->coursemodule;
     unset($_SESSION["random"]);
+    unset($_SESSION["randominterno"]);
     $jitsi->id = $DB->insert_record('jitsi', $jitsi);
     jitsi_update_calendar($jitsi, $cmid);
 
@@ -368,7 +369,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     if ($user == null) {
         if ($CFG->jitsi_livebutton == 1 && has_capability('mod/jitsi:record', $PAGE->context)
             && $account != null && $universal == false
-            && ($CFG->jitsi_streamingoption == 1)) {
+            && ($CFG->jitsi_streamingoption == 1) && $jitsi->sessionwithtoken == 0) {
             echo "<div class=\"text-right\">";
             echo "<div class=\"custom-control custom-switch\">";
             echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\"";

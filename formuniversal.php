@@ -124,7 +124,6 @@ if (!istimedout($sesion)) {
             $urlsession = new moodle_url('/mod/jitsi/view.php', ['id' => $id]);
             echo "<div class=\"alert alert-warning\" role=\"alert\">";
             echo get_string('alertacceswithlogin', 'jitsi');
-            echo "<a href=\"".$urlsession."\" class=\"alert-link\">".get_string('link', 'jitsi')."</a>.";
             echo "</div>";
         }
     } else {

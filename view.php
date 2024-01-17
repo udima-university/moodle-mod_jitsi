@@ -167,7 +167,7 @@ if ($jitsi->sessionwithtoken == 0) {
     $jitsiid = $jitsi->id;
     $jitsiname = $jitsi->name;
 } else {
-    $sql = "select * from {jitsi} where token = '".$jitsi->tokeninvitacion."'";
+    $sql = "select * from {jitsi} where tokeninterno = '".$jitsi->tokeninvitacion."'";
     $jitsiinvitado = $DB->get_record_sql($sql);
     $courseinvitado = $DB->get_record('course', ['id' => $jitsiinvitado->course]);
     $courseshortname = $courseinvitado->shortname;
@@ -257,7 +257,7 @@ if ($jitsi->sessionwithtoken) {
         0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5
         1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z\"/>";
     echo "</svg> ";
-    $sql = "select * from {jitsi} where token = '".$jitsi->tokeninvitacion."'";
+    $sql = "select * from {jitsi} where tokeninterno = '".$jitsi->tokeninvitacion."'";
     $jitsimaster = $DB->get_record_sql($sql);
     $coursemaster = $DB->get_record('course', ['id' => $jitsimaster->course]);
     echo get_string('sessionshared', 'jitsi', $coursemaster->shortname);
@@ -406,7 +406,7 @@ if ($records && isallvisible($records) || has_capability ('mod/jitsi:record', $P
                     } else {
                         echo "<h5 class=\"card-title\">";
                     }
-                    if (has_capability('mod/jitsi:editrecordname', $context)) {
+                    if (has_capability('mod/jitsi:editrecordname', $context) && $jitsi->sessionwithtoken == 0) {
                         $tmpl = new \core\output\inplace_editable('mod_jitsi', 'recordname', $record->id,
                             has_capability('mod/jitsi:editrecordname', $context),
                             format_string($record->name), $record->name, get_string('editrecordname', 'jitsi'),
@@ -436,24 +436,25 @@ if ($records && isallvisible($records) || has_capability ('mod/jitsi:record', $P
                     echo "<div class=\"col-sm\">";
                     echo "</div>";
                     echo "  <div class=\"col-sm\">";
-
-                    if (has_capability('mod/jitsi:deleterecord', $context) && !has_capability('mod/jitsi:hide', $context)) {
-                        echo "<span class=\"align-middle text-right\"><p>".$deleteaction."</p></span>";
-                    }
-                    if (has_capability('mod/jitsi:hide', $context) && !has_capability('mod/jitsi:deleterecord', $context)) {
-                        if ($record->visible != 0) {
-                            echo "<span class=\"align-middle text-right\"><p>".$hideaction."</p></span>";
-                        } else {
-                            echo "<span class=\"align-middle text-right\"><p>".$showaction."</p></span>";
+                    if ($jitsi->sessionwithtoken == 0) {
+                        if (has_capability('mod/jitsi:deleterecord', $context) && !has_capability('mod/jitsi:hide', $context)) {
+                            echo "<span class=\"align-middle text-right\"><p>".$deleteaction."</p></span>";
                         }
-                    }
-                    if (has_capability('mod/jitsi:hide', $context) && has_capability('mod/jitsi:deleterecord', $context)) {
-                        if ($record->visible != 0) {
-                            echo "<span class=\"align-middle text-right\"><p>".$deleteaction."</span>";
-                            echo "<span class=\"align-middle text-right\">".$hideaction."</p></span>";
-                        } else {
-                            echo "<span class=\"align-middle text-right\"><p>".$deleteaction."</span>";
-                            echo "<span class=\"align-middle text-right\">".$showaction."</p></span>";
+                        if (has_capability('mod/jitsi:hide', $context) && !has_capability('mod/jitsi:deleterecord', $context)) {
+                            if ($record->visible != 0) {
+                                echo "<span class=\"align-middle text-right\"><p>".$hideaction."</p></span>";
+                            } else {
+                                echo "<span class=\"align-middle text-right\"><p>".$showaction."</p></span>";
+                            }
+                        }
+                        if (has_capability('mod/jitsi:hide', $context) && has_capability('mod/jitsi:deleterecord', $context)) {
+                            if ($record->visible != 0) {
+                                echo "<span class=\"align-middle text-right\"><p>".$deleteaction."</span>";
+                                echo "<span class=\"align-middle text-right\">".$hideaction."</p></span>";
+                            } else {
+                                echo "<span class=\"align-middle text-right\"><p>".$deleteaction."</span>";
+                                echo "<span class=\"align-middle text-right\">".$showaction."</p></span>";
+                            }
                         }
                     }
                     echo "</div>";

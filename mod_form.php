@@ -57,7 +57,9 @@ class mod_jitsi_mod_form extends moodleform_mod {
 
         $mform->addElement('advcheckbox', 'sessionwithtoken', get_string('sharedsessionwithtoken', 'jitsi'));
 
-        $mform->addElement('text', 'token', get_string('token', 'jitsi'), ['size' => '70']);
+        $mform->addElement('text', 'tokeninterno', get_string('token', 'jitsi'), ['size' => '70']);
+        $mform->hideIf('tokeninterno', 'sessionwithtoken', 'checked');
+
         if ($data = $this->_customdata) {
             $mform->setDefault('token', $data->token);
         } else {
@@ -70,9 +72,24 @@ class mod_jitsi_mod_form extends moodleform_mod {
 
         $mform->setType('token', PARAM_TEXT);
 
+        if ($data = $this->_customdata) {
+            $mform->setDefault('tokeninterno', $data->tokeninterno);
+        } else {
+            if (!isset($_SESSION["randominterno"])) {
+                $_SESSION["randominterno"] = random_bytes(32);
+            }
+            $tokeninternonuevo = bin2hex($_SESSION["randominterno"]);
+            $mform->setDefault('tokeninterno', $tokeninternonuevo);
+        }
+
+        $mform->setType('tokeninterno', PARAM_TEXT);
+
+        echo $mform->getElementValue('sessionwithtoken');
+        if ($mform->getElementValue('sessionwithtoken') == 0) {
+            $mform->setDefault('tokeninvitacion', '');
+        }
         $mform->addElement('text', 'tokeninvitacion', get_string('tokeninvitacion', 'jitsi'), ['size' => '70']);
-        $mform->disabledIf('tokeninvitacion', 'sessionwithtoken', 'notchecked');
-        $mform->hardFreeze('token');
+        $mform->hardFreeze('tokeninterno');
         $mform->hideIf('tokeninvitacion', 'sessionwithtoken', 'notchecked');
 
         $mform->addHelpButton('tokeninvitacion', 'tokeninvitacion', 'jitsi');
@@ -102,16 +119,20 @@ class mod_jitsi_mod_form extends moodleform_mod {
         $mform->disabledIf('minpretime', 'timeopen[enabled]');
         $mform->addHelpButton('minpretime', 'minpretime', 'jitsi');
 
-        if ($CFG->jitsi_invitebuttons == 1 && has_capability('mod/jitsi:createlink', $PAGE->context)) {
+        if ($CFG->jitsi_invitebuttons == 1) {
             $optionsinvitation = ['defaulttime' => time() + 86400, 'optional' => true];
             $mform->addElement('header', 'invitations', get_string('invitations', 'jitsi'));
-            $options = ['optional' => true];
             $mform->addElement('static', 'description', get_string('staticinvitationlink', 'jitsi'),
                 get_string('staticinvitationlinkex', 'jitsi'));
             $mform->addElement('date_time_selector', 'validitytime',
                 get_string('finishinvitation', 'jitsi'), $optionsinvitation);
-            $mform->disabledIf('validitytime', 'sessionwithtoken', 'checked');
+            if (!has_capability('mod/jitsi:createlink', $PAGE->context)) {
+                $mform->hardFreeze('validitytime');
+            }
 
+            if ($mform->getElementValue('validitytime') < time()) {
+                $mform->addElement('static', 'linkexpired', '', 'linkExpired2');
+            }
         }
 
         $this->standard_coursemodule_elements();
@@ -191,8 +212,12 @@ class mod_jitsi_mod_form extends moodleform_mod {
                 $errors['validitytime'] = get_string('validitytimevalidation', 'jitsi');
             }
         }
+        if (isset($data['validitytime']) && $data['validitytime'] <= time() && $data['validitytime'] != 0) {
+            $errors['validitytime'] = get_string('tokeninvitationnotvalid', 'jitsi');
+
+        }
         if ($data['sessionwithtoken'] == 1) {
-            $sql = "select * from {jitsi} where token = '".$data['tokeninvitacion']."'";
+            $sql = "select * from {jitsi} where tokeninterno = '".$data['tokeninvitacion']."'";
             if ($DB->get_record_sql($sql) == null) {
                 $errors['tokeninvitacion'] = get_string('tokeninvitationvalidation', 'jitsi');
             }
@@ -210,6 +235,9 @@ class mod_jitsi_mod_form extends moodleform_mod {
             !empty($defaultvalues['completionminutes']) ? 1 : 0;
         if (empty($defaultvalues['completionminutes'])) {
             $defaultvalues['completionminutes'] = 1;
+        }
+        if ($defaultvalues['sessionwithtoken'] == 0) {
+            $defaultvalues['tokeninvitacion'] = '';
         }
     }
 }
