@@ -56,7 +56,7 @@ class mod_jitsi_mod_form extends moodleform_mod {
         $mform->addHelpButton('name', 'modulename', 'jitsi');
 
         $mform->addElement('advcheckbox', 'sessionwithtoken', get_string('sharedsessionwithtoken', 'jitsi'));
-
+        $mform->setDefault('sessionwithtoken', 0);
         $mform->addElement('text', 'tokeninterno', get_string('token', 'jitsi'), ['size' => '70']);
         $mform->hideIf('tokeninterno', 'sessionwithtoken', 'checked');
 
@@ -235,9 +235,6 @@ class mod_jitsi_mod_form extends moodleform_mod {
             !empty($defaultvalues['completionminutes']) ? 1 : 0;
         if (empty($defaultvalues['completionminutes'])) {
             $defaultvalues['completionminutes'] = 1;
-        }
-        if ($defaultvalues['sessionwithtoken'] == 0) {
-            $defaultvalues['tokeninvitacion'] = '';
         }
     }
 }
