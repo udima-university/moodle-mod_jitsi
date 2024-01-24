@@ -273,3 +273,4 @@ $string['latency'] = 'Latency';
 $string['latencyex'] = 'Select latency level for streaming.';
 $string['tokeninvitationnotvalid'] = 'The invitation cannot expire before now';
 $string['urlerror'] = 'The URL is not valid';
+$string['jitsi:viewrecords'] = 'View records';
