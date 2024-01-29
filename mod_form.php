@@ -58,6 +58,7 @@ class mod_jitsi_mod_form extends moodleform_mod {
         $mform->addElement('advcheckbox', 'sessionwithtoken', get_string('sharedsessionwithtoken', 'jitsi'));
         $mform->setDefault('sessionwithtoken', 0);
         $mform->addElement('text', 'tokeninterno', get_string('token', 'jitsi'), ['size' => '70']);
+        $mform->addHelpButton('tokeninterno', 'tokeninterno', 'jitsi');
         $mform->hideIf('tokeninterno', 'sessionwithtoken', 'checked');
 
         if ($data = $this->_customdata) {
@@ -100,6 +101,7 @@ class mod_jitsi_mod_form extends moodleform_mod {
         $mform->addElement('header', 'availability', get_string('availability', 'assign'));
         $name = get_string('allow', 'jitsi');
         $options = ['optional' => true];
+
         $mform->addElement('date_time_selector', 'timeopen', $name, $options);
         $mform->disabledIf('timeopen', 'sessionwithtoken', 'checked');
         $mform->disabledIf('timeclose', 'sessionwithtoken', 'checked');
@@ -121,9 +123,11 @@ class mod_jitsi_mod_form extends moodleform_mod {
 
         if ($CFG->jitsi_invitebuttons == 1) {
             $optionsinvitation = ['defaulttime' => time() + 86400, 'optional' => true];
-            $mform->addElement('header', 'invitations', get_string('invitations', 'jitsi'));
-            $mform->addElement('static', 'description', get_string('staticinvitationlink', 'jitsi'),
-                get_string('staticinvitationlinkex', 'jitsi'));
+            $mform->addElement('header', 'invitations', get_string('externalinvitations', 'jitsi'));
+            $mform->addElement('text', 'token', get_string('externaltoken', 'jitsi'), ['size' => '70']);
+            $mform->addHelpButton('token', 'externaltoken', 'jitsi');
+            $mform->hardFreeze('token');
+
             $mform->addElement('date_time_selector', 'validitytime',
                 get_string('finishinvitation', 'jitsi'), $optionsinvitation);
             if (!has_capability('mod/jitsi:createlink', $PAGE->context)) {

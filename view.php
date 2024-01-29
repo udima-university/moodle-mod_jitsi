@@ -321,11 +321,11 @@ echo "<ul class=\"nav nav-tabs\" id=\"myTab\" role=\"tablist\">";
 if (has_capability ('mod/jitsi:viewrecords', $PAGE->context)) {
     if ($records && isallvisible($records) || has_capability ('mod/jitsi:record', $PAGE->context) && $records ||
     $CFG->jitsi_streamingoption == 1) {
-       echo "  <li class=\"nav-item\">";
-       echo "    <a class=\"nav-link\" id=\"record-tab\" data-toggle=\"tab\" href=\"#record\"
-        role=\"tab\" aria-controls=\"record\" aria-selected=\"false\">".get_string('records', 'jitsi')."</a>";
-       echo "  </li>";
-   }
+        echo "  <li class=\"nav-item\">";
+        echo "    <a class=\"nav-link\" id=\"record-tab\" data-toggle=\"tab\" href=\"#record\"
+          role=\"tab\" aria-controls=\"record\" aria-selected=\"false\">".get_string('records', 'jitsi')."</a>";
+        echo "  </li>";
+    }
 }
 
 if ($usersconnected && has_capability('mod/jitsi:viewusersonsession', $PAGE->context)) {
@@ -364,118 +364,118 @@ if ($CFG->jitsi_help != null) {
 if (has_capability ('mod/jitsi:viewrecords', $PAGE->context)) {
     if ($records && isallvisible($records) || has_capability ('mod/jitsi:record', $PAGE->context) && $records ||
     $CFG->jitsi_streamingoption == 1) {
-       if ($records && isallvisible($records) || has_capability ('mod/jitsi:record', $PAGE->context) && $records) {
-           echo "<br>";
-           echo "<div class=\"row\">";
-           foreach ($records as $record) {
-               $sourcerecord = $DB->get_record('jitsi_source_record', ['id' => $record->source]);
-               if ($sourcerecord->embed != 1) {
-                   $account = $DB->get_record('jitsi_record_account', ['id' => $sourcerecord->account]);
-                   if ($account->clientaccesstoken != null && $sourcerecord->timecreated != 0) {
-                       if ($sourcerecord->embed == 0) {
-                           doembedable($sourcerecord->link);
-                       }
-                   }
-               }
-           }
-           foreach ($records as $record) {
-               // Para borrar grabaciones.
-               $deleteurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&deletejitsirecordid=' .
+        if ($records && isallvisible($records) || has_capability ('mod/jitsi:record', $PAGE->context) && $records) {
+            echo "<br>";
+            echo "<div class=\"row\">";
+            foreach ($records as $record) {
+                $sourcerecord = $DB->get_record('jitsi_source_record', ['id' => $record->source]);
+                if ($sourcerecord->embed != 1) {
+                    $account = $DB->get_record('jitsi_record_account', ['id' => $sourcerecord->account]);
+                    if ($account->clientaccesstoken != null && $sourcerecord->timecreated != 0) {
+                        if ($sourcerecord->embed == 0) {
+                            doembedable($sourcerecord->link);
+                        }
+                    }
+                }
+            }
+            foreach ($records as $record) {
+                // Para borrar grabaciones.
+                $deleteurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&deletejitsirecordid=' .
                         $record->id . '&sesskey=' . sesskey() . '#record');
-               $deleteicon = new pix_icon('t/delete', get_string('delete'));
-               $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon,
-                   new confirm_action(get_string('confirmdeleterecordinactivity', 'jitsi')));
-   
-               $hideurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&hidejitsirecordid=' .
+                $deleteicon = new pix_icon('t/delete', get_string('delete'));
+                $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon,
+                    new confirm_action(get_string('confirmdeleterecordinactivity', 'jitsi')));
+
+                $hideurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&hidejitsirecordid=' .
                         $record->id . '&sesskey=' . sesskey(). '#record');
-               $showurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&showjitsirecordid=' .
+                $showurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&showjitsirecordid=' .
                         $record->id . '&sesskey=' . sesskey(). '#record');
-               $hideicon = new pix_icon('t/hide', get_string('hide'));
-               $showicon = new pix_icon('t/show', get_string('show'));
-               $hideaction = $OUTPUT->action_icon($hideurl, $hideicon, new confirm_action('Hide?'));
-               $showaction = $OUTPUT->action_icon($showurl, $showicon, new confirm_action('Show?'));
-   
-               $sourcerecord = $DB->get_record('jitsi_source_record', ['id' => $record->source]);
-               $context = context_module::instance($cm->id);
-               if ($sourcerecord->link != null) {
-                   if ($record->visible != 0 || (has_capability('mod/jitsi:record', $context)
-                       && has_capability('mod/jitsi:hide', $context))) {
-   
-                       echo "<div class=\"col-sm-6\">";
-                       echo "<div class=\"card\" >";
-                       echo "<div class=\"card-body\">";
-                       if ($record->visible == 0) {
-                           echo "<h5 class=\"card-title text-muted\">";
-                       } else {
-                           echo "<h5 class=\"card-title\">";
-                       }
-                       if (has_capability('mod/jitsi:editrecordname', $context) && $jitsi->sessionwithtoken == 0) {
-                           $tmpl = new \core\output\inplace_editable('mod_jitsi', 'recordname', $record->id,
-                               has_capability('mod/jitsi:editrecordname', $context),
-                               format_string($record->name), $record->name, get_string('editrecordname', 'jitsi'),
-                               get_string('newvaluefor', 'jitsi') . format_string($record->name));
-                           echo $OUTPUT->render($tmpl);
-                       } else {
-                           echo $record->name;
-                       }
-                       echo "</h5>";
-                       if ($sourcerecord) {
-                           echo "<h6 class=\"card-subtitle mb-2 text-muted\">".userdate($sourcerecord->timecreated)."</h6>";
-                       } else {
-                           echo "<h6 class=\"card-subtitle mb-2 text-muted\">".get_string('error')."</h6>";
-                       }
-                       echo "<div class=\"embed-responsive embed-responsive-16by9\">";
-                       if ($sourcerecord && $sourcerecord->link != null) {
-   
-                           echo "<iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/".$sourcerecord->link."\"
-                               allowfullscreen></iframe>";
-                       } else {
-                           echo "<iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/\"
-                               allowfullscreen></iframe>";
-                       }
-   
-                       echo "</div>";
-                       echo "<div class=\"row\">";
-                       echo "<div class=\"col-sm\">";
-                       echo "</div>";
-                       echo "  <div class=\"col-sm\">";
-                       if ($jitsi->sessionwithtoken == 0) {
-                           if (has_capability('mod/jitsi:deleterecord', $context) && !has_capability('mod/jitsi:hide', $context)) {
-                               echo "<span class=\"align-middle text-right\"><p>".$deleteaction."</p></span>";
-                           }
-                           if (has_capability('mod/jitsi:hide', $context) && !has_capability('mod/jitsi:deleterecord', $context)) {
-                               if ($record->visible != 0) {
-                                   echo "<span class=\"align-middle text-right\"><p>".$hideaction."</p></span>";
-                               } else {
-                                   echo "<span class=\"align-middle text-right\"><p>".$showaction."</p></span>";
-                               }
-                           }
-                           if (has_capability('mod/jitsi:hide', $context) && has_capability('mod/jitsi:deleterecord', $context)) {
-                               if ($record->visible != 0) {
-                                   echo "<span class=\"align-middle text-right\"><p>".$deleteaction."</span>";
-                                   echo "<span class=\"align-middle text-right\">".$hideaction."</p></span>";
-                               } else {
-                                   echo "<span class=\"align-middle text-right\"><p>".$deleteaction."</span>";
-                                   echo "<span class=\"align-middle text-right\">".$showaction."</p></span>";
-                               }
-                           }
-                       }
-                       echo "</div>";
-                       echo "</div>";
-                       echo "</div>";
-                       echo "</div>";
-                       echo "</div>";
-                   }
-               }
-           }
-           echo "</div>";
-       } else {
-           echo "<br>";
-           echo "<div class=\"alert alert-info\" role=\"alert\">";
-           echo get_string('norecords', 'jitsi');
-           echo "</div>";
-       }
-   }
+                $hideicon = new pix_icon('t/hide', get_string('hide'));
+                $showicon = new pix_icon('t/show', get_string('show'));
+                $hideaction = $OUTPUT->action_icon($hideurl, $hideicon, new confirm_action('Hide?'));
+                $showaction = $OUTPUT->action_icon($showurl, $showicon, new confirm_action('Show?'));
+
+                $sourcerecord = $DB->get_record('jitsi_source_record', ['id' => $record->source]);
+                $context = context_module::instance($cm->id);
+                if ($sourcerecord->link != null) {
+                    if ($record->visible != 0 || (has_capability('mod/jitsi:record', $context)
+                        && has_capability('mod/jitsi:hide', $context))) {
+
+                        echo "<div class=\"col-sm-6\">";
+                        echo "<div class=\"card\" >";
+                        echo "<div class=\"card-body\">";
+                        if ($record->visible == 0) {
+                            echo "<h5 class=\"card-title text-muted\">";
+                        } else {
+                            echo "<h5 class=\"card-title\">";
+                        }
+                        if (has_capability('mod/jitsi:editrecordname', $context) && $jitsi->sessionwithtoken == 0) {
+                            $tmpl = new \core\output\inplace_editable('mod_jitsi', 'recordname', $record->id,
+                                has_capability('mod/jitsi:editrecordname', $context),
+                                format_string($record->name), $record->name, get_string('editrecordname', 'jitsi'),
+                                get_string('newvaluefor', 'jitsi') . format_string($record->name));
+                            echo $OUTPUT->render($tmpl);
+                        } else {
+                            echo $record->name;
+                        }
+                        echo "</h5>";
+                        if ($sourcerecord) {
+                            echo "<h6 class=\"card-subtitle mb-2 text-muted\">".userdate($sourcerecord->timecreated)."</h6>";
+                        } else {
+                            echo "<h6 class=\"card-subtitle mb-2 text-muted\">".get_string('error')."</h6>";
+                        }
+                        echo "<div class=\"embed-responsive embed-responsive-16by9\">";
+                        if ($sourcerecord && $sourcerecord->link != null) {
+
+                            echo "<iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/".$sourcerecord->link."\"
+                                allowfullscreen></iframe>";
+                        } else {
+                            echo "<iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/\"
+                                allowfullscreen></iframe>";
+                        }
+
+                        echo "</div>";
+                        echo "<div class=\"row\">";
+                        echo "<div class=\"col-sm\">";
+                        echo "</div>";
+                        echo "  <div class=\"col-sm\">";
+                        if ($jitsi->sessionwithtoken == 0) {
+                            if (has_capability('mod/jitsi:deleterecord', $context) && !has_capability('mod/jitsi:hide', $context)) {
+                                echo "<span class=\"align-middle text-right\"><p>".$deleteaction."</p></span>";
+                            }
+                            if (has_capability('mod/jitsi:hide', $context) && !has_capability('mod/jitsi:deleterecord', $context)) {
+                                if ($record->visible != 0) {
+                                    echo "<span class=\"align-middle text-right\"><p>".$hideaction."</p></span>";
+                                } else {
+                                    echo "<span class=\"align-middle text-right\"><p>".$showaction."</p></span>";
+                                }
+                            }
+                            if (has_capability('mod/jitsi:hide', $context) && has_capability('mod/jitsi:deleterecord', $context)) {
+                                if ($record->visible != 0) {
+                                    echo "<span class=\"align-middle text-right\"><p>".$deleteaction."</span>";
+                                    echo "<span class=\"align-middle text-right\">".$hideaction."</p></span>";
+                                } else {
+                                    echo "<span class=\"align-middle text-right\"><p>".$deleteaction."</span>";
+                                    echo "<span class=\"align-middle text-right\">".$showaction."</p></span>";
+                                }
+                            }
+                        }
+                        echo "</div>";
+                        echo "</div>";
+                        echo "</div>";
+                        echo "</div>";
+                        echo "</div>";
+                    }
+                }
+            }
+            echo "</div>";
+        } else {
+            echo "<br>";
+            echo "<div class=\"alert alert-info\" role=\"alert\">";
+            echo get_string('norecords', 'jitsi');
+            echo "</div>";
+        }
+    }
 }
 
 echo "  </div>";
