@@ -335,12 +335,6 @@ if ($usersconnected && has_capability('mod/jitsi:viewusersonsession', $PAGE->con
     echo "  </li>";
 }
 
-if ($CFG->jitsi_invitebuttons == 1 && has_capability('mod/jitsi:createlink', $PAGE->context) && $jitsi->validitytime != 0) {
-    echo "  <li class=\"nav-item\">";
-    echo "    <a class=\"nav-link\" id=\"invitations-tab\" data-toggle=\"tab\" href=\"#invitations\"
-     role=\"tab\" aria-controls=\"invitations\" aria-selected=\"false\">".get_string('invitations', 'jitsi')."</a>";
-    echo "  </li>";
-}
 echo "</ul>";
 
 // Tabs content.
@@ -493,43 +487,5 @@ foreach ($usersconnected as $userconnected) {
 }
 echo html_writer::table($table);
 echo "  </div>";
-echo "  <div class=\"tab-pane fade\" id=\"invitations\" role=\"tabpanel\" aria-labelledby=\"invitations-tab\">";
-echo "<br>";
-
-$urlinvitacion = $CFG->wwwroot.'/mod/jitsi/formuniversal.php?t='.$jitsi->token;
-echo "<div class=\"container\">";
-echo "<div class=\"row\">";
-echo "<div class=\"col-11\">";
-echo get_string('staticinvitationlinkexview', 'jitsi');
-echo "</div>";
-echo "</div>";
-echo "<div class=\"row\">";
-echo "<div class=\"col-11\">";
-
-echo "<input class=\"form-control\" type=\"text\" placeholder=\"".$urlinvitacion."\" ";
-echo "        aria-label=\"Disabled input example\" disabled>";
-echo "</div>";
-echo "<div class=\"col-1\">";
-echo "<button onclick=\"copyurl()\" type=\"button\" class=\"btn btn-secondary\" id=\"copyurl\">";
-echo "Copy";
-echo "</button>";
-echo "</div>";
-echo "</div>";
-echo "</div>";
-
-echo "</div>";
-echo "</div>";
-
-echo "<p></p>";
-echo "<script>";
-echo "function copyurl() {\n";
-echo "  var time = ".generatecode($jitsi).";\n";
-echo "  var copyText = \"".$urlinvitacion."\";\n";
-echo "  navigator.clipboard.writeText(copyText)
-        .then(() => {alert('".get_string('copied', 'jitsi')."');})
-        .catch(err => {console.log('Error in copying text: ', err);});\n";
-echo "}\n";
-echo "</script>";
-
 echo "<hr>";
 echo $OUTPUT->footer();
