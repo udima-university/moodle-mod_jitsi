@@ -145,4 +145,14 @@ $capabilities = [
             'user' => CAP_ALLOW,
         ],
     ],
+
+    'mod/jitsi:viewexternallink' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => [
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+        ],
+    ],
 ];
