@@ -85,7 +85,6 @@ class mod_jitsi_mod_form extends moodleform_mod {
 
         $mform->setType('tokeninterno', PARAM_TEXT);
 
-        echo $mform->getElementValue('sessionwithtoken');
         if ($mform->getElementValue('sessionwithtoken') == 0) {
             $mform->setDefault('tokeninvitacion', '');
         }
