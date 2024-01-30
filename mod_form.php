@@ -123,10 +123,7 @@ class mod_jitsi_mod_form extends moodleform_mod {
         if ($CFG->jitsi_invitebuttons == 1) {
             $optionsinvitation = ['defaulttime' => time() + 86400, 'optional' => true];
             $mform->addElement('header', 'invitations', get_string('externalinvitations', 'jitsi'));
-            $mform->addElement('text', 'token', get_string('externaltoken', 'jitsi'), ['size' => '70']);
-            $mform->addHelpButton('token', 'externaltoken', 'jitsi');
-            $mform->hardFreeze('token');
-
+            $mform->addElement('static', 'linkexplication', '', get_string('staticinvitationlinkex', 'jitsi'));
             $mform->addElement('date_time_selector', 'validitytime',
                 get_string('finishinvitation', 'jitsi'), $optionsinvitation);
             if (!has_capability('mod/jitsi:createlink', $PAGE->context)) {
