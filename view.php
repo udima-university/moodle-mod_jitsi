@@ -162,6 +162,18 @@ $max = count($allowed);
 
 $sesparam = '';
 
+
+
+
+
+
+
+
+
+
+
+
+$errorborrado = false;
 if ($jitsi->sessionwithtoken == 0) {
     $courseshortname = $course->shortname;
     $jitsiid = $jitsi->id;
@@ -169,44 +181,48 @@ if ($jitsi->sessionwithtoken == 0) {
 } else {
     $sql = "select * from {jitsi} where tokeninterno = '".$jitsi->tokeninvitacion."'";
     $jitsiinvitado = $DB->get_record_sql($sql);
-    $courseinvitado = $DB->get_record('course', ['id' => $jitsiinvitado->course]);
-    $courseshortname = $courseinvitado->shortname;
-    $jitsiid = $jitsiinvitado->id;
-    $jitsiname = $jitsiinvitado->name;
-}
-
-$optionsseparator = ['.', '-', '_', ''];
-for ($i = 0; $i < $max; $i++) {
-    if ($i != $max - 1) {
-        if ($allowed[$i] == 0) {
-            $sesparam .= string_sanitize($courseshortname).$optionsseparator[$CFG->jitsi_separator];
-        } else if ($allowed[$i] == 1) {
-            $sesparam .= $jitsiid.$optionsseparator[$CFG->jitsi_separator];
-        } else if ($allowed[$i] == 2) {
-            $sesparam .= string_sanitize($jitsiname).$optionsseparator[$CFG->jitsi_separator];
-        }
+    if ($jitsiinvitado != null) {
+        $courseinvitado = $DB->get_record('course', ['id' => $jitsiinvitado->course]);
+        $courseshortname = $courseinvitado->shortname;
+        $jitsiid = $jitsiinvitado->id;
+        $jitsiname = $jitsiinvitado->name;
     } else {
-        if ($allowed[$i] == 0) {
-            $sesparam .= string_sanitize($courseshortname);
-        } else if ($allowed[$i] == 1) {
-            $sesparam .= $jitsiid;
-        } else if ($allowed[$i] == 2) {
-            $sesparam .= string_sanitize($jitsiname);
-        }
+        $errorborrado = true;
     }
 }
 
-$avatar = $CFG->wwwroot.'/user/pix.php/'.$USER->id.'/f1.jpg';
-$urlparams = [
-    'avatar' => $avatar,
-    'nom' => $nom,
-    'ses' => $sesparam,
-    'courseid' => $course->id,
-    'cmid' => $id,
-    't' => $moderation,
-];
-
-$today = getdate();
+if ($errorborrado == false) {
+    $optionsseparator = ['.', '-', '_', ''];
+    for ($i = 0; $i < $max; $i++) {
+        if ($i != $max - 1) {
+            if ($allowed[$i] == 0) {
+                $sesparam .= string_sanitize($courseshortname).$optionsseparator[$CFG->jitsi_separator];
+            } else if ($allowed[$i] == 1) {
+                $sesparam .= $jitsiid.$optionsseparator[$CFG->jitsi_separator];
+            } else if ($allowed[$i] == 2) {
+                $sesparam .= string_sanitize($jitsiname).$optionsseparator[$CFG->jitsi_separator];
+            }
+        } else {
+            if ($allowed[$i] == 0) {
+                $sesparam .= string_sanitize($courseshortname);
+            } else if ($allowed[$i] == 1) {
+                $sesparam .= $jitsiid;
+            } else if ($allowed[$i] == 2) {
+                $sesparam .= string_sanitize($jitsiname);
+            }
+        }
+    }
+    $avatar = $CFG->wwwroot.'/user/pix.php/'.$USER->id.'/f1.jpg';
+    $urlparams = [
+        'avatar' => $avatar,
+        'nom' => $nom,
+        'ses' => $sesparam,
+        'courseid' => $course->id,
+        'cmid' => $id,
+        't' => $moderation,
+    ];
+    $today = getdate();
+}
 
 if (!$deletejitsirecordid) {
     echo $OUTPUT->header();
@@ -240,7 +256,14 @@ if ($usersconnected != null) {
         $DB->update_record('jitsi', $jitsi);
     }
 }
+if ($errorborrado) {
+    echo "<div class=\"alert alert-danger\" role=\"alert\">";
 
+    echo get_string('sessiondeleted', 'jitsi');
+    echo "</div>";
+    echo $OUTPUT->footer();
+    die();
+}
 echo " ";
 echo "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\"
      class=\"bi bi-person-workspace\" viewBox=\"0 0 16 16\">";
@@ -332,13 +355,6 @@ if ($usersconnected && has_capability('mod/jitsi:viewusersonsession', $PAGE->con
     echo "  <li class=\"nav-item\">";
     echo "    <a class=\"nav-link\" id=\"attendees-tab\" data-toggle=\"tab\" href=\"#attendees\"
      role=\"tab\" aria-controls=\"attendees\" aria-selected=\"false\">".get_string('attendeesreport', 'jitsi')."</a>";
-    echo "  </li>";
-}
-
-if ($CFG->jitsi_invitebuttons == 1 && has_capability('mod/jitsi:viewexternallink', $PAGE->context) && $jitsi->validitytime != 0) {
-    echo "  <li class=\"nav-item\">";
-    echo "    <a class=\"nav-link\" id=\"invitations-tab\" data-toggle=\"tab\" href=\"#invitations\"
-     role=\"tab\" aria-controls=\"invitations\" aria-selected=\"false\">".get_string('invitations', 'jitsi')."</a>";
     echo "  </li>";
 }
 echo "</ul>";
@@ -493,51 +509,5 @@ foreach ($usersconnected as $userconnected) {
 }
 echo html_writer::table($table);
 echo "  </div>";
-if ($CFG->jitsi_invitebuttons == 1 && has_capability('mod/jitsi:viewexternallink', $PAGE->context) && $jitsi->validitytime != 0) {
-    echo "  <div class=\"tab-pane fade\" id=\"invitations\" role=\"tabpanel\" aria-labelledby=\"invitations-tab\">";
-    echo "<br>";
-
-    $urlinvitacion = $CFG->wwwroot.'/mod/jitsi/formuniversal.php?t='.$jitsi->token;
-    echo "<div class=\"container\">";
-    echo "<div class=\"row\">";
-    echo "<div class=\"col-11\">";
-    if ($jitsi->validitytime < time()) {
-        echo get_string('linkexpiredon', 'jitsi', userdate($jitsi->validitytime));
-        echo "<br>";
-        echo get_string('confignewexpirationtime', 'jitsi');
-    } else {
-        echo get_string('staticinvitationlinkexview', 'jitsi');
-        echo "</div>";
-        echo "</div>";
-        echo "<div class=\"row\">";
-        echo "<div class=\"col-11\">";
-
-        echo "<input class=\"form-control\" type=\"text\" placeholder=\"".$urlinvitacion."\" ";
-        echo "        aria-label=\"Disabled input example\" disabled>";
-        echo "</div>";
-        echo "<div class=\"col-1\">";
-        echo "<button onclick=\"copyurl()\" type=\"button\" class=\"btn btn-secondary\" id=\"copyurl\">";
-        echo "Copy";
-        echo "</button>";
-        echo "</div>";
-        echo "</div>";
-        echo "</div>";
-
-        echo "</div>";
-        echo "</div>";
-
-        echo "<p></p>";
-        echo "<script>";
-        echo "function copyurl() {\n";
-        echo "  var time = ".generatecode($jitsi).";\n";
-        echo "  var copyText = \"".$urlinvitacion."\";\n";
-        echo "  navigator.clipboard.writeText(copyText)
-                .then(() => {alert('".get_string('copied', 'jitsi')."');})
-                .catch(err => {console.log('Error in copying text: ', err);});\n";
-        echo "}\n";
-        echo "</script>";
-    }
-
-}
 echo "<hr>";
 echo $OUTPUT->footer();

@@ -281,3 +281,5 @@ $string['tokeninterno'] = 'Main session token';
 $string['tokeninterno_help'] = 'Use this token to share the session with other courses.';
 $string['jitsi:viewexternallink'] = 'View external link';
 $string['confignewexpirationtime'] = 'Config new expiration time on settings';
+$string['urlinvitacion'] = 'Invitation URL';
+$string['sessiondeleted'] = 'Session shared deleted';
