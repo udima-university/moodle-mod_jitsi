@@ -61,10 +61,8 @@ class mod_jitsi_mod_form extends moodleform_mod {
 
         $mform->setDefault('tokeninterno', $tokeninterno);
         $mform->addElement('static', 'tokeninternocompartir', get_string('tokeninterno', 'jitsi'), $tokeninterno);
-        $mform->addHelpButton('tokeninterno', 'tokeninterno', 'jitsi');
+        $mform->addHelpButton('tokeninternocompartir', 'tokeninternocompartir', 'jitsi');
 
-        $mform->addHelpButton('tokeninterno', 'tokeninterno', 'jitsi');
-        $mform->hideIf('tokeninterno', 'sessionwithtoken', 'checked');
         $mform->setType('tokeninterno', PARAM_TEXT);
 
         if ($mform->getElementValue('sessionwithtoken') == 0) {
