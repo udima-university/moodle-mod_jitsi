@@ -56,7 +56,12 @@ class mod_jitsi_mod_form extends moodleform_mod {
 
         $mform->addElement('advcheckbox', 'sessionwithtoken', get_string('sharedsessionwithtoken', 'jitsi'));
         $mform->setDefault('sessionwithtoken', 0);
-        $tokeninterno = bin2hex(random_bytes(32));
+
+        if (!isset($this->current->tokeninterno)) {
+            $tokeninterno = bin2hex(random_bytes(32));
+        } else {
+            $tokeninterno = $this->current->tokeninterno;
+        }
         $mform->addElement('hidden', 'tokeninterno', $tokeninterno);
 
         $mform->setDefault('tokeninterno', $tokeninterno);
@@ -112,8 +117,11 @@ class mod_jitsi_mod_form extends moodleform_mod {
             if ($mform->getElementValue('validitytime') < time()) {
                 $mform->addElement('static', 'linkexpired', '', 'linkExpired2');
             }
-
-            $token = bin2hex(random_bytes(32));
+            if (!isset($this->current->token)) {
+                $token = bin2hex(random_bytes(32));
+            } else {
+                $token = $this->current->token;
+            }
             $mform->addElement('hidden', 'token', $token);
             $mform->setDefault('token', $token);
 
