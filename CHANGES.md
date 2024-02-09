@@ -1,4 +1,20 @@
 # Changelog
+## v3.4 (2023020900)
+### Added
+ * Add user and recorder filter for search recordings
+ * Add latency parameter
+ * New capability for view records. 
+### Fixed
+ * Private sessions error.
+ * Url validation for username.
+### Changed
+ * New mode for share sessions on courses. Now if you want to share a session between two or more courses you have to copy the token that you will find on the configuration page and enter it in the course where you want to share it.
+ * URL link for guest users now is on configuration page. 
+ * New Google Api 2.15.3
+ * Refactoring doembedable function
+
+---
+
 ## v3.3.9 (2023102300)
 ### Added 
 * Show course on search videos page
