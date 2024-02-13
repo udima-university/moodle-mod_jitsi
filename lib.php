@@ -461,13 +461,13 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "prejoinPageEnabled: false,";
     echo "channelLastN: ".$CFG->jitsi_channellastcam.",\n";
 
-    if (get_config('jitsi', 'startwithaudiomuted') == '1') {
+    if (get_config('mod_jitsi', 'startwithaudiomuted') == '1') {
         echo "startWithAudioMuted: true,\n";
     } else {
         echo "startWithAudioMuted: false,\n";
     }
 
-    if (get_config('jitsi', 'startwithvideomuted') == '1') {
+    if (get_config('mod_jitsi', 'startwithvideomuted') == '1') {
         echo "startWithVideoMuted: true,\n";
     } else {
         echo "startWithVideoMuted: false,\n";
@@ -1195,8 +1195,17 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
     echo "disableProfile: true,\n";
     echo "prejoinPageEnabled: false,";
     echo "channelLastN: ".$CFG->jitsi_channellastcam.",\n";
-    echo "startWithAudioMuted: true,\n";
-    echo "startWithVideoMuted: true,\n";
+    if (get_config('mod_jitsi', 'startwithaudiomuted') == '1') {
+        echo "startWithAudioMuted: true,\n";
+    } else {
+        echo "startWithAudioMuted: false,\n";
+    }
+
+    if (get_config('mod_jitsi', 'startwithvideomuted') == '1') {
+        echo "startWithVideoMuted: true,\n";
+    } else {
+        echo "startWithVideoMuted: false,\n";
+    }
     echo "},\n";
 
     $appid8x8 = get_config('jitsi', '8x8app_id');
