@@ -90,6 +90,12 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('mod_jitsi/selfdeclaredmadeforkids', get_string('forkids', 'jitsi'),
         get_string('forkidsex', 'jitsi'), 0));
 
+    $settings->add(new admin_setting_configcheckbox('mod_jitsi/startwithaudiomuted', get_string('startwithaudiomuted', 'jitsi'),
+        get_string('startwithaudiomutedex', 'jitsi'), 1));
+
+    $settings->add(new admin_setting_configcheckbox('mod_jitsi/startwithvideomuted', get_string('startwithvideomuted', 'jitsi'),
+        get_string('startwithvideomutedex', 'jitsi'), 1));
+
     $settings->add(new admin_setting_heading('jitsistreaming',
             get_string('streamingconfig', 'jitsi'), get_string('streamingconfigex', 'jitsi')));
     $settings->add(new admin_setting_configcheckbox('jitsi_livebutton', get_string('streamingbutton', 'jitsi'),

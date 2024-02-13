@@ -284,3 +284,7 @@ $string['confignewexpirationtime'] = 'Config new expiration time on settings';
 $string['urlinvitacion'] = 'Invitation URL';
 $string['sessiondeleted'] = 'Session shared deleted';
 $string['tokeninternocompartir'] = 'Token to share';
+$string['startwithvideomuted'] = 'Start with video muted';
+$string['startwithaudiomuted'] = 'Start with audio muted';
+$string['startwithvideomutedex'] = 'When user connects to the session, the video will be muted';
+$string['startwithaudiomutedex'] = 'When user connects to the session, the audio will be muted';
