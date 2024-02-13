@@ -4,6 +4,7 @@
  * Add user and recorder filter for search recordings
  * Add latency parameter
  * New capability for view records. 
+ * Add startwithaudiomuted and startwithvideomuted parameters
 ### Fixed
  * Private sessions error.
  * Url validation for username.
