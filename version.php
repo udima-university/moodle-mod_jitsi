@@ -32,3 +32,4 @@ $plugin->version = 2024021301;
 $plugin->release = 'v3.4';
 $plugin->requires = 2014051200;
 $plugin->maturity = MATURITY_STABLE;
+$plugin->component = 'mod_jitsi';
