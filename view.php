@@ -162,17 +162,6 @@ $max = count($allowed);
 
 $sesparam = '';
 
-
-
-
-
-
-
-
-
-
-
-
 $errorborrado = false;
 if ($jitsi->sessionwithtoken == 0) {
     $courseshortname = $course->shortname;
@@ -306,8 +295,16 @@ if ($CFG->branch <= 311) {
     }
 }
 
-if ($today[0] < $jitsi->timeclose || $jitsi->timeclose == 0) {
-    if ($today[0] > (($jitsi->timeopen)) ||
+$fechacierre = $jitsi->timeclose;
+$fechainicio = $jitsi->timeopen;
+
+if ($jitsi->sessionwithtoken == 1) {
+    $fechacierre = $jitsiinvitado->timeclose;
+    $fechainicio = $jitsiinvitado->timeopen;
+}
+
+if ($today[0] < $fechacierre || $fechacierre == 0) {
+    if ($today[0] > (($fechainicio)) ||
         has_capability('mod/jitsi:moderation', $context) && $today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))) {
         echo "<br><br>";
         $button = new moodle_url('/mod/jitsi/session.php', $urlparams);
