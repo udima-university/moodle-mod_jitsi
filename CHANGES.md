@@ -1,4 +1,10 @@
 # Changelog
+## v3.4.1 (2024022700)
+### Fixed
+ * Fix problem with end date and start date on shared sessions
+### Changed
+ * New explication for external link on configuration page
+---
 ## v3.4 (2023020900)
 ### Added
  * Add user and recorder filter for search recordings
