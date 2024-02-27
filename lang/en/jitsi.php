@@ -288,3 +288,4 @@ $string['startwithvideomuted'] = 'Start with video muted';
 $string['startwithaudiomuted'] = 'Start with audio muted';
 $string['startwithvideomutedex'] = 'When user connects to the session, the video will be muted';
 $string['startwithaudiomutedex'] = 'When user connects to the session, the audio will be muted';
+$string['staticinvitationlinkcapabilityex'] = 'Use this option for guests who don\'t have a Moodle user to access. Only if you have capability mod/jitsi:createlink you can create or modify the invitation link.';
