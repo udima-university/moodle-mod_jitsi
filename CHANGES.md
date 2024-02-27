@@ -2,6 +2,7 @@
 ## v3.4.1 (2024022700)
 ### Fixed
  * Fix problem with end date and start date on shared sessions
+ * Show acces button on form universal when user is logged
 ### Changed
  * New explication for external link on configuration page
 ---
