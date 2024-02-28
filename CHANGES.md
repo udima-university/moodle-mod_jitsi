@@ -1,8 +1,9 @@
 # Changelog
-## v3.4.1 (2024022700)
+## v3.4.1 (2024022800)
 ### Fixed
  * Fix problem with end date and start date on shared sessions
  * Show acces button on form universal when user is logged
+ * Fix problem with search pagination when search with user or recorder filter
 ### Changed
  * New explication for external link on configuration page
 ---
