@@ -2,6 +2,7 @@
 ## v3.4.1 (2024022800)
 ### Added
  * Attendance user list now linked with user profile
+ * Attendance info show minutes today
 ### Fixed
  * Fix problem with end date and start date on shared sessions
  * Show acces button on form universal when user is logged
