@@ -9,6 +9,7 @@
  * Fix problem with search pagination when search with user or recorder filter
 ### Changed
  * New explication for external link on configuration page
+ * Pagination for attendees table
 ---
 ## v3.4 (2023020900)
 ### Added
