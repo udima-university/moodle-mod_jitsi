@@ -1641,6 +1641,23 @@ function getminutes($contextinstanceid, $userid) {
 }
 
 /**
+ * Counts the minutes of a user in the current session
+ * @param id $contextinstanceid - context instance
+ * @param id $userid - user id
+ * @param int $init - initial time
+ * @param int $end - end time
+ */
+function getminutesdates($contextinstanceid, $userid, $init, $end) {
+    global $DB, $USER;
+    $sqlminutos = 'select * from {logstore_standard_log} where userid = '.$userid
+        .' and contextinstanceid = '.$contextinstanceid.' and action = \'participating\'
+         and timecreated > '.$init.' and timecreated < '.$end;
+    $minutos = $DB->get_records_sql($sqlminutos);
+    return count($minutos);
+}
+
+
+/**
  * Add a get_coursemodule_info function in case any jitsi type wants to add 'extra' information
  * for the course (see resource).
  *

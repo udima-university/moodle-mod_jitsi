@@ -496,7 +496,8 @@ echo "  <div class=\"tab-pane fade\" id=\"attendees\" role=\"tabpanel\" aria-lab
 echo "<br>";
 
 $table = new html_table();
-$table->head = [get_string('name'), get_string('minutes')];
+$table->head = [get_string('name'), get_string('minutestoday', 'jitsi').': '
+    .date('d/m', strtotime('today midnight')), get_string('totalminutes', 'jitsi')];
 $table->data = [];
 foreach ($usersconnected as $userconnected) {
     if ($userconnected->userid != 0) {
@@ -504,7 +505,8 @@ foreach ($usersconnected as $userconnected) {
         $urluser = new moodle_url('/user/profile.php', ['id' => $user->id]);
 
         $table->data[] = ["<a href=".$urluser." data-toggle=\"tooltip\" data-placement=\"top\" title=\""
-        .$user->username."\">".fullname($user).'</a>', getminutes($id, $user->id)];
+        .$user->username."\">".fullname($user).'</a>', getminutesdates($id, $user->id, strtotime('today midnight'),
+         strtotime('today midnight +1 day')), getminutes($id, $user->id)];
     }
 }
 echo html_writer::table($table);
