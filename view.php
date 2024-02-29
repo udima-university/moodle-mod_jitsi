@@ -501,7 +501,10 @@ $table->data = [];
 foreach ($usersconnected as $userconnected) {
     if ($userconnected->userid != 0) {
         $user = $DB->get_record('user', ['id' => $userconnected->userid]);
-        $table->data[] = [fullname($user), getminutes($id, $user->id)];
+        $urluser = new moodle_url('/user/profile.php', ['id' => $user->id]);
+
+        $table->data[] = ["<a href=".$urluser." data-toggle=\"tooltip\" data-placement=\"top\" title=\""
+        .$user->username."\">".fullname($user).'</a>', getminutes($id, $user->id)];
     }
 }
 echo html_writer::table($table);
