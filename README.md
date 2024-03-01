@@ -122,14 +122,25 @@ As we said "out of the box", the plugin connects with the public servers at meet
 
 The **meet.jit.si** team recently announced that the embed mode, required by our plugin, **is now restricted and they only allow to use it for 5 minutes on every conference**, but this is enough in order to test if this fits to you. You can [read about this announcement here](https://community.jitsi.org/t/important-embedding-meet-jit-si-in-your-web-app-will-no-longer-be-supported-please-use-jaas/). We would like to thank them for providing such a good service for so many years without restrictions, which helped many schools to continue their activities during the Covid pandemic.
 
- **Jitsi is Open Source** and you can **install your own Jitsi Server** or to **rent the service from https://jaas.8x8.vc/** with an **important discount for you**. Probably you could find other unofficial sites providing professional hosting for Jitsi, but 8x8 is the company which supports the Jitsi project and buying their services is the best way to support the project in order to guarantee it's future.
+**Jitsi is Open Source** and you can **install your own Jitsi Server** or **rent the service from https://jaas.8x8.vc/**, which is **free up to 25 unique monthly active users**. Read more about it [here](https://jaas.8x8.vc/#/pricing). Probably you could find other unofficial sites providing professional hosting for Jitsi, but 8x8 is the company which supports the Jitsi project and buying their services is the best way to support the project in order to guarantee its future.
 
+## Using a Jitsi as a Service Account
+
+You need to create a [Jitsi as a Service Account](https://jaas.8x8.vc), if you don't already have one.
+
+Once you do, go to the [API Keys](https://jaas.8x8.vc/#/apikeys) page and create a new key pair, name it something meaningful.
+Download the private key and store it somewhere safe.
+
+Open the Moodle Jitsi plugin settings and change the values as follows.
+
+- **Domain**: `8x8.vc`
+- **Server type**: pick `8x8 Servers`
+- **App_ID**: copy it from the JaaS Console API Keys page, i.e. `vpaas-magic-cookie-xxxxx`
+- **Api Key ID**: copy it from the keys table in the same page, it should be something like `vpaas-magic-cookie-xxxxx/somehex`
+- **Private key**: the contents of the private key you just downloaded from JaaS Console
+
+Save the changes and you're ready to use Jitsi as a Service in your Moodle courses.
 
 ## Disclaimer
 
-This plugin is maintained by UDIMA University (www.udima.es) and is not related or partner with 8x8 Inc nor with "Jitsi as a service" (jaas).
-
-
-
-
-
+This plugin is maintained by UDIMA University (www.udima.es) and is not related or partner with 8x8 Inc. nor with "Jitsi as a Service" (JaaS).
