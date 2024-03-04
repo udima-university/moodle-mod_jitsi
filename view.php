@@ -495,13 +495,21 @@ echo "  </div>";
 echo "  <div class=\"tab-pane fade\" id=\"attendees\" role=\"tabpanel\" aria-labelledby=\"attendees-tab\">";
 echo "<br>";
 
-$table = new mod_attendee_table('attendee');
-$fields = ' DISTINCT {logstore_standard_log}.userid, {logstore_standard_log}.contextinstanceid';
-$from = '{logstore_standard_log}';
-$where = '{logstore_standard_log}.contextinstanceid = '.$id.' and {logstore_standard_log}.action = \'participating\'';
-$table->set_sql($fields, $from, $where, ['1']);
-$table->define_baseurl('/mod/jitsi/view.php?id='.$cm->id.'#attendees');
-$table->out(10, true);
+$table = new html_table();
+$table->head = [get_string('name'), get_string('minutestoday', 'jitsi').': '
+    .date('d/m', strtotime('today midnight')), get_string('totalminutes', 'jitsi')];
+$table->data = [];
+foreach ($usersconnected as $userconnected) {
+    if ($userconnected->userid != 0) {
+        $user = $DB->get_record('user', ['id' => $userconnected->userid]);
+        $urluser = new moodle_url('/user/profile.php', ['id' => $user->id]);
+
+        $table->data[] = ["<a href=".$urluser." data-toggle=\"tooltip\" data-placement=\"top\" title=\""
+        .$user->username."\">".fullname($user).'</a>', getminutesdates($id, $user->id, strtotime('today midnight'),
+         strtotime('today midnight +1 day')), getminutes($id, $user->id)];
+    }
+}
+echo html_writer::table($table);
 echo "  </div>";
 echo "<hr>";
 echo $OUTPUT->footer();

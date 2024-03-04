@@ -1503,9 +1503,7 @@ function deleterecordyoutube($idsource) {
 
             $_SESSION[$tokensessionkey] = $account->clientaccesstoken;
             $client->setAccessToken($_SESSION[$tokensessionkey]);
-            $t = time();
-            $timediff = $t - $account->tokencreated;
-            if ($timediff > 3599) {
+            if ($client->isAccessTokenExpired()) {
                 $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
                 try {
                     $account->clientaccesstoken = $newaccesstoken["access_token"];
@@ -1647,15 +1645,19 @@ function getminutes($contextinstanceid, $userid) {
  * @param int $init - initial time
  * @param int $end - end time
  */
+
 function getminutesdates($contextinstanceid, $userid, $init, $end) {
     global $DB, $USER;
-    $sqlminutos = 'select * from {logstore_standard_log} where userid = '.$userid
-        .' and contextinstanceid = '.$contextinstanceid.' and action = \'participating\'
-         and timecreated > '.$init.' and timecreated < '.$end;
-    $minutos = $DB->get_records_sql($sqlminutos);
-    return count($minutos);
+    $sqlminutos = 'SELECT COUNT(*) AS minutes FROM {logstore_standard_log}
+                   WHERE userid = :userid AND contextinstanceid = :contextinstanceid
+                   AND action = \'participating\' AND timecreated BETWEEN :init AND :end';
+    $params = ['userid' => $userid,
+        'contextinstanceid' => $contextinstanceid,
+        'init' => $init,
+        'end' => $end];
+    $minutos = $DB->get_record_sql($sqlminutos, $params);
+    return $minutos->minutes;
 }
-
 
 /**
  * Add a get_coursemodule_info function in case any jitsi type wants to add 'extra' information
@@ -1817,39 +1819,34 @@ function togglestate($idvideo) {
     $_SESSION[$tokensessionkey] = $account->clientaccesstoken;
     $client->setAccessToken($_SESSION[$tokensessionkey]);
 
-    $t = time();
-    $timediff = $t - $account->tokencreated;
-
-    if ($timediff > 3599) {
-        if ($timediff > 3599) {
-            $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
-            try {
-                $account->clientaccesstoken = $newaccesstoken["access_token"];
-                $newrefreshaccesstoken = $client->getRefreshToken();
-                $newrefreshaccesstoken = $client->getRefreshToken();
-                $account->clientrefreshtoken = $newrefreshaccesstoken;
-                $account->tokencreated = time();
-            } catch (Google_Service_Exception $e) {
-                if ($account->inuse == 1) {
-                    $account->inuse = 0;
-                }
-                $account->clientaccesstoken = null;
-                $account->clientrefreshtoken = null;
-                $account->tokencreated = 0;
-                $DB->update_record('jitsi_record_account', $account);
-                $client->revokeToken();
-                return false;
-            } catch (Google_Exception $e) {
-                if ($account->inuse == 1) {
-                    $account->inuse = 0;
-                }
-                $account->clientaccesstoken = null;
-                $account->clientrefreshtoken = null;
-                $account->tokencreated = 0;
-                $DB->update_record('jitsi_record_account', $account);
-                $client->revokeToken();
-                return false;
+    if ($client->isAccessTokenExpired()) {
+        $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
+        try {
+            $account->clientaccesstoken = $newaccesstoken["access_token"];
+            $newraccesstfreshaccesstoken = $client->getRefreshToken();
+            $newrefreshaccesstoken = $client->getRefreshToken();
+            $account->clientrefreshtoken = $newrefreshaccesstoken;
+            $account->tokencreated = time();
+        } catch (Google_Service_Exception $e) {
+            if ($account->inuse == 1) {
+                $account->inuse = 0;
             }
+            $account->clientaccesstoken = null;
+            $account->clientrefreshtoken = null;
+            $account->tokencreated = 0;
+            $DB->update_record('jitsi_record_account', $account);
+            $client->revokeToken();
+            return false;
+        } catch (Google_Exception $e) {
+            if ($account->inuse == 1) {
+                $account->inuse = 0;
+            }
+            $account->clientaccesstoken = null;
+            $account->clientrefreshtoken = null;
+            $account->tokencreated = 0;
+            $DB->update_record('jitsi_record_account', $account);
+            $client->revokeToken();
+            return false;
         }
     }
 
@@ -1929,10 +1926,7 @@ function getclientgoogleapi() {
     $_SESSION[$tokensessionkey] = $account->clientaccesstoken;
     $client->setAccessToken($_SESSION[$tokensessionkey]);
 
-    $t = time();
-    $timediff = $t - $account->tokencreated;
-
-    if ($timediff > 3599) {
+    if ($client->isAccessTokenExpired()) {
         $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
         try {
             $account->clientaccesstoken = $newaccesstoken["access_token"];
@@ -1987,10 +1981,7 @@ function getclientgoogleapibyaccount($account) {
     $_SESSION[$tokensessionkey] = $account->clientaccesstoken;
     $client->setAccessToken($_SESSION[$tokensessionkey]);
 
-    $t = time();
-    $timediff = $t - $account->tokencreated;
-
-    if ($timediff > 3599) {
+    if ($client->isAccessTokenExpired()) {
         $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
         try {
             $account->clientaccesstoken = $newaccesstoken["access_token"];
