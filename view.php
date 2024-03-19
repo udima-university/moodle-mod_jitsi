@@ -27,7 +27,6 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
-require_once('attendee_table.php');
 // Allow CORS requests.
 header('Access-Control-Allow-Origin: *');
 
@@ -494,7 +493,6 @@ if (has_capability ('mod/jitsi:viewrecords', $PAGE->context)) {
 echo "  </div>";
 echo "  <div class=\"tab-pane fade\" id=\"attendees\" role=\"tabpanel\" aria-labelledby=\"attendees-tab\">";
 echo "<br>";
-
 
 $table = new html_table();
 $table->head = [get_string('name'), get_string('minutestoday', 'jitsi').

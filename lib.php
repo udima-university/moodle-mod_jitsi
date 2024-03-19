@@ -278,8 +278,7 @@ function string_sanitize($string, $forcelowercase = true, $anal = false) {
 function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jitsi, $universal = false,
         $user = null) {
     global $CFG, $DB, $PAGE, $USER;
-    $sessionnorm = str_replace([' ', ':', '"', 'º', 'ª', '{', '}', '@', '[', ']', '^', '_', '{',
-            '|', '}', '~', '@', '·', '#', '$', '~', '%', '½', '½', '%', ], '', $session);
+    $sessionnorm = normalizesessionname($session);
     if ($teacher == 1) {
         $teacher = true;
         $affiliation = "owner";
@@ -393,6 +392,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "const domain = \"".$CFG->jitsi_domain."\";\n";
     echo "const options = {\n";
     echo "configOverwrite: {\n";
+    echo "subject: '".$jitsi->name."',\n";
     echo "disableSelfView: false,\n";
     echo "defaultLanguage: '".current_language()."',\n";
     echo "disableInviteFunctions: true,\n";
@@ -1027,8 +1027,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
 function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $jitsi, $universal = false,
         $user = null) {
     global $CFG, $DB, $PAGE, $USER;
-    $sessionnorm = str_replace([' ', ':', '"', 'º', 'ª', '{', '}', '@', '[', ']', '^', '_', '{',
-            '|', '}', '~', '@', '·', '#', '$', '~', '%', '½', '½', '%', ], '', $session);
+    $sessionnorm = normalizesessionname($session);
     if ($teacher == 1) {
         $teacher = true;
         $affiliation = "owner";
@@ -1128,6 +1127,7 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
     echo "const domain = \"".$CFG->jitsi_domain."\";\n";
     echo "const options = {\n";
     echo "configOverwrite: {\n";
+    echo "subject: '".$jitsi->name."',\n";
     echo "disableSelfView: false,\n";
     echo "defaultLanguage: '".current_language()."',\n";
     echo "disableInviteFunctions: true,\n";
@@ -2099,4 +2099,16 @@ function senderror($jitsi, $user, $error, $source) {
     $event->add_record_snapshot('course', $PAGE->course);
     $event->add_record_snapshot('jitsi', $jitsiob);
     $event->trigger();
+}
+
+
+/**
+ * Normalizes the session name by removing any special characters or spaces.
+ *
+ * @param string $session The session name to be normalized.
+ * @return string The normalized session name.
+ */
+function normalizesessionname($session) {
+    $normalized = preg_replace('/[^a-zA-Z0-9\-_]/', '', $session);
+    return $normalized;
 }
