@@ -278,8 +278,7 @@ function string_sanitize($string, $forcelowercase = true, $anal = false) {
 function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jitsi, $universal = false,
         $user = null) {
     global $CFG, $DB, $PAGE, $USER;
-    $sessionnorm = str_replace([' ', ':', '"', 'º', 'ª', '{', '}', '@', '[', ']', '^', '_', '{',
-            '|', '}', '~', '@', '·', '#', '$', '~', '%', '½', '½', '%', ], '', $session);
+    $sessionnorm = normalizesessionname($session);
     if ($teacher == 1) {
         $teacher = true;
         $affiliation = "owner";
@@ -393,6 +392,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "const domain = \"".$CFG->jitsi_domain."\";\n";
     echo "const options = {\n";
     echo "configOverwrite: {\n";
+    echo "subject: '".$jitsi->name."',\n";
     echo "disableSelfView: false,\n";
     echo "defaultLanguage: '".current_language()."',\n";
     echo "disableInviteFunctions: true,\n";
@@ -1027,8 +1027,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
 function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $jitsi, $universal = false,
         $user = null) {
     global $CFG, $DB, $PAGE, $USER;
-    $sessionnorm = str_replace([' ', ':', '"', 'º', 'ª', '{', '}', '@', '[', ']', '^', '_', '{',
-            '|', '}', '~', '@', '·', '#', '$', '~', '%', '½', '½', '%', ], '', $session);
+    $sessionnorm = normalizesessionname($session);
     if ($teacher == 1) {
         $teacher = true;
         $affiliation = "owner";
@@ -1128,6 +1127,7 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
     echo "const domain = \"".$CFG->jitsi_domain."\";\n";
     echo "const options = {\n";
     echo "configOverwrite: {\n";
+    echo "subject: '".$jitsi->name."',\n";
     echo "disableSelfView: false,\n";
     echo "defaultLanguage: '".current_language()."',\n";
     echo "disableInviteFunctions: true,\n";
@@ -1503,9 +1503,7 @@ function deleterecordyoutube($idsource) {
 
             $_SESSION[$tokensessionkey] = $account->clientaccesstoken;
             $client->setAccessToken($_SESSION[$tokensessionkey]);
-            $t = time();
-            $timediff = $t - $account->tokencreated;
-            if ($timediff > 3599) {
+            if ($client->isAccessTokenExpired()) {
                 $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
                 try {
                     $account->clientaccesstoken = $newaccesstoken["access_token"];
@@ -1638,6 +1636,27 @@ function getminutes($contextinstanceid, $userid) {
         .' and contextinstanceid = '.$contextinstanceid.' and action = \'participating\'';
     $minutos = $DB->get_records_sql($sqlminutos);
     return count($minutos);
+}
+
+/**
+ * Counts the minutes of a user in the current session
+ * @param id $contextinstanceid - context instance
+ * @param id $userid - user id
+ * @param int $init - initial time
+ * @param int $end - end time
+ */
+
+function getminutesdates($contextinstanceid, $userid, $init, $end) {
+    global $DB, $USER;
+    $sqlminutos = 'SELECT COUNT(*) AS minutes FROM {logstore_standard_log}
+                   WHERE userid = :userid AND contextinstanceid = :contextinstanceid
+                   AND action = \'participating\' AND timecreated BETWEEN :init AND :end';
+    $params = ['userid' => $userid,
+        'contextinstanceid' => $contextinstanceid,
+        'init' => $init,
+        'end' => $end];
+    $minutos = $DB->get_record_sql($sqlminutos, $params);
+    return $minutos->minutes;
 }
 
 /**
@@ -1800,39 +1819,34 @@ function togglestate($idvideo) {
     $_SESSION[$tokensessionkey] = $account->clientaccesstoken;
     $client->setAccessToken($_SESSION[$tokensessionkey]);
 
-    $t = time();
-    $timediff = $t - $account->tokencreated;
-
-    if ($timediff > 3599) {
-        if ($timediff > 3599) {
-            $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
-            try {
-                $account->clientaccesstoken = $newaccesstoken["access_token"];
-                $newrefreshaccesstoken = $client->getRefreshToken();
-                $newrefreshaccesstoken = $client->getRefreshToken();
-                $account->clientrefreshtoken = $newrefreshaccesstoken;
-                $account->tokencreated = time();
-            } catch (Google_Service_Exception $e) {
-                if ($account->inuse == 1) {
-                    $account->inuse = 0;
-                }
-                $account->clientaccesstoken = null;
-                $account->clientrefreshtoken = null;
-                $account->tokencreated = 0;
-                $DB->update_record('jitsi_record_account', $account);
-                $client->revokeToken();
-                return false;
-            } catch (Google_Exception $e) {
-                if ($account->inuse == 1) {
-                    $account->inuse = 0;
-                }
-                $account->clientaccesstoken = null;
-                $account->clientrefreshtoken = null;
-                $account->tokencreated = 0;
-                $DB->update_record('jitsi_record_account', $account);
-                $client->revokeToken();
-                return false;
+    if ($client->isAccessTokenExpired()) {
+        $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
+        try {
+            $account->clientaccesstoken = $newaccesstoken["access_token"];
+            $newraccesstfreshaccesstoken = $client->getRefreshToken();
+            $newrefreshaccesstoken = $client->getRefreshToken();
+            $account->clientrefreshtoken = $newrefreshaccesstoken;
+            $account->tokencreated = time();
+        } catch (Google_Service_Exception $e) {
+            if ($account->inuse == 1) {
+                $account->inuse = 0;
             }
+            $account->clientaccesstoken = null;
+            $account->clientrefreshtoken = null;
+            $account->tokencreated = 0;
+            $DB->update_record('jitsi_record_account', $account);
+            $client->revokeToken();
+            return false;
+        } catch (Google_Exception $e) {
+            if ($account->inuse == 1) {
+                $account->inuse = 0;
+            }
+            $account->clientaccesstoken = null;
+            $account->clientrefreshtoken = null;
+            $account->tokencreated = 0;
+            $DB->update_record('jitsi_record_account', $account);
+            $client->revokeToken();
+            return false;
         }
     }
 
@@ -1912,10 +1926,7 @@ function getclientgoogleapi() {
     $_SESSION[$tokensessionkey] = $account->clientaccesstoken;
     $client->setAccessToken($_SESSION[$tokensessionkey]);
 
-    $t = time();
-    $timediff = $t - $account->tokencreated;
-
-    if ($timediff > 3599) {
+    if ($client->isAccessTokenExpired()) {
         $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
         try {
             $account->clientaccesstoken = $newaccesstoken["access_token"];
@@ -1970,10 +1981,7 @@ function getclientgoogleapibyaccount($account) {
     $_SESSION[$tokensessionkey] = $account->clientaccesstoken;
     $client->setAccessToken($_SESSION[$tokensessionkey]);
 
-    $t = time();
-    $timediff = $t - $account->tokencreated;
-
-    if ($timediff > 3599) {
+    if ($client->isAccessTokenExpired()) {
         $newaccesstoken = $client->fetchAccessTokenWithRefreshToken($account->clientrefreshtoken);
         try {
             $account->clientaccesstoken = $newaccesstoken["access_token"];
@@ -2091,4 +2099,16 @@ function senderror($jitsi, $user, $error, $source) {
     $event->add_record_snapshot('course', $PAGE->course);
     $event->add_record_snapshot('jitsi', $jitsiob);
     $event->trigger();
+}
+
+
+/**
+ * Normalizes the session name by removing any special characters or spaces.
+ *
+ * @param string $session The session name to be normalized.
+ * @return string The normalized session name.
+ */
+function normalizesessionname($session) {
+    $normalized = preg_replace('/[^a-zA-Z0-9\-_]/', '', $session);
+    return $normalized;
 }

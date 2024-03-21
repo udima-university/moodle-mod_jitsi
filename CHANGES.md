@@ -1,11 +1,30 @@
 # Changelog
-## v3.4.1 (2024022700)
+## v3.4.2 (2024032100)
+## Added
+ * Attendance user list now linked with user profile
+## Fixed
+ * Fixes the problem that caused the search filters to not be respected when turning pages.
+ * Fix error writing to the database when creating a new jitsi activity when inviteopcions is activated #126
+ * Fix the URL is not valid when jitsi_id is first name + lasta name or alias #125
+## Changed
+ * New function normalizesessionname for normalize session name.
+
+---
+
+## v3.4.1 (2024022800)
+### Added
+ * Attendance user list now linked with user profile
+ * Attendance info show minutes today
 ### Fixed
  * Fix problem with end date and start date on shared sessions
  * Show acces button on form universal when user is logged
+ * Fix problem with search pagination when search with user or recorder filter
 ### Changed
  * New explication for external link on configuration page
+ * Pagination for attendees table
+
 ---
+
 ## v3.4 (2023020900)
 ### Added
  * Add user and recorder filter for search recordings

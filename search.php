@@ -164,7 +164,8 @@ if (is_siteadmin()) {
     }
     $table->set_sql($fields, $from, $where, ['1']);
     $table->define_baseurl('/mod/jitsi/search.php?'.
-        http_build_query(['timestart' => $timestart, 'timeend' => $timeend]));
+        http_build_query(['timestart' => $timestart, 'timeend' => $timeend,
+            'recorder' => $recorder, 'userselected' => $userselected]));
     $table->out(10, true);
 } else {
     redirect($CFG->wwwroot, 'Acceso a busquedas no permitido. Solo administradores');
