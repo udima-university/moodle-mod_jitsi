@@ -128,6 +128,15 @@ class mod_jitsi_mod_form extends moodleform_mod {
             $urlinvitacion = $CFG->wwwroot.'/mod/jitsi/formuniversal.php?t='.$token;
             $mform->addElement('static', 'urltoken', get_string('urlinvitacion', 'jitsi'), $urlinvitacion);
             $mform->setType('token', PARAM_TEXT);
+        } else {
+            if (!isset($this->current->token)) {
+                $token = bin2hex(random_bytes(32));
+            } else {
+                $token = $this->current->token;
+            }
+            $mform->addElement('hidden', 'token', $token);
+            $mform->setDefault('token', $token);
+            $mform->setType('token', PARAM_TEXT);
         }
 
         $this->standard_coursemodule_elements();
