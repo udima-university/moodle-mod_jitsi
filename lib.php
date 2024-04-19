@@ -383,6 +383,8 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "</div></div>";
     echo "<hr>";
 
+    echo "<div id=\"jitsi-container\" style=\"height: 80vh; width: 100%;\"></div>";
+    
     echo "<script>\n";
     echo "if (document.getElementById(\"recordSwitch\") != null) {\n";
     echo "  document.getElementById(\"recordSwitch\").disabled = true;\n";
@@ -569,7 +571,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             echo "parentNode: document.querySelector('#region-main'),\n";
         }
     } else {
-        echo "parentNode: document.querySelector('#region-main'),\n";
+        echo "parentNode: document.querySelector('#jitsi-container'),\n";
     }
     echo "interfaceConfigOverwrite:{\n";
     echo "TOOLBAR_BUTTONS: ".$buttons.",\n";
@@ -577,7 +579,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "JITSI_WATERMARK_LINK: '".$CFG->jitsi_watermarklink."',\n";
     echo "},\n";
     echo "width: '100%',\n";
-    echo "height: 650,\n";
+    echo "height: '100%',\n";
     echo "}\n";
     echo "const api = new JitsiMeetExternalAPI(domain, options);\n";
     echo "api.addListener('videoConferenceJoined', () => {\n";
@@ -1316,7 +1318,7 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
             echo "parentNode: document.querySelector('#region-main'),\n";
         }
     } else {
-        echo "parentNode: document.querySelector('#region-main'),\n";
+        echo "parentNode: document.querySelector('#jitsi-container'),\n";
     }
     echo "interfaceConfigOverwrite:{\n";
     echo "TOOLBAR_BUTTONS: ".$buttons.",\n";
@@ -1324,7 +1326,7 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
     echo "JITSI_WATERMARK_LINK: '".$CFG->jitsi_watermarklink."',\n";
     echo "},\n";
     echo "width: '100%',\n";
-    echo "height: 650,\n";
+    echo "height: '100%',\n";
     echo "}\n";
     echo "const api = new JitsiMeetExternalAPI(domain, options);\n";
 
