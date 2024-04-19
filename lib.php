@@ -392,6 +392,19 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "const domain = \"".$CFG->jitsi_domain."\";\n";
     echo "const options = {\n";
     echo "configOverwrite: {\n";
+
+    echo "breakoutRooms: {";
+    if (get_config('mod_jitsi', 'allowbreakoutrooms') == '1') {
+        echo "    hideAddRoomButton: false,";
+        echo "    hideAutoAssignButton: false,";
+        echo "    hideJoinRoomButton: false,";
+    } else {
+        echo "    hideAddRoomButton: true,";
+        echo "    hideAutoAssignButton: true,";
+        echo "    hideJoinRoomButton: true,";
+    }
+    echo "},";
+
     echo "subject: '".$jitsi->name."',\n";
     echo "disableSelfView: false,\n";
     echo "defaultLanguage: '".current_language()."',\n";
@@ -1127,6 +1140,19 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
     echo "const domain = \"".$CFG->jitsi_domain."\";\n";
     echo "const options = {\n";
     echo "configOverwrite: {\n";
+
+    echo "breakoutRooms: {";
+    if (get_config('mod_jitsi', 'allowbreakoutrooms') == '1') {
+        echo "    hideAddRoomButton: false,";
+        echo "    hideAutoAssignButton: false,";
+        echo "    hideJoinRoomButton: false,";
+    } else {
+        echo "    hideAddRoomButton: true,";
+        echo "    hideAutoAssignButton: true,";
+        echo "    hideJoinRoomButton: true,";
+    }
+    echo "},";
+
     echo "subject: '".$jitsi->name."',\n";
     echo "disableSelfView: false,\n";
     echo "defaultLanguage: '".current_language()."',\n";
@@ -1645,7 +1671,6 @@ function getminutes($contextinstanceid, $userid) {
  * @param int $init - initial time
  * @param int $end - end time
  */
-
 function getminutesdates($contextinstanceid, $userid, $init, $end) {
     global $DB, $USER;
     $sqlminutos = 'SELECT COUNT(*) AS minutes FROM {logstore_standard_log}
