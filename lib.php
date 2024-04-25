@@ -383,8 +383,23 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "</div></div>";
     echo "<hr>";
 
-    echo "<div id=\"jitsi-container\" style=\"height: 80vh; width: 100%;\"></div>";
-    
+    echo '<style>
+    .cuadrado-wrapper {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+    .jitsi-container {
+        width: calc(90vw);
+        height: calc(90vw * 9 / 16);
+        max-width: calc(90vh * 16 / 9);
+        max-height: calc(90vh);
+    }
+    </style>';
+    echo '<div class="cuadrado-wrapper"><div class="jitsi-container" id="jitsi-container"></div></div>';
+
     echo "<script>\n";
     echo "if (document.getElementById(\"recordSwitch\") != null) {\n";
     echo "  document.getElementById(\"recordSwitch\").disabled = true;\n";
@@ -578,8 +593,8 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "SHOW_JITSI_WATERMARK: true,\n";
     echo "JITSI_WATERMARK_LINK: '".$CFG->jitsi_watermarklink."',\n";
     echo "},\n";
-    echo "width: '100%',\n";
-    echo "height: '100%',\n";
+    echo "width: '100%',";
+    echo "height: '100%',";
     echo "}\n";
     echo "const api = new JitsiMeetExternalAPI(domain, options);\n";
     echo "api.addListener('videoConferenceJoined', () => {\n";
