@@ -17,26 +17,28 @@
 
 namespace Google\Service\YouTube;
 
-class RelatedEntity extends \Google\Model
+class ChannelToStoreLinkDetailsBillingDetails extends \Google\Model
 {
-  protected $entityType = Entity::class;
-  protected $entityDataType = '';
+  /**
+   * @var string
+   */
+  public $billingStatus;
 
   /**
-   * @param Entity
+   * @param string
    */
-  public function setEntity(Entity $entity)
+  public function setBillingStatus($billingStatus)
   {
-    $this->entity = $entity;
+    $this->billingStatus = $billingStatus;
   }
   /**
-   * @return Entity
+   * @return string
    */
-  public function getEntity()
+  public function getBillingStatus()
   {
-    return $this->entity;
+    return $this->billingStatus;
   }
 }
 
 // Adding a class alias for backwards compatibility with the previous class name.
-class_alias(RelatedEntity::class, 'Google_Service_YouTube_RelatedEntity');
+class_alias(ChannelToStoreLinkDetailsBillingDetails::class, 'Google_Service_YouTube_ChannelToStoreLinkDetailsBillingDetails');

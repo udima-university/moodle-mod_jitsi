@@ -17,26 +17,44 @@
 
 namespace Google\Service\YouTube;
 
-class RelatedEntity extends \Google\Model
+class LiveChatPollDetails extends \Google\Model
 {
-  protected $entityType = Entity::class;
-  protected $entityDataType = '';
+  protected $metadataType = LiveChatPollDetailsPollMetadata::class;
+  protected $metadataDataType = '';
+  /**
+   * @var string
+   */
+  public $status;
 
   /**
-   * @param Entity
+   * @param LiveChatPollDetailsPollMetadata
    */
-  public function setEntity(Entity $entity)
+  public function setMetadata(LiveChatPollDetailsPollMetadata $metadata)
   {
-    $this->entity = $entity;
+    $this->metadata = $metadata;
   }
   /**
-   * @return Entity
+   * @return LiveChatPollDetailsPollMetadata
    */
-  public function getEntity()
+  public function getMetadata()
   {
-    return $this->entity;
+    return $this->metadata;
+  }
+  /**
+   * @param string
+   */
+  public function setStatus($status)
+  {
+    $this->status = $status;
+  }
+  /**
+   * @return string
+   */
+  public function getStatus()
+  {
+    return $this->status;
   }
 }
 
 // Adding a class alias for backwards compatibility with the previous class name.
-class_alias(RelatedEntity::class, 'Google_Service_YouTube_RelatedEntity');
+class_alias(LiveChatPollDetails::class, 'Google_Service_YouTube_LiveChatPollDetails');
