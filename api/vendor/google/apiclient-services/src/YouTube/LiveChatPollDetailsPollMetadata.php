@@ -17,45 +17,45 @@
 
 namespace Google\Service\YouTube;
 
-class VideoAbuseReportReasonSnippet extends \Google\Collection
+class LiveChatPollDetailsPollMetadata extends \Google\Collection
 {
-  protected $collection_key = 'secondaryReasons';
+  protected $collection_key = 'options';
+  protected $optionsType = LiveChatPollDetailsPollMetadataPollOption::class;
+  protected $optionsDataType = 'array';
   /**
    * @var string
    */
-  public $label;
-  protected $secondaryReasonsType = VideoAbuseReportSecondaryReason::class;
-  protected $secondaryReasonsDataType = 'array';
+  public $questionText;
 
+  /**
+   * @param LiveChatPollDetailsPollMetadataPollOption[]
+   */
+  public function setOptions($options)
+  {
+    $this->options = $options;
+  }
+  /**
+   * @return LiveChatPollDetailsPollMetadataPollOption[]
+   */
+  public function getOptions()
+  {
+    return $this->options;
+  }
   /**
    * @param string
    */
-  public function setLabel($label)
+  public function setQuestionText($questionText)
   {
-    $this->label = $label;
+    $this->questionText = $questionText;
   }
   /**
    * @return string
    */
-  public function getLabel()
+  public function getQuestionText()
   {
-    return $this->label;
-  }
-  /**
-   * @param VideoAbuseReportSecondaryReason[]
-   */
-  public function setSecondaryReasons($secondaryReasons)
-  {
-    $this->secondaryReasons = $secondaryReasons;
-  }
-  /**
-   * @return VideoAbuseReportSecondaryReason[]
-   */
-  public function getSecondaryReasons()
-  {
-    return $this->secondaryReasons;
+    return $this->questionText;
   }
 }
 
 // Adding a class alias for backwards compatibility with the previous class name.
-class_alias(VideoAbuseReportReasonSnippet::class, 'Google_Service_YouTube_VideoAbuseReportReasonSnippet');
+class_alias(LiveChatPollDetailsPollMetadata::class, 'Google_Service_YouTube_LiveChatPollDetailsPollMetadata');

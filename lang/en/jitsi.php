@@ -291,3 +291,5 @@ $string['startwithaudiomutedex'] = 'When user connects to the session, the audio
 $string['staticinvitationlinkcapabilityex'] = 'Use this option for guests who don\'t have a Moodle user to access. Only if you have capability mod/jitsi:createlink you can create or modify the invitation link.';
 $string['totalminutes'] = 'Total minutes';
 $string['minutestoday'] = 'Minutes today';
+$string['allowbreakoutrooms'] = 'Allow breakout rooms';
+$string['allowbreakoutroomsex'] = 'Allow to create breakout rooms. Server needs to be configured to allow breakout rooms.';

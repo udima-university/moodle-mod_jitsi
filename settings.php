@@ -96,6 +96,9 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('mod_jitsi/startwithvideomuted', get_string('startwithvideomuted', 'jitsi'),
         get_string('startwithvideomutedex', 'jitsi'), 1));
 
+    $settings->add(new admin_setting_configcheckbox('mod_jitsi/allowbreakoutrooms', get_string('allowbreakoutrooms', 'jitsi'),
+        get_string('allowbreakoutroomsex', 'jitsi'), 1));
+
     $settings->add(new admin_setting_heading('jitsistreaming',
             get_string('streamingconfig', 'jitsi'), get_string('streamingconfigex', 'jitsi')));
     $settings->add(new admin_setting_configcheckbox('jitsi_livebutton', get_string('streamingbutton', 'jitsi'),

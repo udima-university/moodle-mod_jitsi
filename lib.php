@@ -383,6 +383,23 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "</div></div>";
     echo "<hr>";
 
+    echo '<style>
+    .cuadrado-wrapper {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+    .jitsi-container {
+        width: calc(90vw);
+        height: calc(90vw * 9 / 16);
+        max-width: calc(90vh * 16 / 9);
+        max-height: calc(90vh);
+    }
+    </style>';
+    echo '<div class="cuadrado-wrapper"><div class="jitsi-container" id="jitsi-container"></div></div>';
+
     echo "<script>\n";
     echo "if (document.getElementById(\"recordSwitch\") != null) {\n";
     echo "  document.getElementById(\"recordSwitch\").disabled = true;\n";
@@ -392,6 +409,19 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "const domain = \"".$CFG->jitsi_domain."\";\n";
     echo "const options = {\n";
     echo "configOverwrite: {\n";
+
+    echo "breakoutRooms: {";
+    if (get_config('mod_jitsi', 'allowbreakoutrooms') == '1') {
+        echo "    hideAddRoomButton: false,";
+        echo "    hideAutoAssignButton: false,";
+        echo "    hideJoinRoomButton: false,";
+    } else {
+        echo "    hideAddRoomButton: true,";
+        echo "    hideAutoAssignButton: true,";
+        echo "    hideJoinRoomButton: true,";
+    }
+    echo "},";
+
     echo "subject: '".$jitsi->name."',\n";
     echo "disableSelfView: false,\n";
     echo "defaultLanguage: '".current_language()."',\n";
@@ -556,15 +586,15 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             echo "parentNode: document.querySelector('#region-main'),\n";
         }
     } else {
-        echo "parentNode: document.querySelector('#region-main'),\n";
+        echo "parentNode: document.querySelector('#jitsi-container'),\n";
     }
     echo "interfaceConfigOverwrite:{\n";
     echo "TOOLBAR_BUTTONS: ".$buttons.",\n";
     echo "SHOW_JITSI_WATERMARK: true,\n";
     echo "JITSI_WATERMARK_LINK: '".$CFG->jitsi_watermarklink."',\n";
     echo "},\n";
-    echo "width: '100%',\n";
-    echo "height: 650,\n";
+    echo "width: '100%',";
+    echo "height: '100%',";
     echo "}\n";
     echo "const api = new JitsiMeetExternalAPI(domain, options);\n";
     echo "api.addListener('videoConferenceJoined', () => {\n";
@@ -1127,6 +1157,19 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
     echo "const domain = \"".$CFG->jitsi_domain."\";\n";
     echo "const options = {\n";
     echo "configOverwrite: {\n";
+
+    echo "breakoutRooms: {";
+    if (get_config('mod_jitsi', 'allowbreakoutrooms') == '1') {
+        echo "    hideAddRoomButton: false,";
+        echo "    hideAutoAssignButton: false,";
+        echo "    hideJoinRoomButton: false,";
+    } else {
+        echo "    hideAddRoomButton: true,";
+        echo "    hideAutoAssignButton: true,";
+        echo "    hideJoinRoomButton: true,";
+    }
+    echo "},";
+
     echo "subject: '".$jitsi->name."',\n";
     echo "disableSelfView: false,\n";
     echo "defaultLanguage: '".current_language()."',\n";
@@ -1290,7 +1333,7 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
             echo "parentNode: document.querySelector('#region-main'),\n";
         }
     } else {
-        echo "parentNode: document.querySelector('#region-main'),\n";
+        echo "parentNode: document.querySelector('#jitsi-container'),\n";
     }
     echo "interfaceConfigOverwrite:{\n";
     echo "TOOLBAR_BUTTONS: ".$buttons.",\n";
@@ -1298,7 +1341,7 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
     echo "JITSI_WATERMARK_LINK: '".$CFG->jitsi_watermarklink."',\n";
     echo "},\n";
     echo "width: '100%',\n";
-    echo "height: 650,\n";
+    echo "height: '100%',\n";
     echo "}\n";
     echo "const api = new JitsiMeetExternalAPI(domain, options);\n";
 
@@ -1645,7 +1688,6 @@ function getminutes($contextinstanceid, $userid) {
  * @param int $init - initial time
  * @param int $end - end time
  */
-
 function getminutesdates($contextinstanceid, $userid, $init, $end) {
     global $DB, $USER;
     $sqlminutos = 'SELECT COUNT(*) AS minutes FROM {logstore_standard_log}

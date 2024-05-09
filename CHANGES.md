@@ -1,4 +1,13 @@
 # Changelog
+## v3.4.3 (2024050900)
+## Added
+ * Breakoutroom options
+## Changed
+ * Improved adaptation when expanding the window.
+ * New Google Api 2.16.0
+ 
+ ---
+
 ## v3.4.2 (2024032100)
 ## Added
  * Attendance user list now linked with user profile

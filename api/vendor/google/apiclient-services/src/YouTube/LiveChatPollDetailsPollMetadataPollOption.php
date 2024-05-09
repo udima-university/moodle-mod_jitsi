@@ -17,62 +17,46 @@
 
 namespace Google\Service\YouTube;
 
-class ActivityContentDetailsPlaylistItem extends \Google\Model
+class LiveChatPollDetailsPollMetadataPollOption extends \Google\Model
 {
   /**
    * @var string
    */
-  public $playlistId;
+  public $optionText;
   /**
    * @var string
    */
-  public $playlistItemId;
-  protected $resourceIdType = ResourceId::class;
-  protected $resourceIdDataType = '';
+  public $tally;
 
   /**
    * @param string
    */
-  public function setPlaylistId($playlistId)
+  public function setOptionText($optionText)
   {
-    $this->playlistId = $playlistId;
+    $this->optionText = $optionText;
   }
   /**
    * @return string
    */
-  public function getPlaylistId()
+  public function getOptionText()
   {
-    return $this->playlistId;
+    return $this->optionText;
   }
   /**
    * @param string
    */
-  public function setPlaylistItemId($playlistItemId)
+  public function setTally($tally)
   {
-    $this->playlistItemId = $playlistItemId;
+    $this->tally = $tally;
   }
   /**
    * @return string
    */
-  public function getPlaylistItemId()
+  public function getTally()
   {
-    return $this->playlistItemId;
-  }
-  /**
-   * @param ResourceId
-   */
-  public function setResourceId(ResourceId $resourceId)
-  {
-    $this->resourceId = $resourceId;
-  }
-  /**
-   * @return ResourceId
-   */
-  public function getResourceId()
-  {
-    return $this->resourceId;
+    return $this->tally;
   }
 }
 
 // Adding a class alias for backwards compatibility with the previous class name.
-class_alias(ActivityContentDetailsPlaylistItem::class, 'Google_Service_YouTube_ActivityContentDetailsPlaylistItem');
+class_alias(LiveChatPollDetailsPollMetadataPollOption::class, 'Google_Service_YouTube_LiveChatPollDetailsPollMetadataPollOption');
