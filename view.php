@@ -376,15 +376,11 @@ if ($CFG->jitsi_help != null) {
 
 if (has_capability ('mod/jitsi:viewrecords', $PAGE->context)) {
     $table = new mod_view_table('search');
-    $fields = '{jitsi_source_record}.id,
-                {jitsi_source_record}.link,
-                {jitsi_record}.jitsi,
-                {jitsi_source_record}.account,
-                {jitsi_record}.name,
-                {jitsi_source_record}.userid,
-                {jitsi_source_record}.timecreated,
-                {jitsi_source_record}.maxparticipants,
-                {jitsi_record}.deleted';
+    $fields = '{jitsi_record}.id,
+               {jitsi_source_record}.link,
+               {jitsi_record}.jitsi,
+               {jitsi_record}.name,
+               {jitsi_source_record}.timecreated';
     $from = '{jitsi_record}, {jitsi_source_record}';
     if (has_capability('mod/jitsi:hide', $context)) {
         $where = '{jitsi_record}.source = {jitsi_source_record}.id and

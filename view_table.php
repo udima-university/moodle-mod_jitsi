@@ -56,34 +56,33 @@ class mod_view_table extends table_sql {
      */
     protected function col_id($values) {
         global $DB, $OUTPUT;
-        $user = $DB->get_record('user', ['id' => $values->userid]);
-        $urluser = new moodle_url('/user/profile.php', ['id' => $user->id]);
         $jitsi = $DB->get_record('jitsi', ['id' => $values->jitsi]);
         $module = $DB->get_record('modules', ['name' => 'jitsi']);
         $cm = $DB->get_record('course_modules', ['instance' => $values->jitsi, 'module' => $module->id]);
         $context = context_module::instance($cm->id);
 
-        if ($values->id && $values->link != null) {
+        $record = $DB->get_record('jitsi_record', ['id' => $values->id]);
+        $sourcerecord = $DB->get_record('jitsi_source_record', ['id' => $record->source]);
+        if ($sourcerecord->id && $sourcerecord->link != null) {
             $deleteurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&deletejitsirecordid=' .
-            $values->id . '&sesskey=' . sesskey() . '#record');
+            $record->id . '&sesskey=' . sesskey() . '#record');
             $deleteicon = new pix_icon('t/delete', get_string('delete'));
             $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon,
                 new confirm_action(get_string('confirmdeleterecordinactivity', 'jitsi')));
 
             $hideurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&hidejitsirecordid=' .
-                $values->id . '&sesskey=' . sesskey(). '#record');
+                $record->id . '&sesskey=' . sesskey(). '#record');
             $showurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&showjitsirecordid=' .
-                $values->id . '&sesskey=' . sesskey(). '#record');
+                $record->id . '&sesskey=' . sesskey(). '#record');
             $hideicon = new pix_icon('t/hide', get_string('hide'));
             $showicon = new pix_icon('t/show', get_string('show'));
             $hideaction = $OUTPUT->action_icon($hideurl, $hideicon, new confirm_action('Hide?'));
             $showaction = $OUTPUT->action_icon($showurl, $showicon, new confirm_action('Show?'));
 
-            $tmpl = new \core\output\inplace_editable('mod_jitsi', 'recordname', $values->id,
+            $tmpl = new \core\output\inplace_editable('mod_jitsi', 'recordname', $values->jitsi,
                 has_capability('mod/jitsi:editrecordname', $context),
                 format_string($values->name), $values->name, get_string('editrecordname', 'jitsi'),
                 get_string('newvaluefor', 'jitsi') . format_string($values->name));
-            $record = $DB->get_record('jitsi_record', ['id' => $values->jitsi]);
             if ($jitsi->sessionwithtoken == 0) {
                 if (has_capability('mod/jitsi:deleterecord', $context) && !has_capability('mod/jitsi:hide', $context)) {
                     return "<h5>".$OUTPUT->render($tmpl)."</h5><h6 class=\"card-subtitle mb-2 text-muted\">".
