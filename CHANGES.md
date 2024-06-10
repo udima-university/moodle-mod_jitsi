@@ -1,7 +1,10 @@
 # Changelog
-## v3.4.3 (2024050900)
+## v3.4.4 (2024050900)
 ## Fixed
   * Fixed problems new recordings table
+   
+ ---
+
 ## v3.4.3 (2024050900)
 ## Added
  * Breakoutroom options
