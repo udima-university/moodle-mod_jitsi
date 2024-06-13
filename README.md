@@ -148,3 +148,4 @@ Save the changes and you're ready to use Jitsi as a Service in your Moodle cours
 ## Disclaimer
 
 This plugin is maintained by UDIMA University (www.udima.es) and is not related or partner with 8x8 Inc. nor with "Jitsi as a Service" (JaaS).
+This plugin is maintained by UDIMA University (www.udima.es) and is not related or partner with 8x8 Inc. nor with "Jitsi as a Service" (JaaS).
