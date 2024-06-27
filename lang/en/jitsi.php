@@ -291,3 +291,6 @@ $string['totalminutes'] = 'Total minutes';
 $string['minutestoday'] = 'Minutes today';
 $string['allowbreakoutrooms'] = 'Allow breakout rooms';
 $string['allowbreakoutroomsex'] = 'Allow to create breakout rooms. Server needs to be configured to allow breakout rooms.';
+$string['urlinvitacionrecord'] = 'Invitation URL for stream';
+$string['norecording'] = 'There is no recording. The video will appear automatically';
+$string['loadingvideo'] = 'Loading video... Please wait';
