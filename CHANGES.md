@@ -1,4 +1,8 @@
 # Changelog
+## v3.4.5 (2024081300)
+## Fixed
+  * Fix inplace editable recordname in view_table.php #127
+
 ## v3.4.4 (2024050900)
 ## Fixed
   * Fixed problems new recordings table
