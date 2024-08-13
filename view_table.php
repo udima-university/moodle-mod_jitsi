@@ -79,7 +79,7 @@ class mod_view_table extends table_sql {
             $hideaction = $OUTPUT->action_icon($hideurl, $hideicon, new confirm_action('Hide?'));
             $showaction = $OUTPUT->action_icon($showurl, $showicon, new confirm_action('Show?'));
 
-            $tmpl = new \core\output\inplace_editable('mod_jitsi', 'recordname', $values->jitsi,
+            $tmpl = new \core\output\inplace_editable('mod_jitsi', 'recordname', $values->id,
                 has_capability('mod/jitsi:editrecordname', $context),
                 format_string($values->name), $values->name, get_string('editrecordname', 'jitsi'),
                 get_string('newvaluefor', 'jitsi') . format_string($values->name));
