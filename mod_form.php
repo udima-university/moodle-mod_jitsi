@@ -150,19 +150,25 @@ class mod_jitsi_mod_form extends moodleform_mod {
      * @return array List of added element names, or names of wrapping group elements.
      */
     public function add_completion_rules() {
+        global $CFG;
+        if ($CFG->branch < 403) {
+            $suffix = '';
+        } else {
+            $suffix = $this->get_suffix();
+        }
 
         $mform =&  $this->_form;
 
         $group = [
-            $mform->createElement('checkbox', 'completionminutesenabled', ' ', get_string('completionminutesex', 'jitsi')),
-            $mform->createElement('text', 'completionminutes', ' ', ['size' => 3]),
+            $mform->createElement('checkbox', 'completionminutesenabled'.$suffix, ' ', get_string('completionminutesex', 'jitsi')),
+            $mform->createElement('text', 'completionminutes'.$suffix, ' ', ['size' => 3]),
         ];
-        $mform->setType('completionminutes', PARAM_INT);
-        $mform->addGroup($group, 'completionminutesgroup', get_string('completionminutes', 'jitsi'), [' '], false);
-        $mform->addHelpButton('completionminutesgroup', 'completionminutes', 'jitsi');
-        $mform->disabledIf('completionminutes', 'completionminutesenabled', 'notchecked');
+        $mform->setType('completionminutes'.$suffix, PARAM_INT);
+        $mform->addGroup($group, 'completionminutesgroup'.$suffix, get_string('completionminutes', 'jitsi'), [' '], false);
+        $mform->addHelpButton('completionminutesgroup'.$suffix, 'completionminutes', 'jitsi');
+        $mform->disabledIf('completionminutes'.$suffix, 'completionminutesenabled', 'notchecked');
 
-        return ['completionminutesgroup'];
+        return ['completionminutesgroup'.$suffix];
     }
 
     /**
@@ -172,7 +178,14 @@ class mod_jitsi_mod_form extends moodleform_mod {
      * @return bool True if one or more rules is enabled, false if none are.
      */
     public function completion_rule_enabled($data) {
-        return (!empty($data['completionminutesenabled']) && $data['completionminutes'] != 0);
+        global $CFG;
+        if ($CFG->branch < 403) {
+            $suffix = '';
+        } else {
+            $suffix = $this->get_suffix();
+        }
+
+        return (!empty($data['completionminutesenabled'.$suffix]) && $data['completionminutes'.$suffix] != 0);
     }
 
     /**
