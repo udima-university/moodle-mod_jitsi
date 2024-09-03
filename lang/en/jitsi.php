@@ -243,7 +243,6 @@ $string['news1'] = 'If you have recently upgraded,
  (<a href="https://github.com/udima-university/moodle-mod_jitsi#important-announcement-from-meetjitsi-team">read more here</a>).
  </br>If you want to hire professional hosting services for Jitsi, we recommend <a href="https://jaas.8x8.vc/">https://jaas.8x8.vc/</a>.
  It is run by the Jitsi developers, they have <b>very competitive prices</b> and this way you help to keep alive the Jitsi Open Source Project.
- You can <b>enjoy an 80% discount</b> on the first 3 months <b>using the coupon MOODLE23</b> when you sign up for your account.
  </br></br><b>DISCLAIMER</b></br>This plugin is maintained by UDIMA University (<a href="https://www.udima.es">www.udima.es</a>) and is not related or partner
  with 8x8 Inc nor with "Jitsi as a service" (jaas).';
 $string['config'] = 'Configuration';

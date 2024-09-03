@@ -124,10 +124,6 @@ The **meet.jit.si** team recently announced that the embed mode, required by our
 
 **Jitsi is Open Source** and you can **install your own Jitsi Server** or **rent the service from https://jaas.8x8.vc/**, which is **free up to 25 unique monthly active users**. Read more about it [here](https://jaas.8x8.vc/#/pricing). Probably you could find other unofficial sites providing professional hosting for Jitsi, but 8x8 is the company which supports the Jitsi project and buying their services is the best way to support the project in order to guarantee its future.
 
-## Discount from 8x8 on Jitsi as a Service (jaas)
-
-If you decide to rent Jitsi as service from https://jaas.8x8.vc/ you can use the coupon **MOODLE23** in order to get an **80% discount for three months on the three JaaS packages**. This means, for your first three months, you can have up to 300 users for $20/month, 1500 users for $100/month and 3000 users for $200/month. The coupon can be used until the 1st of September 2024.
-
 ## Using a Jitsi as a Service Account
 
 You need to create a [Jitsi as a Service Account](https://jaas.8x8.vc), if you don't already have one.
