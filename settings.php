@@ -190,6 +190,9 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('jitsi_privatesessions', get_string('privatesessions', 'jitsi'),
         get_string('privatesessionsex', 'jitsi'), 0));
 
+    $settings->add(new admin_setting_configcheckbox('mod_jitsi/sharestream', get_string('sharestream', 'jitsi'),
+        get_string('sharestreamex', 'jitsi'), 0));
+
     // Deprecated Section.
     $settings->add(new admin_setting_heading('deprecated', get_string('deprecated', 'jitsi'),
         get_string('deprecatedex', 'jitsi')));

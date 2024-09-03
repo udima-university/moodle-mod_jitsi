@@ -127,8 +127,10 @@ class mod_jitsi_mod_form extends moodleform_mod {
 
             $urlinvitacion = $CFG->wwwroot.'/mod/jitsi/formuniversal.php?t='.$token;
             $mform->addElement('static', 'urltoken', get_string('urlinvitacion', 'jitsi'), $urlinvitacion);
-            $urlinvitacionrecord = $CFG->wwwroot.'/mod/jitsi/recordun.php?t='.$token;
-            $mform->addElement('static', 'urltokenrecord', get_string('urlinvitacionrecord', 'jitsi'), $urlinvitacionrecord);
+            if (get_config('mod_jitsi', 'sharestream')) {
+                $urlinvitacionrecord = $CFG->wwwroot.'/mod/jitsi/recordun.php?t='.$token;
+                $mform->addElement('static', 'urltokenrecord', get_string('urlinvitacionrecord', 'jitsi'), $urlinvitacionrecord);
+            }
             $mform->setType('token', PARAM_TEXT);
         } else {
             if (!isset($this->current->token)) {
