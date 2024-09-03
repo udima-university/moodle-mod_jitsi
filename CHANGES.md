@@ -1,4 +1,12 @@
 # Changelog
+## v3.4.6 (2024090300)
+## Fixed
+  * Update mod_form.php to add completion rules with suffix based on branch version #128
+## Added
+  * Add experimental function to share stream with users outside the moodle. 
+
+---
+
 ## v3.4.5 (2024081300)
 ## Fixed
   * Fix inplace editable recordname in view_table.php #127
