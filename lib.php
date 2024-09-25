@@ -1675,10 +1675,24 @@ function mod_jitsi_inplace_editable($itemtype, $itemid, $newvalue) {
  */
 function getminutes($contextinstanceid, $userid) {
     global $DB, $USER;
-    $sqlminutos = 'select * from {logstore_standard_log} where userid = '.$userid
-        .' and contextinstanceid = '.$contextinstanceid.' and action = \'participating\'';
-    $minutos = $DB->get_records_sql($sqlminutos);
-    return count($minutos);
+
+    $cache = cache::make('mod_jitsi', 'getminutes');
+    $cachekey = "getminutes_{$contextinstanceid}_{$userid}";
+    $cachedresult = $cache->get($cachekey);
+
+    if ($cachedresult !== false) {
+        return $cachedresult;
+    }
+
+    $sqlminutos = 'SELECT * FROM {logstore_standard_log} WHERE userid = :userid
+                   AND contextinstanceid = :contextinstanceid AND action = \'participating\'';
+    $params = ['userid' => $userid, 'contextinstanceid' => $contextinstanceid];
+    $minutos = $DB->get_records_sql($sqlminutos, $params);
+    
+    $result = count($minutos);
+    $cache->set($cachekey, $result, 120); // Cache for 2 minutes
+
+    return $result;
 }
 
 /**
@@ -1690,6 +1704,15 @@ function getminutes($contextinstanceid, $userid) {
  */
 function getminutesdates($contextinstanceid, $userid, $init, $end) {
     global $DB, $USER;
+
+    $cache = cache::make('mod_jitsi', 'getminutesdates');
+    $cachekey = "getminutesdates_{$contextinstanceid}_{$userid}_{$init}_{$end}";
+    $cachedresult = $cache->get($cachekey);
+
+    if ($cachedresult !== false) {
+        return $cachedresult;
+    }
+
     $sqlminutos = 'SELECT COUNT(*) AS minutes FROM {logstore_standard_log}
                    WHERE userid = :userid AND contextinstanceid = :contextinstanceid
                    AND action = \'participating\' AND timecreated BETWEEN :init AND :end';
@@ -1698,6 +1721,8 @@ function getminutesdates($contextinstanceid, $userid, $init, $end) {
         'init' => $init,
         'end' => $end];
     $minutos = $DB->get_record_sql($sqlminutos, $params);
+    
+    $cache->set($cachekey, $minutos->minutes, 120); // Cache for 2 minutes
     return $minutos->minutes;
 }
 
