@@ -1,5 +1,5 @@
 # Changelog
-## v3.4.7 (2024092600)
+## v3.4.8 (2024092600)
 ## Fixed
   * Update mod_form.php to add completion rules with suffix based on branch version #128
 ## Added
