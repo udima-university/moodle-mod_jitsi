@@ -314,12 +314,30 @@ if ($today[0] < $fechacierre || $fechacierre == 0) {
             'title' => get_string('access', 'jitsi'),
         ];
         $boton = \html_writer::link($button, get_string('access', 'jitsi'), $options);
-        echo $boton;
+        echo $boton.' ';
     } else {
         echo $OUTPUT->box(get_string('nostart', 'jitsi', userdate($jitsi->timeopen)));
     }
 } else {
     echo $OUTPUT->box(get_string('finish', 'jitsi'));
+}
+if (has_capability ('mod/jitsi:viewrecords', $PAGE->context)) {
+    $buttonrecords = new moodle_url('/mod/jitsi/recordsview.php', ['id' => $id]);
+    $options = [
+        'class' => 'btn btn-secondary',
+        'title' => get_string('records', 'jitsi'),
+    ];
+    $botonrecords = \html_writer::link($buttonrecords, get_string('records', 'jitsi'), $options);
+    echo $botonrecords.' ';
+}
+if ($usersconnected && has_capability('mod/jitsi:viewusersonsession', $PAGE->context)) {
+    $buttonattendees = new moodle_url('/mod/jitsi/attendeesview.php', ['id' => $id]);
+    $options = [
+        'class' => 'btn btn-secondary',
+        'title' => get_string('attendeesreport', 'jitsi'),
+    ];
+    $botonattendees = \html_writer::link($buttonattendees, get_string('attendeesreport', 'jitsi'), $options);
+    echo $botonattendees.' ';
 }
 
 echo "<br><br>";
@@ -327,113 +345,12 @@ echo "<br><br>";
 $sql = 'select * from {jitsi_record} where jitsi = '.$jitsiid.' and deleted = 0 order by id desc';
 $records = $DB->get_records_sql($sql);
 
-$sqlusersconnected = 'SELECT DISTINCT userid FROM {logstore_standard_log}
-    WHERE contextid = :contextid AND action = \'participating\'';
-$params = ['contextid' => $contextmodule->id];
-$usersconnected = $DB->get_records_sql($sqlusersconnected, $params);
-
-// Tabs.
-echo "<ul class=\"nav nav-tabs\" id=\"myTab\" role=\"tablist\">";
-    echo "  <li class=\"nav-item\">";
-    echo "    <a class=\"nav-link active\" id=\"help-tab\" data-toggle=\"tab\" href=\"#help\"
-     role=\"tab\" aria-controls=\"help\" aria-selected=\"true\">".get_string('help')."</a>";
-    echo "  </li>";
-
-if (has_capability ('mod/jitsi:viewrecords', $PAGE->context)) {
-    if ($records && isallvisible($records) || has_capability ('mod/jitsi:record', $PAGE->context) && $records ||
-    $CFG->jitsi_streamingoption == 1) {
-        echo "  <li class=\"nav-item\">";
-        echo "    <a class=\"nav-link\" id=\"record-tab\" data-toggle=\"tab\" href=\"#record\"
-          role=\"tab\" aria-controls=\"record\" aria-selected=\"false\">".get_string('records', 'jitsi')."</a>";
-        echo "  </li>";
-    }
-}
-
-if ($usersconnected && has_capability('mod/jitsi:viewusersonsession', $PAGE->context)) {
-    echo "  <li class=\"nav-item\">";
-    echo "    <a class=\"nav-link\" id=\"attendees-tab\" data-toggle=\"tab\" href=\"#attendees\"
-     role=\"tab\" aria-controls=\"attendees\" aria-selected=\"false\">".get_string('attendeesreport', 'jitsi')."</a>";
-    echo "  </li>";
-}
-echo "</ul>";
-
-// Tabs content.
-echo "<div class=\"tab-content\" id=\"myTabContent\">";
 if ($CFG->jitsi_help != null) {
-    echo "  <div class=\"tab-pane fade show active\" id=\"help\" role=\"tabpanel\" aria-labelledby=\"help-tab\">";
-    echo "  <br>";
     echo $CFG->jitsi_help;
-    echo "  </div>";
-
-    echo "  <div class=\"tab-pane fade show \" id=\"record\" role=\"tabpanel\" aria-labelledby=\"record-tab\">";
 } else {
-    echo "  <div class=\"tab-pane fade show active\" id=\"help\" role=\"tabpanel\" aria-labelledby=\"help-tab\">";
-    echo "  <br>";
     echo $OUTPUT->box(get_string('instruction', 'jitsi'));
-    echo "  </div>";
-    echo "  <div class=\"tab-pane fade show \" id=\"record\" role=\"tabpanel\" aria-labelledby=\"record-tab\">";
 }
 
-if (has_capability ('mod/jitsi:viewrecords', $PAGE->context)) {
-    $table = new mod_view_table('search');
-    $fields = '{jitsi_record}.id,
-               {jitsi_source_record}.link,
-               {jitsi_record}.jitsi,
-               {jitsi_record}.name,
-               {jitsi_source_record}.timecreated';
-    $from = '{jitsi_record}, {jitsi_source_record}';
-    if (has_capability('mod/jitsi:hide', $context)) {
-        $where = '{jitsi_record}.source = {jitsi_source_record}.id and
-        {jitsi_record}.jitsi = '.$jitsiid.' and
-        {jitsi_record}.deleted = 0';
-    } else {
-        $where = '{jitsi_record}.source = {jitsi_source_record}.id and
-        {jitsi_record}.jitsi = '.$jitsiid.' and
-        {jitsi_record}.deleted = 0 and
-        {jitsi_record}.visible = 1';
-    }
-    if (!empty($recorder)) {
-        $recorderlist = implode(',', $recorder);
-        $where .= ' AND {jitsi_source_record}.account IN ('.$recorderlist.')';
-    }
-    if (!empty($userselected)) {
-        $userlist = implode(',', $userselected);
-        $where .= ' AND {jitsi_source_record}.userid IN ('.$userlist.')';
-    }
-    $table->set_sql($fields, $from, $where, ['1']);
-    $table->sortable(true, 'id', SORT_DESC);
-    $table->define_baseurl('/mod/jitsi/view.php?id='.$id.'#record');
-    $table->out(5, true);
-}
-echo "  </div>";
-echo "  <div class=\"tab-pane fade\" id=\"attendees\" role=\"tabpanel\" aria-labelledby=\"attendees-tab\">";
-echo "<br>";
 
-$table = new html_table();
-$table->head = [get_string('name'), get_string('minutestoday', 'jitsi').
-    ': '.date('d/m', strtotime('today midnight')), get_string('totalminutes', 'jitsi')];
-$table->data = [];
 
-$userids = [];
-foreach ($usersconnected as $userconnected) {
-    if ($userconnected->userid != 0) {
-        $userids[] = $userconnected->userid;
-    }
-}
-
-$users = $DB->get_records_list('user', 'id', $userids);
-foreach ($users as $user) {
-    $urluser = new moodle_url('/user/profile.php', ['id' => $user->id]);
-
-    $table->data[] = [
-        html_writer::link($urluser, fullname($user), ['data-toggle' =>
-             'tooltip', 'data-placement' => 'top', 'title' => $user->username]),
-        getminutesdates($id, $user->id, strtotime('today midnight'), strtotime('today midnight +1 day')),
-            getminutes($id, $user->id)];
-}
-
-echo html_writer::table($table);
-
-echo "  </div>";
-echo "<hr>";
 echo $OUTPUT->footer();

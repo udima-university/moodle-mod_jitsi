@@ -1,11 +1,12 @@
 # Changelog
-## v3.4.7 (2024092502)
+## v3.4.7 (2024092600)
 ## Fixed
   * Update mod_form.php to add completion rules with suffix based on branch version #128
 ## Added
   * Add experimental function to share stream with users outside the moodle. 
   * Cache for getminutes functions
-
+## Changed
+  * Replace tabs with buttons in view.
 ---
 
 ## v3.4.5 (2024081300)
