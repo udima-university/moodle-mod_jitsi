@@ -705,14 +705,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "      </div>';";
         echo "  } else if (event['on'] == false){\n";
         echo "    console.log(\"No esta grabando\");\n";
-        echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
-        echo "      ajax.call([{\n";
-        echo "        methodname: 'mod_jitsi_stop_stream_byerror',\n";
-        echo "        args: {jitsi: ".$jitsi->id.", userid: ".$USER->id."},\n";
-        echo "        done: console.log(\"borrado author!\"),\n";
-        echo "        fail: notification.exception\n";
-        echo "      }]);\n";
-        echo "    })\n";
+
         echo "if (document.getElementById(\"recordSwitch\") != null) {\n";
         echo "    document.getElementById(\"recordSwitch\").checked = false;\n";
         echo "}\n";
