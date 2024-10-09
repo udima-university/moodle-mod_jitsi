@@ -413,30 +413,57 @@ echo "  </div>";
 echo "  <div class=\"tab-pane fade\" id=\"attendees\" role=\"tabpanel\" aria-labelledby=\"attendees-tab\">";
 echo "<br>";
 if (has_capability('mod/jitsi:viewusersonsession', $PAGE->context)) {
+    echo '<form method="post" action="">';
+    echo '<input type="hidden" name="sesskey" value="'.sesskey().'">';
+    echo '<button type="submit" name="generateusersconnected" value="1" class="btn btn-secondary">';
+    echo get_string('loadattendees', 'mod_jitsi');
+    echo '</button>';
+    echo '</form><br>';
+
     if ($usersconnected) {
+        $generateusersconnected = optional_param('generateusersconnected', 0, PARAM_BOOL);
+        if ($generateusersconnected && confirm_sesskey()) {
+            require_sesskey();
+            $sqlusersconnected = 'SELECT DISTINCT userid FROM {logstore_standard_log}
+                                  WHERE contextid = :contextid AND action = \'participating\'';
+            $params = ['contextid' => $contextmodule->id];
+            $usersconnected = $DB->get_records_sql($sqlusersconnected, $params);
+        } else {
+            $usersconnected = false;
+        }
+
         $table = new html_table();
-        $table->head = [get_string('name'), get_string('minutestoday', 'jitsi').
-            ': '.date('d/m', strtotime('today midnight')), get_string('totalminutes', 'jitsi')];
+        $table->head = [
+            get_string('name'),
+            get_string('minutestoday', 'jitsi') . ': ' . date('d/m', strtotime('today midnight')),
+            get_string('totalminutes', 'jitsi')
+        ];
         $table->data = [];
 
-        $userids = [];
-        foreach ($usersconnected as $userconnected) {
-            if ($userconnected->userid != 0) {
-                $userids[] = $userconnected->userid;
+        if ($usersconnected) {
+            $userids = [];
+            foreach ($usersconnected as $userconnected) {
+                if ($userconnected->userid != 0) {
+                    $userids[] = $userconnected->userid;
+                }
+            }
+
+            $users = $DB->get_records_list('user', 'id', $userids);
+            foreach ($users as $user) {
+                $urluser = new moodle_url('/user/profile.php', ['id' => $user->id]);
+
+                $table->data[] = [
+                    html_writer::link($urluser, fullname($user), [
+                        'data-toggle' => 'tooltip',
+                        'data-placement' => 'top',
+                        'title' => $user->username
+                    ]),
+                    getminutesdates($id, $user->id, strtotime('today midnight'), strtotime('today midnight +1 day')),
+                    getminutes($id, $user->id)
+                ];
             }
         }
-
-        $users = $DB->get_records_list('user', 'id', $userids);
-        foreach ($users as $user) {
-            $urluser = new moodle_url('/user/profile.php', ['id' => $user->id]);
-
-            $table->data[] = [
-                html_writer::link($urluser, fullname($user), ['data-toggle' =>
-                    'tooltip', 'data-placement' => 'top', 'title' => $user->username]),
-                getminutesdates($id, $user->id, strtotime('today midnight'), strtotime('today midnight +1 day')),
-                    getminutes($id, $user->id)];
-        }
-        echo html_writer::table($table);
+            echo html_writer::table($table);
     }
 }
 

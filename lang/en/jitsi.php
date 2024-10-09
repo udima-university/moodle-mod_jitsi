@@ -295,3 +295,4 @@ $string['norecording'] = 'There is no recording. The video will appear automatic
 $string['loadingvideo'] = 'Loading video... Please wait';
 $string['sharestream'] = 'Share stream with users outside of Moodle (experimental function)';
 $string['sharestreamex'] = 'Enable this setting to offer the ability to share the live stream of a session with users outside of Moodle.';
+$string['loadattendees'] = 'Load attendees';
