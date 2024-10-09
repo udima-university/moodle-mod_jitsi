@@ -144,6 +144,10 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_heading('jitsi_search', '', '<a href='.$link.' >'.
             get_string('searchrecords', 'jitsi').'</a>'));
 
+    $link = new moodle_url('/mod/jitsi/stats.php');
+    $settings->add(new admin_setting_heading('jitsi_stats', '', '<a href='.$link.' >'.
+            get_string('jitsi_recording_statistics', 'jitsi').'</a>'));
+
     // Jitsi Token Section.
     $settings->add(new admin_setting_heading('jitsitoken',
         get_string('tokennconfig', 'jitsi'), get_string('tokenconfigurationex', 'jitsi')));
