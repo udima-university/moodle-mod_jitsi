@@ -1,4 +1,11 @@
 # Changelog
+---
+## v3.4.9 (2024100900)
+## Added
+	*	A button is added to generate the list of participants and attended minutes.
+	*	A page with graphs and statistics is added.
+---
+
 ## v3.4.8 (2024092600)
 ## Fixed
   * Update mod_form.php to add completion rules with suffix based on branch version #128
