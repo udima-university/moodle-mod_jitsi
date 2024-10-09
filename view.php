@@ -416,7 +416,7 @@ if (has_capability('mod/jitsi:viewusersonsession', $PAGE->context)) {
     echo '<form method="post" action="">';
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'">';
     echo '<button type="submit" name="generateusersconnected" value="1" class="btn btn-secondary">';
-    echo get_string('loadattendees', 'mod_jitsi');
+    echo get_string('loadattendees', 'jitsi');
     echo '</button>';
     echo '</form><br>';
 
