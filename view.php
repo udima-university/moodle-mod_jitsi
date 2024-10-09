@@ -327,10 +327,12 @@ echo "<br><br>";
 $sql = 'select * from {jitsi_record} where jitsi = '.$jitsiid.' and deleted = 0 order by id desc';
 $records = $DB->get_records_sql($sql);
 
-$sqlusersconnected = 'SELECT DISTINCT userid FROM {logstore_standard_log}
+if (has_capability('mod/jitsi:viewusersonsession', $PAGE->context)) {
+    $sqlusersconnected = 'SELECT DISTINCT userid FROM {logstore_standard_log}
     WHERE contextid = :contextid AND action = \'participating\'';
-$params = ['contextid' => $contextmodule->id];
-$usersconnected = $DB->get_records_sql($sqlusersconnected, $params);
+    $params = ['contextid' => $contextmodule->id];
+    $usersconnected = $DB->get_records_sql($sqlusersconnected, $params);
+}
 
 // Tabs.
 echo "<ul class=\"nav nav-tabs\" id=\"myTab\" role=\"tablist\">";
@@ -348,13 +350,15 @@ if (has_capability ('mod/jitsi:viewrecords', $PAGE->context)) {
         echo "  </li>";
     }
 }
-
-if ($usersconnected && has_capability('mod/jitsi:viewusersonsession', $PAGE->context)) {
-    echo "  <li class=\"nav-item\">";
-    echo "    <a class=\"nav-link\" id=\"attendees-tab\" data-toggle=\"tab\" href=\"#attendees\"
-     role=\"tab\" aria-controls=\"attendees\" aria-selected=\"false\">".get_string('attendeesreport', 'jitsi')."</a>";
-    echo "  </li>";
+if (has_capability('mod/jitsi:viewusersonsession', $PAGE->context)) {
+    if ($usersconnected) {
+        echo "  <li class=\"nav-item\">";
+        echo "    <a class=\"nav-link\" id=\"attendees-tab\" data-toggle=\"tab\" href=\"#attendees\"
+         role=\"tab\" aria-controls=\"attendees\" aria-selected=\"false\">".get_string('attendeesreport', 'jitsi')."</a>";
+        echo "  </li>";
+    }
 }
+
 echo "</ul>";
 
 // Tabs content.
@@ -408,31 +412,33 @@ if (has_capability ('mod/jitsi:viewrecords', $PAGE->context)) {
 echo "  </div>";
 echo "  <div class=\"tab-pane fade\" id=\"attendees\" role=\"tabpanel\" aria-labelledby=\"attendees-tab\">";
 echo "<br>";
+if (has_capability('mod/jitsi:viewusersonsession', $PAGE->context)) {
+    if ($usersconnected) {
+        $table = new html_table();
+        $table->head = [get_string('name'), get_string('minutestoday', 'jitsi').
+            ': '.date('d/m', strtotime('today midnight')), get_string('totalminutes', 'jitsi')];
+        $table->data = [];
 
-$table = new html_table();
-$table->head = [get_string('name'), get_string('minutestoday', 'jitsi').
-    ': '.date('d/m', strtotime('today midnight')), get_string('totalminutes', 'jitsi')];
-$table->data = [];
+        $userids = [];
+        foreach ($usersconnected as $userconnected) {
+            if ($userconnected->userid != 0) {
+                $userids[] = $userconnected->userid;
+            }
+        }
 
-$userids = [];
-foreach ($usersconnected as $userconnected) {
-    if ($userconnected->userid != 0) {
-        $userids[] = $userconnected->userid;
+        $users = $DB->get_records_list('user', 'id', $userids);
+        foreach ($users as $user) {
+            $urluser = new moodle_url('/user/profile.php', ['id' => $user->id]);
+
+            $table->data[] = [
+                html_writer::link($urluser, fullname($user), ['data-toggle' =>
+                    'tooltip', 'data-placement' => 'top', 'title' => $user->username]),
+                getminutesdates($id, $user->id, strtotime('today midnight'), strtotime('today midnight +1 day')),
+                    getminutes($id, $user->id)];
+        }
+        echo html_writer::table($table);
     }
 }
-
-$users = $DB->get_records_list('user', 'id', $userids);
-foreach ($users as $user) {
-    $urluser = new moodle_url('/user/profile.php', ['id' => $user->id]);
-
-    $table->data[] = [
-        html_writer::link($urluser, fullname($user), ['data-toggle' =>
-             'tooltip', 'data-placement' => 'top', 'title' => $user->username]),
-        getminutesdates($id, $user->id, strtotime('today midnight'), strtotime('today midnight +1 day')),
-            getminutes($id, $user->id)];
-}
-
-echo html_writer::table($table);
 
 echo "  </div>";
 echo "<hr>";
