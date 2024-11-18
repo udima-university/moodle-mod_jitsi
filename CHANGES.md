@@ -1,5 +1,9 @@
 # Changelog
+## v3.4.10 (2024111800)
+# Changed
+  * Now the attendance report has a button to view reports for a specific day
 ---
+
 ## v3.4.9 (2024100900)
 ## Added
 	*	A button is added to generate the list of participants and attended minutes.

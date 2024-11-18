@@ -306,3 +306,6 @@ $string['avg_recordings_per_week'] = 'Average Recordings per Week';
 $string['toplimit'] = 'Top Limit';
 $string['from'] = 'From';
 $string['to'] = 'To';
+$string['selectdate'] = 'Select date';
+$string['search'] = 'Search';
+$string['minutesday'] = 'Minutes day';

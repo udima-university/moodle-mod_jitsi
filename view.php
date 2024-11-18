@@ -28,7 +28,55 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once('view_table.php');
+require_once($CFG->libdir . '/formslib.php');
 
+class datesearch_form extends moodleform {
+
+    /**
+     * Defines forms elements
+     */
+    public function definition() {
+        $mform = $this->_form;
+
+        // Campo oculto para el ID del curso.
+        $mform->addElement('hidden', 'id', $this->_customdata['id']);
+        $mform->setType('id', PARAM_INT);
+        $mform->addElement('hidden', 'sesskey', sesskey());
+        $mform->setType('sesskey', PARAM_RAW);
+        $mform->addElement('hidden', 'generateusersconnected', 1);
+        $mform->setType('generateusersconnected', PARAM_BOOL);
+        $mform->addElement('hidden', 'tab', 'attendees');
+        $mform->setType('tab', PARAM_TEXT);
+
+        // Selector de fecha (solo día) para la búsqueda.
+        $defaultdate = [
+            'year' => date('Y'),
+            'month' => date('n'),
+            'day' => date('j')
+        ];
+        $mform->addElement('date_selector', 'selecteddate', get_string('selectdate', 'jitsi'), [
+            'defaulttime' => $defaultdate
+        ]);
+        $mform->setType('selecteddate', PARAM_INT);
+
+        // Botón de envío.
+        $buttonarray = [];
+        $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('search', 'jitsi'));
+        $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
+    }
+
+    /**
+     * Validate data
+     *
+     * @param array $data Data to validate
+     * @param array $files Array of files
+     * @return array Errors found
+     */
+    public function validation($data, $files) {
+        // Validación personalizada si se necesita.
+        return [];
+    }
+}
 // Allow CORS requests.
 header('Access-Control-Allow-Origin: *');
 
@@ -40,7 +88,16 @@ $state = optional_param('state', null, PARAM_TEXT);
 $deletejitsirecordid = optional_param('deletejitsirecordid', 0, PARAM_INT);
 $hidejitsirecordid = optional_param('hidejitsirecordid', 0, PARAM_INT);
 $showjitsirecordid = optional_param('showjitsirecordid', 0, PARAM_INT);
+$selecteddate = optional_param_array('selecteddate', 0, PARAM_INT);
+$tab = optional_param('tab', 'help', PARAM_TEXT);
+$activetab = $tab;
 
+if ($selecteddate == 0) {
+    $selecteddate = time();
+} else {
+    $selecteddate = make_timestamp($selecteddate['year'], $selecteddate['month'],
+    $selecteddate['day']); // Por defecto, la fecha de hoy.
+}
 if ($id) {
     $cm = get_coursemodule_from_id('jitsi', $id, 0, false, MUST_EXIST);
     $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
@@ -334,139 +391,141 @@ if (has_capability('mod/jitsi:viewusersonsession', $PAGE->context)) {
     $usersconnected = $DB->get_records_sql($sqlusersconnected, $params);
 }
 
-// Tabs.
+// Generar las pestañas
 echo "<ul class=\"nav nav-tabs\" id=\"myTab\" role=\"tablist\">";
+
+    // Pestaña "help"
     echo "  <li class=\"nav-item\">";
-    echo "    <a class=\"nav-link active\" id=\"help-tab\" data-toggle=\"tab\" href=\"#help\"
-     role=\"tab\" aria-controls=\"help\" aria-selected=\"true\">".get_string('help')."</a>";
+    echo "    <a class=\"nav-link " . ($activetab == 'help' ? 'active' : '') . "\" id=\"help-tab\" data-toggle=\"tab\" href=\"#help\"
+         role=\"tab\" aria-controls=\"help\" aria-selected=\"" . ($activetab == 'help' ? 'true' : 'false') . "\">" . get_string('help') . "</a>";
     echo "  </li>";
 
-if (has_capability ('mod/jitsi:viewrecords', $PAGE->context)) {
-    if ($records && isallvisible($records) || has_capability ('mod/jitsi:record', $PAGE->context) && $records ||
-    $CFG->jitsi_streamingoption == 1) {
-        echo "  <li class=\"nav-item\">";
-        echo "    <a class=\"nav-link\" id=\"record-tab\" data-toggle=\"tab\" href=\"#record\"
-          role=\"tab\" aria-controls=\"record\" aria-selected=\"false\">".get_string('records', 'jitsi')."</a>";
-        echo "  </li>";
+    // Pestaña "record" si el usuario tiene permiso y hay registros
+    if (has_capability('mod/jitsi:viewrecords', $PAGE->context)) {
+        if (($records && isallvisible($records)) || (has_capability('mod/jitsi:record', $PAGE->context) && $records) || $CFG->jitsi_streamingoption == 1) {
+            echo "  <li class=\"nav-item\">";
+            echo "    <a class=\"nav-link " . ($activetab == 'record' ? 'active' : '') . "\" id=\"record-tab\" data-toggle=\"tab\" href=\"#record\"
+                role=\"tab\" aria-controls=\"record\" aria-selected=\"" . ($activetab == 'record' ? 'true' : 'false') . "\">" . get_string('records', 'jitsi') . "</a>";
+            echo "  </li>";
+        }
     }
-}
-if (has_capability('mod/jitsi:viewusersonsession', $PAGE->context)) {
-    if ($usersconnected) {
-        echo "  <li class=\"nav-item\">";
-        echo "    <a class=\"nav-link\" id=\"attendees-tab\" data-toggle=\"tab\" href=\"#attendees\"
-         role=\"tab\" aria-controls=\"attendees\" aria-selected=\"false\">".get_string('attendeesreport', 'jitsi')."</a>";
-        echo "  </li>";
+
+    // Pestaña "attendees" si el usuario tiene permiso y hay usuarios conectados
+    if (has_capability('mod/jitsi:viewusersonsession', $PAGE->context)) {
+        if ($usersconnected) {
+            echo "  <li class=\"nav-item\">";
+            echo "    <a class=\"nav-link " . ($activetab == 'attendees' ? 'active' : '') . "\" id=\"attendees-tab\" data-toggle=\"tab\" href=\"#attendees\"
+                 role=\"tab\" aria-controls=\"attendees\" aria-selected=\"" . ($activetab == 'attendees' ? 'true' : 'false') . "\">" . get_string('attendeesreport', 'jitsi') . "</a>";
+            echo "  </li>";
+        }
     }
-}
 
 echo "</ul>";
 
-// Tabs content.
+// Contenido de las pestañas
 echo "<div class=\"tab-content\" id=\"myTabContent\">";
-if ($CFG->jitsi_help != null) {
-    echo "  <div class=\"tab-pane fade show active\" id=\"help\" role=\"tabpanel\" aria-labelledby=\"help-tab\">";
-    echo "  <br>";
-    echo $CFG->jitsi_help;
-    echo "  </div>";
 
-    echo "  <div class=\"tab-pane fade show \" id=\"record\" role=\"tabpanel\" aria-labelledby=\"record-tab\">";
-} else {
-    echo "  <div class=\"tab-pane fade show active\" id=\"help\" role=\"tabpanel\" aria-labelledby=\"help-tab\">";
-    echo "  <br>";
-    echo $OUTPUT->box(get_string('instruction', 'jitsi'));
-    echo "  </div>";
-    echo "  <div class=\"tab-pane fade show \" id=\"record\" role=\"tabpanel\" aria-labelledby=\"record-tab\">";
-}
-
-if (has_capability ('mod/jitsi:viewrecords', $PAGE->context)) {
-    $table = new mod_view_table('search');
-    $fields = '{jitsi_record}.id,
-               {jitsi_source_record}.link,
-               {jitsi_record}.jitsi,
-               {jitsi_record}.name,
-               {jitsi_source_record}.timecreated';
-    $from = '{jitsi_record}, {jitsi_source_record}';
-    if (has_capability('mod/jitsi:hide', $context)) {
-        $where = '{jitsi_record}.source = {jitsi_source_record}.id and
-        {jitsi_record}.jitsi = '.$jitsiid.' and
-        {jitsi_record}.deleted = 0';
+    // Contenido de la pestaña "help"
+    echo "  <div class=\"tab-pane fade " . ($activetab == 'help' ? 'show active' : '') . "\" id=\"help\" role=\"tabpanel\" aria-labelledby=\"help-tab\">";
+    if ($CFG->jitsi_help != null) {
+        echo "  <br>";
+        echo $CFG->jitsi_help;
     } else {
-        $where = '{jitsi_record}.source = {jitsi_source_record}.id and
-        {jitsi_record}.jitsi = '.$jitsiid.' and
-        {jitsi_record}.deleted = 0 and
-        {jitsi_record}.visible = 1';
+        echo "  <br>";
+        echo $OUTPUT->box(get_string('instruction', 'jitsi'));
     }
-    if (!empty($recorder)) {
-        $recorderlist = implode(',', $recorder);
-        $where .= ' AND {jitsi_source_record}.account IN ('.$recorderlist.')';
-    }
-    if (!empty($userselected)) {
-        $userlist = implode(',', $userselected);
-        $where .= ' AND {jitsi_source_record}.userid IN ('.$userlist.')';
-    }
-    $table->set_sql($fields, $from, $where, ['1']);
-    $table->sortable(true, 'id', SORT_DESC);
-    $table->define_baseurl('/mod/jitsi/view.php?id='.$id.'#record');
-    $table->out(5, true);
-}
-echo "  </div>";
-echo "  <div class=\"tab-pane fade\" id=\"attendees\" role=\"tabpanel\" aria-labelledby=\"attendees-tab\">";
-echo "<br>";
-if (has_capability('mod/jitsi:viewusersonsession', $PAGE->context)) {
-    echo '<form method="post" action="">';
-    echo '<input type="hidden" name="sesskey" value="'.sesskey().'">';
-    echo '<button type="submit" name="generateusersconnected" value="1" class="btn btn-secondary">';
-    echo get_string('loadattendees', 'jitsi');
-    echo '</button>';
-    echo '</form><br>';
+    echo "  </div>";
 
-    if ($usersconnected) {
+    // Contenido de la pestaña "record"
+    if (has_capability('mod/jitsi:viewrecords', $PAGE->context)) {
+        echo "  <div class=\"tab-pane fade " . ($activetab == 'record' ? 'show active' : '') . "\" id=\"record\" role=\"tabpanel\" aria-labelledby=\"record-tab\">";
+        if ($records) {
+            $table = new mod_view_table('search');
+            // Configuración y generación de la tabla de registros...
+            $fields = '{jitsi_record}.id,
+                       {jitsi_source_record}.link,
+                       {jitsi_record}.jitsi,
+                       {jitsi_record}.name,
+                       {jitsi_source_record}.timecreated';
+            $from = '{jitsi_record}, {jitsi_source_record}';
+            $where = '{jitsi_record}.source = {jitsi_source_record}.id AND
+                      {jitsi_record}.jitsi = :jitsiid AND
+                      {jitsi_record}.deleted = 0';
+            if (!has_capability('mod/jitsi:hide', $context)) {
+                $where .= ' AND {jitsi_record}.visible = 1';
+            }
+            $params = ['jitsiid' => $jitsi->id];
+            $table->set_sql($fields, $from, $where, $params);
+            $table->sortable(true, 'id', SORT_DESC);
+            $table->define_baseurl('/mod/jitsi/view.php?id=' . $id . '&tab=record');
+            $table->out(5, true);
+        } else {
+            echo "<br>";
+            echo get_string('norecords', 'jitsi');
+        }
+        echo "  </div>";
+    }
+
+    // Contenido de la pestaña "attendees"
+    echo "  <div class=\"tab-pane fade " . ($activetab == 'attendees' ? 'show active' : '') . "\" id=\"attendees\" role=\"tabpanel\" aria-labelledby=\"attendees-tab\">";
+    echo "<br>";
+
+    // Mostrar el formulario de búsqueda
+    $form = new datesearch_form(null, ['id' => $id]);
+    $form->display();
+
+    // Mostrar la tabla de asistentes si se ha generado
+    if (has_capability('mod/jitsi:viewusersonsession', $PAGE->context)) {
         $generateusersconnected = optional_param('generateusersconnected', 0, PARAM_BOOL);
         if ($generateusersconnected && confirm_sesskey()) {
             require_sesskey();
+
+            // Obtener y mostrar los usuarios conectados
             $sqlusersconnected = 'SELECT DISTINCT userid FROM {logstore_standard_log}
                                   WHERE contextid = :contextid AND action = \'participating\'';
             $params = ['contextid' => $contextmodule->id];
             $usersconnected = $DB->get_records_sql($sqlusersconnected, $params);
-        } else {
-            $usersconnected = false;
-        }
 
-        $table = new html_table();
-        $table->head = [
-            get_string('name'),
-            get_string('minutestoday', 'jitsi') . ': ' . date('d/m', strtotime('today midnight')),
-            get_string('totalminutes', 'jitsi')
-        ];
-        $table->data = [];
+            $table = new html_table();
+            $table->head = [
+                get_string('name'),
+                // get_string('minutestoday', 'jitsi') . ': ' . userdate($selecteddate, '%A %d %B %Y'),
+                get_string('minutesday', 'jitsi') . ': ' . userdate($selecteddate, '%A %d %B %Y'),
 
-        if ($usersconnected) {
-            $userids = [];
-            foreach ($usersconnected as $userconnected) {
-                if ($userconnected->userid != 0) {
-                    $userids[] = $userconnected->userid;
+                get_string('totalminutes', 'jitsi')
+            ];
+            $table->data = [];
+
+            if ($usersconnected) {
+                $userids = [];
+                foreach ($usersconnected as $userconnected) {
+                    if ($userconnected->userid != 0) {
+                        $userids[] = $userconnected->userid;
+                    }
                 }
-            }
 
-            $users = $DB->get_records_list('user', 'id', $userids);
-            foreach ($users as $user) {
-                $urluser = new moodle_url('/user/profile.php', ['id' => $user->id]);
+                $users = $DB->get_records_list('user', 'id', $userids);
+                foreach ($users as $user) {
+                    $urluser = new moodle_url('/user/profile.php', ['id' => $user->id]);
+                    $table->data[] = [
+                        html_writer::link($urluser, fullname($user), [
+                            'data-toggle' => 'tooltip',
+                            'data-placement' => 'top',
+                            'title' => $user->username
+                        ]),
+                        getminutesdates($id, $user->id, $selecteddate, $selecteddate + DAYSECS),
+                        getminutes($id, $user->id)
+                    ];
+                }
 
-                $table->data[] = [
-                    html_writer::link($urluser, fullname($user), [
-                        'data-toggle' => 'tooltip',
-                        'data-placement' => 'top',
-                        'title' => $user->username
-                    ]),
-                    getminutesdates($id, $user->id, strtotime('today midnight'), strtotime('today midnight +1 day')),
-                    getminutes($id, $user->id)
-                ];
+                echo html_writer::table($table);
             }
         }
-            echo html_writer::table($table);
     }
-}
 
-echo "  </div>";
+    echo "  </div>";
+
+echo "</div>";
+
 echo "<hr>";
 echo $OUTPUT->footer();
