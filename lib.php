@@ -1681,9 +1681,9 @@ function getminutes($contextinstanceid, $userid) {
                    AND contextinstanceid = :contextinstanceid AND action = \'participating\'';
     $params = ['userid' => $userid, 'contextinstanceid' => $contextinstanceid];
     $minutos = $DB->get_records_sql($sqlminutos, $params);
-    
+
     $result = count($minutos);
-    $cache->set($cachekey, $result, 120); // Cache for 2 minutes
+    $cache->set($cachekey, $result, 120); // Cache for 2 minutes.
 
     return $result;
 }
@@ -1714,8 +1714,8 @@ function getminutesdates($contextinstanceid, $userid, $init, $end) {
         'init' => $init,
         'end' => $end];
     $minutos = $DB->get_record_sql($sqlminutos, $params);
-    
-    $cache->set($cachekey, $minutos->minutes, 120); // Cache for 2 minutes
+
+    $cache->set($cachekey, $minutos->minutes, 120); // Cache for 2 minutes.
     return $minutos->minutes;
 }
 
