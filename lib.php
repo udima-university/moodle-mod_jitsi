@@ -606,6 +606,12 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "    console.log('---------->>>>>> El Recording link: ', data);\n";
     echo "});\n";
 
+    echo "api.on('recordingLinkAvailable', () => {\n";
+
+    echo "});\n";
+
+
+
     $navigator = $_SERVER['HTTP_USER_AGENT'];
 
     $cm = get_coursemodule_from_id('jitsi', $cmid, 0, false, MUST_EXIST);
