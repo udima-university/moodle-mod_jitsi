@@ -196,6 +196,7 @@ class mod_jitsi_mod_form extends moodleform_mod {
      * Get Data
      */
     public function get_data() {
+        global $DB;
         $data = parent::get_data();
         if (!$data) {
             return $data;
@@ -206,6 +207,25 @@ class mod_jitsi_mod_form extends moodleform_mod {
                 $data->completionminutes = 0;
             }
         }
+
+        if ($data->tokeninvitacion != null) {
+            $sql = "SELECT * FROM {jitsi} WHERE " . $DB->sql_compare_text('tokeninterno') . " = " . $DB->sql_compare_text(':tokeninvitacion');
+            $params = ['tokeninvitacion' => $data->tokeninvitacion];
+            $principal = $DB->get_record_sql($sql, $params);
+            $data->timeopen = $principal->timeopen;
+            $data->timeclose = $principal->timeclose;
+        }
+
+        $sql = "SELECT * FROM {jitsi} WHERE " . $DB->sql_compare_text('tokeninvitacion') . " = :tokeninterno";
+        $params = ['tokeninterno' => $data->tokeninterno];
+        $secundarias = $DB->get_records_sql($sql, $params);
+        foreach ($secundarias as $secundaria) {
+            $secundaria->timeopen = $data->timeopen;
+            $secundaria->timeclose = $data->timeclose;
+            $DB->update_record('jitsi', $secundaria);
+            rebuild_course_cache($secundaria->course, true);
+        }
+
         return $data;
     }
 
