@@ -4,6 +4,7 @@
   * Now the attendance report has a button to view reports for a specific day
 # Fixed
   * Final deprecation of MESSAGE_DEFAULT_LOGGEDOFF / MESSAGE_DEFAULT_LOGGEDIN
+  * Fixed problem with timeopen and timeclose on shared sessions
 ---
 
 ## v3.4.9 (2024100900)
