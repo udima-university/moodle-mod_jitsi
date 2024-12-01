@@ -1,16 +1,24 @@
 # Changelog
+## v3.4.11 (2024120100)
+# Fixed
+  * Fixes issue where recordings in shared sessions were not displayed in secondary sessions
+  
+  ---
+
 ## v3.4.10 (2024111800)
 # Changed
   * Now the attendance report has a button to view reports for a specific day
 # Fixed
   * Final deprecation of MESSAGE_DEFAULT_LOGGEDOFF / MESSAGE_DEFAULT_LOGGEDIN
   * Fixed problem with timeopen and timeclose on shared sessions
+
 ---
 
 ## v3.4.9 (2024100900)
 ## Added
 	*	A button is added to generate the list of participants and attended minutes.
 	*	A page with graphs and statistics is added.
+
 ---
 
 ## v3.4.8 (2024092600)
