@@ -459,7 +459,7 @@ if (has_capability('mod/jitsi:viewrecords', $PAGE->context)) {
                    {jitsi_source_record}.timecreated';
         $from = '{jitsi_record}, {jitsi_source_record}';
         $where = '{jitsi_record}.source = {jitsi_source_record}.id AND
-                  {jitsi_record}.jitsi = :jitsiid AND
+                  {jitsi_record}.jitsi = '.$jitsiid.' and
                   {jitsi_record}.deleted = 0';
         if (!has_capability('mod/jitsi:hide', $context)) {
             $where .= ' AND {jitsi_record}.visible = 1';
