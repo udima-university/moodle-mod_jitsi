@@ -1,5 +1,6 @@
 # Changelog
 
+<<<<<<< HEAD
 ## [6.11.1](https://github.com/firebase/php-jwt/compare/v6.11.0...v6.11.1) (2025-04-09)
 
 
@@ -19,6 +20,8 @@
 
 * refactor constructor Key to use PHP 8.0 syntax ([#577](https://github.com/firebase/php-jwt/issues/577)) ([29fa2ce](https://github.com/firebase/php-jwt/commit/29fa2ce9e0582cd397711eec1e80c05ce20fabca))
 
+=======
+>>>>>>> 9878d638 (new google api 2.18.2)
 ## [6.10.2](https://github.com/firebase/php-jwt/compare/v6.10.1...v6.10.2) (2024-11-24)
 
 
