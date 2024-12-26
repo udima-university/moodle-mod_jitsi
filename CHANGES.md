@@ -25,7 +25,8 @@
 ## v3.4.11 (2024120100)
 # Fixed
   * Fixes issue where recordings in shared sessions were not displayed in secondary sessions
-  
+# Changed
+  * New version Google api 2.18.2
   ---
 
 ## v3.4.10 (2024111800)
