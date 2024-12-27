@@ -586,8 +586,10 @@ function xmldb_jitsi_upgrade($oldversion) {
     }
 
     if ($oldversion < 2024122700) {
-        $DB->execute("UPDATE {config_plugins} SET plugin = 'mod_jitsi' WHERE plugin = 'jitsi'");
-        upgrade_mod_savepoint(true, 2024122700, 'jitsi');
+        if ($DB->record_exists('config_plugins', ['plugin' => 'jitsi'])) {
+            $DB->execute("UPDATE {config_plugins} SET plugin = 'mod_jitsi' WHERE plugin = 'jitsi'");
+            upgrade_mod_savepoint(true, 2024122700, 'jitsi');
+        }
     }
 
     /*
