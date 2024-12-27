@@ -192,6 +192,12 @@ class mobile {
      */
     public static function mobile_session_view($args) {
         global $OUTPUT, $CFG;
+        $serverid = get_config('mod_jitsi', 'server');
+        $server = $DB->get_record('jitsi_servers', ['id' => $serverid]);
+        $servertype = $server->type;
+        $appid = $server->appid;
+        $domain = $server->domain;
+        $secret = $server->secret;
 
         if ($args['appversioncode'] >= 3950) {
             $foldername = 'ionic5';
@@ -242,8 +248,8 @@ class mobile {
                 "group" => "",
             ],
             "aud" => "jitsi",
-            "iss" => get_config('mod_jitsi', 'app_id'),
-            "sub" => get_config('mod_jitsi', 'domain'),
+            "iss" => $appid,
+            "sub" => $secret,
             "room" => urlencode($sessionnorm),
             "exp" => time() + 24 * 3600,
             "moderator" => $teacher,
@@ -294,7 +300,7 @@ class mobile {
         $buttons .= "\"download\",\"help\",\"".$muteeveryone."\",\"".$mutevideoeveryone."\",\"".$security."\"]";
 
         $data = [];
-        if (get_config('mod_jitsi', 'app_id') != null && get_config('mod_jitsi', 'secret') != null) {
+        if ($appid != null && $secret != null) {
             $data['jwt'] = 'jwt='.$jwt;
         }
 
