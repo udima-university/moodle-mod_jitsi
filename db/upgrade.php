@@ -585,6 +585,11 @@ function xmldb_jitsi_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2024011200, 'jitsi');
     }
 
+    if ($oldversion < 2024122700) {
+        $DB->execute("UPDATE {config_plugins} SET plugin = 'mod_jitsi' WHERE plugin = 'jitsi'");
+        upgrade_mod_savepoint(true, 2024122700, 'jitsi');
+    }
+
     /*
      * And that's all. Please, examine and understand the 3 example blocks above. Also
      * it's interesting to look how other modules are using this script. Remember that
