@@ -524,11 +524,11 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     }
     echo "},\n";
 
-    $appid8x8 = get_config('jitsi', '8x8app_id');
+    $appid8x8 = get_config('mod_jitsi', '8x8app_id');
 
-    if (get_config('jitsi', 'tokentype') == '2') {
+    if (get_config('mod_jitsi', 'tokentype') == '2') {
         $header = json_encode([
-            "kid" => get_config('jitsi', '8x8apikey_id'),
+            "kid" => get_config('mod_jitsi', '8x8apikey_id'),
             "typ" => "JWT",
             "alg" => "RS256",
         ]);
@@ -559,7 +559,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "roomName: \"".$appid8x8."/".urlencode($sessionnorm)."\",\n";
         $payloadencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
         $headerencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
-        openssl_sign( $headerencoded . "." . $payloadencoded, $signature, get_config('jitsi', 'privatykey'), OPENSSL_ALGO_SHA256);
+        openssl_sign( $headerencoded . "." . $payloadencoded, $signature, get_config('mod_jitsi', 'privatykey'), OPENSSL_ALGO_SHA256);
     } else if (set_config('jitsi', 'tokentype') == '1') {
         $header = json_encode([
             "kid" => "jitsi/custom_key_name",
@@ -591,8 +591,8 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         $signature = hash_hmac('sha256', $headerencoded . "." . $payloadencoded, $CFG->jitsi_secret, true);
     }
 
-    if ((get_config('jitsi', 'tokentype') == '1' && ($CFG->jitsi_app_id != null && $CFG->jitsi_secret != null))
-        || get_config('jitsi', 'tokentype') == '2') {
+    if ((get_config('mod_jitsi', 'tokentype') == '1' && ($CFG->jitsi_app_id != null && $CFG->jitsi_secret != null))
+        || get_config('mod_jitsi', 'tokentype') == '2') {
         $signatureencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
         $jwt = $headerencoded . "." . $payloadencoded . "." . $signatureencoded;
         echo "jwt: \"".$jwt."\",\n";
@@ -1268,11 +1268,11 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
     }
     echo "},\n";
 
-    $appid8x8 = get_config('jitsi', '8x8app_id');
+    $appid8x8 = get_config('mod_jitsi', '8x8app_id');
 
-    if (get_config('jitsi', 'tokentype') == '2') {
+    if (get_config('mod_jitsi', 'tokentype') == '2') {
         $header = json_encode([
-            "kid" => get_config('jitsi', '8x8apikey_id'),
+            "kid" => get_config('mod_jitsi', '8x8apikey_id'),
             "typ" => "JWT",
             "alg" => "RS256",
         ]);
@@ -1303,7 +1303,7 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
         echo "roomName: \"".$appid8x8."/".urlencode($sessionnorm)."\",\n";
         $payloadencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
         $headerencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
-        openssl_sign( $headerencoded . "." . $payloadencoded, $signature, get_config('jitsi', 'privatykey'), OPENSSL_ALGO_SHA256);
+        openssl_sign( $headerencoded . "." . $payloadencoded, $signature, get_config('mod_jitsi', 'privatykey'), OPENSSL_ALGO_SHA256);
     } else if (set_config('jitsi', 'tokentype') == '1') {
         $header = json_encode([
             "kid" => "jitsi/custom_key_name",
@@ -1335,8 +1335,8 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
         $signature = hash_hmac('sha256', $headerencoded . "." . $payloadencoded, $CFG->jitsi_secret, true);
     }
 
-    if ((get_config('jitsi', 'tokentype') == '1' && ($CFG->jitsi_app_id != null && $CFG->jitsi_secret != null))
-        || get_config('jitsi', 'tokentype') == '2') {
+    if ((get_config('mod_jitsi', 'tokentype') == '1' && ($CFG->jitsi_app_id != null && $CFG->jitsi_secret != null))
+        || get_config('mod_jitsi', 'tokentype') == '2') {
         $signatureencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
         $jwt = $headerencoded . "." . $payloadencoded . "." . $signatureencoded;
         echo "jwt: \"".$jwt."\",\n";
