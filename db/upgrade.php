@@ -592,6 +592,28 @@ function xmldb_jitsi_upgrade($oldversion) {
         }
     }
 
+    if ($oldversion < 2024122701) {        
+        // Ejemplo: tienes filas en mdl_config con el campo name='jitsi_param_x'.
+        // Quieres copiarlas a mdl_config_plugins con plugin='mod_jitsi', name='param_x'.
+        
+        // 1) Insertar las entradas en mdl_config_plugins con los valores de mdl_config
+        //    (asumiendo que no existen todavía en mdl_config_plugins).
+        $DB->execute("
+            INSERT INTO {config_plugins} (plugin, name, value)
+            SELECT 'mod_jitsi', REPLACE(name, 'jitsi_', ''), value
+              FROM {config}
+             WHERE name LIKE 'jitsi_%'
+        ");
+    
+        // 2) Borrar las entradas viejas de mdl_config
+        $DB->execute("
+            DELETE FROM {config}
+             WHERE name LIKE 'jitsi_%'
+        ");
+    
+        upgrade_mod_savepoint(true, 2024122701, 'jitsi');
+    }
+
     /*
      * And that's all. Please, examine and understand the 3 example blocks above. Also
      * it's interesting to look how other modules are using this script. Remember that

@@ -59,8 +59,8 @@ if ($name) {
     unset($_SESSION[$tokensessionkey]);
     if ($accountinuse) {
         $client = new Google_Client();
-        $client->setClientId($CFG->jitsi_oauth_id);
-        $client->setClientSecret($CFG->jitsi_oauth_secret);
+        $client->setClientId(get_config('mod_jitsi', 'oauth_id'));
+        $client->setClientSecret(get_config('mod_jitsi', 'oauth_secret'));
 
         $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
         $client->setAccessToken($accountinuse->clientaccesstoken);
@@ -90,7 +90,7 @@ if (!$accounttab) {
     $_SESSION[$tokensessionkey] = null;
 }
 
-if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
+if (get_config('mod_jitsi', 'oauth_id') == null || get_config('mod_jitsi', 'oauth_secret') == null) {
     echo "Empty parameters 'jitsi_oauth_id' & 'jitsi_oauth_secret'";
 } else {
     if (!file_exists(__DIR__ . '/api/vendor/autoload.php')) {
@@ -99,8 +99,8 @@ if ($CFG->jitsi_oauth_id == null || $CFG->jitsi_oauth_secret == null) {
 
     require_once(__DIR__ . '/api/vendor/autoload.php');
 
-    $oauth2clientid = $CFG->jitsi_oauth_id;
-    $oauth2clientsecret = $CFG->jitsi_oauth_secret;
+    $oauth2clientid = get_config('mod_jitsi', 'oauth_id');
+    $oauth2clientsecret = get_config('mod_jitsi', 'oauth_secret');
 
     $client = new Google_Client();
     $client->setClientId($oauth2clientid);

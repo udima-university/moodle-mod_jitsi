@@ -38,7 +38,7 @@ if ($state == null) {
     $cmid = required_param('cmid', PARAM_INT);
     $nombre = required_param('nom', PARAM_TEXT);
     $session = required_param('ses', PARAM_TEXT);
-    $avatar = $CFG->jitsi_showavatars == true ? required_param('avatar', PARAM_TEXT) : null;
+    $avatar = get_config('mod_jitsi', 'showavatars') == true ? required_param('avatar', PARAM_TEXT) : null;
     $teacher = required_param('t', PARAM_BOOL);
 
 } else {
@@ -94,9 +94,9 @@ if ($jitsi->sourcerecord != null) {
         $DB->update_record('jitsi', $jitsi);
     }
 }
-if ($CFG->jitsi_id == 'username' && $nombre != $USER->username ||
-    $CFG->jitsi_id == 'nameandsurname' && $nombre != $USER->firstname.' '.$USER->lastname ||
-    $CFG->jitsi_id == 'alias' && $nombre != "") {
+if (get_config('mod_jitsi', 'id') == 'username' && $nombre != $USER->username ||
+    get_config('mod_jitsi', 'id') == 'nameandsurname' && $nombre != $USER->firstname.' '.$USER->lastname ||
+    get_config('mod_jitsi', 'id') == 'alias' && $nombre != "") {
     echo $OUTPUT->notification(get_string('urlerror', 'jitsi'), 'error');
 } else {
     createsession($teacher, $cmid, $avatar, $nombre, $session, null, $jitsi);

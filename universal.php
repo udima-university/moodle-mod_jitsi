@@ -69,7 +69,7 @@ echo "}";
 echo "setInterval(participating, 60000);\n";
 echo "</script>";
 
-$fieldssessionname = $CFG->jitsi_sesionname;
+$fieldssessionname = get_config('mod_jitsi', 'sesionname');
 $allowed = explode(',', $fieldssessionname);
 $max = count($allowed);
 
@@ -78,11 +78,11 @@ $optionsseparator = ['.', '-', '_', ''];
 for ($i = 0; $i < $max; $i++) {
     if ($i != $max - 1) {
         if ($allowed[$i] == 0) {
-            $sesparam .= string_sanitize($course->shortname).$optionsseparator[$CFG->jitsi_separator];
+            $sesparam .= string_sanitize($course->shortname).$optionsseparator[get_config('mod_jitsi', 'separator')];
         } else if ($allowed[$i] == 1) {
-            $sesparam .= $sesion->id.$optionsseparator[$CFG->jitsi_separator];
+            $sesparam .= $sesion->id.$optionsseparator[get_config('mod_jitsi', 'separator')];
         } else if ($allowed[$i] == 2) {
-            $sesparam .= string_sanitize($sesion->name).$optionsseparator[$CFG->jitsi_separator];
+            $sesparam .= string_sanitize($sesion->name).$optionsseparator[get_config('mod_jitsi', 'separator')];
         }
     } else {
         if ($allowed[$i] == 0) {
