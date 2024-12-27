@@ -27,10 +27,10 @@ global $DB, $CFG;
 
 if ($ADMIN->fulltree) {
     require_once($CFG->dirroot.'/mod/jitsi/lib.php');
-    $settings->add(new admin_setting_heading('mdl_jitsi/news', get_string('news', 'jitsi'),
+    $settings->add(new admin_setting_heading('mod_jitsi/news', get_string('news', 'jitsi'),
     html_writer::tag('div class="alert alert-info" role="alert"', get_string('news1', 'jitsi'),
         ['style' => 'text-align: center;'])));
-    $settings->add(new admin_setting_heading('mdl_jitsi/config', get_string('config', 'jitsi'),
+    $settings->add(new admin_setting_heading('mod_jitsi/config', get_string('config', 'jitsi'),
     ''));
     $settings->add(new admin_setting_configtext('jitsi_domain', 'Domain', 'Domain Jitsi Server', 'meet.jit.si'));
     $settings->add(new admin_setting_configtext('jitsi_domain', get_string('domain', 'jitsi'),
@@ -153,38 +153,38 @@ if ($ADMIN->fulltree) {
         get_string('tokennconfig', 'jitsi'), get_string('tokenconfigurationex', 'jitsi')));
 
     $tokenoptions = ['0' => 'Server without token', '1' => 'Self-hosted with appid and secret', '2' => '8x8 servers'];
-    $settings->add(new admin_setting_configselect('mdl_jitsi/tokentype', 'Server type', null, '0', $tokenoptions));
+    $settings->add(new admin_setting_configselect('mod_jitsi/tokentype', 'Server type', null, '0', $tokenoptions));
 
     // Self-hosted servers with appid and secret.
     $settings->add(new admin_setting_configtext('jitsi_app_id', get_string('appid', 'jitsi'),
         get_string('appidex', 'jitsi'), ''));
     if ($CFG->branch > 36) {
-        $settings->hide_if('jitsi_app_id', 'mdl_jitsi/tokentype', 'in', '2|0');
+        $settings->hide_if('jitsi_app_id', 'mod_jitsi/tokentype', 'in', '2|0');
     }
 
     $settings->add(new admin_setting_configpasswordunmask('jitsi_secret', get_string('secret', 'jitsi'),
         get_string('secretex', 'jitsi'), ''));
     if ($CFG->branch > 36) {
-        $settings->hide_if('jitsi_secret', 'mdl_jitsi/tokentype', 'in', '2|0');
+        $settings->hide_if('jitsi_secret', 'mod_jitsi/tokentype', 'in', '2|0');
     }
 
     // 8x8 servers token configuration
-    $settings->add(new admin_setting_configtext('mdl_jitsi/8x8app_id', get_string('appid', 'jitsi'),
+    $settings->add(new admin_setting_configtext('mod_jitsi/8x8app_id', get_string('appid', 'jitsi'),
         get_string('appidex', 'jitsi'), null));
     if ($CFG->branch > 36) {
-        $settings->hide_if('mdl_jitsi/8x8app_id', 'mdl_jitsi/tokentype', 'in', '1|0');
+        $settings->hide_if('mod_jitsi/8x8app_id', 'mod_jitsi/tokentype', 'in', '1|0');
     }
 
-    $settings->add(new admin_setting_configtext('mdl_jitsi/8x8apikey_id', get_string('apikeyid8x8', 'jitsi'),
+    $settings->add(new admin_setting_configtext('mod_jitsi/8x8apikey_id', get_string('apikeyid8x8', 'jitsi'),
         get_string('apikeyid8x8ex', 'jitsi'), null));
     if ($CFG->branch > 36) {
-        $settings->hide_if('mdl_jitsi/8x8apikey_id', 'mdl_jitsi/tokentype', 'in', '1|0');
+        $settings->hide_if('mod_jitsi/8x8apikey_id', 'mod_jitsi/tokentype', 'in', '1|0');
     }
 
-    $settings->add(new admin_setting_configtextarea('mdl_jitsi/privatykey', get_string('privatekey', 'jitsi'),
+    $settings->add(new admin_setting_configtextarea('mod_jitsi/privatykey', get_string('privatekey', 'jitsi'),
     get_string('privatekeyex', 'jitsi'), '', PARAM_TEXT));
     if ($CFG->branch > 36) {
-        $settings->hide_if('mdl_jitsi/privatykey', 'mdl_jitsi/tokentype', 'in', '1|0');
+        $settings->hide_if('mod_jitsi/privatykey', 'mod_jitsi/tokentype', 'in', '1|0');
     }
 
     // Experimental Section.
