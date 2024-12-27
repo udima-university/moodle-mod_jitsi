@@ -208,7 +208,7 @@ function jitsi_delete_instance($id) {
  */
 function jitsi_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser) {
     global $DB, $CFG, $USER;
-    if ($CFG->jitsi_privatesessions == 1) {
+    if (get_config('mod_jitsi', 'privatesessions') == 1) {
         $urlparams = ['user' => $user->id];
         $url = new moodle_url('/mod/jitsi/viewpriv.php', $urlparams);
         $category = new core_user\output\myprofile\category('jitsi',
@@ -299,28 +299,28 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     }
 
     echo "<script src=\"//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js\"></script>";
-    echo "<script src=\"https://".$CFG->jitsi_domain."/external_api.js\"></script>\n";
+    echo "<script src=\"https://".get_config('mod_jitsi', 'domain')."/external_api.js\"></script>\n";
 
     $streamingoption = '';
-    if (($CFG->jitsi_livebutton == 1) && (has_capability('mod/jitsi:record', $PAGE->context))
-        && ($CFG->jitsi_streamingoption == 0)) {
+    if ((get_config('mod_jitsi', 'livebutton') == 1) && (has_capability('mod/jitsi:record', $PAGE->context))
+        && (get_config('mod_jitsi', 'streamingoption ')== 0)) {
         $streamingoption = 'livestreaming';
     }
 
     $youtubeoption = '';
-    if ($CFG->jitsi_shareyoutube == 1) {
+    if (get_config('mod_jitsi', 'shareyoutube') == 1) {
         $youtubeoption = 'sharedvideo';
     }
     $bluroption = '';
-    if ($CFG->jitsi_blurbutton == 1) {
+    if (get_config('mod_jitsi', 'blurbutton') == 1) {
         $bluroption = 'select-background';
     }
     $security = '';
-    if ($CFG->jitsi_securitybutton == 1) {
+    if (get_config('mod_jitsi', 'securitybutton') == 1) {
         $security = 'security';
     }
     $record = '';
-    if ($CFG->jitsi_record == 1 && has_capability('mod/jitsi:record', $PAGE->context)) {
+    if (get_config('mod_jitsi', 'record') == 1 && has_capability('mod/jitsi:record', $PAGE->context)) {
         $record = 'recording';
     }
     $invite = '';
@@ -332,17 +332,17 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     }
 
     $participantspane = '';
-    if (has_capability('mod/jitsi:moderation', $PAGE->context) || $CFG->jitsi_participantspane == 1 ) {
+    if (has_capability('mod/jitsi:moderation', $PAGE->context) || get_config('mod_jitsi', 'participantspane') == 1 ) {
         $participantspane = 'participants-pane';
     }
 
     $raisehand = '';
-    if ($CFG->jitsi_raisehand == 1 ) {
+    if (get_config('mod_jitsi', 'raisehand') == 1 ) {
         $raisehand = 'raisehand';
     }
 
     $whiteboard = '';
-    if ($CFG->jitsi_whiteboard == 1 ) {
+    if (get_config('mod_jitsi', 'whiteboard') == 1 ) {
         $whiteboard = 'whiteboard';
     }
 
@@ -369,7 +369,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     }
 
     if ($user == null) {
-        if ($CFG->jitsi_livebutton == 1 && has_capability('mod/jitsi:record', $PAGE->context)
+        if (get_config('mod_jitsi', 'livebutton')== 1 && has_capability('mod/jitsi:record', $PAGE->context)
             && $account != null && $universal == false
             && ($CFG->jitsi_streamingoption == 1) && $jitsi->sessionwithtoken == 0) {
             
@@ -426,7 +426,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "  setTimeout(function() { document.getElementById(\"recordSwitch\").disabled = false; }, 5000);\n";
     echo "}\n";
 
-    echo "const domain = \"".$CFG->jitsi_domain."\";\n";
+    echo "const domain = \"".get_config('mod_jitsi', 'domain')."\";\n";
     echo "const options = {\n";
     echo "configOverwrite: {\n";
 
@@ -447,7 +447,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "defaultLanguage: '".current_language()."',\n";
     echo "disableInviteFunctions: true,\n";
     echo "recordingService: {\n";
-    if ($CFG->jitsi_livebutton == 1) {
+    if (get_config('mod_jitsi', 'livebutton') == 1) {
         echo "enabled: true,\n";
     } else {
         echo "enabled: false,\n";
@@ -498,18 +498,18 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "disableRemoteMute: true,\n";
     }
 
-    if ($CFG->jitsi_reactions == 0) {
+    if (get_config('mod_jitsi', 'reactions') == 0) {
         echo "disableReactions: true,\n";
     }
 
-    if ($CFG->jitsi_livebutton == 0) {
+    if (get_config('mod_jitsi', 'livebutton') == 0) {
         echo "liveStreamingEnabled: false,\n";
     }
 
     echo "toolbarButtons: ".$buttons.",\n";
     echo "disableProfile: true,\n";
     echo "prejoinPageEnabled: false,";
-    echo "channelLastN: ".$CFG->jitsi_channellastcam.",\n";
+    echo "channelLastN: ".get_config('mod_jitsi', 'channellastcam').",\n";
 
     if (get_config('mod_jitsi', 'startwithaudiomuted') == '1') {
         echo "startWithAudioMuted: true,\n";
@@ -579,8 +579,8 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
                 "group" => "",
             ],
             "aud" => "jitsi",
-            "iss" => $CFG->jitsi_app_id,
-            "sub" => $CFG->jitsi_domain,
+            "iss" => get_config('mod_jitsi', 'app_id'),
+            "sub" => get_config('mod_jitsi', 'domain'),
             "room" => urlencode($sessionnorm),
             "exp" => time() + 24 * 3600,
             "moderator" => has_capability('mod/jitsi:moderation', $PAGE->context),
@@ -588,10 +588,10 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "roomName: \"".urlencode($sessionnorm)."\",\n";
         $payloadencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
         $headerencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
-        $signature = hash_hmac('sha256', $headerencoded . "." . $payloadencoded, $CFG->jitsi_secret, true);
+        $signature = hash_hmac('sha256', $headerencoded . "." . $payloadencoded, get_config('mod_jitsi', 'secret'), true);
     }
 
-    if ((get_config('mod_jitsi', 'tokentype') == '1' && ($CFG->jitsi_app_id != null && $CFG->jitsi_secret != null))
+    if ((get_config('mod_jitsi', 'tokentype') == '1' && (get_config('mod_jitsi', 'app_id') != null && get_config('mod_jitsi', 'secret') != null))
         || get_config('mod_jitsi', 'tokentype') == '2') {
         $signatureencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
         $jwt = $headerencoded . "." . $payloadencoded . "." . $signatureencoded;
@@ -611,7 +611,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "interfaceConfigOverwrite:{\n";
     echo "TOOLBAR_BUTTONS: ".$buttons.",\n";
     echo "SHOW_JITSI_WATERMARK: true,\n";
-    echo "JITSI_WATERMARK_LINK: '".$CFG->jitsi_watermarklink."',\n";
+    echo "JITSI_WATERMARK_LINK: '".get_config('mod_jitsi', 'watermarklink')."',\n";
     echo "},\n";
     echo "width: '100%',";
     echo "height: '100%',";
@@ -645,7 +645,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "      })\n";
     echo "}\n";
 
-    if ($CFG->jitsi_finishandreturn == 1) {
+    if (get_config('mod_jitsi', 'finishandreturn') == 1) {
         echo "api.on('readyToClose', () => {\n";
             echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
                 echo "       var respuesta = ajax.call([{\n";
@@ -694,14 +694,14 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "    }";
     echo "}";
 
-    if ($CFG->jitsi_password != null) {
+    if (get_config('mod_jitsi', 'password') != null) {
         echo "api.addEventListener('participantRoleChanged', function(event) {\n";
         echo "    if (event.role === \"moderator\") {\n";
-        echo "        api.executeCommand('password', '".$CFG->jitsi_password."');\n";
+        echo "        api.executeCommand('password', '".get_config('mod_jitsi', 'password')."');\n";
         echo "    }\n";
         echo "});\n";
         echo "api.on('passwordRequired', function () {\n";
-        echo "    api.executeCommand('password', '".$CFG->jitsi_password."');\n";
+        echo "    api.executeCommand('password', '".get_config('mod_jitsi', 'password')."');\n";
         echo "});\n";
     }
 
@@ -1091,28 +1091,28 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
     }
 
     echo "<script src=\"//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js\"></script>";
-    echo "<script src=\"https://".$CFG->jitsi_domain."/external_api.js\"></script>\n";
+    echo "<script src=\"https://".get_config('mod_jitsi', 'domain')."/external_api.js\"></script>\n";
 
     $streamingoption = '';
-    if (($CFG->jitsi_livebutton == 1) && (has_capability('mod/jitsi:record', $PAGE->context))
-        && ($CFG->jitsi_streamingoption == 0)) {
+    if ((get_config('mod_jitsi', 'livebutton') == 1) && (has_capability('mod/jitsi:record', $PAGE->context))
+        && (get_config('mod_jitsi', 'streamingoption') == 0)) {
         $streamingoption = 'livestreaming';
     }
 
     $youtubeoption = '';
-    if ($CFG->jitsi_shareyoutube == 1) {
+    if (get_config('mod_jitsi', 'shareyoutube') == 1) {
         $youtubeoption = 'sharedvideo';
     }
     $bluroption = '';
-    if ($CFG->jitsi_blurbutton == 1) {
+    if (get_config('mod_jitsi', 'blurbutton') == 1) {
         $bluroption = 'select-background';
     }
     $security = '';
-    if ($CFG->jitsi_securitybutton == 1) {
+    if (get_config('mod_jitsi', 'securitybutton') == 1) {
         $security = 'security';
     }
     $record = '';
-    if ($CFG->jitsi_record == 1 && has_capability('mod/jitsi:record', $PAGE->context)) {
+    if (get_config('mod_jitsi', 'record') == 1 && has_capability('mod/jitsi:record', $PAGE->context)) {
         $record = 'recording';
     }
     $invite = '';
@@ -1124,17 +1124,17 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
     }
 
     $participantspane = '';
-    if (has_capability('mod/jitsi:moderation', $PAGE->context) || $CFG->jitsi_participantspane == 1 ) {
+    if (has_capability('mod/jitsi:moderation', $PAGE->context) || get_config('mod_jitsi', 'participantspane') == 1 ) {
         $participantspane = 'participants-pane';
     }
 
     $raisehand = '';
-    if ($CFG->jitsi_raisehand == 1 ) {
+    if (get_config('mod_jitsi', 'raisehand') == 1 ) {
         $raisehand = 'raisehand';
     }
 
     $whiteboard = '';
-    if ($CFG->jitsi_whiteboard == 1 ) {
+    if (get_config('mod_jitsi', 'whiteboard') == 1 ) {
         $whiteboard = 'whiteboard';
     }
 
@@ -1171,7 +1171,7 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
     echo "  setTimeout(function() { document.getElementById(\"recordSwitch\").disabled = false; }, 5000);\n";
     echo "}\n";
 
-    echo "const domain = \"".$CFG->jitsi_domain."\";\n";
+    echo "const domain = \"".get_config('mod_jitsi', 'domain')."\";\n";
     echo "const options = {\n";
     echo "configOverwrite: {\n";
 
@@ -1192,7 +1192,7 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
     echo "defaultLanguage: '".current_language()."',\n";
     echo "disableInviteFunctions: true,\n";
     echo "recordingService: {\n";
-    if ($CFG->jitsi_livebutton == 1) {
+    if (get_config('mod_jitsi', 'livebutton') == 1) {
         echo "enabled: true,\n";
     } else {
         echo "enabled: false,\n";
@@ -1243,18 +1243,18 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
         echo "disableRemoteMute: true,\n";
     }
 
-    if ($CFG->jitsi_reactions == 0) {
+    if (get_config('mod_jitsi', 'reactions') == 0) {
         echo "disableReactions: true,\n";
     }
 
-    if ($CFG->jitsi_livebutton == 0) {
+    if (get_config('mod_jitsi', 'livebutton') == 0) {
         echo "liveStreamingEnabled: false,\n";
     }
 
     echo "toolbarButtons: ".$buttons.",\n";
     echo "disableProfile: true,\n";
     echo "prejoinPageEnabled: false,";
-    echo "channelLastN: ".$CFG->jitsi_channellastcam.",\n";
+    echo "channelLastN: ".get_config('mod_jitsi', 'channellastcam').",\n";
     if (get_config('mod_jitsi', 'startwithaudiomuted') == '1') {
         echo "startWithAudioMuted: true,\n";
     } else {
@@ -1323,8 +1323,8 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
                 "group" => "",
             ],
             "aud" => "jitsi",
-            "iss" => $CFG->jitsi_app_id,
-            "sub" => $CFG->jitsi_domain,
+            "iss" => get_config('mod_jitsi', 'app_id'),
+            "sub" => get_config('mod_jitsi', 'domain'),
             "room" => urlencode($sessionnorm),
             "exp" => time() + 24 * 3600,
             "moderator" => has_capability('mod/jitsi:moderation', $PAGE->context),
@@ -1332,10 +1332,10 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
         echo "roomName: \"".urlencode($sessionnorm)."\",\n";
         $payloadencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
         $headerencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
-        $signature = hash_hmac('sha256', $headerencoded . "." . $payloadencoded, $CFG->jitsi_secret, true);
+        $signature = hash_hmac('sha256', $headerencoded . "." . $payloadencoded, get_config('mod_jitsi', 'secret'), true);
     }
 
-    if ((get_config('mod_jitsi', 'tokentype') == '1' && ($CFG->jitsi_app_id != null && $CFG->jitsi_secret != null))
+    if ((get_config('mod_jitsi', 'tokentype') == '1' && (get_config('mod_jitsi', 'app_id') != null && get_config('mod_jitsi', 'secret') != null))
         || get_config('mod_jitsi', 'tokentype') == '2') {
         $signatureencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
         $jwt = $headerencoded . "." . $payloadencoded . "." . $signatureencoded;
@@ -1355,14 +1355,14 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
     echo "interfaceConfigOverwrite:{\n";
     echo "TOOLBAR_BUTTONS: ".$buttons.",\n";
     echo "SHOW_JITSI_WATERMARK: true,\n";
-    echo "JITSI_WATERMARK_LINK: '".$CFG->jitsi_watermarklink."',\n";
+    echo "JITSI_WATERMARK_LINK: '".get_config('mod_jitsi', 'watermarklink')."',\n";
     echo "},\n";
     echo "width: '100%',\n";
     echo "height: '100%',\n";
     echo "}\n";
     echo "const api = new JitsiMeetExternalAPI(domain, options);\n";
 
-    if ($CFG->jitsi_finishandreturn == 1) {
+    if (get_config('mod_jitsi', 'finishandreturn') == 1) {
         echo "api.on('readyToClose', () => {\n";
         echo "    api.dispose();\n";
         if ($universal == false && $user == null) {
@@ -1375,14 +1375,14 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
         echo  "});\n";
     }
 
-    if ($CFG->jitsi_password != null) {
+    if (get_config('mod_jitsi', 'password') != null) {
         echo "api.addEventListener('participantRoleChanged', function(event) {\n";
         echo "    if (event.role === \"moderator\") {\n";
-        echo "        api.executeCommand('password', '".$CFG->jitsi_password."');\n";
+        echo "        api.executeCommand('password', '".get_config('mod_jitsi', 'password')."');\n";
         echo "    }\n";
         echo "});\n";
         echo "api.on('passwordRequired', function () {\n";
-        echo "    api.executeCommand('password', '".$CFG->jitsi_password."');\n";
+        echo "    api.executeCommand('password', '".get_config('mod_jitsi', 'password')."');\n";
         echo "});\n";
     }
     echo "</script>\n";
@@ -1406,7 +1406,7 @@ function istimedout($jitsi) {
  */
 function generateerrortime($jitsi) {
     global $CFG;
-    if ($jitsi->validitytime == 0 || $CFG->jitsi_invitebuttons == 0) {
+    if ($jitsi->validitytime == 0 || get_config('mod_jitsi', 'invitebuttons') == 0) {
         return get_string('invitationsnotactivated', 'jitsi');
     } else {
         return get_string('linkexpiredon', 'jitsi', userdate($jitsi->validitytime));
@@ -1556,8 +1556,8 @@ function deleterecordyoutube($idsource) {
 
             $client = new Google_Client();
 
-            $client->setClientId($CFG->jitsi_oauth_id);
-            $client->setClientSecret($CFG->jitsi_oauth_secret);
+            $client->setClientId(get_config('mod_jitsi', 'oauth_id'));
+            $client->setClientSecret(get_config('mod_jitsi', 'oauth_secret'));
 
             $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
 
@@ -1892,8 +1892,8 @@ function togglestate($idvideo) {
 
     $client = new Google_Client();
 
-    $client->setClientId($CFG->jitsi_oauth_id);
-    $client->setClientSecret($CFG->jitsi_oauth_secret);
+    $client->setClientId(get_config('mod_jitsi', 'oauth_id'));
+    $client->setClientSecret(get_config('mod_jitsi', 'oauth_secret'));
 
     $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
 
@@ -2001,8 +2001,8 @@ function getclientgoogleapi() {
 
     $client = new Google_Client();
 
-    $client->setClientId($CFG->jitsi_oauth_id);
-    $client->setClientSecret($CFG->jitsi_oauth_secret);
+    $client->setClientId(get_config('mod_jitsi', 'oauth_id'));
+    $client->setClientSecret(get_config('mod_jitsi', 'oauth_secret'));
 
     $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
 
@@ -2057,8 +2057,8 @@ function getclientgoogleapibyaccount($account) {
 
     $client = new Google_Client();
 
-    $client->setClientId($CFG->jitsi_oauth_id);
-    $client->setClientSecret($CFG->jitsi_oauth_secret);
+    $client->setClientId(get_config('mod_jitsi', 'oauth_id'));
+    $client->setClientSecret(get_config('mod_jitsi', 'oauth_secret'));
 
     $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
 

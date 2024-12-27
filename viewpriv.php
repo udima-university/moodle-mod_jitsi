@@ -84,7 +84,7 @@ if ($userstocall != null) {
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('privatesession', 'jitsi', $user->firstname));
 
-if ($CFG->jitsi_privatesessions) {
+if (get_config('mod_jitsi', 'privatesessions')) {
 
     if ($USER->id == $user->id) {
         $moderation = 1;
@@ -93,7 +93,7 @@ if ($CFG->jitsi_privatesessions) {
     }
 
     $nom = null;
-    switch ($CFG->jitsi_id) {
+    switch (get_config('mod_jitsi', 'id')) {
         case 'username':
             $nom = $USER->username;
             break;
@@ -104,7 +104,7 @@ if ($CFG->jitsi_privatesessions) {
             break;
     }
     $sessionoptionsparam = ['$course->shortname', '$jitsi->id', '$jitsi->name'];
-    $fieldssessionname = $CFG->jitsi_sesionname;
+    $fieldssessionname = get_config('mod_jitsi', 'sesionname');
 
     $allowed = explode(',', $fieldssessionname);
     $max = count($allowed);
@@ -134,7 +134,7 @@ if ($CFG->jitsi_privatesessions) {
     echo $OUTPUT->single_button(new moodle_url('/mod/jitsi/sessionpriv.php', $urlparams), get_string('access', 'jitsi'), 'post');
 
     echo "<p></p>";
-    echo $CFG->jitsi_help;
+    echo get_config('mod_jitsi', 'help');
 
 } else {
     echo get_string('privatesessiondisabled', 'jitsi');

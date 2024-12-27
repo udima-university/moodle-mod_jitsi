@@ -209,7 +209,7 @@ if (has_capability('mod/jitsi:moderation', $context)) {
 }
 
 $nom = null;
-switch ($CFG->jitsi_id) {
+switch (get_config('mod_jitsi', 'id')) {
     case 'username':
         $nom = $USER->username;
         break;
@@ -220,7 +220,7 @@ switch ($CFG->jitsi_id) {
         break;
 }
 $sessionoptionsparam = ['$course->shortname', '$jitsi->id', '$jitsi->name'];
-$fieldssessionname = $CFG->jitsi_sesionname;
+$fieldssessionname = get_config('mod_jitsi', 'sesionname');
 
 $allowed = explode(',', $fieldssessionname);
 $max = count($allowed);
@@ -250,11 +250,11 @@ if ($errorborrado == false) {
     for ($i = 0; $i < $max; $i++) {
         if ($i != $max - 1) {
             if ($allowed[$i] == 0) {
-                $sesparam .= string_sanitize($courseshortname).$optionsseparator[$CFG->jitsi_separator];
+                $sesparam .= string_sanitize($courseshortname).$optionsseparator[get_config('mod_jitsi', 'separator')];
             } else if ($allowed[$i] == 1) {
-                $sesparam .= $jitsiid.$optionsseparator[$CFG->jitsi_separator];
+                $sesparam .= $jitsiid.$optionsseparator[get_config('mod_jitsi', 'separator')];
             } else if ($allowed[$i] == 2) {
-                $sesparam .= string_sanitize($jitsiname).$optionsseparator[$CFG->jitsi_separator];
+                $sesparam .= string_sanitize($jitsiname).$optionsseparator[get_config('mod_jitsi', 'separator')];
             }
         } else {
             if ($allowed[$i] == 0) {
@@ -410,7 +410,7 @@ echo "<ul class=\"nav nav-tabs\" id=\"myTab\" role=\"tablist\">";
 if (has_capability('mod/jitsi:viewrecords', $PAGE->context)) {
     if (($records && isallvisible($records)) ||
         (has_capability('mod/jitsi:record', $PAGE->context) && $records) ||
-        $CFG->jitsi_streamingoption == 1) {
+        get_config('mod_jitsi', 'streamingoption') == 1) {
         echo "  <li class=\"nav-item\">";
         echo "    <a class=\"nav-link " . ($activetab == 'record' ? 'active' : '') .
             "\" id=\"record-tab\" " . ($CFG->branch >= 500 ? 'data-bs-toggle' : 'data-toggle') . "=\"tab\" href=\"#record\"
@@ -438,9 +438,9 @@ echo "<div class=\"tab-content\" id=\"myTabContent\">";
     echo "  <div class=\"tab-pane fade " .
     ($activetab == 'help' ? 'show active' : '') .
     "\" id=\"help\" role=\"tabpanel\" aria-labelledby=\"help-tab\">";
-if ($CFG->jitsi_help != null) {
+if (get_config('mod_jitsi', 'help') != null) {
     echo "  <br>";
-    echo $CFG->jitsi_help;
+    echo get_config('mod_jitsi', 'help');
 } else {
     echo "  <br>";
     echo $OUTPUT->box(get_string('instruction', 'jitsi'));

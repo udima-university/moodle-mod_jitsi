@@ -96,7 +96,7 @@ class mobile {
         }
 
         $nom = null;
-        switch ($CFG->jitsi_id) {
+        switch (get_config('mod_jitsi', 'id')) {
             case 'username':
                 $nom = $USER->username;
                 break;
@@ -107,7 +107,7 @@ class mobile {
                 break;
         }
 
-        $fieldssessionname = $CFG->jitsi_sesionname;
+        $fieldssessionname = get_config('mod_jitsi', 'sesionname');
 
         $allowed = explode(',', $fieldssessionname);
         $max = count($allowed);
@@ -117,11 +117,11 @@ class mobile {
         for ($i = 0; $i < $max; $i++) {
             if ($i != $max - 1) {
                 if ($allowed[$i] == 0) {
-                    $sesparam .= string_sanitize($course->shortname).$optionsseparator[$CFG->jitsi_separator];
+                    $sesparam .= string_sanitize($course->shortname).$optionsseparator[get_config('mod_jitsi', 'separator')];
                 } else if ($allowed[$i] == 1) {
-                    $sesparam .= $jitsi->id.$optionsseparator[$CFG->jitsi_separator];
+                    $sesparam .= $jitsi->id.$optionsseparator[get_config('mod_jitsi', 'separator')];
                 } else if ($allowed[$i] == 2) {
-                    $sesparam .= string_sanitize($jitsi->name).$optionsseparator[$CFG->jitsi_separator];
+                    $sesparam .= string_sanitize($jitsi->name).$optionsseparator[get_config('mod_jitsi', 'separator')];
                 }
             } else {
                 if ($allowed[$i] == 0) {
@@ -135,8 +135,8 @@ class mobile {
         }
 
         $help = "";
-        if ($CFG->jitsi_help) {
-            $help = str_replace(['<h2', '<h3'], '<h1', $CFG->jitsi_help);
+        if (get_config('mod_jitsi', 'help')) {
+            $help = str_replace(['<h2', '<h3'], '<h1', get_config('mod_jitsi', 'help'));
             $help = str_replace(['</h2>', '</h3>'], '</h1>', $help);
 
             $help = str_replace(['<h4', '<h5', '<h6'], '<h2>', $help);
@@ -242,15 +242,15 @@ class mobile {
                 "group" => "",
             ],
             "aud" => "jitsi",
-            "iss" => $CFG->jitsi_app_id,
-            "sub" => $CFG->jitsi_domain,
+            "iss" => get_config('mod_jitsi', 'app_id'),
+            "sub" => get_config('mod_jitsi', 'domain'),
             "room" => urlencode($sessionnorm),
             "exp" => time() + 24 * 3600,
             "moderator" => $teacher,
         ], JSON_UNESCAPED_SLASHES);
         $base64urlpayload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
 
-        $secret = $CFG->jitsi_secret;
+        $secret = get_config('mod_jitsi', 'secret');
         $signature = hash_hmac('sha256', $base64urlheader . "." . $base64urlpayload, $secret, true);
         $base64urlsignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
 
@@ -262,22 +262,22 @@ class mobile {
         }
 
         $youtubeoption = '';
-        if ($CFG->jitsi_shareyoutube == 1) {
+        if (get_config('mod_jitsi', 'shareyoutube') == 1) {
             $youtubeoption = 'sharedvideo';
         }
 
         $bluroption = '';
-        if ($CFG->jitsi_blurbutton == 1) {
+        if (get_config('mod_jitsi', 'blurbutton') == 1) {
             $bluroption = 'videobackgroundblur';
         }
 
         $security = '';
-        if ($CFG->jitsi_securitybutton == 1) {
+        if (get_config('mod_jitsi', 'securitybutton') == 1) {
             $security = 'security';
         }
 
         $invite = '';
-        if ($CFG->jitsi_invitebuttons == 1) {
+        if (get_config('mod_jitsi', 'invitebuttons') == 1) {
             $invite = 'invite';
         }
         $muteeveryone = '';
@@ -294,14 +294,14 @@ class mobile {
         $buttons .= "\"download\",\"help\",\"".$muteeveryone."\",\"".$mutevideoeveryone."\",\"".$security."\"]";
 
         $data = [];
-        if ($CFG->jitsi_app_id != null && $CFG->jitsi_secret != null) {
+        if (get_config('mod_jitsi', 'app_id') != null && get_config('mod_jitsi', 'secret') != null) {
             $data['jwt'] = 'jwt='.$jwt;
         }
 
-        $config = '&config.channelLastN='.$CFG->jitsi_channellastcam;
+        $config = '&config.channelLastN='.get_config('mod_jitsi', 'channellastcam');
         $config .= '&config.startWithAudioMuted=true';
         $config .= '&config.startWithVideoMuted=true';
-        if ($CFG->jitsi_deeplink == 0) {
+        if (get_config('mod_jitsi', 'deeplink') == 0) {
             $config .= '&config.disableDeepLinking=true';
         }
         $config .= '&config.disableProfile=true';
@@ -310,11 +310,11 @@ class mobile {
         $data['displayName'] = 'userInfo.displayName="'.$nombre.'"';
 
         $interfaceconfig .= '&interfaceConfig.SHOW_JITSI_WATERMARK=false';
-        $interfaceconfig .= '&interfaceConfig.JITSI_WATERMARK_LINK='.urlencode("'".$CFG->jitsi_watermarklink."'");
+        $interfaceconfig .= '&interfaceConfig.JITSI_WATERMARK_LINK='.urlencode("'".get_config('mod_jitsi', 'watermarklink')."'");
         $data['interface_config'] = $interfaceconfig;
 
         $data['is_desktop'] = $args['appisdesktop'];
-        $data['jitsi_domain'] = $CFG->jitsi_domain;
+        $data['jitsi_domain'] = get_config('mod_jitsi', 'domain');
         $data['room'] = $sessionnorm;
 
         return [

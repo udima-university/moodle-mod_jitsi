@@ -116,8 +116,8 @@ if ($daccountid && confirm_sesskey($sesskey)) {
         }
 
         $client = new Google_Client();
-        $client->setClientId($CFG->jitsi_oauth_id);
-        $client->setClientSecret($CFG->jitsi_oauth_secret);
+        $client->setClientId(get_config('mod_jitsi', 'oauth_id'));
+        $client->setClientSecret(get_config('mod_jitsi', 'oauth_secret'));
 
         $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
         $client->setAccessToken($account->clientaccesstoken);
@@ -158,8 +158,8 @@ if (is_siteadmin()) {
     ];
 
     $client = new Google_Client();
-    $client->setClientId($CFG->jitsi_oauth_id);
-    $client->setClientSecret($CFG->jitsi_oauth_secret);
+    $client->setClientId(get_config('mod_jitsi', 'oauth_id'));
+    $client->setClientSecret(get_config('mod_jitsi', 'oauth_secret'));
 
     $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
     echo $OUTPUT->box(get_string('adminaccountex', 'jitsi'));

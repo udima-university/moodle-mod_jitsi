@@ -97,7 +97,7 @@ $event->add_record_snapshot($PAGE->cm->modname, $sesion);
 
 $event->trigger();
 if (!istimedout($sesion)) {
-    if ($CFG->jitsi_invitebuttons == 1) {
+    if (get_config('mod_jitsi', 'invitebuttons') == 1) {
         if (!isloggedin()) {
             echo get_string('accessto', 'jitsi', $sesion->name);
             $today = getdate();
@@ -125,7 +125,7 @@ if (!istimedout($sesion)) {
             $today = getdate();
             if ($today[0] > (($sesion->timeopen) - ($sesion->minpretime * 60))) {
                 $nom = null;
-                switch ($CFG->jitsi_id) {
+                switch (get_config('mod_jitsi', 'jitsi_id')) {
                     case 'username':
                         $nom = $USER->username;
                         break;
@@ -161,7 +161,7 @@ if (!istimedout($sesion)) {
     echo "</div>";
 }
 echo '<p></p>';
-echo $CFG->jitsi_help;
+echo get_config('mod_jitsi', 'help');
 
 if (isloggedin()) {
     echo $OUTPUT->footer();

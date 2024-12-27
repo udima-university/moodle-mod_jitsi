@@ -59,7 +59,7 @@ $event->add_record_snapshot($PAGE->cm->modname, $jitsi);
 $event->trigger();
 $jitsi = $DB->get_record('jitsi', ['id' => $cm->instance]);
 
-$fieldssessionname = $CFG->jitsi_sesionname;
+$fieldssessionname = get_config('mod_jitsi', 'sesionname');
 $allowed = explode(',', $fieldssessionname);
 $max = count($allowed);
 
@@ -68,11 +68,11 @@ $optionsseparator = ['.', '-', '_', ''];
 for ($i = 0; $i < $max; $i++) {
     if ($i != $max - 1) {
         if ($allowed[$i] == 0) {
-            $sesparam .= string_sanitize($course->shortname).$optionsseparator[$CFG->jitsi_separator];
+            $sesparam .= string_sanitize($course->shortname).$optionsseparator[get_config('mod_jitsi', 'separator')];
         } else if ($allowed[$i] == 1) {
-            $sesparam .= $jitsi->id.$optionsseparator[$CFG->jitsi_separator];
+            $sesparam .= $jitsi->id.$optionsseparator[get_config('mod_jitsi', 'separator')];
         } else if ($allowed[$i] == 2) {
-            $sesparam .= string_sanitize($jitsi->name).$optionsseparator[$CFG->jitsi_separator];
+            $sesparam .= string_sanitize($jitsi->name).$optionsseparator[get_config('mod_jitsi', 'separator')];
         }
     } else {
         if ($allowed[$i] == 0) {

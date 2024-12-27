@@ -36,12 +36,12 @@ $userid = required_param('u', PARAM_INT);
 $session = required_param('ses', PARAM_TEXT);
 $user = $DB->get_record('user', ['id' => $userid]);
 $sessionnorm = str_replace([' ', ':', '"'], '', $user->username);
-$avatar = $CFG->jitsi_showavatars == true ? required_param('avatar', PARAM_TEXT) : null;
+$avatar = get_config('mod_jitsi', 'showavatars') == true ? required_param('avatar', PARAM_TEXT) : null;
 
 $PAGE->set_title(get_string('privatesession', 'jitsi', $user->firstname));
 $PAGE->set_heading(get_string('privatesession', 'jitsi', $user->firstname));
 echo $OUTPUT->header();
-if ($CFG->jitsi_privatesessions == 1) {
+if (get_config('mod_jitsi', 'privatesessions') == 1) {
     $teacher = 0;
     if ($USER->id == $user->id) {
         $teacher = 1;

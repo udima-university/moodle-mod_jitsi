@@ -104,7 +104,7 @@ class mod_jitsi_mod_form extends moodleform_mod {
         $mform->disabledIf('minpretime', 'timeopen[enabled]');
         $mform->addHelpButton('minpretime', 'minpretime', 'jitsi');
 
-        if ($CFG->jitsi_invitebuttons == 1) {
+        if (get_config('mod_jitsi', 'invitebuttons') == 1) {
             $optionsinvitation = ['defaulttime' => time() + 86400, 'optional' => true];
             $mform->addElement('header', 'invitations', get_string('externalinvitations', 'jitsi'));
             $mform->addElement('static', 'linkexplication', '', get_string('staticinvitationlinkcapabilityex', 'jitsi'));
