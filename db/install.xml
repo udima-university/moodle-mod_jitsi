@@ -83,7 +83,7 @@
             <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
             
             <!-- Nombre interno del servidor. -->
-            <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT=""/>
+            <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="false" DEFAULT=""/>
 
             <!-- Tipo de servidor:
                  0 => 'Server without token'
@@ -93,7 +93,7 @@
             <FIELD NAME="type" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0"/>
 
             <!-- Campos comunes / obligatorios. -->
-            <FIELD NAME="domain" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT=""/>
+            <FIELD NAME="domain" TYPE="char" LENGTH="255" NOTNULL="false" DEFAULT=""/>
 
             <!-- Campos para 'Self-hosted with appid and secret' (type = 1). -->
             <FIELD NAME="appid" TYPE="char" LENGTH="255" NOTNULL="false" DEFAULT=""/>
