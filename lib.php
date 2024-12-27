@@ -278,6 +278,17 @@ function string_sanitize($string, $forcelowercase = true, $anal = false) {
 function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jitsi, $universal = false,
         $user = null) {
     global $CFG, $DB, $PAGE, $USER;
+    
+    $serverid = get_config('mod_jitsi', 'server');
+    $server = $DB->get_record('jitsi_servers', ['id' => $serverid]);
+    $servertype = $server->type;
+    $appid = $server->appid;
+    $domain = $server->domain;
+    $secret = $server->secret;
+    $eightbyeightappid = $server->eightbyeightappid;
+    $eightbyeightapikeyid = $server->eightbyeightapikeyid;
+    $privatykey = $server->privatekey;
+
     $sessionnorm = normalizesessionname($session);
     if ($teacher == 1) {
         $teacher = true;
@@ -299,7 +310,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     }
 
     echo "<script src=\"//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js\"></script>";
-    echo "<script src=\"https://".get_config('mod_jitsi', 'domain')."/external_api.js\"></script>\n";
+    echo "<script src=\"https://".$domain."/external_api.js\"></script>\n";
 
     $streamingoption = '';
     if ((get_config('mod_jitsi', 'livebutton') == 1) && (has_capability('mod/jitsi:record', $PAGE->context))
@@ -406,7 +417,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "  setTimeout(function() { document.getElementById(\"recordSwitch\").disabled = false; }, 5000);\n";
     echo "}\n";
 
-    echo "const domain = \"".get_config('mod_jitsi', 'domain')."\";\n";
+    echo "const domain = \"".$domain."\";\n";
     echo "const options = {\n";
     echo "configOverwrite: {\n";
 
@@ -504,11 +515,9 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     }
     echo "},\n";
 
-    $appid8x8 = get_config('mod_jitsi', '8x8app_id');
-
-    if (get_config('mod_jitsi', 'tokentype') == '2') {
+    if ($servertype == '2') {
         $header = json_encode([
-            "kid" => get_config('mod_jitsi', '8x8apikey_id'),
+            "kid" => $eightbyeightapikeyid,
             "typ" => "JWT",
             "alg" => "RS256",
         ]);
@@ -519,7 +528,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             'exp' => time() + 24 * 3600,
             'nbf' => time() - 10,
             'room' => '*',
-            'sub' => $appid8x8,
+            'sub' => $eightbyeightappid,
             'context' => [
                 'user' => [
                     'moderator' => has_capability('mod/jitsi:moderation', $PAGE->context),
@@ -536,10 +545,10 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
                 ],
             ],
         ]);
-        echo "roomName: \"".$appid8x8."/".urlencode($sessionnorm)."\",\n";
+        echo "roomName: \"".$eightbyeightappid."/".urlencode($sessionnorm)."\",\n";
         $payloadencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
         $headerencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
-        openssl_sign( $headerencoded . "." . $payloadencoded, $signature, get_config('mod_jitsi', 'privatykey'), OPENSSL_ALGO_SHA256);
+        openssl_sign( $headerencoded . "." . $payloadencoded, $signature, $privatykey, OPENSSL_ALGO_SHA256);
     } else if (set_config('jitsi', 'tokentype') == '1') {
         $header = json_encode([
             "kid" => "jitsi/custom_key_name",
@@ -559,8 +568,8 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
                 "group" => "",
             ],
             "aud" => "jitsi",
-            "iss" => get_config('mod_jitsi', 'app_id'),
-            "sub" => get_config('mod_jitsi', 'domain'),
+            "iss" => $appid,
+            "sub" => $domain,
             "room" => urlencode($sessionnorm),
             "exp" => time() + 24 * 3600,
             "moderator" => has_capability('mod/jitsi:moderation', $PAGE->context),
@@ -568,11 +577,11 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "roomName: \"".urlencode($sessionnorm)."\",\n";
         $payloadencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
         $headerencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
-        $signature = hash_hmac('sha256', $headerencoded . "." . $payloadencoded, get_config('mod_jitsi', 'secret'), true);
+        $signature = hash_hmac('sha256', $headerencoded . "." . $payloadencoded, $secret, true);
     }
 
-    if ((get_config('mod_jitsi', 'tokentype') == '1' && (get_config('mod_jitsi', 'app_id') != null && get_config('mod_jitsi', 'secret') != null))
-        || get_config('mod_jitsi', 'tokentype') == '2') {
+    if (($servertype == '1' && ($appid != null && $secret != null))
+        || $servertype == '2') {
         $signatureencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
         $jwt = $headerencoded . "." . $payloadencoded . "." . $signatureencoded;
         echo "jwt: \"".$jwt."\",\n";
@@ -1050,6 +1059,16 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
 function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $jitsi, $universal = false,
         $user = null) {
     global $CFG, $DB, $PAGE, $USER;
+    $serverid = get_config('mod_jitsi', 'server');
+    $server = $DB->get_record('jitsi_servers', ['id' => $serverid]);
+    $servertype = $server->type;
+    $appid = $server->appid;
+    $domain = $server->domain;
+    $secret = $server->secret;
+    $eightbyeightappid = $server->eightbyeightappid;
+    $eightbyeightapikeyid = $server->eightbyeightapikeyid;
+    $privatykey = $server->privatekey;
+
     $sessionnorm = normalizesessionname($session);
     if ($teacher == 1) {
         $teacher = true;
@@ -1071,7 +1090,7 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
     }
 
     echo "<script src=\"//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js\"></script>";
-    echo "<script src=\"https://".get_config('mod_jitsi', 'domain')."/external_api.js\"></script>\n";
+    echo "<script src=\"https://".$domain."/external_api.js\"></script>\n";
 
     $streamingoption = '';
     if ((get_config('mod_jitsi', 'livebutton') == 1) && (has_capability('mod/jitsi:record', $PAGE->context))
@@ -1147,7 +1166,7 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
     echo "  setTimeout(function() { document.getElementById(\"recordSwitch\").disabled = false; }, 5000);\n";
     echo "}\n";
 
-    echo "const domain = \"".get_config('mod_jitsi', 'domain')."\";\n";
+    echo "const domain = \"".$domain."\";\n";
     echo "const options = {\n";
     echo "configOverwrite: {\n";
 
@@ -1244,11 +1263,10 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
     }
     echo "},\n";
 
-    $appid8x8 = get_config('mod_jitsi', '8x8app_id');
 
-    if (get_config('mod_jitsi', 'tokentype') == '2') {
+    if ($servertype == '2') {
         $header = json_encode([
-            "kid" => get_config('mod_jitsi', '8x8apikey_id'),
+            "kid" => $eightbyeightapikeyid,
             "typ" => "JWT",
             "alg" => "RS256",
         ]);
@@ -1259,7 +1277,7 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
             'exp' => time() + 24 * 3600,
             'nbf' => time() - 10,
             'room' => '*',
-            'sub' => $appid8x8,
+            'sub' => $eightbyeightappid,
             'context' => [
                 'user' => [
                     'moderator' => has_capability('mod/jitsi:moderation', $PAGE->context),
@@ -1276,10 +1294,10 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
                 ],
             ],
         ]);
-        echo "roomName: \"".$appid8x8."/".urlencode($sessionnorm)."\",\n";
+        echo "roomName: \"".$eightbyeightappid."/".urlencode($sessionnorm)."\",\n";
         $payloadencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
         $headerencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
-        openssl_sign( $headerencoded . "." . $payloadencoded, $signature, get_config('mod_jitsi', 'privatykey'), OPENSSL_ALGO_SHA256);
+        openssl_sign( $headerencoded . "." . $payloadencoded, $signature, $privatykey, OPENSSL_ALGO_SHA256);
     } else if (set_config('jitsi', 'tokentype') == '1') {
         $header = json_encode([
             "kid" => "jitsi/custom_key_name",
@@ -1299,8 +1317,8 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
                 "group" => "",
             ],
             "aud" => "jitsi",
-            "iss" => get_config('mod_jitsi', 'app_id'),
-            "sub" => get_config('mod_jitsi', 'domain'),
+            "iss" => $appid,
+            "sub" => $domain,
             "room" => urlencode($sessionnorm),
             "exp" => time() + 24 * 3600,
             "moderator" => has_capability('mod/jitsi:moderation', $PAGE->context),
@@ -1308,11 +1326,11 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
         echo "roomName: \"".urlencode($sessionnorm)."\",\n";
         $payloadencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
         $headerencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
-        $signature = hash_hmac('sha256', $headerencoded . "." . $payloadencoded, get_config('mod_jitsi', 'secret'), true);
+        $signature = hash_hmac('sha256', $headerencoded . "." . $payloadencoded, $secret, true);
     }
 
-    if ((get_config('mod_jitsi', 'tokentype') == '1' && (get_config('mod_jitsi', 'app_id') != null && get_config('mod_jitsi', 'secret') != null))
-        || get_config('mod_jitsi', 'tokentype') == '2') {
+    if (($servertype == '1' && ($appid != null && $secret != null))
+        || $servertype == '2') {
         $signatureencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
         $jwt = $headerencoded . "." . $payloadencoded . "." . $signatureencoded;
         echo "jwt: \"".$jwt."\",\n";

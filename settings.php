@@ -30,11 +30,38 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_heading('mod_jitsi/news', get_string('news', 'jitsi'),
     html_writer::tag('div class="alert alert-info" role="alert"', get_string('news1', 'jitsi'),
         ['style' => 'text-align: center;'])));
+    
+
+    $link = new moodle_url('/mod/jitsi/servermanagement.php');
+    $settings->add(new admin_setting_heading('mod_jitsi/servermanagementlink',
+        get_string('servermanagement', 'jitsi'),
+        html_writer::link($link, get_string('servermanagementdesc', 'jitsi'))
+    ));
+
+    // Comprobamos si la tabla existe para evitar errores en instalaciones muy nuevas:
+    if ($DB->get_manager()->table_exists('jitsi_servers')) {
+        // Obtenemos los servidores (id => nombre).
+        $servers = $DB->get_records_menu('jitsi_servers', null, 'name ASC', 'id, name');
+
+        // Si hay al menos un servidor, añadimos el selector.
+        if (!empty($servers)) {
+            $settings->add(new admin_setting_configselect(
+                'mod_jitsi/server',
+                get_string('server', 'jitsi'),
+                get_string('serverdesc', 'jitsi'),
+                0,
+                $servers
+            ));
+        } else {
+            // Opcionalmente, podrías mostrar un aviso o no agregar el setting si no hay servidores.
+        }
+    }
+
+    // $settings->add(new admin_setting_configtext('mod_jitsi/domain', 'Domain', 'Domain Jitsi Server', 'meet.jit.si'));
+    // $settings->add(new admin_setting_configtext('mod_jitsi/domain', get_string('domain', 'jitsi'),
+    //     get_string('domainex', 'jitsi'), 'meet.jit.si'));
     $settings->add(new admin_setting_heading('mod_jitsi/config', get_string('config', 'jitsi'),
     ''));
-    $settings->add(new admin_setting_configtext('mod_jitsi/domain', 'Domain', 'Domain Jitsi Server', 'meet.jit.si'));
-    $settings->add(new admin_setting_configtext('mod_jitsi/domain', get_string('domain', 'jitsi'),
-        get_string('domainex', 'jitsi'), 'meet.jit.si'));
     $settings->add(new admin_setting_confightmleditor('mod_jitsi/help', get_string('help', 'jitsi'),
         get_string('helpex', 'jitsi'), null));
     $options = ['username' => get_string('username', 'jitsi'),
@@ -148,44 +175,44 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_heading('mod_jitsi/stats', '', '<a href='.$link.' >'.
             get_string('jitsi_recording_statistics', 'jitsi').'</a>'));
 
-    // Jitsi Token Section.
-    $settings->add(new admin_setting_heading('jitsitoken',
-        get_string('tokennconfig', 'jitsi'), get_string('tokenconfigurationex', 'jitsi')));
+    // // Jitsi Token Section.
+    // $settings->add(new admin_setting_heading('jitsitoken',
+    //     get_string('tokennconfig', 'jitsi'), get_string('tokenconfigurationex', 'jitsi')));
 
-    $tokenoptions = ['0' => 'Server without token', '1' => 'Self-hosted with appid and secret', '2' => '8x8 servers'];
-    $settings->add(new admin_setting_configselect('mod_jitsi/tokentype', 'Server type', null, '0', $tokenoptions));
+    // $tokenoptions = ['0' => 'Server without token', '1' => 'Self-hosted with appid and secret', '2' => '8x8 servers'];
+    // $settings->add(new admin_setting_configselect('mod_jitsi/tokentype', 'Server type', null, '0', $tokenoptions));
 
-    // Self-hosted servers with appid and secret.
-    $settings->add(new admin_setting_configtext('mod_jitsi/app_id', get_string('appid', 'jitsi'),
-        get_string('appidex', 'jitsi'), ''));
-    if ($CFG->branch > 36) {
-        $settings->hide_if('mod_jitsi/app_id', 'mod_jitsi/tokentype', 'in', '2|0');
-    }
+    // // Self-hosted servers with appid and secret.
+    // $settings->add(new admin_setting_configtext('mod_jitsi/app_id', get_string('appid', 'jitsi'),
+    //     get_string('appidex', 'jitsi'), ''));
+    // if ($CFG->branch > 36) {
+    //     $settings->hide_if('mod_jitsi/app_id', 'mod_jitsi/tokentype', 'in', '2|0');
+    // }
 
-    $settings->add(new admin_setting_configpasswordunmask('mod_jitsi/secret', get_string('secret', 'jitsi'),
-        get_string('secretex', 'jitsi'), ''));
-    if ($CFG->branch > 36) {
-        $settings->hide_if('mod_jitsi/secret', 'mod_jitsi/tokentype', 'in', '2|0');
-    }
+    // $settings->add(new admin_setting_configpasswordunmask('mod_jitsi/secret', get_string('secret', 'jitsi'),
+    //     get_string('secretex', 'jitsi'), ''));
+    // if ($CFG->branch > 36) {
+    //     $settings->hide_if('mod_jitsi/secret', 'mod_jitsi/tokentype', 'in', '2|0');
+    // }
 
-    // 8x8 servers token configuration
-    $settings->add(new admin_setting_configtext('mod_jitsi/8x8app_id', get_string('appid', 'jitsi'),
-        get_string('appidex', 'jitsi'), null));
-    if ($CFG->branch > 36) {
-        $settings->hide_if('mod_jitsi/8x8app_id', 'mod_jitsi/tokentype', 'in', '1|0');
-    }
+    // // 8x8 servers token configuration
+    // $settings->add(new admin_setting_configtext('mod_jitsi/8x8app_id', get_string('appid', 'jitsi'),
+    //     get_string('appidex', 'jitsi'), null));
+    // if ($CFG->branch > 36) {
+    //     $settings->hide_if('mod_jitsi/8x8app_id', 'mod_jitsi/tokentype', 'in', '1|0');
+    // }
 
-    $settings->add(new admin_setting_configtext('mod_jitsi/8x8apikey_id', get_string('apikeyid8x8', 'jitsi'),
-        get_string('apikeyid8x8ex', 'jitsi'), null));
-    if ($CFG->branch > 36) {
-        $settings->hide_if('mod_jitsi/8x8apikey_id', 'mod_jitsi/tokentype', 'in', '1|0');
-    }
+    // $settings->add(new admin_setting_configtext('mod_jitsi/8x8apikey_id', get_string('apikeyid8x8', 'jitsi'),
+    //     get_string('apikeyid8x8ex', 'jitsi'), null));
+    // if ($CFG->branch > 36) {
+    //     $settings->hide_if('mod_jitsi/8x8apikey_id', 'mod_jitsi/tokentype', 'in', '1|0');
+    // }
 
-    $settings->add(new admin_setting_configtextarea('mod_jitsi/privatykey', get_string('privatekey', 'jitsi'),
-    get_string('privatekeyex', 'jitsi'), '', PARAM_TEXT));
-    if ($CFG->branch > 36) {
-        $settings->hide_if('mod_jitsi/privatykey', 'mod_jitsi/tokentype', 'in', '1|0');
-    }
+    // $settings->add(new admin_setting_configtextarea('mod_jitsi/privatykey', get_string('privatekey', 'jitsi'),
+    // get_string('privatekeyex', 'jitsi'), '', PARAM_TEXT));
+    // if ($CFG->branch > 36) {
+    //     $settings->hide_if('mod_jitsi/privatykey', 'mod_jitsi/tokentype', 'in', '1|0');
+    // }
 
     // Experimental Section.
     $settings->add(new admin_setting_heading('jitsiexperimental', get_string('experimental', 'jitsi'),
