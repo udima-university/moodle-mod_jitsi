@@ -627,9 +627,9 @@ function xmldb_jitsi_upgrade($oldversion) {
 
         // Define los campos (usar add_field en lugar de addFieldInfo).
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
-        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, '');
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '');
         $table->add_field('type', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', null);
-        $table->add_field('domain', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, '');
+        $table->add_field('domain', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '');
         $table->add_field('appid', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '');
         $table->add_field('secret', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '');
         $table->add_field('eightbyeightappid', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '');
