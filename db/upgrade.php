@@ -667,19 +667,25 @@ function xmldb_jitsi_upgrade($oldversion) {
     
             // 2. Comprobar si hay un dominio guardado antiguamente en config_plugins (mod_jitsi/domain).
             $olddomain = get_config('mod_jitsi', 'domain');
-            if (!empty($olddomain)) {
+            if (!empty($olddomain) && $olddomain != 'meet.jit.si') {
+                $oldtype = get_config('mod_jitsi', 'tokentype');
+                $oldappid = get_config('mod_jitsi', 'app_id');
+                $oldsecret = get_config('mod_jitsi', 'secret');
+                $old8x8appid = get_config('mod_jitsi', '8x8app_id');
+                $old8x8apikeyid = get_config('mod_jitsi', '8x8apikey_id');
+                $oldprivatekey = get_config('mod_jitsi', 'privatykey');
                 // Verificamos si NO está en la tabla 'jitsi_servers'.
                 if (!$DB->record_exists('jitsi_servers', ['domain' => $olddomain])) {
                     // Creamos el servidor con el dominio anterior.
                     $server = new stdClass();
                     $server->name         = $olddomain; // Usa el dominio como nombre
-                    $server->type         = 0;  // Sin token (suponiendo que era la config previa)
+                    $server->type         = $oldtype;  // Sin token (suponiendo que era la config previa)
                     $server->domain       = $olddomain;
-                    $server->appid        = '';
-                    $server->secret       = '';
-                    $server->eightbyeightappid    = '';
-                    $server->eightbyeightapikeyid = '';
-                    $server->privatekey   = '';
+                    $server->appid        = $oldappid;
+                    $server->secret       = $oldsecret;
+                    $server->eightbyeightappid    = $old8x8appid;
+                    $server->eightbyeightapikeyid = $old8x8apikeyid;
+                    $server->privatekey   = $oldprivatekey;
                     $server->timecreated  = time();
                     $server->timemodified = time();
     
