@@ -62,6 +62,7 @@ $string['attendeesreport'] = 'Attendees report';
 $string['authq'] = 'Login with this account to get credentials and put "in use"?';
 $string['avg_recordings_per_day'] = 'Average Recordings per Day';
 $string['avg_recordings_per_week'] = 'Average Recordings per Week';
+$string['backtosettings'] = 'Back to settings';
 $string['blurbutton'] = 'Show Background options';
 $string['blurbuttonex'] = 'Show the "Select Backgroud" option to all users. This feature is cool but require powerfull computers. Maybe you should disable it.';
 $string['buttondownloadapp'] = 'Download application';
