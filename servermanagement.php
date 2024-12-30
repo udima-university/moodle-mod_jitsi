@@ -146,6 +146,11 @@ if ($mform->is_cancelled()) {
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('servermanagement', 'mod_jitsi'));
 
+// Añadir el enlace para volver a settings.php
+$settingsurl = new moodle_url('/admin/settings.php', ['section' => 'modsettingjitsi']);
+echo html_writer::link($settingsurl, get_string('backtosettings', 'mod_jitsi'), ['class' => 'btn btn-secondary']);
+
+
 // Mostrar la lista de servidores existentes en tabla.
 $servers = $DB->get_records('jitsi_servers', null, 'name ASC');
 $table = new html_table();
