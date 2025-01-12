@@ -38,6 +38,7 @@ $string['accounts'] = 'Streaming/Recording Accounts';
 $string['activatetooltip'] = 'Click to put into use';
 $string['addaccount'] = 'Add account';
 $string['addedtoqueue'] = 'Added to queue';
+$string['addnewserver'] = 'Añadir nuevo servidor';
 $string['addtoqueue'] = 'Add to queue';
 $string['adminaccountex'] = 'At least one account is required in order to stream/record sessions with the "Moodle integrated" method for streaming.
  </br>Just one account can be "<b>in use</b>" and will be used to stream/record the next recording demanded by one teacher.
@@ -97,6 +98,7 @@ $string['domainex'] = 'Domain Jitsi Server to use. Default server (<b>meet.jit.s
  If you have your private own Jitsi Server inform it here without "https://".
  The 8x8 professional server uses to be (<b>8x8.vc</b>) and requires to config your credentials in the bellow "Token Configuration" section.';
 $string['editrecordname'] = 'Edit record name';
+$string['editserver'] = 'Editar servidor';
 $string['entersession'] = 'Enter to session';
 $string['error'] = 'Error';
 $string['errordeleting'] = 'Error deleting';
@@ -308,8 +310,6 @@ $string['whiteboard'] = 'Whiteboard';
 $string['whiteboardex'] = 'Show the whiteboard button to all users. Actually Whiteboard is not available on Jaas Servers.';
 $string['youtubebutton'] = 'Youtube sharing option';
 $string['youtubebuttonex'] = 'Show the youtube videos sharing option';
-$string['addnewserver'] = 'Añadir nuevo servidor';
-$string['editserver'] = 'Editar servidor';
 $string['serveradded'] = 'Servidor creado correctamente.';
 $string['serverupdated'] = 'Servidor "{$a}" actualizado correctamente.';
 $string['serverdeleted'] = 'Servidor "{$a}" eliminado correctamente.';

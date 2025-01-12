@@ -79,32 +79,15 @@
     </TABLE>
     <TABLE NAME="jitsi_servers" COMMENT="Lista de servidores Jitsi con distintos tipos de token">
         <FIELDS>
-            <!-- Clave primaria. -->
             <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-            
-            <!-- Nombre interno del servidor. -->
             <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="false" DEFAULT=""/>
-
-            <!-- Tipo de servidor:
-                 0 => 'Server without token'
-                 1 => 'Self-hosted with appid and secret'
-                 2 => '8x8 servers'
-            -->
             <FIELD NAME="type" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0"/>
-
-            <!-- Campos comunes / obligatorios. -->
             <FIELD NAME="domain" TYPE="char" LENGTH="255" NOTNULL="false" DEFAULT=""/>
-
-            <!-- Campos para 'Self-hosted with appid and secret' (type = 1). -->
             <FIELD NAME="appid" TYPE="char" LENGTH="255" NOTNULL="false" DEFAULT=""/>
             <FIELD NAME="secret" TYPE="char" LENGTH="255" NOTNULL="false" DEFAULT=""/>
-
-            <!-- Campos para '8x8 servers' (type = 2). -->
             <FIELD NAME="eightbyeightappid" TYPE="char" LENGTH="255" NOTNULL="false" DEFAULT=""/>
             <FIELD NAME="eightbyeightapikeyid" TYPE="char" LENGTH="255" NOTNULL="false" DEFAULT=""/>
             <FIELD NAME="privatekey" TYPE="text" NOTNULL="false"/>
-
-            <!-- Fechas de creación y modificación. -->
             <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
             <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
         </FIELDS>
