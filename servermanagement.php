@@ -1,7 +1,26 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * Página de administración para gestionar (crear, editar, eliminar) servidores Jitsi.
+ * Settings for Jitsi instances
+ * @package   mod_jitsi
+ * @copyright  2025 Sergio Comerón (jitsi@sergiocomeron.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 require_once(__DIR__ . '/../../config.php');
 require_login();
 require_capability('moodle/site:config', context_system::instance());
@@ -13,24 +32,19 @@ $PAGE->set_url('/mod/jitsi/servermanagement.php');
 $PAGE->set_context(context_system::instance());
 $PAGE->set_url('/mod/jitsi/servermanagement.php');
 $PAGE->set_title(get_string('servermanagement', 'mod_jitsi'));
-// $PAGE->set_heading(get_string('servermanagement', 'mod_jitsi'));
 
 require_once($CFG->dirroot . '/mod/jitsi/servermanagement_form.php');
 
-$action = optional_param('action', '', PARAM_ALPHA); // p.ej. 'edit', 'delete', ''
-$id     = optional_param('id', 0, PARAM_INT);        // id del servidor
-$confirm= optional_param('confirm', 0, PARAM_BOOL);  // para confirmaciones
+$action  = optional_param('action', '', PARAM_ALPHA);
+$id      = optional_param('id', 0, PARAM_INT);
+$confirm = optional_param('confirm', 0, PARAM_BOOL);
 
-// 1. Si se solicitó eliminar un servidor: "action=delete&id=X".
 if ($action === 'delete' && $id > 0) {
-    // Primero, comprobamos que el servidor existe.
     if (!$server = $DB->get_record('jitsi_servers', ['id' => $id])) {
-        print_error('invalidid', 'error');
+        throw new moodle_exception('invalidid', 'error');
     }
 
-    // Preguntamos si el usuario ya confirmó la acción.
     if ($confirm) {
-        // Borramos el registro.
         $DB->delete_records('jitsi_servers', ['id' => $server->id]);
 
         \core\notification::add(
@@ -39,13 +53,12 @@ if ($action === 'delete' && $id > 0) {
         );
         redirect(new moodle_url('/mod/jitsi/servermanagement.php'));
     } else {
-        // Mostramos la confirmación.
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('delete'));
         $msg = get_string('confirmdelete', 'mod_jitsi', format_string($server->name));
         echo $OUTPUT->confirm(
             $msg,
-            new moodle_url('/mod/jitsi/servermanagement.php', ['action'=>'delete', 'id'=>$id, 'confirm'=>1]),
+            new moodle_url('/mod/jitsi/servermanagement.php', ['action' => 'delete', 'id' => $id, 'confirm' => 1]),
             new moodle_url('/mod/jitsi/servermanagement.php')
         );
         echo $OUTPUT->footer();
@@ -53,41 +66,33 @@ if ($action === 'delete' && $id > 0) {
     }
 }
 
-// 2. Instanciamos el formulario (para crear o editar).
 $mform = new servermanagement_form();
 
-// Si es “editar” (action=edit&id=X), cargamos datos en el formulario.
 if ($action === 'edit' && $id > 0) {
     if ($server = $DB->get_record('jitsi_servers', ['id' => $id])) {
-        // Cargamos datos en el form.
         $mform->set_data($server);
     } else {
-        print_error('invalidid', 'error');
+        throw new moodle_exception('invalidid', 'error');
     }
 }
 
-// 3. Comprobar si el formulario fue cancelado.
 if ($mform->is_cancelled()) {
-    // Simplemente redirige a la misma página (limpia).
     redirect(new moodle_url('/mod/jitsi/servermanagement.php'));
 
-// 4. Procesar datos si el formulario fue enviado y validado.
 } else if ($data = $mform->get_data()) {
-    // Si $data->id > 0, significa que estamos editando un servidor, si =0, es nuevo.
     if ($data->id) {
-        // EDITAR
         if (!$server = $DB->get_record('jitsi_servers', ['id' => $data->id])) {
-            print_error('invalidid', 'error');
+            throw new moodle_exception('invalidid', 'error');
         }
 
         $server->name   = $data->name;
         $server->type   = $data->type;
         $server->domain = $data->domain;
-        $server->appid               = '';
-        $server->secret              = '';
-        $server->eightbyeightappid   = '';
-        $server->eightbyeightapikeyid= '';
-        $server->privatekey          = '';
+        $server->appid                = '';
+        $server->secret               = '';
+        $server->eightbyeightappid    = '';
+        $server->eightbyeightapikeyid = '';
+        $server->privatekey           = '';
 
         if ($data->type == 1) {
             $server->appid  = $data->appid;
@@ -107,16 +112,15 @@ if ($mform->is_cancelled()) {
         );
 
     } else {
-        // CREAR
         $server = new stdClass();
         $server->name   = $data->name;
         $server->type   = $data->type;
         $server->domain = $data->domain;
-        $server->appid               = '';
-        $server->secret              = '';
-        $server->eightbyeightappid   = '';
-        $server->eightbyeightapikeyid= '';
-        $server->privatekey          = '';
+        $server->appid                = '';
+        $server->secret               = '';
+        $server->eightbyeightappid    = '';
+        $server->eightbyeightapikeyid = '';
+        $server->privatekey           = '';
 
         if ($data->type == 1) {
             $server->appid  = $data->appid;
@@ -138,27 +142,23 @@ if ($mform->is_cancelled()) {
         );
     }
 
-    // Tras crear o editar, redirigir a la misma página para refrescar.
     redirect(new moodle_url('/mod/jitsi/servermanagement.php'));
 }
 
-// 5. Mostrar la lista de servidores y el formulario (si se desea crear uno nuevo o editar).
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('servermanagement', 'mod_jitsi'));
 
-// Añadir el enlace para volver a settings.php
 $settingsurl = new moodle_url('/admin/settings.php', ['section' => 'modsettingjitsi']);
 echo html_writer::link($settingsurl, get_string('backtosettings', 'mod_jitsi'), ['class' => 'btn btn-secondary']);
 
 
-// Mostrar la lista de servidores existentes en tabla.
 $servers = $DB->get_records('jitsi_servers', null, 'name ASC');
 $table = new html_table();
 $table->head = [
     get_string('name'),
     get_string('type', 'mod_jitsi'),
     get_string('domain', 'mod_jitsi'),
-    get_string('actions', 'mod_jitsi') // nueva columna
+    get_string('actions', 'mod_jitsi'),
 ];
 
 foreach ($servers as $s) {
@@ -176,9 +176,8 @@ foreach ($servers as $s) {
             $typestring = get_string('unknowntype', 'mod_jitsi');
     }
 
-    // Enlaces de acción (editar y borrar).
-    $editurl = new moodle_url('/mod/jitsi/servermanagement.php', ['action'=>'edit', 'id'=>$s->id]);
-    $deleteurl = new moodle_url('/mod/jitsi/servermanagement.php', ['action'=>'delete', 'id'=>$s->id]);
+    $editurl = new moodle_url('/mod/jitsi/servermanagement.php', ['action' => 'edit', 'id' => $s->id]);
+    $deleteurl = new moodle_url('/mod/jitsi/servermanagement.php', ['action' => 'delete', 'id' => $s->id]);
 
     $links = html_writer::link($editurl, get_string('edit')) . ' | '
            . html_writer::link($deleteurl, get_string('delete'));
@@ -187,19 +186,17 @@ foreach ($servers as $s) {
         format_string($s->name),
         $typestring,
         format_string($s->domain),
-        $links
+        $links,
     ];
 }
 echo html_writer::table($table);
 
-// Título del formulario: depende si estamos editando o no.
 if ($action === 'edit' && $id > 0) {
     echo $OUTPUT->heading(get_string('editserver', 'mod_jitsi'));
 } else {
     echo $OUTPUT->heading(get_string('addnewserver', 'mod_jitsi'));
 }
 
-// Mostramos el formulario.
 $mform->display();
 
 echo $OUTPUT->footer();

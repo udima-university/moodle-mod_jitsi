@@ -1,24 +1,46 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * This file is part of mod_jitsi
- * It is executed only on fresh install (not on upgrade).
+ * Install
+ * @package   mod_jitsi
+ * @copyright  2025 Sergio Comerón (jitsi@sergiocomeron.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * Function to handle the installation process for the Jitsi module.
+ *
+ * This function checks if the 'jitsi_servers' table exists in the database.
+ * If the table exists and there is no record with the domain 'meet.jit.si',
+ * it inserts a default server record with the domain 'meet.jit.si'.
+ *
+ * @return bool Returns true upon successful execution.
+ */
 function xmldb_jitsi_install() {
     global $DB;
-
-    // Verificar si la tabla jitsi_servers existe.
     $dbman = $DB->get_manager();
     $table = new xmldb_table('jitsi_servers');
     if ($dbman->table_exists($table)) {
 
-        // Comprobamos si ya existe un servidor con el dominio meet.jit.si
-        // (para no duplicar si se reinstala en un entorno de prueba).
         if (!$DB->record_exists('jitsi_servers', ['domain' => 'meet.jit.si'])) {
 
             $server = new stdClass();
-            $server->name         = 'Meet JitSi default'; // O el nombre que prefieras.
-            $server->type         = 0;  // 0 => sin token.
+            $server->name         = 'Meet JitSi default';
+            $server->type         = 0;
             $server->domain       = 'meet.jit.si';
             $server->appid        = '';
             $server->secret       = '';

@@ -278,7 +278,7 @@ function string_sanitize($string, $forcelowercase = true, $anal = false) {
 function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jitsi, $universal = false,
         $user = null) {
     global $CFG, $DB, $PAGE, $USER;
-    
+
     $serverid = get_config('mod_jitsi', 'server');
     $server = $DB->get_record('jitsi_servers', ['id' => $serverid]);
     $servertype = $server->type;
@@ -314,7 +314,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
 
     $streamingoption = '';
     if ((get_config('mod_jitsi', 'livebutton') == 1) && (has_capability('mod/jitsi:record', $PAGE->context))
-        && (get_config('mod_jitsi', 'streamingoption ')== 0)) {
+        && (get_config('mod_jitsi', 'streamingoption ') == 0)) {
         $streamingoption = 'livestreaming';
     }
 
@@ -380,7 +380,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     }
 
     if ($user == null) {
-        if (get_config('mod_jitsi', 'livebutton')== 1 && has_capability('mod/jitsi:record', $PAGE->context)
+        if (get_config('mod_jitsi', 'livebutton') == 1 && has_capability('mod/jitsi:record', $PAGE->context)
             && $account != null && $universal == false
             && ($CFG->jitsi_streamingoption == 1) && $jitsi->sessionwithtoken == 0) {
             
@@ -1286,7 +1286,6 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
         echo "startWithVideoMuted: false,\n";
     }
     echo "},\n";
-
 
     if ($servertype == '2') {
         $header = json_encode([

@@ -30,6 +30,7 @@
  */
 
 require_once('../../config.php');
+require_login();
 $jitsiid = required_param('jitsiId', PARAM_INT);
 
 $jitsi = $DB->get_record('jitsi', ['id' => $jitsiid]);

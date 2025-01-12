@@ -597,35 +597,25 @@ function xmldb_jitsi_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2025021600, 'jitsi');
     }
 
-    if ($oldversion < 2024122701) {        
-        // Ejemplo: tienes filas en mdl_config con el campo name='jitsi_param_x'.
-        // Quieres copiarlas a mdl_config_plugins con plugin='mod_jitsi', name='param_x'.
-        
-        // 1) Insertar las entradas en mdl_config_plugins con los valores de mdl_config
-        //    (asumiendo que no existen todavía en mdl_config_plugins).
+    if ($oldversion < 2024122701) {
         $DB->execute("
             INSERT INTO {config_plugins} (plugin, name, value)
             SELECT 'mod_jitsi', REPLACE(name, 'jitsi_', ''), value
               FROM {config}
              WHERE name LIKE 'jitsi_%'
         ");
-    
-        // 2) Borrar las entradas viejas de mdl_config
+
         $DB->execute("
             DELETE FROM {config}
              WHERE name LIKE 'jitsi_%'
         ");
-    
+
         upgrade_mod_savepoint(true, 2024122701, 'jitsi');
     }
 
-    // Ejemplo: Si la versión antigua es menor que 2024122700 (ajusta según tu numeración).
     if ($oldversion < 2024122703) {
-
-        // Crea la tabla jitsi_servers si no existe.
         $table = new xmldb_table('jitsi_servers');
 
-        // Define los campos (usar add_field en lugar de addFieldInfo).
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
         $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '');
         $table->add_field('type', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', null);
@@ -638,27 +628,23 @@ function xmldb_jitsi_upgrade($oldversion) {
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', null);
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', null);
 
-        // Define la clave primaria (usar add_key en lugar de addKeyInfo).
         $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
-        // Crea la tabla si no existe.
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
 
-        // Marca el “savepoint” de upgrade.
         upgrade_mod_savepoint(true, 2024122703, 'jitsi');
     }
 
     if ($oldversion < 2024122704) {
         $table = new xmldb_table('jitsi_servers');
         if ($dbman->table_exists($table)) {
-    
-            // 1. Crear (si no existe) el servidor 'meet.jit.si' por defecto.
+
             if (!$DB->record_exists('jitsi_servers', ['domain' => 'meet.jit.si'])) {
                 $defaultserver = new stdClass();
                 $defaultserver->name         = 'Meet JitSi default';
-                $defaultserver->type         = 0;  // Without token
+                $defaultserver->type         = 0;
                 $defaultserver->domain       = 'meet.jit.si';
                 $defaultserver->appid        = '';
                 $defaultserver->secret       = '';
@@ -669,8 +655,7 @@ function xmldb_jitsi_upgrade($oldversion) {
                 $defaultserver->timemodified = time();
                 $DB->insert_record('jitsi_servers', $defaultserver);
             }
-    
-            // 2. Comprobar si hay un dominio guardado antiguamente en config_plugins (mod_jitsi/domain).
+
             $olddomain = get_config('mod_jitsi', 'domain');
             if (!empty($olddomain) && $olddomain != 'meet.jit.si') {
                 $oldtype = get_config('mod_jitsi', 'tokentype');
@@ -679,12 +664,10 @@ function xmldb_jitsi_upgrade($oldversion) {
                 $old8x8appid = get_config('mod_jitsi', '8x8app_id');
                 $old8x8apikeyid = get_config('mod_jitsi', '8x8apikey_id');
                 $oldprivatekey = get_config('mod_jitsi', 'privatykey');
-                // Verificamos si NO está en la tabla 'jitsi_servers'.
                 if (!$DB->record_exists('jitsi_servers', ['domain' => $olddomain])) {
-                    // Creamos el servidor con el dominio anterior.
                     $server = new stdClass();
-                    $server->name         = $olddomain; // Usa el dominio como nombre
-                    $server->type         = $oldtype;  // Sin token (suponiendo que era la config previa)
+                    $server->name         = $olddomain;
+                    $server->type         = $oldtype;
                     $server->domain       = $olddomain;
                     $server->appid        = $oldappid;
                     $server->secret       = $oldsecret;
@@ -693,30 +676,20 @@ function xmldb_jitsi_upgrade($oldversion) {
                     $server->privatekey   = $oldprivatekey;
                     $server->timecreated  = time();
                     $server->timemodified = time();
-    
-                    // Insertar registro y obtener el ID.
+
                     $newserverid = $DB->insert_record('jitsi_servers', $server);
-    
-                    // 3. Guardar ese ID en un parámetro de config, p. ej. 'mod_jitsi/server'.
-                    //    Así apuntas tu plugin al servidor recién creado.
                     set_config('server', $newserverid, 'mod_jitsi');
-    
                 } else {
-                    // Si ya existía un servidor con ese dominio, opcionalmente
-                    // podríamos recuperar su ID y setearlo también en 'server':
                     $existingsrv = $DB->get_record('jitsi_servers', ['domain' => $olddomain]);
                     set_config('server', $existingsrv->id, 'mod_jitsi');
                 }
             }
         }
-    
-        // Savepoint de upgrade.
+
         upgrade_mod_savepoint(true, 2024122704, 'jitsi');
     }
 
     if ($oldversion < 2024122706) {
-
-        // Elimina parámetros obsoletos de la configuración de mod_jitsi.
         unset_config('tokentype', 'mod_jitsi');
         unset_config('app_id', 'mod_jitsi');
         unset_config('secret', 'mod_jitsi');
@@ -725,22 +698,8 @@ function xmldb_jitsi_upgrade($oldversion) {
         unset_config('privatykey', 'mod_jitsi');
         unset_config('domain', 'mod_jitsi');
 
-        // Marca el savepoint, indicando que esta parte del upgrade ha finalizado con éxito.
         upgrade_mod_savepoint(true, 2024122706, 'jitsi');
     }
 
-
-    /*
-     * And that's all. Please, examine and understand the 3 example blocks above. Also
-     * it's interesting to look how other modules are using this script. Remember that
-     * the basic idea is to have "blocks" of code (each one being executed only once,
-     * when the module version (version.php) is updated.
-     *
-     * Lines above (this included) MUST BE DELETED once you get the first version of
-     * yout module working. Each time you need to modify something in the module (DB
-     * related, you'll raise the version and add one upgrade block here.
-     *
-     * Finally, return of upgrade result (true, all went good) to Moodle.
-     */
     return true;
 }
