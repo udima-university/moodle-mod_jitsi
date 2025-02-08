@@ -172,16 +172,6 @@ Jitsi-meet is an open-source videoconferencing solution that enables you to easi
 $string['modulenameplural'] = 'Jitsis';
 $string['myprivatesession'] = 'My private session';
 $string['nameandsurname'] = 'Firstname + Lastname';
-$string['news'] = 'News';
-$string['news1'] = 'If you have recently upgraded,
- it is recommended that you check the <a href="../mod/jitsi/CHANGES.md">CHANGES.md</a> for updates and set your language to English to be sure you read updated instructions on this configuration screen.
- </br></br><b>IMPORTANT NOTICE</b>
- </br>Recently the meet.jit.si public servers have implemented restrictions for the embed mode that limit to 5 minutes per conference
- (<a href="https://github.com/udima-university/moodle-mod_jitsi#important-announcement-from-meetjitsi-team">read more here</a>).
- </br>If you want to hire professional hosting services for Jitsi, we recommend <a href="https://jaas.8x8.vc/">https://jaas.8x8.vc/</a>.
- It is run by the Jitsi developers, they have <b>very competitive prices</b> and this way you help to keep alive the Jitsi Open Source Project.
- </br></br><b>DISCLAIMER</b></br>This plugin is maintained by UDIMA University (<a href="https://www.udima.es">www.udima.es</a>) and is not related or partner
- with 8x8 Inc nor with "Jitsi as a service" (jaas).';
 $string['newvaluefor'] = 'New value for ';
 $string['noinviteaccess'] = 'Guest access is currently not allowed.';
 $string['nojitsis'] = 'No Jitsi activities found';

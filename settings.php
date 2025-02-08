@@ -27,9 +27,6 @@ global $DB, $CFG;
 
 if ($ADMIN->fulltree) {
     require_once($CFG->dirroot.'/mod/jitsi/lib.php');
-    $settings->add(new admin_setting_heading('mod_jitsi/news', get_string('news', 'jitsi'),
-    html_writer::tag('div class="alert alert-info" role="alert"', get_string('news1', 'jitsi'),
-        ['style' => 'text-align: center;'])));
 
     $link = new moodle_url('/mod/jitsi/servermanagement.php');
     $settings->add(new admin_setting_heading('mod_jitsi/servermanagementlink',
