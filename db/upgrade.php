@@ -585,6 +585,21 @@ function xmldb_jitsi_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2024011200, 'jitsi');
     }
 
+    if ($oldversion < 2025021600) {
+        $table = new xmldb_table('jitsi');
+        $field = new xmldb_field('tokeninvitacion', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, '');
+    
+        // Convert all NULL values to ''
+        $DB->execute("UPDATE {jitsi} SET tokeninvitacion = '' WHERE tokeninvitacion IS NULL");
+    
+        // Apply the change in the structure so that the field does not accept NULL
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->change_field_notnull($table, $field);
+        }
+    
+        upgrade_mod_savepoint(true, 2025021600, 'jitsi');
+    }
+
     /*
      * And that's all. Please, examine and understand the 3 example blocks above. Also
      * it's interesting to look how other modules are using this script. Remember that
