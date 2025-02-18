@@ -588,8 +588,7 @@ function xmldb_jitsi_upgrade($oldversion) {
     if ($oldversion < 2025021600) {
         $table = new xmldb_table('jitsi');
         // Se elimina el valor por defecto ya que no es permitido para campos TEXT.
-        $field = new xmldb_field('tokeninvitacion', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
-    
+        $field = new xmldb_field('tokeninvitacion', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null);    
         // Convert all NULL values to ''
         $DB->execute("UPDATE {jitsi} SET tokeninvitacion = '' WHERE tokeninvitacion IS NULL");
     
