@@ -23,7 +23,7 @@
         <FIELD NAME="numberofparticipants" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of participants"/>
         <FIELD NAME="sourcerecord" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="sessionwithtoken" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" UNSIGNED="true" SEQUENCE="false" COMMENT="Session bassed on other"/>
-        <FIELD NAME="tokeninvitacion" TYPE="text" LENGTH="40" NOTNULL="true" SEQUENCE="false" COMMENT="Token from session master"/>
+        <FIELD NAME="tokeninvitacion" TYPE="text" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Token from session master"/>
         <FIELD NAME="tokeninterno" TYPE="text" LENGTH="40" NOTNULL="true" SEQUENCE="false" COMMENT="Sha for share sessions with other courses"/>
       </FIELDS>
       <KEYS>
