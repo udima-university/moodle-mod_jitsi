@@ -587,15 +587,13 @@ function xmldb_jitsi_upgrade($oldversion) {
 
     if ($oldversion < 2025021600) {
         $table = new xmldb_table('jitsi');
-        $field = new xmldb_field('tokeninvitacion', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);    
-        // Convert all NULL values to ''
+        $field = new xmldb_field('tokeninvitacion', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
         $DB->execute("UPDATE {jitsi} SET tokeninvitacion = '' WHERE tokeninvitacion IS NULL");
-    
-        // Apply the change in the structure so that the field does not accept NULL
+
         if ($dbman->field_exists($table, $field)) {
             $dbman->change_field_notnull($table, $field);
         }
-    
+
         upgrade_mod_savepoint(true, 2025021600, 'jitsi');
     }
 

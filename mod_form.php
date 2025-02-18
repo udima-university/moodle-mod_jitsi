@@ -209,7 +209,8 @@ class mod_jitsi_mod_form extends moodleform_mod {
         }
 
         if ($data->tokeninvitacion != null) {
-            $sql = "SELECT * FROM {jitsi} WHERE " . $DB->sql_compare_text('tokeninterno') . " = " . $DB->sql_compare_text(':tokeninvitacion');
+            $sql = "SELECT * FROM {jitsi} WHERE " . $DB->sql_compare_text('tokeninterno') . " = " .
+                $DB->sql_compare_text(':tokeninvitacion');
             $params = ['tokeninvitacion' => $data->tokeninvitacion];
             $principal = $DB->get_record_sql($sql, $params);
             $data->timeopen = $principal->timeopen;
