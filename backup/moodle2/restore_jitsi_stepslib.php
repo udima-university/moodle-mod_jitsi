@@ -67,6 +67,8 @@ class restore_jitsi_activity_structure_step extends restore_activity_structure_s
         }
 
         $data->token = bin2hex(random_bytes(32));
+        $data->tokeninterno = bin2hex(random_bytes(32));
+        $data->tokeninvitacion = '';
 
         $newitemid = $DB->insert_record('jitsi', $data);
         $this->apply_activity_instance($newitemid);

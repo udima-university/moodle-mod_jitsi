@@ -1,4 +1,10 @@
 # Changelog
+## v3.4.13 (2025028601)
+# Fixed
+  * tokeninvitacion empty when restore.
+
+---
+
 ## v3.4.12 (2025021600)
 # Fixed
   * Fixes problem with tokeninvitacion
