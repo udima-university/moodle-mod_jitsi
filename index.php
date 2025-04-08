@@ -14,21 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This is a one-line short description of the file
- *
- * You can have a rather longer description of the file as well,
- * if you like, and it can span multiple lines.
- *
- * @package    mod_jitsi
- * @copyright  2019 Sergio Comerón Sánchez-Paniagua <sergiocomeron@icloud.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 
-$id = required_param('id', PARAM_INT);   // Course.
+$id = required_param('id', PARAM_INT);   // Course ID.
+
+require_once($CFG->dirroot . '/course/format/lib.php');
+
+// Redirigir a la vista general moderna si está disponible (Moodle 5.0+).
+if (class_exists('core_courseformat\base') &&
+    method_exists('format_base', 'redirect_to_course_overview')) {
+    format_base::redirect_to_course_overview($id, 'jitsi');
+}
+
+// Si estamos en Moodle <5.0, continuar con la lógica tradicional.
 
 $PAGE->set_url('/mod/jitsi/index.php', ['id' => $id]);
 
@@ -46,26 +45,21 @@ $event = \mod_jitsi\event\course_module_instance_list_viewed::create($params);
 $event->add_record_snapshot('course', $course);
 $event->trigger();
 
-// Get all required strings.
 $strjitsis = get_string('modulenameplural', 'jitsi');
 $strjitsi  = get_string('modulename', 'jitsi');
 
-// Print the header.
 $PAGE->navbar->add($strjitsis);
 $PAGE->set_title($strjitsis);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strjitsis, 2);
 
-// Get all the appropriate data.
 if (! $jitsis = get_all_instances_in_course('jitsi', $course)) {
     notice(get_string('thereareno', 'moodle', $strjitsis), "../../course/view.php?id=$course->id");
     die();
 }
 
 $usesections = course_format_uses_sections($course->format);
-
-// Print the list of instances (your module will probably extend this).
 
 $timenow  = time();
 $strname  = get_string('name');
@@ -83,13 +77,10 @@ if ($usesections) {
 
 $currentsection = '';
 foreach ($jitsis as $jitsi) {
-    if (!$jitsi->visible) {
-        // Show dimmed if the mod is hidden.
-        $link = "<a class=\"dimmed\" href=\"view.php?id=$jitsi->coursemodule\">".format_string($jitsi->name, true)."</a>";
-    } else {
-        // Show normal if the mod is visible.
-        $link = "<a href=\"view.php?id=$jitsi->coursemodule\">".format_string($jitsi->name, true)."</a>";
-    }
+    $link = $jitsi->visible
+        ? "<a href=\"view.php?id=$jitsi->coursemodule\">" . format_string($jitsi->name, true) . "</a>"
+        : "<a class=\"dimmed\" href=\"view.php?id=$jitsi->coursemodule\">" . format_string($jitsi->name, true) . "</a>";
+
     $printsection = '';
     if ($jitsi->section !== $currentsection) {
         if ($jitsi->section) {
@@ -100,6 +91,7 @@ foreach ($jitsis as $jitsi) {
         }
         $currentsection = $jitsi->section;
     }
+
     if ($usesections) {
         $table->data[] = [$printsection, $link];
     } else {
@@ -108,10 +100,5 @@ foreach ($jitsis as $jitsi) {
 }
 
 echo '<br />';
-
 echo html_writer::table($table);
-
-// Finish the page.
-
 echo $OUTPUT->footer();
-
