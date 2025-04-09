@@ -1,7 +1,6 @@
 <?php
 namespace mod_jitsi\courseformat;
 
-// Esto asegura que el archivo no se acceda directamente.
 defined('MOODLE_INTERNAL') || die();
 
 use core_courseformat\activityoverviewbase;
@@ -10,39 +9,43 @@ use moodle_url;
 use html_writer;
 
 /**
- * Clase overview para mostrar información del módulo Jitsi en la vista general del curso (Moodle 5.0+).
+ * Overview class to display information about the Jitsi module in the course overview (Moodle 5.0+).
  */
 class overview extends activityoverviewbase {
 
     /**
-     * Devuelve elementos adicionales que se mostrarán en la vista general.
+     * Returns additional items to be displayed in the course overview.
      *
      * @return overviewitem[]
      */
     public function get_extra_overview_items(): array {
         return [
-            'sessionstatus' => $this->get_session_status_item(),
+            'sessionstatus' => $this->get_session_timeopen_item(),
         ];
     }
 
     /**
-     * Crea un elemento que muestra el estado de la sesión Jitsi (ejemplo básico).
+     * Creates an item that displays the timeopen of the Jitsi session.
      *
      * @return overviewitem|null
      */
-    private function get_session_status_item(): ?overviewitem {
-        // Aquí deberías poner tu lógica real de si la sesión está activa o no.
-        $sessionactive = false; // Cambia esto por tu lógica.
+    private function get_session_timeopen_item(): ?overviewitem {
+        global $DB;
+        $jitsi = $DB->get_record('jitsi', ['id' => $this->cm->instance]);
+        if ($jitsi->timeopen != 0) {
+            return new overviewitem(
+                name: get_string('timeopen', 'mod_jitsi'),
+                value: $sessionactive ? 1 : 0,
+                content: userdate($jitsi->timeopen),
+            );
+        } else {
+            return null;
+        }
 
-        return new overviewitem(
-            name: get_string('sessionstatus', 'mod_jitsi'),
-            value: $sessionactive ? 1 : 0,
-            content: $sessionactive ? get_string('sessionactive', 'mod_jitsi') : get_string('sessioninactive', 'mod_jitsi')
-        );
     }
 
     /**
-     * Devuelve la acción principal para esta actividad (enlace a unirse a la sesión).
+     * Return main action.
      *
      * @return overviewitem|null
      */
@@ -54,26 +57,6 @@ class overview extends activityoverviewbase {
             name: get_string('action', 'mod_jitsi'),
             value: 'join',
             content: $link
-        );
-    }
-
-    /**
-     * Devuelve una fecha de vencimiento si aplica (opcional).
-     *
-     * @return overviewitem|null
-     */
-    public function get_due_date_overview(): ?overviewitem {
-        // Solo si tu actividad tiene alguna fecha límite.
-        if (empty($this->cm->customdata['duedate'])) {
-            return null;
-        }
-
-        $duedate = $this->cm->customdata['duedate'];
-
-        return new overviewitem(
-            name: get_string('duedate', 'mod_jitsi'),
-            value: $duedate,
-            content: userdate($duedate)
         );
     }
 }
