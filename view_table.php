@@ -57,11 +57,10 @@ class mod_view_table extends table_sql {
     protected function col_id($values) {
         global $DB, $OUTPUT, $CFG;
 
-        // Verificar si la versión de Moodle es 5 o superior.
         if ($CFG->branch >= 500) {
-            $alignmentClass = 'text-end'; // Usar text-end para Moodle 5 o superior.
+            $alignmentClass = 'text-end';
         } else {
-            $alignmentClass = 'text-right'; // Usar text-right para versiones anteriores.
+            $alignmentClass = 'text-right';
         }
 
         $jitsi = $DB->get_record('jitsi', ['id' => $values->jitsi]);
