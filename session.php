@@ -99,6 +99,7 @@ if ($CFG->jitsi_id == 'username' && $nombre != $USER->username ||
     $CFG->jitsi_id == 'alias' && $nombre != "") {
     echo $OUTPUT->notification(get_string('urlerror', 'jitsi'), 'error');
 } else {
+    $nombre = str_replace("'", "\\'", $nombre);
     createsession($teacher, $cmid, $avatar, $nombre, $session, null, $jitsi);
 }
 
