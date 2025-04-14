@@ -59,8 +59,12 @@ class mod_view_table extends table_sql {
 
         if ($CFG->branch >= 500) {
             $alignmentClass = 'text-end';
+            $videoContainerStart = "<div class=\"ratio ratio-16x9\">";
+            $iframeClass = ""; 
         } else {
             $alignmentClass = 'text-right';
+            $videoContainerStart = "<div class=\"embed-responsive embed-responsive-16by9\">";
+            $iframeClass = "class=\"embed-responsive-item\"";
         }
 
         $jitsi = $DB->get_record('jitsi', ['id' => $values->jitsi]);
@@ -94,22 +98,19 @@ class mod_view_table extends table_sql {
                 if (has_capability('mod/jitsi:deleterecord', $context) && !has_capability('mod/jitsi:hide', $context)) {
                     return "<h5>".$OUTPUT->render($tmpl)."</h5><h6 class=\"card-subtitle mb-2 text-muted\">".
                         userdate($values->timecreated)."</h6><span class=\"align-middle ".$alignmentClass."\"><p>".$deleteaction.
-                        "</p></span><div class=\"embed-responsive embed-responsive-16by9\">
-                        <iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/".$values->link."\"
+                        "</p></span>".$videoContainerStart."<iframe ".$iframeClass." src=\"https://youtube.com/embed/".$values->link."\"
                         allowfullscreen></iframe></div><br>";
                 }
                 if (has_capability('mod/jitsi:hide', $context) && !has_capability('mod/jitsi:deleterecord', $context)) {
                     if ($record->visible != 0) {
                         return "<h5>".$OUTPUT->render($tmpl)."</h5><h6 class=\"card-subtitle mb-2 text-muted\">".
                             userdate($values->timecreated)."</h6><span class=\"align-middle ".$alignmentClass."\"><p>".$hideaction.
-                            "</p></span><div class=\"embed-responsive embed-responsive-16by9\">
-                            <iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/".$values->link."\"
+                            "</p></span>".$videoContainerStart."<iframe ".$iframeClass." src=\"https://youtube.com/embed/".$values->link."\"
                             allowfullscreen></iframe></div><br>";
                     } else {
                         return "<h5>".$OUTPUT->render($tmpl)."</h5><h6 class=\"card-subtitle mb-2 text-muted\">".
                             userdate($values->timecreated)."</h6><span class=\"align-middle ".$alignmentClass."\"><p>".$showaction.
-                            "</p></span><div class=\"embed-responsive embed-responsive-16by9\">
-                            <iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/".$values->link."\"
+                            "</p></span>".$videoContainerStart."<iframe ".$iframeClass." src=\"https://youtube.com/embed/".$values->link."\"
                             allowfullscreen></iframe></div><br>";
                     }
                 }
@@ -117,27 +118,23 @@ class mod_view_table extends table_sql {
                     if ($record->visible != 0) {
                         return "<h5>".$OUTPUT->render($tmpl)."</h5><h6 class=\"card-subtitle mb-2 text-muted\">".
                             userdate($values->timecreated)."</h6><span class=\"align-middle ".$alignmentClass."\"><p>".$deleteaction.
-                            "".$hideaction."</p></span><div class=\"embed-responsive embed-responsive-16by9\">
-                            <iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/".$values->link."\"
+                            "".$hideaction."</p></span>".$videoContainerStart."<iframe ".$iframeClass." src=\"https://youtube.com/embed/".$values->link."\"
                             allowfullscreen></iframe></div><br>";
                     } else {
                         return "<h5>".$OUTPUT->render($tmpl)."</h5><h6 class=\"card-subtitle mb-2 text-muted\">".
                             userdate($values->timecreated)."</h6><span class=\"align-middle ".$alignmentClass."\"><p>".$deleteaction.
-                            "".$showaction."</p></span><div class=\"embed-responsive embed-responsive-16by9\">
-                            <iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/".$values->link."\"
+                            "".$showaction."</p></span>".$videoContainerStart."<iframe ".$iframeClass." src=\"https://youtube.com/embed/".$values->link."\"
                             allowfullscreen></iframe></div><br>";
                     }
                 }
                 if (!has_capability('mod/jitsi:hide', $context) && !has_capability('mod/jitsi:deleterecord', $context)) {
                     return "<h5>".$OUTPUT->render($tmpl)."</h5><h6 class=\"card-subtitle mb-2 text-muted\">".
-                        userdate($values->timecreated)."</h6><br><div class=\"embed-responsive embed-responsive-16by9\">
-                        <iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/".$values->link."\"
+                        userdate($values->timecreated)."</h6><br>".$videoContainerStart."<iframe ".$iframeClass." src=\"https://youtube.com/embed/".$values->link."\"
                         allowfullscreen></iframe></div>";
                 }
             } else {
                 return "<h5>".$OUTPUT->render($tmpl)."</h5><h6 class=\"card-subtitle mb-2 text-muted\">".
-                    userdate($values->timecreated)."</h6><br><div class=\"embed-responsive embed-responsive-16by9\">
-                    <iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/".$values->link."\"
+                    userdate($values->timecreated)."</h6><br>".$videoContainerStart."<iframe ".$iframeClass." src=\"https://youtube.com/embed/".$values->link."\"
                     allowfullscreen></iframe></div>";
             }
         } else {

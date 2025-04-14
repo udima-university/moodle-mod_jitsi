@@ -402,7 +402,7 @@ echo "<ul class=\"nav nav-tabs\" id=\"myTab\" role=\"tablist\">";
 
     echo "  <li class=\"nav-item\">";
     echo "    <a class=\"nav-link " . ($activetab == 'help' ? 'active' : '') .
-        "\" id=\"help-tab\" data-toggle=\"tab\" href=\"#help\"
+        "\" id=\"help-tab\" " . ($CFG->branch >= 500 ? 'data-bs-toggle' : 'data-toggle') . "=\"tab\" href=\"#help\"
          role=\"tab\" aria-controls=\"help\" aria-selected=\"" .
          ($activetab == 'help' ? 'true' : 'false') . "\">" . get_string('help') . "</a>";
     echo "  </li>";
@@ -413,7 +413,7 @@ if (has_capability('mod/jitsi:viewrecords', $PAGE->context)) {
         $CFG->jitsi_streamingoption == 1) {
         echo "  <li class=\"nav-item\">";
         echo "    <a class=\"nav-link " . ($activetab == 'record' ? 'active' : '') .
-            "\" id=\"record-tab\" data-toggle=\"tab\" href=\"#record\"
+            "\" id=\"record-tab\" " . ($CFG->branch >= 500 ? 'data-bs-toggle' : 'data-toggle') . "=\"tab\" href=\"#record\"
             role=\"tab\" aria-controls=\"record\" aria-selected=\"" .
             ($activetab == 'record' ? 'true' : 'false') . "\">" . get_string('records', 'jitsi') . "</a>";
         echo "  </li>";
@@ -424,7 +424,7 @@ if (has_capability('mod/jitsi:viewusersonsession', $PAGE->context)) {
     if ($usersconnected) {
         echo "  <li class=\"nav-item\">";
         echo "    <a class=\"nav-link " . ($activetab == 'attendees' ? 'active' : '') .
-            "\" id=\"attendees-tab\" data-toggle=\"tab\" href=\"#attendees\"
+            "\" id=\"attendees-tab\" " . ($CFG->branch >= 500 ? 'data-bs-toggle' : 'data-toggle') . "=\"tab\" href=\"#attendees\"
             role=\"tab\" aria-controls=\"attendees\" aria-selected=\"" .
             ($activetab == 'attendees' ? 'true' : 'false') . "\">" .
             get_string('attendeesreport', 'jitsi') . "</a>";
