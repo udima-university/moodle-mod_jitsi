@@ -1,4 +1,15 @@
 # Changelog
+## v3.5 (20025041400)
+# Fixed
+ * Escape single quotes in the username before creating the session. #134
+# Changed
+ * Upgrade google api php to 2.18.3
+ * data-toggle deprecation
+ * deprecation custom-switch
+ * deprecation text-right
+# Added
+ * Course overview integration
+
 ## v3.4.13 (2025028601)
 # Fixed
   * tokeninvitacion empty when restore.
