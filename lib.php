@@ -380,11 +380,10 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             }
 
             if ($CFG->branch >= 500) {
-                echo "<label class=\"form-check-label\" for=\"recordSwitch\" style=\"margin-left: 0.5rem;\">"
-                . addslashes(get_string('streamingandrecording', 'jitsi')) . "</label>";
-                echo "<div class=\"form-check form-switch\">";
+                echo "<div class=\"form-check form-switch\" style=\"display: flex; align-items: center; gap: 0.5rem;\">";
                 echo "<input type=\"checkbox\" class=\"form-check-input\" id=\"recordSwitch\" onClick=\"activaGrab($(this));\">";
-                
+                echo "<label class=\"form-check-label\" for=\"recordSwitch\" style=\"margin: 0;\">"
+                    . addslashes(get_string('streamingandrecording', 'jitsi')) . "</label>";
                 echo "</div>";
             } else {
                 echo "<div class=\"custom-control custom-switch\">";
