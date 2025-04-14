@@ -379,12 +379,20 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
                 echo "<div class=\"text-right\">"; 
             }
 
-            echo "<div class=\"custom-control custom-switch\">";
-            echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\"";
-            echo "onClick=\"activaGrab($(this));\">";
-            echo "  <label class=\"custom-control-label\" for=\"recordSwitch\">"
-                .addslashes(get_string('streamingandrecording', 'jitsi'))."</label>";
-            echo "</div>";
+            if ($CFG->branch >= 500) {
+                echo "<div class=\"form-check form-switch\">";
+                echo "<input type=\"checkbox\" class=\"form-check-input\" id=\"recordSwitch\" onClick=\"activaGrab($(this));\">";
+                echo "<label class=\"form-check-label\" for=\"recordSwitch\">"
+                    . addslashes(get_string('streamingandrecording', 'jitsi')) . "</label>";
+                echo "</div>";
+            } else {
+                echo "<div class=\"custom-control custom-switch\">";
+                echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\" onClick=\"activaGrab($(this));\">";
+                echo "<label class=\"custom-control-label\" for=\"recordSwitch\">"
+                    . addslashes(get_string('streamingandrecording', 'jitsi')) . "</label>";
+                echo "</div>";
+            }
+
             echo "</div>";
         }
     }
