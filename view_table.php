@@ -55,7 +55,15 @@ class mod_view_table extends table_sql {
      *     when downloading.
      */
     protected function col_id($values) {
-        global $DB, $OUTPUT;
+        global $DB, $OUTPUT, $CFG;
+
+        // Verificar si la versión de Moodle es 5 o superior.
+        if ($CFG->branch >= 500) {
+            $alignmentClass = 'text-end'; // Usar text-end para Moodle 5 o superior.
+        } else {
+            $alignmentClass = 'text-right'; // Usar text-right para versiones anteriores.
+        }
+
         $jitsi = $DB->get_record('jitsi', ['id' => $values->jitsi]);
         $module = $DB->get_record('modules', ['name' => 'jitsi']);
         $cm = $DB->get_record('course_modules', ['instance' => $values->jitsi, 'module' => $module->id]);
@@ -86,7 +94,7 @@ class mod_view_table extends table_sql {
             if ($jitsi->sessionwithtoken == 0) {
                 if (has_capability('mod/jitsi:deleterecord', $context) && !has_capability('mod/jitsi:hide', $context)) {
                     return "<h5>".$OUTPUT->render($tmpl)."</h5><h6 class=\"card-subtitle mb-2 text-muted\">".
-                        userdate($values->timecreated)."</h6><span class=\"align-middle text-right\"><p>".$deleteaction.
+                        userdate($values->timecreated)."</h6><span class=\"align-middle ".$alignmentClass."\"><p>".$deleteaction.
                         "</p></span><div class=\"embed-responsive embed-responsive-16by9\">
                         <iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/".$values->link."\"
                         allowfullscreen></iframe></div><br>";
@@ -94,13 +102,13 @@ class mod_view_table extends table_sql {
                 if (has_capability('mod/jitsi:hide', $context) && !has_capability('mod/jitsi:deleterecord', $context)) {
                     if ($record->visible != 0) {
                         return "<h5>".$OUTPUT->render($tmpl)."</h5><h6 class=\"card-subtitle mb-2 text-muted\">".
-                            userdate($values->timecreated)."</h6><span class=\"align-middle text-right\"><p>".$hideaction.
+                            userdate($values->timecreated)."</h6><span class=\"align-middle ".$alignmentClass."\"><p>".$hideaction.
                             "</p></span><div class=\"embed-responsive embed-responsive-16by9\">
                             <iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/".$values->link."\"
                             allowfullscreen></iframe></div><br>";
                     } else {
                         return "<h5>".$OUTPUT->render($tmpl)."</h5><h6 class=\"card-subtitle mb-2 text-muted\">".
-                            userdate($values->timecreated)."</h6><span class=\"align-middle text-right\"><p>".$showaction.
+                            userdate($values->timecreated)."</h6><span class=\"align-middle ".$alignmentClass."\"><p>".$showaction.
                             "</p></span><div class=\"embed-responsive embed-responsive-16by9\">
                             <iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/".$values->link."\"
                             allowfullscreen></iframe></div><br>";
@@ -109,13 +117,13 @@ class mod_view_table extends table_sql {
                 if (has_capability('mod/jitsi:hide', $context) && has_capability('mod/jitsi:deleterecord', $context)) {
                     if ($record->visible != 0) {
                         return "<h5>".$OUTPUT->render($tmpl)."</h5><h6 class=\"card-subtitle mb-2 text-muted\">".
-                            userdate($values->timecreated)."</h6><span class=\"align-middle text-right\"><p>".$deleteaction.
+                            userdate($values->timecreated)."</h6><span class=\"align-middle ".$alignmentClass."\"><p>".$deleteaction.
                             "".$hideaction."</p></span><div class=\"embed-responsive embed-responsive-16by9\">
                             <iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/".$values->link."\"
                             allowfullscreen></iframe></div><br>";
                     } else {
                         return "<h5>".$OUTPUT->render($tmpl)."</h5><h6 class=\"card-subtitle mb-2 text-muted\">".
-                            userdate($values->timecreated)."</h6><span class=\"align-middle text-right\"><p>".$deleteaction.
+                            userdate($values->timecreated)."</h6><span class=\"align-middle ".$alignmentClass."\"><p>".$deleteaction.
                             "".$showaction."</p></span><div class=\"embed-responsive embed-responsive-16by9\">
                             <iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/".$values->link."\"
                             allowfullscreen></iframe></div><br>";
