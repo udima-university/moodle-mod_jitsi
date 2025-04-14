@@ -361,12 +361,24 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "<div class=\"col-sm-9\">";
     echo "<div id=\"state\"><div class=\"alert alert-light\" role=\"alert\"></div></div>";
     echo "</div>";
-    echo "<div class=\"col-sm-3 text-right\">";
+
+    if ($CFG->branch >= 500) {
+        echo "<div class=\"col-sm-3 text-end\">"; 
+    } else {
+        echo "<div class=\"col-sm-3 text-right\">"; 
+    }
+
     if ($user == null) {
         if ($CFG->jitsi_livebutton == 1 && has_capability('mod/jitsi:record', $PAGE->context)
             && $account != null && $universal == false
             && ($CFG->jitsi_streamingoption == 1) && $jitsi->sessionwithtoken == 0) {
-            echo "<div class=\"text-right\">";
+            
+            if ($CFG->branch >= 500) {
+                echo "<div class=\"text-end\">"; 
+            } else {
+                echo "<div class=\"text-right\">"; 
+            }
+
             echo "<div class=\"custom-control custom-switch\">";
             echo "<input type=\"checkbox\" class=\"custom-control-input\" id=\"recordSwitch\"";
             echo "onClick=\"activaGrab($(this));\">";
@@ -1133,7 +1145,11 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
     echo "<div class=\"col-sm-9\">";
     echo "<div id=\"state\"><div class=\"alert alert-light\" role=\"alert\"></div></div>";
     echo "</div>";
-    echo "<div class=\"col-sm-3 text-right\">";
+    if ($CFG->branch >= 500) {
+        echo "<div class=\"col-sm-3 text-end\">"; 
+    } else {
+        echo "<div class=\"col-sm-3 text-right\">"; 
+    }
 
     echo "</div>";
     echo "</div>";
