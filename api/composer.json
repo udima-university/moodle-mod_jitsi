@@ -1,7 +1,10 @@
 {
     "require": {
-        "google/apiclient": "^2.16.0",
-        "php": "^7.4"
+        "google/apiclient": "^2.18.3",
+        "php": "^8.0"
+    },
+    "scripts": {
+        "pre-autoload-dump": "Google\\Task\\Composer::cleanup"
     },
     "extra": {
         "google/apiclient-services": [
@@ -10,7 +13,7 @@
     },
     "config": {
         "platform": {
-            "php": "7.4"
+            "php": "8.0"
         }
     }
 }
