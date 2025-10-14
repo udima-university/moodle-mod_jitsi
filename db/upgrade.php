@@ -753,7 +753,7 @@ function xmldb_jitsi_upgrade($oldversion) {
             // 2024 pre-migration stored keys in core config as jitsi_*.
             $olddomain = get_config('core', 'jitsi_domain');
             if (empty($olddomain)) {
-                $olddomain = get_config('', 'jitsi_domain'); // Fallback to global config.
+                $olddomain = get_config('core', 'jitsi_domain'); // Fallback to global config.
             }
         }
         if (empty($olddomain)) {
@@ -908,6 +908,18 @@ function xmldb_jitsi_upgrade($oldversion) {
         // Remove legacy plugin rows after migration to avoid duplicates.
         $DB->delete_records('config_plugins', ['plugin' => 'jitsi']);
 
+        // 8) Ensure token fields use CHAR(64) (SHA-256). Handle both TEXT->CHAR and CHAR(40)->CHAR(64).
+        $table = new xmldb_table('jitsi');
+
+        $fieldtoken = new xmldb_field('token', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL, null, null);
+        if ($dbman->field_exists($table, $fieldtoken)) {
+            $dbman->change_field_type($table, $fieldtoken);
+        }
+
+        $fieldtokeninterno = new xmldb_field('tokeninterno', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL, null, null);
+        if ($dbman->field_exists($table, $fieldtokeninterno)) {
+            $dbman->change_field_type($table, $fieldtokeninterno);
+        }
         upgrade_mod_savepoint(true, 2025101401, 'jitsi');
     }
     return true;
