@@ -805,20 +805,66 @@ function xmldb_jitsi_upgrade($oldversion) {
         // Remove legacy plugin rows after migration to avoid duplicates.
         $DB->delete_records('config_plugins', ['plugin' => 'jitsi']);
 
-        // 8) Ensure token fields use CHAR(64) (SHA-256). Handle both TEXT->CHAR and CHAR(40)->CHAR(64).
+        // 8) Ensure token fields use CHAR(64) (SHA-256). Robust sequence for Postgres.
         $table = new xmldb_table('jitsi');
-        // Prefill possible NULLs to avoid NOT NULL constraint failures during type change.
+
+        // a) Prefill possible NULLs.
         $DB->execute("UPDATE {jitsi} SET tokeninterno = '' WHERE tokeninterno IS NULL");
         $DB->execute("UPDATE {jitsi} SET token = '' WHERE token IS NULL");
 
-        $fieldtoken = new xmldb_field('token', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL, null, null);
-        if ($dbman->field_exists($table, $fieldtoken)) {
-            $dbman->change_field_type($table, $fieldtoken);
+        // b) Temporarily allow NULLs explicitly to avoid implicit NOT NULL during type change.
+        $fieldtoken_nullable = new xmldb_field('token', XMLDB_TYPE_CHAR, '64', null, null, null, null);
+        if ($dbman->field_exists($table, $fieldtoken_nullable)) {
+            $dbman->change_field_notnull($table, $fieldtoken_nullable); // Drops NOT NULL if present.
+        }
+        $fieldtokeninterno_nullable = new xmldb_field('tokeninterno', XMLDB_TYPE_CHAR, '64', null, null, null, null);
+        if ($dbman->field_exists($table, $fieldtokeninterno_nullable)) {
+            $dbman->change_field_notnull($table, $fieldtokeninterno_nullable); // Drops NOT NULL if present.
         }
 
-        $fieldtokeninterno = new xmldb_field('tokeninterno', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL, null, null);
-        if ($dbman->field_exists($table, $fieldtokeninterno)) {
-            $dbman->change_field_type($table, $fieldtokeninterno);
+        // c) Change precision/type. Prefer precision change when already CHAR.
+        $fieldtoken_precision = new xmldb_field('token', XMLDB_TYPE_CHAR, '64', null, null, null, null);
+        if ($dbman->field_exists($table, $fieldtoken_precision)) {
+            try { $dbman->change_field_precision($table, $fieldtoken_precision); }
+            catch (Exception $e) { $dbman->change_field_type($table, $fieldtoken_precision); }
+        }
+        // For tokeninterno, use a temp column to avoid NOT NULL issues when changing from TEXT -> CHAR.
+        if ($dbman->field_exists($table, new xmldb_field('tokeninterno'))) {
+            // Add temporary nullable column with desired final type/length.
+            if (!$dbman->field_exists($table, new xmldb_field('tokeninterno_tmp'))) {
+                $tmpfield = new xmldb_field('tokeninterno_tmp', XMLDB_TYPE_CHAR, '64', null, null, null, '');
+                $dbman->add_field($table, $tmpfield);
+            }
+            // Copy data, coercing NULLs to empty string.
+            $DB->execute("UPDATE {jitsi} SET tokeninterno_tmp = COALESCE(tokeninterno, '')");
+            // Drop old column.
+            $dbman->drop_field($table, new xmldb_field('tokeninterno'));
+            // Rename temp column to final name (xmldb requires full specs for rename).
+            $tmpfield_ren = new xmldb_field('tokeninterno_tmp', XMLDB_TYPE_CHAR, '64', null, null, null, '');
+            $dbman->rename_field($table, $tmpfield_ren, 'tokeninterno');
+            // Harden against latent NULLs from concurrent transactions.
+            $DB->execute("UPDATE {jitsi} SET tokeninterno = '' WHERE tokeninterno IS NULL");
+        }
+
+        // d) Set DEFAULTs.
+        $fieldtoken_default = new xmldb_field('token', XMLDB_TYPE_CHAR, '64', null, null, null, '');
+        if ($dbman->field_exists($table, $fieldtoken_default)) {
+            $dbman->change_field_default($table, $fieldtoken_default);
+        }
+        // tokeninterno column was recreated; ensure default is set.
+        if ($dbman->field_exists($table, new xmldb_field('tokeninterno'))) {
+            $fieldtokeninterno_default = new xmldb_field('tokeninterno', XMLDB_TYPE_CHAR, '64', null, null, null, '');
+            $dbman->change_field_default($table, $fieldtokeninterno_default);
+        }
+
+        // e) Enforce NOT NULL at the end.
+        $fieldtoken_notnull = new xmldb_field('token', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL, null, '');
+        if ($dbman->field_exists($table, $fieldtoken_notnull)) {
+            $dbman->change_field_notnull($table, $fieldtoken_notnull);
+        }
+        if ($dbman->field_exists($table, new xmldb_field('tokeninterno'))) {
+            $fieldtokeninterno_notnull = new xmldb_field('tokeninterno', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL, null, '');
+            $dbman->change_field_notnull($table, $fieldtokeninterno_notnull);
         }
         upgrade_mod_savepoint(true, 2025101401, 'jitsi');
     }
