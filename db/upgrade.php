@@ -865,54 +865,34 @@ function xmldb_jitsi_upgrade($oldversion) {
         unset_config('jitsi_privatykey');
         unset_config('jitsi_domain');
 
-        // 5) Ensure there is a selected server id in config if empty (select or create meet.jit.si).
-        $selectedserverid = get_config('mod_jitsi', 'server');
-        if (empty($selectedserverid)) {
-            // Find or create the default 'meet.jit.si' server.
-            $meet = $DB->get_record('jitsi_servers', ['domain' => 'meet.jit.si']);
-            if (!$meet) {
-                $meet = new stdClass();
-                $meet->name         = 'Meet JitSi default';
-                $meet->type         = 0;
-                $meet->domain       = 'meet.jit.si';
-                $meet->appid        = '';
-                $meet->secret       = '';
-                $meet->eightbyeightappid    = '';
-                $meet->eightbyeightapikeyid = '';
-                $meet->privatekey   = '';
-                $meet->timecreated  = time();
-                $meet->timemodified = time();
-                $meet->id = $DB->insert_record('jitsi_servers', $meet);
+        // 4b) Normalize plugin config names that still carry the 'jitsi_' prefix.
+        //     This covers cases where entries existed in config_plugins under the legacy
+        //     plugin 'jitsi' and were later renamed to 'mod_jitsi' without stripping the prefix.
+        //     Result: 'mod_jitsi'|'jitsi_help'  ->  'mod_jitsi'|'help'
+        $prefixedrecords = $DB->get_records_select('config_plugins', "plugin = :plugin AND name LIKE 'jitsi_%'", ['plugin' => 'mod_jitsi']);
+        foreach ($prefixedrecords as $rec) {
+            $newname = substr($rec->name, 6); // remove 'jitsi_'
+            // Do not overwrite if target exists. Keep existing target and drop the prefixed one.
+            if (!$DB->record_exists('config_plugins', ['plugin' => 'mod_jitsi', 'name' => $newname])) {
+                set_config($newname, $rec->value, 'mod_jitsi');
             }
-            set_config('server', $meet->id, 'mod_jitsi');
+            unset_config($rec->name, 'mod_jitsi');
         }
 
-        // 6) Ensure default config values exist when keys are missing.
-        $defaults = [
-            'tokentype'        => '0',
-            'app_id'           => '',
-            'secret'           => '',
-            '8x8app_id'        => '',
-            '8x8apikey_id'     => '',
-            'privatykey'       => '', // historical key name kept for compatibility
-        ];
-        foreach ($defaults as $k => $v) {
-            $current = get_config('mod_jitsi', $k);
-            if ($current === false) { // key not present at all
-                set_config($k, $v, 'mod_jitsi');
+        // Also collect any lingering entries still under plugin='jitsi' and migrate them,
+        // stripping the 'jitsi_' prefix if present.
+        $legacyrecs = $DB->get_records('config_plugins', ['plugin' => 'jitsi']);
+        foreach ($legacyrecs as $rec) {
+            $newname = $rec->name;
+            if (strpos($newname, 'jitsi_') === 0) {
+                $newname = substr($newname, 6);
+            }
+            if (!$DB->record_exists('config_plugins', ['plugin' => 'mod_jitsi', 'name' => $newname])) {
+                set_config($newname, $rec->value, 'mod_jitsi');
             }
         }
-
-        // 7) Tighten data defaults at row level in case previous schemas allowed NULLs (idempotent).
-        if ($DB->get_manager()->table_exists('jitsi')) {
-            // sessionwithtoken introduced NOT NULL default 0, but legacy rows may have NULLs.
-            $DB->execute("UPDATE {jitsi} SET sessionwithtoken = 0 WHERE sessionwithtoken IS NULL");
-            // tokeninvitacion became CHAR(255) NOT NULL; ensure empty string instead of NULL.
-            $DB->execute("UPDATE {jitsi} SET tokeninvitacion = '' WHERE tokeninvitacion IS NULL");
-            // numberofparticipants default 0.
-            $DB->execute("UPDATE {jitsi} SET numberofparticipants = 0 WHERE numberofparticipants IS NULL");
-            // completionminutes may be NULL by design; do not change it.
-        }
+        // Remove legacy plugin rows after migration to avoid duplicates.
+        $DB->delete_records('config_plugins', ['plugin' => 'jitsi']);
 
         upgrade_mod_savepoint(true, 2025101401, 'jitsi');
     }
