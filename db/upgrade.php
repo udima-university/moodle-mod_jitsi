@@ -807,6 +807,9 @@ function xmldb_jitsi_upgrade($oldversion) {
 
         // 8) Ensure token fields use CHAR(64) (SHA-256). Handle both TEXT->CHAR and CHAR(40)->CHAR(64).
         $table = new xmldb_table('jitsi');
+        // Prefill possible NULLs to avoid NOT NULL constraint failures during type change.
+        $DB->execute("UPDATE {jitsi} SET tokeninterno = '' WHERE tokeninterno IS NULL");
+        $DB->execute("UPDATE {jitsi} SET token = '' WHERE token IS NULL");
 
         $fieldtoken = new xmldb_field('token', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL, null, null);
         if ($dbman->field_exists($table, $fieldtoken)) {
