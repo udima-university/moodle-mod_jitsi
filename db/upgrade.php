@@ -747,14 +747,86 @@ function xmldb_jitsi_upgrade($oldversion) {
         }
 
         // 3) Migrate old domain configuration into jitsi_servers if needed (remaining part of 2024122704).
+        // Try multiple legacy locations for the domain configuration.
         $olddomain = get_config('mod_jitsi', 'domain');
+        if (empty($olddomain)) {
+            // 2024 pre-migration stored keys in core config as jitsi_*.
+            $olddomain = get_config('core', 'jitsi_domain');
+            if (empty($olddomain)) {
+                $olddomain = get_config('', 'jitsi_domain'); // Fallback to global config.
+            }
+        }
+        if (empty($olddomain)) {
+            // Older installs may have kept values under the legacy plugin name 'jitsi'.
+            $olddomain = get_config('jitsi', 'domain');
+        }
         if (!empty($olddomain) && $olddomain !== 'meet.jit.si') {
-            $oldtype         = get_config('mod_jitsi', 'tokentype');
-            $oldappid        = get_config('mod_jitsi', 'app_id');
-            $oldsecret       = get_config('mod_jitsi', 'secret');
-            $old8x8appid     = get_config('mod_jitsi', '8x8app_id');
-            $old8x8apikeyid  = get_config('mod_jitsi', '8x8apikey_id');
-            $oldprivatekey   = get_config('mod_jitsi', 'privatykey');
+            // Pull values from mod_jitsi if present; else fall back to legacy core jitsi_* keys; else legacy plugin 'jitsi'.
+            $oldtype        = get_config('mod_jitsi', 'tokentype');
+            if ($oldtype === false || $oldtype === null || $oldtype === '') {
+                $oldtype = get_config('core', 'jitsi_tokentype');
+                if ($oldtype === false || $oldtype === null || $oldtype === '') {
+                    $oldtype = get_config('', 'jitsi_tokentype');
+                    if ($oldtype === false || $oldtype === null || $oldtype === '') {
+                        $oldtype = get_config('jitsi', 'tokentype');
+                    }
+                }
+            }
+
+            $oldappid       = get_config('mod_jitsi', 'app_id');
+            if ($oldappid === false || $oldappid === null) {
+                $oldappid = get_config('core', 'jitsi_app_id');
+                if ($oldappid === false || $oldappid === null) {
+                    $oldappid = get_config('', 'jitsi_app_id');
+                    if ($oldappid === false || $oldappid === null) {
+                        $oldappid = get_config('jitsi', 'app_id');
+                    }
+                }
+            }
+
+            $oldsecret      = get_config('mod_jitsi', 'secret');
+            if ($oldsecret === false || $oldsecret === null) {
+                $oldsecret = get_config('core', 'jitsi_secret');
+                if ($oldsecret === false || $oldsecret === null) {
+                    $oldsecret = get_config('', 'jitsi_secret');
+                    if ($oldsecret === false || $oldsecret === null) {
+                        $oldsecret = get_config('jitsi', 'secret');
+                    }
+                }
+            }
+
+            $old8x8appid    = get_config('mod_jitsi', '8x8app_id');
+            if ($old8x8appid === false || $old8x8appid === null) {
+                $old8x8appid = get_config('core', 'jitsi_8x8app_id');
+                if ($old8x8appid === false || $old8x8appid === null) {
+                    $old8x8appid = get_config('', 'jitsi_8x8app_id');
+                    if ($old8x8appid === false || $old8x8appid === null) {
+                        $old8x8appid = get_config('jitsi', '8x8app_id');
+                    }
+                }
+            }
+
+            $old8x8apikeyid = get_config('mod_jitsi', '8x8apikey_id');
+            if ($old8x8apikeyid === false || $old8x8apikeyid === null) {
+                $old8x8apikeyid = get_config('core', 'jitsi_8x8apikey_id');
+                if ($old8x8apikeyid === false || $old8x8apikeyid === null) {
+                    $old8x8apikeyid = get_config('', 'jitsi_8x8apikey_id');
+                    if ($old8x8apikeyid === false || $old8x8apikeyid === null) {
+                        $old8x8apikeyid = get_config('jitsi', '8x8apikey_id');
+                    }
+                }
+            }
+
+            $oldprivatekey  = get_config('mod_jitsi', 'privatykey');
+            if ($oldprivatekey === false || $oldprivatekey === null) {
+                $oldprivatekey = get_config('core', 'jitsi_privatykey');
+                if ($oldprivatekey === false || $oldprivatekey === null) {
+                    $oldprivatekey = get_config('', 'jitsi_privatykey');
+                    if ($oldprivatekey === false || $oldprivatekey === null) {
+                        $oldprivatekey = get_config('jitsi', 'privatykey');
+                    }
+                }
+            }
 
             if (!$DB->record_exists('jitsi_servers', ['domain' => $olddomain])) {
                 $server = new stdClass();
@@ -784,6 +856,14 @@ function xmldb_jitsi_upgrade($oldversion) {
         unset_config('8x8apikey_id', 'mod_jitsi');
         unset_config('privatykey', 'mod_jitsi');
         unset_config('domain', 'mod_jitsi');
+        // Also remove legacy core config keys if present.
+        unset_config('jitsi_tokentype');
+        unset_config('jitsi_app_id');
+        unset_config('jitsi_secret');
+        unset_config('jitsi_8x8app_id');
+        unset_config('jitsi_8x8apikey_id');
+        unset_config('jitsi_privatykey');
+        unset_config('jitsi_domain');
 
         upgrade_mod_savepoint(true, 2025101401, 'jitsi');
     }
