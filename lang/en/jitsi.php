@@ -36,6 +36,7 @@ $string['accountconnected'] = 'Account successfully connected and put <b>in use<
 $string['accountinsufficientprivileges'] = 'The streaming account set up has insufficient privileges. Please contact your administrator.';
 $string['accounts'] = 'Streaming/Recording Accounts';
 $string['action'] = 'Action';
+$string['actions'] = 'Actions';
 $string['activatetooltip'] = 'Click to put into use';
 $string['addaccount'] = 'Add account';
 $string['addedtoqueue'] = 'Added to queue';

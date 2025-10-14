@@ -701,5 +701,91 @@ function xmldb_jitsi_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2024122706, 'jitsi');
     }
 
+    if ($oldversion < 2025101400) {
+        // Ensure old plugin config entries are renamed from 'jitsi' to 'mod_jitsi' only if they exist.
+        if ($DB->record_exists('config_plugins', ['plugin' => 'jitsi'])) {
+            $DB->execute("UPDATE {config_plugins} SET plugin = 'mod_jitsi' WHERE plugin = 'jitsi'");
+        }
+
+        upgrade_mod_savepoint(true, 2025101400, 'jitsi');
+    }
+
+    if ($oldversion < 2025101401) {
+        // Self-heal for branches missing 20241227xx merges from master.
+        // 1) Ensure the jitsi_servers table exists (equivalent to 2024122703).
+        $table = new xmldb_table('jitsi_servers');
+        if (!$dbman->table_exists($table)) {
+            $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
+            $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '');
+            $table->add_field('type', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', null);
+            $table->add_field('domain', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '');
+            $table->add_field('appid', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '');
+            $table->add_field('secret', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '');
+            $table->add_field('eightbyeightappid', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '');
+            $table->add_field('eightbyeightapikeyid', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '');
+            $table->add_field('privatekey', XMLDB_TYPE_TEXT, null, null, null, null, null, null);
+            $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', null);
+            $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', null);
+            $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+            $dbman->create_table($table);
+        }
+
+        // 2) Ensure default server entry (equivalent to part of 2024122704).
+        if (!$DB->record_exists('jitsi_servers', ['domain' => 'meet.jit.si'])) {
+            $defaultserver = new stdClass();
+            $defaultserver->name         = 'Meet JitSi default';
+            $defaultserver->type         = 0;
+            $defaultserver->domain       = 'meet.jit.si';
+            $defaultserver->appid        = '';
+            $defaultserver->secret       = '';
+            $defaultserver->eightbyeightappid    = '';
+            $defaultserver->eightbyeightapikeyid = '';
+            $defaultserver->privatekey   = '';
+            $defaultserver->timecreated  = time();
+            $defaultserver->timemodified = time();
+            $DB->insert_record('jitsi_servers', $defaultserver);
+        }
+
+        // 3) Migrate old domain configuration into jitsi_servers if needed (remaining part of 2024122704).
+        $olddomain = get_config('mod_jitsi', 'domain');
+        if (!empty($olddomain) && $olddomain !== 'meet.jit.si') {
+            $oldtype         = get_config('mod_jitsi', 'tokentype');
+            $oldappid        = get_config('mod_jitsi', 'app_id');
+            $oldsecret       = get_config('mod_jitsi', 'secret');
+            $old8x8appid     = get_config('mod_jitsi', '8x8app_id');
+            $old8x8apikeyid  = get_config('mod_jitsi', '8x8apikey_id');
+            $oldprivatekey   = get_config('mod_jitsi', 'privatykey');
+
+            if (!$DB->record_exists('jitsi_servers', ['domain' => $olddomain])) {
+                $server = new stdClass();
+                $server->name                = $olddomain;
+                $server->type                = is_numeric($oldtype) ? (int)$oldtype : 0;
+                $server->domain              = $olddomain;
+                $server->appid               = (string)$oldappid;
+                $server->secret              = (string)$oldsecret;
+                $server->eightbyeightappid   = (string)$old8x8appid;
+                $server->eightbyeightapikeyid= (string)$old8x8apikeyid;
+                $server->privatekey          = (string)$oldprivatekey;
+                $server->timecreated         = time();
+                $server->timemodified        = time();
+                $newserverid = $DB->insert_record('jitsi_servers', $server);
+                set_config('server', $newserverid, 'mod_jitsi');
+            } else {
+                $existingsrv = $DB->get_record('jitsi_servers', ['domain' => $olddomain]);
+                set_config('server', $existingsrv->id, 'mod_jitsi');
+            }
+        }
+
+        // 4) Remove deprecated configs if present (equivalent to 2024122706).
+        unset_config('tokentype', 'mod_jitsi');
+        unset_config('app_id', 'mod_jitsi');
+        unset_config('secret', 'mod_jitsi');
+        unset_config('8x8app_id', 'mod_jitsi');
+        unset_config('8x8apikey_id', 'mod_jitsi');
+        unset_config('privatykey', 'mod_jitsi');
+        unset_config('domain', 'mod_jitsi');
+
+        upgrade_mod_savepoint(true, 2025101401, 'jitsi');
+    }
     return true;
 }
