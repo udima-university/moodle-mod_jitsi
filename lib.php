@@ -569,7 +569,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         $payloadencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
         $headerencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
         openssl_sign( $headerencoded . "." . $payloadencoded, $signature, $privatykey, OPENSSL_ALGO_SHA256);
-    } else if (get_config('mod_jitsi', 'tokentype') == '1') {
+    } else if (set_config('jitsi', 'tokentype') == '1') {
         $header = json_encode([
             "kid" => "jitsi/custom_key_name",
             "typ" => "JWT",
@@ -1321,7 +1321,7 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
         $payloadencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
         $headerencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
         openssl_sign( $headerencoded . "." . $payloadencoded, $signature, $privatykey, OPENSSL_ALGO_SHA256);
-    } else if (get_config('mod_jitsi', 'tokentype') == '1') {
+    } else if (set_config('jitsi', 'tokentype') == '1') {
         $header = json_encode([
             "kid" => "jitsi/custom_key_name",
             "typ" => "JWT",
