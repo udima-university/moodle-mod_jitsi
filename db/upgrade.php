@@ -848,6 +848,20 @@ function xmldb_jitsi_upgrade($oldversion) {
             }
         }
 
+        // 2b) Migrate leftover CORE config entries (config.name LIKE 'jitsi_%') into mod_jitsi, if 2024122701 didn't run on this branch.
+        $corejitsi = $DB->get_records_select('config', "name LIKE 'jitsi_%'");
+        foreach ($corejitsi as $rec) {
+            $newname = substr($rec->name, 6); // strip 'jitsi_'
+            // Avoid overwriting existing mod_jitsi values.
+            if (!$DB->record_exists('config_plugins', ['plugin' => 'mod_jitsi', 'name' => $newname])) {
+                set_config($newname, $rec->value, 'mod_jitsi');
+            }
+        }
+        // Remove migrated CORE keys to avoid duplicates.
+        if (!empty($corejitsi)) {
+            $DB->delete_records_select('config', "name LIKE 'jitsi_%'");
+        }
+
         // 4) Remove deprecated configs if present (equivalent to 2024122706).
         unset_config('tokentype', 'mod_jitsi');
         unset_config('app_id', 'mod_jitsi');
