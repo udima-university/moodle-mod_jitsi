@@ -320,7 +320,16 @@ class mobile {
         $data['interface_config'] = $interfaceconfig;
 
         $data['is_desktop'] = $args['appisdesktop'];
-        $data['jitsi_domain'] = get_config('mod_jitsi', 'domain');
+        global $DB;
+        $serverid = get_config('mod_jitsi', 'server');
+        $domain = 'meet.jit.si';
+        if (!empty($serverid)) {
+            $srv = $DB->get_record('jitsi_servers', ['id' => $serverid]);
+            if ($srv && !empty($srv->domain)) {
+                $domain = $srv->domain;
+            }
+        }
+        $data['jitsi_domain'] = $domain;
         $data['room'] = $sessionnorm;
 
         return [

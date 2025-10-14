@@ -314,7 +314,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
 
     $streamingoption = '';
     if ((get_config('mod_jitsi', 'livebutton') == 1) && (has_capability('mod/jitsi:record', $PAGE->context))
-        && (get_config('mod_jitsi', 'streamingoption ') == 0)) {
+        && (get_config('mod_jitsi', 'streamingoption') == 0)) {
         $streamingoption = 'livestreaming';
     }
 
@@ -382,7 +382,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     if ($user == null) {
         if (get_config('mod_jitsi', 'livebutton') == 1 && has_capability('mod/jitsi:record', $PAGE->context)
             && $account != null && $universal == false
-            && ($CFG->jitsi_streamingoption == 1) && $jitsi->sessionwithtoken == 0) {
+            && (get_config('mod_jitsi', 'streamingoption') == 1) && $jitsi->sessionwithtoken == 0) {
             
             if ($CFG->branch >= 500) {
                 echo "<div class=\"text-end\">"; 
@@ -569,7 +569,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         $payloadencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
         $headerencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
         openssl_sign( $headerencoded . "." . $payloadencoded, $signature, $privatykey, OPENSSL_ALGO_SHA256);
-    } else if (set_config('jitsi', 'tokentype') == '1') {
+    } else if (get_config('mod_jitsi', 'tokentype') == '1') {
         $header = json_encode([
             "kid" => "jitsi/custom_key_name",
             "typ" => "JWT",
@@ -1321,7 +1321,7 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
         $payloadencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
         $headerencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
         openssl_sign( $headerencoded . "." . $payloadencoded, $signature, $privatykey, OPENSSL_ALGO_SHA256);
-    } else if (set_config('jitsi', 'tokentype') == '1') {
+    } else if (get_config('mod_jitsi', 'tokentype') == '1') {
         $header = json_encode([
             "kid" => "jitsi/custom_key_name",
             "typ" => "JWT",
