@@ -41,7 +41,7 @@ $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
 if ($action === 'delete' && $id > 0) {
     if (!$server = $DB->get_record('jitsi_servers', ['id' => $id])) {
-        throw new moodle_exception('invalidid', 'error');
+        throw new moodle_exception('Invalid id');
     }
 
     if ($confirm) {
@@ -72,7 +72,7 @@ if ($action === 'edit' && $id > 0) {
     if ($server = $DB->get_record('jitsi_servers', ['id' => $id])) {
         $mform->set_data($server);
     } else {
-        throw new moodle_exception('invalidid', 'error');
+        throw new moodle_exception('Invalid id');
     }
 }
 
@@ -82,7 +82,7 @@ if ($mform->is_cancelled()) {
 } else if ($data = $mform->get_data()) {
     if ($data->id) {
         if (!$server = $DB->get_record('jitsi_servers', ['id' => $data->id])) {
-            throw new moodle_exception('invalidid', 'error');
+            throw new moodle_exception('Invalid Id');
         }
 
         $server->name   = $data->name;
