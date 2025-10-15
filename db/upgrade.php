@@ -453,8 +453,8 @@ function xmldb_jitsi_upgrade($oldversion) {
 
         // Define field status to be added to jitsi.
         $table = new xmldb_table('jitsi');
-        $field = new xmldb_field('numberofparticipants', XMLDB_TYPE_INTEGER, '3', XMLDB_UNSIGNED
-            , XMLDB_NOTNULL, null, '0', 'status');
+        $field = new xmldb_field('numberofparticipants', XMLDB_TYPE_INTEGER, '3', XMLDB_UNSIGNED, null, null, '0',
+            'status');
 
         // Conditionally launch add field status.
         if (!$dbman->field_exists($table, $field)) {
@@ -587,16 +587,41 @@ function xmldb_jitsi_upgrade($oldversion) {
 
     if ($oldversion < 2025021600) {
         $table = new xmldb_table('jitsi');
-        $field = new xmldb_field('tokeninvitacion', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
-        $DB->execute("UPDATE {jitsi} SET tokeninvitacion = '' WHERE tokeninvitacion IS NULL");
+        $field = new xmldb_field('tokeninvitacion');
 
         if ($dbman->field_exists($table, $field)) {
-            $dbman->change_field_notnull($table, $field);
+            // Step 1: Update NULL values to empty string using Moodle's API (portable).
+            $records = $DB->get_records_select('jitsi', 
+                $DB->sql_isempty('jitsi', 'tokeninvitacion', false, true) . ' OR tokeninvitacion IS NULL');
+            foreach ($records as $record) {
+                $record->tokeninvitacion = '';
+                $DB->update_record('jitsi', $record);
+            }
+
+            // Step 2: Create temporary field with correct type.
+            $tmpfield = new xmldb_field('tokeninvitacion_tmp', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, '');
+            if (!$dbman->field_exists($table, $tmpfield)) {
+                $dbman->add_field($table, $tmpfield);
+            }
+
+            // Step 3: Copy data using Moodle's API (portable across all DBs).
+            $allrecords = $DB->get_records('jitsi');
+            foreach ($allrecords as $record) {
+                $update = new stdClass();
+                $update->id = $record->id;
+                $update->tokeninvitacion_tmp = empty($record->tokeninvitacion) ? '' : $record->tokeninvitacion;
+                $DB->update_record('jitsi', $update);
+            }
+
+            // Step 4: Drop old field and rename temp.
+            $dbman->drop_field($table, $field);
+            $dbman->rename_field($table, $tmpfield, 'tokeninvitacion');
         }
 
         upgrade_mod_savepoint(true, 2025021600, 'jitsi');
     }
 
+    // ...existing code...
 
     if ($oldversion < 2025101400) {
         // Ensure old plugin config entries are renamed from 'jitsi' to 'mod_jitsi' only if they exist.
@@ -613,13 +638,13 @@ function xmldb_jitsi_upgrade($oldversion) {
         $table = new xmldb_table('jitsi_servers');
         if (!$dbman->table_exists($table)) {
             $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
-            $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '');
+            $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null);
             $table->add_field('type', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', null);
-            $table->add_field('domain', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '');
-            $table->add_field('appid', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '');
-            $table->add_field('secret', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '');
-            $table->add_field('eightbyeightappid', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '');
-            $table->add_field('eightbyeightapikeyid', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '');
+            $table->add_field('domain', XMLDB_TYPE_CHAR, '255', null, null, null, null, null);
+            $table->add_field('appid', XMLDB_TYPE_CHAR, '255', null, null, null, null, null);
+            $table->add_field('secret', XMLDB_TYPE_CHAR, '255', null, null, null, null, null);
+            $table->add_field('eightbyeightappid', XMLDB_TYPE_CHAR, '255', null, null, null, null, null);
+            $table->add_field('eightbyeightapikeyid', XMLDB_TYPE_CHAR, '255', null, null, null, null, null);
             $table->add_field('privatekey', XMLDB_TYPE_TEXT, null, null, null, null, null, null);
             $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', null);
             $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', null);
@@ -650,7 +675,7 @@ function xmldb_jitsi_upgrade($oldversion) {
             // 2024 pre-migration stored keys in core config as jitsi_*.
             $olddomain = get_config('core', 'jitsi_domain');
             if (empty($olddomain)) {
-                $olddomain = get_config('core', 'jitsi_domain'); // Fallback to global config.
+                $olddomain = get_config(null, 'jitsi_domain'); // Fallback to global config.
             }
         }
         if (empty($olddomain)) {
@@ -663,7 +688,7 @@ function xmldb_jitsi_upgrade($oldversion) {
             if ($oldtype === false || $oldtype === null || $oldtype === '') {
                 $oldtype = get_config('core', 'jitsi_tokentype');
                 if ($oldtype === false || $oldtype === null || $oldtype === '') {
-                    $oldtype = get_config('', 'jitsi_tokentype');
+                    $oldtype = get_config(null, 'jitsi_tokentype');
                     if ($oldtype === false || $oldtype === null || $oldtype === '') {
                         $oldtype = get_config('jitsi', 'tokentype');
                     }
@@ -674,7 +699,7 @@ function xmldb_jitsi_upgrade($oldversion) {
             if ($oldappid === false || $oldappid === null) {
                 $oldappid = get_config('core', 'jitsi_app_id');
                 if ($oldappid === false || $oldappid === null) {
-                    $oldappid = get_config('', 'jitsi_app_id');
+                    $oldappid = get_config(null, 'jitsi_app_id');
                     if ($oldappid === false || $oldappid === null) {
                         $oldappid = get_config('jitsi', 'app_id');
                     }
@@ -685,7 +710,7 @@ function xmldb_jitsi_upgrade($oldversion) {
             if ($oldsecret === false || $oldsecret === null) {
                 $oldsecret = get_config('core', 'jitsi_secret');
                 if ($oldsecret === false || $oldsecret === null) {
-                    $oldsecret = get_config('', 'jitsi_secret');
+                    $oldsecret = get_config(null, 'jitsi_secret');
                     if ($oldsecret === false || $oldsecret === null) {
                         $oldsecret = get_config('jitsi', 'secret');
                     }
@@ -696,7 +721,7 @@ function xmldb_jitsi_upgrade($oldversion) {
             if ($old8x8appid === false || $old8x8appid === null) {
                 $old8x8appid = get_config('core', 'jitsi_8x8app_id');
                 if ($old8x8appid === false || $old8x8appid === null) {
-                    $old8x8appid = get_config('', 'jitsi_8x8app_id');
+                    $old8x8appid = get_config(null, 'jitsi_8x8app_id');
                     if ($old8x8appid === false || $old8x8appid === null) {
                         $old8x8appid = get_config('jitsi', '8x8app_id');
                     }
@@ -707,7 +732,7 @@ function xmldb_jitsi_upgrade($oldversion) {
             if ($old8x8apikeyid === false || $old8x8apikeyid === null) {
                 $old8x8apikeyid = get_config('core', 'jitsi_8x8apikey_id');
                 if ($old8x8apikeyid === false || $old8x8apikeyid === null) {
-                    $old8x8apikeyid = get_config('', 'jitsi_8x8apikey_id');
+                    $old8x8apikeyid = get_config(null, 'jitsi_8x8apikey_id');
                     if ($old8x8apikeyid === false || $old8x8apikeyid === null) {
                         $old8x8apikeyid = get_config('jitsi', '8x8apikey_id');
                     }
@@ -718,7 +743,7 @@ function xmldb_jitsi_upgrade($oldversion) {
             if ($oldprivatekey === false || $oldprivatekey === null) {
                 $oldprivatekey = get_config('core', 'jitsi_privatykey');
                 if ($oldprivatekey === false || $oldprivatekey === null) {
-                    $oldprivatekey = get_config('', 'jitsi_privatykey');
+                    $oldprivatekey = get_config(null, 'jitsi_privatykey');
                     if ($oldprivatekey === false || $oldprivatekey === null) {
                         $oldprivatekey = get_config('jitsi', 'privatykey');
                     }
