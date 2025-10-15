@@ -599,7 +599,7 @@ function xmldb_jitsi_upgrade($oldversion) {
             }
 
             // Step 2: Create temporary field with correct type.
-            $tmpfield = new xmldb_field('tokeninvitacion_tmp', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, '');
+            $tmpfield = new xmldb_field('tokeninvitacion_tmp', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
             if (!$dbman->field_exists($table, $tmpfield)) {
                 $dbman->add_field($table, $tmpfield);
             }
