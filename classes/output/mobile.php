@@ -262,10 +262,7 @@ class mobile {
 
         $jwt = $base64urlheader . "." . $base64urlpayload . "." . $base64urlsignature;
 
-        $desktop = '';
-        if (has_capability('mod/jitsi:sharedesktop', $context)) {
-            $desktop = 'desktop';
-        }
+        $desktop = 'desktop';
 
         $youtubeoption = '';
         if (get_config('mod_jitsi', 'shareyoutube') == 1) {
