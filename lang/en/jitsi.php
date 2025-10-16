@@ -105,6 +105,7 @@ $string['editserver'] = 'Editar servidor';
 $string['entersession'] = 'Enter to session';
 $string['error'] = 'Error';
 $string['errordeleting'] = 'Error deleting';
+$string['exitsession'] = 'Exit session';
 $string['experimental'] = 'Experimental';
 $string['experimentalex'] = 'These are options that we are experimenting with and that may disappear in future versions.';
 $string['externalinvitations'] = 'External invitations';

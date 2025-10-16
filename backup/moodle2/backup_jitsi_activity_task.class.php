@@ -36,7 +36,6 @@ require_once($CFG->dirroot . '/mod/jitsi/backup/moodle2/backup_jitsi_stepslib.ph
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_jitsi_activity_task extends backup_activity_task {
-
     /**
      * No specific settings for this activity
      */
@@ -62,11 +61,11 @@ class backup_jitsi_activity_task extends backup_activity_task {
         $base = preg_quote($CFG->wwwroot, '/');
 
         // Link to the list of newmodules.
-        $search = '/('.$base.'\/mod\/jitsi\/index.php\?id\=)([0-9]+)/';
+        $search = '/(' . $base . '\/mod\/jitsi\/index.php\?id\=)([0-9]+)/';
         $content = preg_replace($search, '$@JITSIINDEX*$2@$', $content);
 
         // Link to jitsi view by moduleid.
-        $search = '/('.$base.'\/mod\/jitsi\/view.php\?id\=)([0-9]+)/';
+        $search = '/(' . $base . '\/mod\/jitsi\/view.php\?id\=)([0-9]+)/';
         $content = preg_replace($search, '$@JITSIVIEWBYID*$2@$', $content);
 
         return $content;

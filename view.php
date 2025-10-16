@@ -25,8 +25,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(__FILE__).'/lib.php');
+require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
+require_once(dirname(__FILE__) . '/lib.php');
 require_once('view_table.php');
 require_once($CFG->libdir . '/formslib.php');
 
@@ -38,7 +38,6 @@ require_once($CFG->libdir . '/formslib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class datesearchattendees_form extends moodleform {
-
     /**
      * Defines forms elements
      */
@@ -102,8 +101,11 @@ $activetab = $tab;
 if ($selecteddate == 0) {
     $selecteddate = time();
 } else {
-    $selecteddate = make_timestamp($selecteddate['year'], $selecteddate['month'],
-    $selecteddate['day']); // Por defecto, la fecha de hoy.
+    $selecteddate = make_timestamp(
+        $selecteddate['year'],
+        $selecteddate['month'],
+        $selecteddate['day']
+    ); // Por defecto, la fecha de hoy.
 }
 if ($id) {
     $cm = get_coursemodule_from_id('jitsi', $id, 0, false, MUST_EXIST);
@@ -214,7 +216,7 @@ switch (get_config('mod_jitsi', 'id')) {
         $nom = $USER->username;
         break;
     case 'nameandsurname':
-        $nom = $USER->firstname.' '.$USER->lastname;
+        $nom = $USER->firstname . ' ' . $USER->lastname;
         break;
     case 'alias':
         break;
@@ -233,7 +235,7 @@ if ($jitsi->sessionwithtoken == 0) {
     $jitsiid = $jitsi->id;
     $jitsiname = $jitsi->name;
 } else {
-    $sql = "select * from {jitsi} where tokeninterno = '".$jitsi->tokeninvitacion."'";
+    $sql = "select * from {jitsi} where tokeninterno = '" . $jitsi->tokeninvitacion . "'";
     $jitsiinvitado = $DB->get_record_sql($sql);
     if ($jitsiinvitado != null) {
         $courseinvitado = $DB->get_record('course', ['id' => $jitsiinvitado->course]);
@@ -250,11 +252,11 @@ if ($errorborrado == false) {
     for ($i = 0; $i < $max; $i++) {
         if ($i != $max - 1) {
             if ($allowed[$i] == 0) {
-                $sesparam .= string_sanitize($courseshortname).$optionsseparator[get_config('mod_jitsi', 'separator')];
+                $sesparam .= string_sanitize($courseshortname) . $optionsseparator[get_config('mod_jitsi', 'separator')];
             } else if ($allowed[$i] == 1) {
-                $sesparam .= $jitsiid.$optionsseparator[get_config('mod_jitsi', 'separator')];
+                $sesparam .= $jitsiid . $optionsseparator[get_config('mod_jitsi', 'separator')];
             } else if ($allowed[$i] == 2) {
-                $sesparam .= string_sanitize($jitsiname).$optionsseparator[get_config('mod_jitsi', 'separator')];
+                $sesparam .= string_sanitize($jitsiname) . $optionsseparator[get_config('mod_jitsi', 'separator')];
             }
         } else {
             if ($allowed[$i] == 0) {
@@ -266,7 +268,7 @@ if ($errorborrado == false) {
             }
         }
     }
-    $avatar = $CFG->wwwroot.'/user/pix.php/'.$USER->id.'/f1.jpg';
+    $avatar = $CFG->wwwroot . '/user/pix.php/' . $USER->id . '/f1.jpg';
     $urlparams = [
         'avatar' => $avatar,
         'nom' => $nom,
@@ -296,16 +298,16 @@ if ($CFG->branch == 311) {
 $contextmodule = context_module::instance($cm->id);
 
 $sqllastparticipating = 'select timecreated from {logstore_standard_log} where contextid = '
-    .$contextmodule->id.' and (action = \'participating\' or action = \'enter\') order by timecreated DESC limit 1';
+    . $contextmodule->id . ' and (action = \'participating\' or action = \'enter\') order by timecreated DESC limit 1';
 $usersconnected = $DB->get_record_sql($sqllastparticipating);
 if ($usersconnected != null) {
-    if ((getdate()[0] - $usersconnected->timecreated) > 72 ) {
+    if ((getdate()[0] - $usersconnected->timecreated) > 72) {
         $jitsi->numberofparticipants = 0;
         $DB->update_record('jitsi', $jitsi);
     }
 }
 if ($usersconnected != null) {
-    if ($jitsi->numberofparticipants == 0 && (getdate()[0] - $usersconnected->timecreated) > 72 ) {
+    if ($jitsi->numberofparticipants == 0 && (getdate()[0] - $usersconnected->timecreated) > 72) {
         $jitsi->sourcerecord = null;
         $DB->update_record('jitsi', $jitsi);
     }
@@ -325,7 +327,7 @@ echo "<path d=\"M4 16s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H4Zm4-5.95a2.5 2.5 0 1 0 0
 echo "<path d=\"M2 1a2 2 0 0 0-2 2v9.5A1.5 1.5 0 0 0 1.5 14h.653a5.373 5.373 0 0 1 1.066-2H1V3a1 1 0 0 1 1-1h12a1 1 0 0 1
      1 1v9h-2.219c.554.654.89 1.373 1.066 2h.653a1.5 1.5 0 0 0 1.5-1.5V3a2 2 0 0 0-2-2H2Z\"/>";
 echo "</svg>";
-echo (" ".$jitsi->numberofparticipants." ".get_string('connectedattendeesnow', 'jitsi'));
+echo (" " . $jitsi->numberofparticipants . " " . get_string('connectedattendeesnow', 'jitsi'));
 echo "<p></p>";
 if ($jitsi->sessionwithtoken) {
     echo "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\"
@@ -334,7 +336,7 @@ if ($jitsi->sessionwithtoken) {
         0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5
         1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z\"/>";
     echo "</svg> ";
-    $sql = "select * from {jitsi} where tokeninterno = '".$jitsi->tokeninvitacion."'";
+    $sql = "select * from {jitsi} where tokeninterno = '" . $jitsi->tokeninvitacion . "'";
     $jitsimaster = $DB->get_record_sql($sql);
     $coursemaster = $DB->get_record('course', ['id' => $jitsimaster->course]);
     echo get_string('sessionshared', 'jitsi', $coursemaster->shortname);
@@ -349,7 +351,7 @@ if ($jitsi->sourcerecord != null) {
     echo "</svg> ";
     $source = $DB->get_record('jitsi_source_record', ['id' => $jitsi->sourcerecord]);
     $author = $DB->get_record('user', ['id' => $source->userid]);
-    echo addslashes(get_string('sessionisbeingrecordingby', 'jitsi', $author->firstname." ".$author->lastname));
+    echo addslashes(get_string('sessionisbeingrecordingby', 'jitsi', $author->firstname . " " . $author->lastname));
 }
 echo "<p></p>";
 echo get_string('minutesconnected', 'jitsi', getminutes($id, $USER->id));
@@ -369,8 +371,10 @@ if ($jitsi->sessionwithtoken == 1) {
 }
 
 if ($today[0] < $fechacierre || $fechacierre == 0) {
-    if ($today[0] > (($fechainicio)) ||
-        has_capability('mod/jitsi:moderation', $context) && $today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))) {
+    if (
+        $today[0] > (($fechainicio)) ||
+        has_capability('mod/jitsi:moderation', $context) && $today[0] > (($jitsi->timeopen) - ($jitsi->minpretime * 60))
+    ) {
         echo "<br><br>";
         $button = new moodle_url('/mod/jitsi/session.php', $urlparams);
         $options = [
@@ -388,7 +392,7 @@ if ($today[0] < $fechacierre || $fechacierre == 0) {
 
 echo "<br><br>";
 
-$sql = 'select * from {jitsi_record} where jitsi = '.$jitsiid.' and deleted = 0 order by id desc';
+$sql = 'select * from {jitsi_record} where jitsi = ' . $jitsiid . ' and deleted = 0 order by id desc';
 $records = $DB->get_records_sql($sql);
 
 if (has_capability('mod/jitsi:viewusersonsession', $PAGE->context)) {
@@ -408,9 +412,11 @@ echo "<ul class=\"nav nav-tabs\" id=\"myTab\" role=\"tablist\">";
     echo "  </li>";
 
 if (has_capability('mod/jitsi:viewrecords', $PAGE->context)) {
-    if (($records && isallvisible($records)) ||
+    if (
+        ($records && isallvisible($records)) ||
         (has_capability('mod/jitsi:record', $PAGE->context) && $records) ||
-        get_config('mod_jitsi', 'streamingoption') == 1) {
+        get_config('mod_jitsi', 'streamingoption') == 1
+    ) {
         echo "  <li class=\"nav-item\">";
         echo "    <a class=\"nav-link " . ($activetab == 'record' ? 'active' : '') .
             "\" id=\"record-tab\" " . ($CFG->branch >= 500 ? 'data-bs-toggle' : 'data-toggle') . "=\"tab\" href=\"#record\"
@@ -459,7 +465,7 @@ if (has_capability('mod/jitsi:viewrecords', $PAGE->context)) {
                    {jitsi_source_record}.timecreated';
         $from = '{jitsi_record}, {jitsi_source_record}';
         $where = '{jitsi_record}.source = {jitsi_source_record}.id AND
-                  {jitsi_record}.jitsi = '.$jitsiid.' and
+                  {jitsi_record}.jitsi = ' . $jitsiid . ' and
                   {jitsi_record}.deleted = 0';
         if (!has_capability('mod/jitsi:hide', $context)) {
             $where .= ' AND {jitsi_record}.visible = 1';
@@ -512,11 +518,15 @@ if (has_capability('mod/jitsi:viewusersonsession', $PAGE->context)) {
             foreach ($users as $user) {
                 $urluser = new moodle_url('/user/profile.php', ['id' => $user->id]);
                 $table->data[] = [
-                    html_writer::link($urluser, fullname($user),
-                        ['data-toggle' => 'tooltip',
-                        'data-placement' => 'top',
-                        'title' => $user->username,
-                        ]),
+                    html_writer::link(
+                        $urluser,
+                        fullname($user),
+                        [
+                            'data-toggle' => 'tooltip',
+                            'data-placement' => 'top',
+                            'title' => $user->username,
+                        ]
+                    ),
                         getminutesdates($id, $user->id, $selecteddate, $selecteddate + DAYSECS),
                         getminutes($id, $user->id),
                 ];

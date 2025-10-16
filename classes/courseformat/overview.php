@@ -1,7 +1,27 @@
 <?php
-namespace mod_jitsi\courseformat;
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
+/**
+ * Overview class to display information about the Jitsi module in the course overview (Moodle 5.0+).
+ *
+ * @package   mod_jitsi
+ * @copyright 2024 Sergio Comerón Sánchez-Paniagua <jitsi@sergiocomeron.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+namespace mod_jitsi\courseformat;
 
 use core_courseformat\activityoverviewbase;
 use core_courseformat\local\overview\overviewitem;
@@ -12,7 +32,6 @@ use html_writer;
  * Overview class to display information about the Jitsi module in the course overview (Moodle 5.0+).
  */
 class overview extends activityoverviewbase {
-
     /**
      * Returns additional items to be displayed in the course overview.
      *
@@ -41,7 +60,6 @@ class overview extends activityoverviewbase {
         } else {
             return null;
         }
-
     }
 
     /**

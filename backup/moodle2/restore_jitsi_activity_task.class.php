@@ -38,7 +38,6 @@ require_once($CFG->dirroot . '/mod/jitsi/backup/moodle2/restore_jitsi_stepslib.p
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_jitsi_activity_task extends restore_activity_task {
-
     /**
      * Define (add) particular settings this activity can have
      */
@@ -77,7 +76,6 @@ class restore_jitsi_activity_task extends restore_activity_task {
         $rules[] = new restore_decode_rule('JITSIINDEX', '/mod/jitsi/index.php?id=$1', 'course');
 
         return $rules;
-
     }
 
     /**

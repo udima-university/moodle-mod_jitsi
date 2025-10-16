@@ -35,7 +35,6 @@ namespace mod_jitsi\event;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class jitsi_press_record_button extends \core\event\base {
-
     /**
      * Init method.
      */
@@ -79,5 +78,4 @@ class jitsi_press_record_button extends \core\event\base {
     public static function get_objectid_mapping() {
         return false;
     }
-
 }

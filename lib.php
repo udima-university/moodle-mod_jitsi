@@ -45,7 +45,7 @@ require_once(__DIR__ . '/deprecatedlib.php');
 function jitsi_supports($feature) {
     global $CFG;
     if ($CFG->branch >= 400) {
-        switch($feature) {
+        switch ($feature) {
             case FEATURE_MOD_INTRO:
                 return true;
             case FEATURE_SHOW_DESCRIPTION:
@@ -60,7 +60,7 @@ function jitsi_supports($feature) {
                 return null;
         }
     } else {
-        switch($feature) {
+        switch ($feature) {
             case FEATURE_MOD_INTRO:
                 return true;
             case FEATURE_SHOW_DESCRIPTION:
@@ -87,9 +87,9 @@ function jitsi_supports($feature) {
  * @param mod_jitsi_mod_form $mform The form instance itself (if needed)
  * @return int The id of the newly inserted jitsi record
  */
-function jitsi_add_instance($jitsi,  $mform = null) {
+function jitsi_add_instance($jitsi, $mform = null) {
     global $CFG, $DB;
-    require_once($CFG->dirroot.'/mod/jitsi/locallib.php');
+    require_once($CFG->dirroot . '/mod/jitsi/locallib.php');
     $time = time();
     $jitsi->timecreated = $time;
     $cmid = $jitsi->coursemodule;
@@ -109,9 +109,9 @@ function jitsi_add_instance($jitsi,  $mform = null) {
  * @param mod_jitsi_mod_form $mform The form instance itself (if needed)
  * @return boolean Success/Fail
  */
-function jitsi_update_instance($jitsi,  $mform = null) {
+function jitsi_update_instance($jitsi, $mform = null) {
     global $CFG, $DB;
-    require_once($CFG->dirroot.'/mod/jitsi/locallib.php');
+    require_once($CFG->dirroot . '/mod/jitsi/locallib.php');
 
     $jitsi->timemodified = time();
     $jitsi->id = $jitsi->instance;
@@ -211,15 +211,28 @@ function jitsi_myprofile_navigation(core_user\output\myprofile\tree $tree, $user
     if (get_config('mod_jitsi', 'privatesessions') == 1) {
         $urlparams = ['user' => $user->id];
         $url = new moodle_url('/mod/jitsi/viewpriv.php', $urlparams);
-        $category = new core_user\output\myprofile\category('jitsi',
-            get_string('jitsi', 'jitsi'), null);
+        $category = new core_user\output\myprofile\category(
+            'jitsi',
+            get_string('jitsi', 'jitsi'),
+            null,
+        );
         $tree->add_category($category);
         if ($iscurrentuser == 0) {
-            $node = new core_user\output\myprofile\node('jitsi', 'jitsi',
-                get_string('privatesession', 'jitsi', $user->firstname), null, $url);
+            $node = new core_user\output\myprofile\node(
+                'jitsi',
+                'jitsi',
+                get_string('privatesession', 'jitsi', $user->firstname),
+                null,
+                $url,
+            );
         } else {
-            $node = new core_user\output\myprofile\node('jitsi', 'jitsi',
-                get_string('myprivatesession', 'jitsi'), null, $url);
+            $node = new core_user\output\myprofile\node(
+                'jitsi',
+                'jitsi',
+                get_string('myprivatesession', 'jitsi'),
+                null,
+                $url,
+            );
         }
         $tree->add_node($node);
     }
@@ -275,8 +288,17 @@ function string_sanitize($string, $forcelowercase = true, $anal = false) {
  * @param bool $universal - Say if is universal session
  * @param stdClass $user - User object
  */
-function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jitsi, $universal = false,
-        $user = null) {
+function createsession(
+    $teacher,
+    $cmid,
+    $avatar,
+    $nombre,
+    $session,
+    $mail,
+    $jitsi,
+    $universal = false,
+    $user = null
+) {
     global $CFG, $DB, $PAGE, $USER;
 
     $serverid = get_config('mod_jitsi', 'server');
@@ -310,11 +332,14 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     }
 
     echo "<script src=\"//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js\"></script>";
-    echo "<script src=\"https://".$domain."/external_api.js\"></script>\n";
+    echo "<script src=\"https://" . $domain . "/external_api.js\"></script>\n";
 
     $streamingoption = '';
-    if ((get_config('mod_jitsi', 'livebutton') == 1) && (has_capability('mod/jitsi:record', $PAGE->context))
-        && (get_config('mod_jitsi', 'streamingoption') == 0)) {
+    if (
+        (get_config('mod_jitsi', 'livebutton') == 1) &&
+        (has_capability('mod/jitsi:record', $PAGE->context)) &&
+        (get_config('mod_jitsi', 'streamingoption') == 0)
+    ) {
         $streamingoption = 'livestreaming';
     }
 
@@ -343,25 +368,28 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     }
 
     $participantspane = '';
-    if (has_capability('mod/jitsi:moderation', $PAGE->context) || get_config('mod_jitsi', 'participantspane') == 1 ) {
+    if (
+        has_capability('mod/jitsi:moderation', $PAGE->context) ||
+        get_config('mod_jitsi', 'participantspane') == 1
+    ) {
         $participantspane = 'participants-pane';
     }
 
     $raisehand = '';
-    if (get_config('mod_jitsi', 'raisehand') == 1 ) {
+    if (get_config('mod_jitsi', 'raisehand') == 1) {
         $raisehand = 'raisehand';
     }
 
     $whiteboard = '';
-    if (get_config('mod_jitsi', 'whiteboard') == 1 ) {
+    if (get_config('mod_jitsi', 'whiteboard') == 1) {
         $whiteboard = 'whiteboard';
     }
 
     $buttons = "['microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
-        'fodeviceselection', 'hangup', 'chat', '".$record."', 'etherpad', '".$youtubeoption."',
-        'settings', '".$raisehand."', 'videoquality', '".$streamingoption."','filmstrip', '".$invite."', 'stats',
-        'shortcuts', 'tileview', '".$bluroption."', 'download', 'help', '".$muteeveryone."',
-        '".$mutevideoeveryone."', '".$security."', '".$participantspane."', '".$whiteboard."']";
+        'fodeviceselection', 'hangup', 'chat', '" . $record . "', 'etherpad', '" . $youtubeoption . "',
+        'settings', '" . $raisehand . "', 'videoquality', '" . $streamingoption . "', 'filmstrip', '" . $invite . "', 'stats',
+        'shortcuts', 'tileview', '" . $bluroption . "', 'download', 'help', '" . $muteeveryone . "',
+        '" . $mutevideoeveryone . "', '" . $security . "', '" . $participantspane . "', '" . $whiteboard . "']";
 
     echo "<div class=\"row\">";
     echo "<div class=\"col-sm\">";
@@ -374,20 +402,22 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "</div>";
 
     if ($CFG->branch >= 500) {
-        echo "<div class=\"col-sm-3 text-end\">"; 
+        echo "<div class=\"col-sm-3 text-end\">";
     } else {
-        echo "<div class=\"col-sm-3 text-right\">"; 
+        echo "<div class=\"col-sm-3 text-right\">";
     }
 
     if ($user == null) {
-        if (get_config('mod_jitsi', 'livebutton') == 1 && has_capability('mod/jitsi:record', $PAGE->context)
-            && $account != null && $universal == false
-            && (get_config('mod_jitsi', 'streamingoption') == 1) && $jitsi->sessionwithtoken == 0) {
-            
+        if (
+            get_config('mod_jitsi', 'livebutton') == 1 &&
+            has_capability('mod/jitsi:record', $PAGE->context) &&
+            $account != null && $universal == false &&
+            (get_config('mod_jitsi', 'streamingoption') == 1) && $jitsi->sessionwithtoken == 0
+        ) {
             if ($CFG->branch >= 500) {
-                echo "<div class=\"text-end\">"; 
+                echo "<div class=\"text-end\">";
             } else {
-                echo "<div class=\"text-right\">"; 
+                echo "<div class=\"text-right\">";
             }
 
             if ($CFG->branch >= 500) {
@@ -437,7 +467,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "  setTimeout(function() { document.getElementById(\"recordSwitch\").disabled = false; }, 5000);\n";
     echo "}\n";
 
-    echo "const domain = \"".$domain."\";\n";
+    echo "const domain = \"" . $domain . "\";\n";
     echo "const options = {\n";
     echo "configOverwrite: {\n";
 
@@ -453,9 +483,9 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     }
     echo "},";
 
-    echo "subject: '".$jitsi->name."',\n";
+    echo "subject: '" . $jitsi->name . "',\n";
     echo "disableSelfView: false,\n";
-    echo "defaultLanguage: '".current_language()."',\n";
+    echo "defaultLanguage: '" . current_language() . "',\n";
     echo "disableInviteFunctions: true,\n";
     echo "recordingService: {\n";
     if (get_config('mod_jitsi', 'livebutton') == 1) {
@@ -517,10 +547,10 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "liveStreamingEnabled: false,\n";
     }
 
-    echo "toolbarButtons: ".$buttons.",\n";
+    echo "toolbarButtons: " . $buttons . ",\n";
     echo "disableProfile: true,\n";
-    echo "prejoinPageEnabled: false,";
-    echo "channelLastN: ".get_config('mod_jitsi', 'channellastcam').",\n";
+    echo "prejoinPageEnabled: false,\n";
+    echo "channelLastN: " . get_config('mod_jitsi', 'channellastcam') . ",\n";
 
     if (get_config('mod_jitsi', 'startwithaudiomuted') == '1') {
         echo "startWithAudioMuted: true,\n";
@@ -565,10 +595,10 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
                 ],
             ],
         ]);
-        echo "roomName: \"".$eightbyeightappid."/".urlencode($sessionnorm)."\",\n";
+        echo "roomName: \"" . $eightbyeightappid . "/" . urlencode($sessionnorm) . "\",\n";
         $payloadencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
         $headerencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
-        openssl_sign( $headerencoded . "." . $payloadencoded, $signature, $privatykey, OPENSSL_ALGO_SHA256);
+        openssl_sign($headerencoded . "." . $payloadencoded, $signature, $privatykey, OPENSSL_ALGO_SHA256);
     } else if (set_config('jitsi', 'tokentype') == '1') {
         $header = json_encode([
             "kid" => "jitsi/custom_key_name",
@@ -594,17 +624,19 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             "exp" => time() + 24 * 3600,
             "moderator" => has_capability('mod/jitsi:moderation', $PAGE->context),
         ], JSON_UNESCAPED_SLASHES);
-        echo "roomName: \"".urlencode($sessionnorm)."\",\n";
+        echo "roomName: \"" . urlencode($sessionnorm) . "\",\n";
         $payloadencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
         $headerencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
         $signature = hash_hmac('sha256', $headerencoded . "." . $payloadencoded, $secret, true);
     }
 
-    if (($servertype == '1' && ($appid != null && $secret != null))
-        || $servertype == '2') {
+    if (
+        ($servertype == '1' && ($appid != null && $secret != null)) ||
+        $servertype == '2'
+    ) {
         $signatureencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
         $jwt = $headerencoded . "." . $payloadencoded . "." . $signatureencoded;
-        echo "jwt: \"".$jwt."\",\n";
+        echo "jwt: \"" . $jwt . "\",\n";
     }
 
     if ($CFG->branch < 36) {
@@ -618,17 +650,17 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "parentNode: document.querySelector('#jitsi-container'),\n";
     }
     echo "interfaceConfigOverwrite:{\n";
-    echo "TOOLBAR_BUTTONS: ".$buttons.",\n";
+    echo "TOOLBAR_BUTTONS: " . $buttons . ",\n";
     echo "SHOW_JITSI_WATERMARK: true,\n";
-    echo "JITSI_WATERMARK_LINK: '".get_config('mod_jitsi', 'watermarklink')."',\n";
+    echo "JITSI_WATERMARK_LINK: '" . get_config('mod_jitsi', 'watermarklink') . "',\n";
     echo "},\n";
     echo "width: '100%',";
     echo "height: '100%',";
     echo "}\n";
     echo "const api = new JitsiMeetExternalAPI(domain, options);\n";
     echo "api.addListener('videoConferenceJoined', () => {\n";
-    echo "api.executeCommand('displayName', '".$nombre."');\n";
-    echo "api.executeCommand('avatarUrl', '".$avatar."');\n";
+    echo "api.executeCommand('displayName', '" . $nombre . "');\n";
+    echo "api.executeCommand('avatarUrl', '" . $avatar . "');\n";
     echo "});\n";
     $navigator = $_SERVER['HTTP_USER_AGENT'];
 
@@ -649,7 +681,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "      require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
     echo "          var respuesta = ajax.call([{\n";
     echo "              methodname: 'mod_jitsi_participating_session',\n";
-    echo "              args: {jitsi:'".$jitsi->id."', user:'".$USER->id."', cmid:'".$cm->id."'},\n";
+    echo "              args: {jitsi:'" . $jitsi->id . "', user:'" . $USER->id . "', cmid:'" . $cm->id . "'},\n";
     echo "          }]);\n";
     echo "      })\n";
     echo "}\n";
@@ -659,17 +691,17 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
             echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
                 echo "       var respuesta = ajax.call([{\n";
                 echo "            methodname: 'mod_jitsi_press_button_end',\n";
-                echo "            args: {jitsi:'".$jitsi->id."', user:'".$USER->id."', cmid:'".$cmid."'},\n";
+                echo "            args: {jitsi:'" . $jitsi->id . "', user:'" . $USER->id . "', cmid:'" . $cmid . "'},\n";
                 echo "            fail: notification.exception\n";
                 echo "       }]);\n";
                 echo "    ;});";
         echo "    api.dispose();\n";
         if ($universal == false && $user == null) {
-            echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/view.php?id=".$cmid."\";";
+            echo "    location.href=\"" . $CFG->wwwroot . "/mod/jitsi/view.php?id=" . $cmid . "\";";
         } else if ($universal == true && $user == null) {
-            echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/formuniversal.php?t=".$jitsi->token."\";";
+            echo "    location.href=\"" . $CFG->wwwroot . "/mod/jitsi/formuniversal.php?t=" . $jitsi->token . "\";";
         } else if ($user != null) {
-            echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/viewpriv.php?user=".$user."\";";
+            echo "    location.href=\"" . $CFG->wwwroot . "/mod/jitsi/viewpriv.php?user=" . $user . "\";";
         }
         echo  "});\n";
     }
@@ -683,7 +715,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
     echo "       var respuesta = ajax.call([{\n";
     echo "            methodname: 'mod_jitsi_press_record_button',\n";
-    echo "            args: {jitsi:'".$jitsi->id."', user:'".$USER->id."', cmid:'".$cmid."'},\n";
+    echo "            args: {jitsi:'" . $jitsi->id . "', user:'" . $USER->id . "', cmid:'" . $cmid . "'},\n";
     echo "            fail: notification.exception\n";
     echo "       }]);\n";
     echo "    ;});";
@@ -693,7 +725,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     echo "var mensaje = document.getElementById('state').innerHTML\n";
 
     echo "      document.getElementById('state').innerHTML = ";
-    echo "      '<div class=\"alert alert-light\" role=\"alert\">".get_string('preparing', 'jitsi')."</div>';";
+    echo "      '<div class=\"alert alert-light\" role=\"alert\">" . get_string('preparing', 'jitsi') . "</div>';";
     echo "      stream();";
     echo "    } else {";
     echo "      console.log(\"Switch cambiado a desactivado\");";
@@ -706,11 +738,11 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
     if (get_config('mod_jitsi', 'password') != null) {
         echo "api.addEventListener('participantRoleChanged', function(event) {\n";
         echo "    if (event.role === \"moderator\") {\n";
-        echo "        api.executeCommand('password', '".get_config('mod_jitsi', 'password')."');\n";
+        echo "        api.executeCommand('password', '" . get_config('mod_jitsi', 'password') . "');\n";
         echo "    }\n";
         echo "});\n";
         echo "api.on('passwordRequired', function () {\n";
-        echo "    api.executeCommand('password', '".get_config('mod_jitsi', 'password')."');\n";
+        echo "    api.executeCommand('password', '" . get_config('mod_jitsi', 'password') . "');\n";
         echo "});\n";
     }
 
@@ -730,7 +762,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "        2 0 0 1 9.5 13H2a2 2 0 0 1-2-2V5zm11.5 5.175 3.5 1.556V4.269l-3.5 1.556v4.35zM2 4a1 1 0 0 ";
         echo "        0-1 1v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H2z\"/>";
         echo "      </svg>";
-        echo "      ".addslashes(get_string('sessionisbeingrecorded', 'jitsi'));
+        echo "      " . addslashes(get_string('sessionisbeingrecorded', 'jitsi'));
         echo "      </div>';";
         echo "  } else if (event['on'] == false){\n";
         echo "    console.log(\"No esta grabando\");\n";
@@ -748,7 +780,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "  require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "    ajax.call([{\n";
         echo "      methodname: 'mod_jitsi_state_record',\n";
-        echo "      args: {jitsi:".$jitsi->id.", state: event['on']},\n";
+        echo "      args: {jitsi:" . $jitsi->id . ", state: event['on']},\n";
         echo "      done: console.log(\"Cambio grabación\"),\n";
         echo "      fail: notification.exception\n";
         echo "    }]);\n";
@@ -767,7 +799,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "  require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "  var respuesta = ajax.call([{\n";
         echo "    methodname: 'mod_jitsi_create_stream',\n";
-        echo "    args: {session:'".$session."', jitsi:'".$jitsi->id."', userid: '".$USER->id."'},\n";
+        echo "    args: {session:'" . $session . "', jitsi:'" . $jitsi->id . "', userid: '" . $USER->id . "'},\n";
         echo "  }]);\n";
 
         echo "  respuesta[0].done(function(response) {\n";
@@ -778,7 +810,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "        console.log(idsource);";
 
         echo "    if (response['error'] == 'errorauthor'){\n";
-        echo "      alert(\"".addslashes(get_string('recordingbloquedby', 'jitsi'))."\"+response['usercomplete']);\n";
+        echo "      alert(\"" . addslashes(get_string('recordingbloquedby', 'jitsi')) . "\"+response['usercomplete']);\n";
         echo "      document.getElementById('state').innerHTML = ";
         echo "        '<div class=\"alert alert-light\" role=\"alert\"></div>';";
         echo "if (document.getElementById(\"recordSwitch\") != null) {\n";
@@ -807,15 +839,15 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "      require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "        ajax.call([{\n";
         echo "          methodname: 'mod_jitsi_stop_stream_byerror',\n";
-        echo "          args: {jitsi: ".$jitsi->id.", userid : ".$USER->id."},\n";
+        echo "          args: {jitsi: " . $jitsi->id . ", userid : " . $USER->id . "},\n";
         echo "          done: console.log(\"borrado author!\"),\n";
         echo "          fail: notification.exception\n";
         echo "        }]);\n";
         echo "      })\n";
         echo "    } else {\n";
         echo "      if (response['stream'] == 'streaming'){\n";
-        echo "        alert(\"".get_string('streamingisstarting', 'jitsi')."\");";
-        echo "        console.log(\"".get_string('streamingisstarting', 'jitsi')."\");  ";
+        echo "        alert(\"" . get_string('streamingisstarting', 'jitsi') . "\");";
+        echo "        console.log(\"" . get_string('streamingisstarting', 'jitsi') . "\");  ";
         echo "      } else {\n";
         echo "        api.executeCommand('startRecording', {\n";
         echo "          mode: 'stream',\n";
@@ -830,7 +862,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "      ajax.call([{\n";
         echo "        methodname: 'mod_jitsi_stop_stream_byerror',\n";
-        echo "        args: {jitsi: ".$jitsi->id.", userid : ".$USER->id."},\n";
+        echo "        args: {jitsi: " . $jitsi->id . ", userid : " . $USER->id . "},\n";
         echo "        done: console.log(\"borrado author!\"),\n";
         echo "        fail: notification.exception\n";
         echo "      }]);\n";
@@ -842,15 +874,15 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "      ajax.call([{\n";
         echo "        methodname: 'mod_jitsi_send_error',\n";
-        echo "        args: {jitsi:'".$jitsi->id."', user: '".$USER->id."',
-                      error: ex['backtrace'], cmid:".$cmid."},\n";
+        echo "        args: {jitsi:'" . $jitsi->id . "', user: '" . $USER->id . "',
+                      error: ex['backtrace'], cmid:" . $cmid . "},\n";
         echo "        done: console.log(\"MAIL ENVIADO!\"),\n";
         echo "        fail: notification.exception\n";
         echo "      }]);\n";
         echo "    })\n";
         echo "    document.getElementById('state').innerHTML = ";
         echo "      '<div class=\"alert alert-light\" role=\"alert\">"
-                    .get_string('internalerror', 'jitsi')."</div>';";
+                    . get_string('internalerror', 'jitsi') . "</div>';";
         echo "if (document.getElementById(\"recordSwitch\") != null) {\n";
         echo "    document.getElementById(\"recordSwitch\").checked = false;\n";
         echo "    document.getElementById(\"recordSwitch\").disabled = false;\n";
@@ -866,7 +898,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "  require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "      var respuesta = ajax.call([{\n";
         echo "          methodname: 'mod_jitsi_update_participants',\n";
-        echo "          args: {jitsi:'".$jitsi->id."', numberofparticipants:api.getNumberOfParticipants()},\n";
+        echo "          args: {jitsi:'" . $jitsi->id . "', numberofparticipants:api.getNumberOfParticipants()},\n";
         echo "          fail: notification.exception\n";
         echo "      }]);\n";
         echo "   ;});";
@@ -878,7 +910,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "  require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "      var respuesta = ajax.call([{\n";
         echo "          methodname: 'mod_jitsi_update_participants',\n";
-        echo "          args: {jitsi:'".$jitsi->id."', numberofparticipants:api.getNumberOfParticipants()},\n";
+        echo "          args: {jitsi:'" . $jitsi->id . "', numberofparticipants:api.getNumberOfParticipants()},\n";
         echo "          fail: notification.exception\n";
         echo "      }]);\n";
         echo "   ;});";
@@ -890,7 +922,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "  require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "      var respuesta = ajax.call([{\n";
         echo "          methodname: 'mod_jitsi_update_participants',\n";
-        echo "          args: {jitsi:'".$jitsi->id."', numberofparticipants:api.getNumberOfParticipants()},\n";
+        echo "          args: {jitsi:'" . $jitsi->id . "', numberofparticipants:api.getNumberOfParticipants()},\n";
         echo "          fail: notification.exception\n";
         echo "      }]);\n";
         echo "   ;});";
@@ -902,7 +934,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "  require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "      var respuesta = ajax.call([{\n";
         echo "          methodname: 'mod_jitsi_update_participants',\n";
-        echo "          args: {jitsi:'".$jitsi->id."', numberofparticipants:api.getNumberOfParticipants()},\n";
+        echo "          args: {jitsi:'" . $jitsi->id . "', numberofparticipants:api.getNumberOfParticipants()},\n";
         echo "          fail: notification.exception\n";
         echo "      }]);\n";
         echo "   ;});";
@@ -914,7 +946,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "  require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "    var respuesta = ajax.call([{\n";
         echo "      methodname: 'mod_jitsi_press_button_cam',\n";
-        echo "      args: {jitsi:'".$jitsi->id."', user:'".$USER->id."', cmid:'".$cmid."'},\n";
+        echo "      args: {jitsi:'" . $jitsi->id . "', user:'" . $USER->id . "', cmid:'" . $cmid . "'},\n";
         echo "      fail: notification.exception\n";
         echo "    }]);\n";
         echo "  ;});";
@@ -924,7 +956,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "  require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "    var respuesta = ajax.call([{\n";
         echo "      methodname: 'mod_jitsi_press_button_desktop',\n";
-        echo "      args: {jitsi:'".$jitsi->id."', user:'".$USER->id."', cmid:'".$cmid."'},\n";
+        echo "      args: {jitsi:'" . $jitsi->id . "', user:'" . $USER->id . "', cmid:'" . $cmid . "'},\n";
         echo "      fail: notification.exception\n";
         echo "    }]);\n";
         echo "  ;});";
@@ -934,7 +966,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "  require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "    var respuesta = ajax.call([{\n";
         echo "      methodname: 'mod_jitsi_press_button_end',\n";
-        echo "      args: {jitsi:'".$jitsi->id."', user:'".$USER->id."', cmid:'".$cmid."'},\n";
+        echo "      args: {jitsi:'" . $jitsi->id . "', user:'" . $USER->id . "', cmid:'" . $cmid . "'},\n";
         echo "      fail: notification.exception\n";
         echo "    }]);\n";
         echo "  ;});";
@@ -944,7 +976,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "  require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "    var respuesta = ajax.call([{\n";
         echo "      methodname: 'mod_jitsi_press_button_microphone',\n";
-        echo "      args: {jitsi:'".$jitsi->id."', user:'".$USER->id."', cmid:'".$cmid."'},\n";
+        echo "      args: {jitsi:'" . $jitsi->id . "', user:'" . $USER->id . "', cmid:'" . $cmid . "'},\n";
         echo "      fail: notification.exception\n";
         echo "    }]);\n";
         echo "  ;});";
@@ -968,8 +1000,8 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "      ajax.call([{\n";
         echo "        methodname: 'mod_jitsi_send_error',\n";
-        echo "        args: {jitsi:'".$jitsi->id."', user: '".$USER->id.
-                    "', error: 'Error de servidor jitsi: ' + event['error'], cmid:".$cmid."},\n";
+        echo "        args: {jitsi:'" . $jitsi->id . "', user: '" . $USER->id .
+                    "', error: 'Error de servidor jitsi: ' + event['error'], cmid:" . $cmid . "},\n";
         echo "        done: console.log(\"MAIL ENVIADO!\"),\n";
         echo "        fail: notification.exception\n";
         echo "      }]);\n";
@@ -983,28 +1015,28 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "  require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "    var respuesta = ajax.call([{\n";
         echo "      methodname: 'mod_jitsi_stop_stream',\n";
-        echo "      args: {jitsi:'".$jitsi->id."', userid: '".$USER->id."'},\n";
+        echo "      args: {jitsi:'" . $jitsi->id . "', userid: '" . $USER->id . "'},\n";
         echo "    }]);\n";
         echo "    respuesta[0].done(function(response) {\n";
         echo "      if (response['error'] == 'errorauthor'){\n";
         echo "        require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "          var respuestaminutos = ajax.call([{\n";
         echo "            methodname: 'mod_jitsi_getminutesfromlastconexion',\n";
-        echo "            args: {cmid: ".$cmid.", user: response['user']},\n";
+        echo "            args: {cmid: " . $cmid . ", user: response['user']},\n";
         echo "            fail: notification.exception\n";
         echo "          }]);\n";
         echo "          respuestaminutos[0].done(function(respuestaminutos) {\n";
         echo "            console.log('Los minutos: '+JSON.stringify(respuestaminutos));\n";
         echo "            if ((Date.now() / 1000) - respuestaminutos > 60){\n";
         echo "              console.log(\"Ha pasado 1 minuto\");\n";
-        echo "              if (confirm(\"".addslashes(get_string('recordingwasbloquedby', 'jitsi')).
+        echo "              if (confirm(\"" . addslashes(get_string('recordingwasbloquedby', 'jitsi')) .
                             "\"+response['usercomplete'])) {";
         echo "                console.log(\"Switch cambiado a desactivado\");";
         echo "                document.getElementById('state').innerHTML = '';";
         echo "                require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "                  ajax.call([{\n";
         echo "                    methodname: 'mod_jitsi_stop_stream_noauthor',\n";
-        echo "                    args: {jitsi: ".$jitsi->id.", userid: ".$USER->id."},\n";
+        echo "                    args: {jitsi: " . $jitsi->id . ", userid: " . $USER->id . "},\n";
         echo "                    done: console.log(\"borrado author!\"),\n";
         echo "                    fail: notification.exception\n";
         echo "                  }]);\n";
@@ -1016,7 +1048,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "              }";
         echo "            } else {\n";
         echo "              console.log(\" no ha pasado 1 minuto\");\n";
-        echo "              alert(\"".addslashes(get_string('recordingbloquedby', 'jitsi'))."\"+response['usercomplete']);\n";
+        echo "              alert(\"" . addslashes(get_string('recordingbloquedby', 'jitsi')) . "\"+response['usercomplete']);\n";
         echo "            }\n";
         echo "          });\n";
         echo "        })\n";
@@ -1036,7 +1068,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "          2 0 0 1 9.5 13H2a2 2 0 0 1-2-2V5zm11.5 5.175 3.5 1.556V4.269l-3.5 1.556v4.35zM2 4a1 1 0 0 ";
         echo "          0-1 1v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H2z\"/>";
         echo "          </svg>";
-        echo " ".addslashes(get_string('sessionisbeingrecorded', 'jitsi'));
+        echo " " . addslashes(get_string('sessionisbeingrecorded', 'jitsi'));
         echo "</div>';";
         echo "      } else if (parar = true) {\n";
         echo "        api.executeCommand('stopRecording', 'stream');\n";
@@ -1052,7 +1084,7 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
         echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
         echo "       var respuesta = ajax.call([{\n";
         echo "            methodname: 'mod_jitsi_create_link',\n";
-        echo "            args: {jitsi: ".$jitsi->id."},\n";
+        echo "            args: {jitsi: " . $jitsi->id . "},\n";
         echo "       }]);\n";
         echo "       respuesta[0].done(function(response) {\n";
         echo "            alert(\"Enviado\");";
@@ -1076,8 +1108,17 @@ function createsession($teacher, $cmid, $avatar, $nombre, $session, $mail, $jits
  * @param bool $universal - Say if is universal session
  * @param stdClass $user - User object
  */
-function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $jitsi, $universal = false,
-        $user = null) {
+function createsessionpriv(
+    $teacher,
+    $cmid,
+    $avatar,
+    $nombre,
+    $session,
+    $mail,
+    $jitsi,
+    $universal = false,
+    $user = null
+) {
     global $CFG, $DB, $PAGE, $USER;
     $serverid = get_config('mod_jitsi', 'server');
     $server = $DB->get_record('jitsi_servers', ['id' => $serverid]);
@@ -1110,11 +1151,14 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
     }
 
     echo "<script src=\"//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js\"></script>";
-    echo "<script src=\"https://".$domain."/external_api.js\"></script>\n";
+    echo "<script src=\"https://" . $domain . "/external_api.js\"></script>\n";
 
     $streamingoption = '';
-    if ((get_config('mod_jitsi', 'livebutton') == 1) && (has_capability('mod/jitsi:record', $PAGE->context))
-        && (get_config('mod_jitsi', 'streamingoption') == 0)) {
+    if (
+        (get_config('mod_jitsi', 'livebutton') == 1) &&
+        (has_capability('mod/jitsi:record', $PAGE->context)) &&
+        (get_config('mod_jitsi', 'streamingoption') == 0)
+    ) {
         $streamingoption = 'livestreaming';
     }
 
@@ -1143,25 +1187,28 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
     }
 
     $participantspane = '';
-    if (has_capability('mod/jitsi:moderation', $PAGE->context) || get_config('mod_jitsi', 'participantspane') == 1 ) {
+    if (
+        has_capability('mod/jitsi:moderation', $PAGE->context) ||
+        get_config('mod_jitsi', 'participantspane') == 1
+    ) {
         $participantspane = 'participants-pane';
     }
 
     $raisehand = '';
-    if (get_config('mod_jitsi', 'raisehand') == 1 ) {
+    if (get_config('mod_jitsi', 'raisehand') == 1) {
         $raisehand = 'raisehand';
     }
 
     $whiteboard = '';
-    if (get_config('mod_jitsi', 'whiteboard') == 1 ) {
+    if (get_config('mod_jitsi', 'whiteboard') == 1) {
         $whiteboard = 'whiteboard';
     }
 
     $buttons = "['microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
-        'fodeviceselection', 'hangup', 'chat', '".$record."', 'etherpad', '".$youtubeoption."',
-        'settings', '".$raisehand."', 'videoquality', '".$streamingoption."','filmstrip', '".$invite."', 'stats',
-        'shortcuts', 'tileview', '".$bluroption."', 'download', 'help', '".$muteeveryone."',
-        '".$mutevideoeveryone."', '".$security."', '".$participantspane."', '".$whiteboard."']";
+        'fodeviceselection', 'hangup', 'chat', '" . $record . "', 'etherpad', '" . $youtubeoption . "',
+        'settings', '" . $raisehand . "', 'videoquality', '" . $streamingoption . "', 'filmstrip', '" . $invite . "', 'stats',
+        'shortcuts', 'tileview', '" . $bluroption . "', 'download', 'help', '" . $muteeveryone . "',
+        '" . $mutevideoeveryone . "', '" . $security . "', '" . $participantspane . "', '" . $whiteboard . "']";
 
     echo "<div class=\"row\">";
     echo "<div class=\"col-sm\">";
@@ -1173,9 +1220,9 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
     echo "<div id=\"state\"><div class=\"alert alert-light\" role=\"alert\"></div></div>";
     echo "</div>";
     if ($CFG->branch >= 500) {
-        echo "<div class=\"col-sm-3 text-end\">"; 
+        echo "<div class=\"col-sm-3 text-end\">";
     } else {
-        echo "<div class=\"col-sm-3 text-right\">"; 
+        echo "<div class=\"col-sm-3 text-right\">";
     }
 
     echo "</div>";
@@ -1190,7 +1237,7 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
     echo "  setTimeout(function() { document.getElementById(\"recordSwitch\").disabled = false; }, 5000);\n";
     echo "}\n";
 
-    echo "const domain = \"".$domain."\";\n";
+    echo "const domain = \"" . $domain . "\";\n";
     echo "const options = {\n";
     echo "configOverwrite: {\n";
 
@@ -1206,9 +1253,9 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
     }
     echo "},";
 
-    echo "subject: '".$jitsi->name."',\n";
+    echo "subject: '" . $jitsi->name . "',\n";
     echo "disableSelfView: false,\n";
-    echo "defaultLanguage: '".current_language()."',\n";
+    echo "defaultLanguage: '" . current_language() . "',\n";
     echo "disableInviteFunctions: true,\n";
     echo "recordingService: {\n";
     if (get_config('mod_jitsi', 'livebutton') == 1) {
@@ -1270,10 +1317,10 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
         echo "liveStreamingEnabled: false,\n";
     }
 
-    echo "toolbarButtons: ".$buttons.",\n";
+    echo "toolbarButtons: " . $buttons . ",\n";
     echo "disableProfile: true,\n";
-    echo "prejoinPageEnabled: false,";
-    echo "channelLastN: ".get_config('mod_jitsi', 'channellastcam').",\n";
+    echo "prejoinPageEnabled: false,\n";
+    echo "channelLastN: " . get_config('mod_jitsi', 'channellastcam') . ",\n";
     if (get_config('mod_jitsi', 'startwithaudiomuted') == '1') {
         echo "startWithAudioMuted: true,\n";
     } else {
@@ -1317,10 +1364,10 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
                 ],
             ],
         ]);
-        echo "roomName: \"".$eightbyeightappid."/".urlencode($sessionnorm)."\",\n";
+        echo "roomName: \"" . $eightbyeightappid . "/" . urlencode($sessionnorm) . "\",\n";
         $payloadencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
         $headerencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
-        openssl_sign( $headerencoded . "." . $payloadencoded, $signature, $privatykey, OPENSSL_ALGO_SHA256);
+        openssl_sign($headerencoded . "." . $payloadencoded, $signature, $privatykey, OPENSSL_ALGO_SHA256);
     } else if (set_config('jitsi', 'tokentype') == '1') {
         $header = json_encode([
             "kid" => "jitsi/custom_key_name",
@@ -1346,17 +1393,19 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
             "exp" => time() + 24 * 3600,
             "moderator" => has_capability('mod/jitsi:moderation', $PAGE->context),
         ], JSON_UNESCAPED_SLASHES);
-        echo "roomName: \"".urlencode($sessionnorm)."\",\n";
+        echo "roomName: \"" . urlencode($sessionnorm) . "\",\n";
         $payloadencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
         $headerencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
         $signature = hash_hmac('sha256', $headerencoded . "." . $payloadencoded, $secret, true);
     }
 
-    if (($servertype == '1' && ($appid != null && $secret != null))
-        || $servertype == '2') {
+    if (
+        ($servertype == '1' && ($appid != null && $secret != null)) ||
+        $servertype == '2'
+    ) {
         $signatureencoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
         $jwt = $headerencoded . "." . $payloadencoded . "." . $signatureencoded;
-        echo "jwt: \"".$jwt."\",\n";
+        echo "jwt: \"" . $jwt . "\",\n";
     }
 
     if ($CFG->branch < 36) {
@@ -1370,9 +1419,9 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
         echo "parentNode: document.querySelector('#jitsi-container'),\n";
     }
     echo "interfaceConfigOverwrite:{\n";
-    echo "TOOLBAR_BUTTONS: ".$buttons.",\n";
+    echo "TOOLBAR_BUTTONS: " . $buttons . ",\n";
     echo "SHOW_JITSI_WATERMARK: true,\n";
-    echo "JITSI_WATERMARK_LINK: '".get_config('mod_jitsi', 'watermarklink')."',\n";
+    echo "JITSI_WATERMARK_LINK: '" . get_config('mod_jitsi', 'watermarklink') . "',\n";
     echo "},\n";
     echo "width: '100%',\n";
     echo "height: '100%',\n";
@@ -1383,11 +1432,11 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
         echo "api.on('readyToClose', () => {\n";
         echo "    api.dispose();\n";
         if ($universal == false && $user == null) {
-            echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/view.php?id=".$cmid."\";";
+            echo "    location.href=\"" . $CFG->wwwroot . "/mod/jitsi/view.php?id=" . $cmid . "\";";
         } else if ($universal == true && $user == null) {
-            echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/formuniversal.php?t=".$jitsi->token."\";";
+            echo "    location.href=\"" . $CFG->wwwroot . "/mod/jitsi/formuniversal.php?t=" . $jitsi->token . "\";";
         } else if ($user != null) {
-            echo "    location.href=\"".$CFG->wwwroot."/mod/jitsi/viewpriv.php?user=".$user."\";";
+            echo "    location.href=\"" . $CFG->wwwroot . "/mod/jitsi/viewpriv.php?user=" . $user . "\";";
         }
         echo  "});\n";
     }
@@ -1395,11 +1444,11 @@ function createsessionpriv($teacher, $cmid, $avatar, $nombre, $session, $mail, $
     if (get_config('mod_jitsi', 'password') != null) {
         echo "api.addEventListener('participantRoleChanged', function(event) {\n";
         echo "    if (event.role === \"moderator\") {\n";
-        echo "        api.executeCommand('password', '".get_config('mod_jitsi', 'password')."');\n";
+        echo "        api.executeCommand('password', '" . get_config('mod_jitsi', 'password') . "');\n";
         echo "    }\n";
         echo "});\n";
         echo "api.on('passwordRequired', function () {\n";
-        echo "    api.executeCommand('password', '".get_config('mod_jitsi', 'password')."');\n";
+        echo "    api.executeCommand('password', '" . get_config('mod_jitsi', 'password') . "');\n";
         echo "});\n";
     }
     echo "</script>\n";
@@ -1465,14 +1514,14 @@ function sendnotificationprivatesession($fromuser, $touser) {
     $message->userfrom = core_user::get_noreply_user();
     $message->userto = $touser;
     $message->subject = get_string('userenter', 'jitsi', $fromuser->firstname);
-    $message->fullmessage = get_string('userenter', 'jitsi', $fromuser->firstname .' '. $fromuser->lastname);
+    $message->fullmessage = get_string('userenter', 'jitsi', $fromuser->firstname . ' ' . $fromuser->lastname);
     $message->fullmessageformat = FORMAT_MARKDOWN;
-    $message->fullmessagehtml = get_string('user').' <a href='.$CFG->wwwroot.'/user/profile.php?id='.$fromuser->id.'> '
-    . $fromuser->firstname .' '. $fromuser->lastname
-    . '</a> '.get_string('hasentered', 'jitsi').'. '.get_string('click', 'jitsi').'<a href='
+    $message->fullmessagehtml = get_string('user') . ' <a href="' . $CFG->wwwroot . '/user/profile.php?id=' . $fromuser->id . '"> '
+    . $fromuser->firstname . ' ' . $fromuser->lastname
+    . '</a> ' . get_string('hasentered', 'jitsi') . '. ' . get_string('click', 'jitsi') . '<a href="'
     . new moodle_url('/mod/jitsi/viewpriv.php', ['user' => $touser->id, 'fromuser' => $fromuser->id])
-    .'> '.get_string('here', 'jitsi').'</a> '.get_string('toenter', 'jitsi');
-    $message->smallmessage = get_string('userenter', 'jitsi', $fromuser->firstname .' '. $fromuser->lastname);
+    . '"> ' . get_string('here', 'jitsi') . '</a> ' . get_string('toenter', 'jitsi');
+    $message->smallmessage = get_string('userenter', 'jitsi', $fromuser->firstname . ' ' . $fromuser->lastname);
     $message->notification = 1;
     $message->contexturl = new moodle_url('/mod/jitsi/viewpriv.php', ['user' => $touser->id, 'fromuser' => $fromuser->id]);
     $message->contexturlname = 'Private session';
@@ -1494,14 +1543,14 @@ function sendcallprivatesession($fromuser, $touser) {
     $message->userfrom = core_user::get_noreply_user();
     $message->userto = $touser;
     $message->subject = get_string('usercall', 'jitsi', $fromuser->firstname);
-    $message->fullmessage = get_string('usercall', 'jitsi', $fromuser->firstname .' '. $fromuser->lastname);
+    $message->fullmessage = get_string('usercall', 'jitsi', $fromuser->firstname . ' ' . $fromuser->lastname);
     $message->fullmessageformat = FORMAT_MARKDOWN;
-    $message->fullmessagehtml = get_string('user').' <a href='.$CFG->wwwroot.'/user/profile.php?id='.$fromuser->id.'> '
-    . $fromuser->firstname .' '. $fromuser->lastname
-    . '</a> '.get_string('iscalling', 'jitsi').'. '.get_string('click', 'jitsi').'<a href='
+    $message->fullmessagehtml = get_string('user') . ' <a href="' . $CFG->wwwroot . '/user/profile.php?id=' . $fromuser->id . '"> '
+    . $fromuser->firstname . ' ' . $fromuser->lastname
+    . '</a> ' . get_string('iscalling', 'jitsi') . '. ' . get_string('click', 'jitsi') . '<a href="'
     . new moodle_url('/mod/jitsi/viewpriv.php', ['user' => $fromuser->id])
-    .'> '.get_string('here', 'jitsi').'</a> '.get_string('toenter', 'jitsi');
-    $message->smallmessage = get_string('usercall', 'jitsi', $fromuser->firstname .' '. $fromuser->lastname);
+    . '"> ' . get_string('here', 'jitsi') . '</a> ' . get_string('toenter', 'jitsi');
+    $message->smallmessage = get_string('usercall', 'jitsi', $fromuser->firstname . ' ' . $fromuser->lastname);
     $message->notification = 1;
     $message->contexturl = new moodle_url('/mod/jitsi/viewpriv.php', ['user' => $fromuser->id]);
     $message->contexturlname = 'Private session';
@@ -1567,7 +1616,7 @@ function deleterecordyoutube($idsource) {
     if (isdeletable($idsource)) {
         if ($source->link != null) {
             if (!file_exists(__DIR__ . '/api/vendor/autoload.php')) {
-                throw new \Exception('please run "composer require google/apiclient:~2.0" in "' . __DIR__ .'"');
+                throw new \Exception('please run "composer require google/apiclient:~2.0" in "' . __DIR__ . '"');
             }
             require_once(__DIR__ . '/api/vendor/autoload.php');
 
@@ -1623,7 +1672,7 @@ function deleterecordyoutube($idsource) {
                 $DB->update_record('jitsi_record_account', $account);
                 $client->revokeToken();
                 return false;
-                throw new \Exception("exception".$e->getMessage());
+                throw new \Exception("exception" . $e->getMessage());
             } catch (Google_Exception $e) {
                 if ($account->inuse == 1) {
                     $account->inuse = 0;
@@ -1634,7 +1683,7 @@ function deleterecordyoutube($idsource) {
                 $DB->update_record('jitsi_record_account', $account);
                 $client->revokeToken();
                 return false;
-                throw new \Exception("exception".$e->getMessage());
+                throw new \Exception("exception" . $e->getMessage());
             }
             if ($listresponse['items'] != []) {
                 if ($client->getAccessToken($idsource)) {
@@ -1643,9 +1692,9 @@ function deleterecordyoutube($idsource) {
                         delete_jitsi_record($idsource);
                         return true;
                     } catch (Google_Service_Exception $e) {
-                        throw new \Exception("exception".$e->getMessage());
+                        throw new \Exception("exception" . $e->getMessage());
                     } catch (Google_Exception $e) {
-                        throw new \Exception("exception".$e->getMessage());
+                        throw new \Exception("exception" . $e->getMessage());
                     }
                 }
             } else {
@@ -1698,7 +1747,8 @@ function mod_jitsi_inplace_editable($itemtype, $itemid, $newvalue) {
             format_string($record->name),
             $record->name,
             get_string('editrecordname', 'jitsi'),
-            get_string('newvaluefor', 'jitsi') . format_string($record->name));
+            get_string('newvaluefor', 'jitsi') . format_string($record->name),
+        );
     }
 }
 
@@ -1811,8 +1861,10 @@ function jitsi_get_coursemodule_info($coursemodule) {
  */
 function mod_jitsi_get_completion_active_rule_descriptions($cm) {
     // Values will be present in cm_info, and we assume these are up to date.
-    if (empty($cm->customdata['customcompletionrules'])
-        || $cm->completion != COMPLETION_TRACKING_AUTOMATIC) {
+    if (
+        empty($cm->customdata['customcompletionrules']) ||
+        $cm->completion != COMPLETION_TRACKING_AUTOMATIC
+    ) {
         return [];
     }
 
@@ -1882,14 +1934,14 @@ function doembedable($idvideo) {
         $jitsi = $DB->get_record('jitsi', ['id' => $record->jitsi]);
         $source->embed = -1;
         $DB->update_record('jitsi_source_record', $source);
-        senderror($jitsi->id, $source->userid, 'ERROR doembedable: '.$e->getMessage(), $source);
+        senderror($jitsi->id, $source->userid, 'ERROR doembedable: ' . $e->getMessage(), $source);
         return false;
     } catch (Google_Exception $e) {
         $record = $DB->get_record('jitsi_record', ['source' => $source->id]);
         $jitsi = $DB->get_record('jitsi', ['id' => $record->jitsi]);
         $source->embed = -1;
         $DB->update_record('jitsi_source_record', $source);
-        senderror($jitsi->id, $source->userid, 'ERROR doembedable: '.$e->getMessage(), $source);
+        senderror($jitsi->id, $source->userid, 'ERROR doembedable: ' . $e->getMessage(), $source);
         return false;
     }
 
@@ -1903,7 +1955,7 @@ function doembedable($idvideo) {
 function togglestate($idvideo) {
     global $CFG, $DB;
     if (!file_exists(__DIR__ . '/api/vendor/autoload.php')) {
-        throw new \Exception('please run "composer require google/apiclient:~2.0" in "' . __DIR__ .'"');
+        throw new \Exception('please run "composer require google/apiclient:~2.0" in "' . __DIR__ . '"');
     }
     require_once(__DIR__ . '/api/vendor/autoload.php');
 
@@ -2012,7 +2064,7 @@ function isallvisible($records) {
 function getclientgoogleapi() {
     global $CFG, $DB;
     if (!file_exists(__DIR__ . '/api/vendor/autoload.php')) {
-        throw new \Exception('please run "composer require google/apiclient:~2.0" in "' . __DIR__ .'"');
+        throw new \Exception('please run "composer require google/apiclient:~2.0" in "' . __DIR__ . '"');
     }
     require_once(__DIR__ . '/api/vendor/autoload.php');
 
@@ -2068,7 +2120,7 @@ function getclientgoogleapi() {
 function getclientgoogleapibyaccount($account) {
     global $CFG, $DB;
     if (!file_exists(__DIR__ . '/api/vendor/autoload.php')) {
-        throw new \Exception('please run "composer require google/apiclient:~2.0" in "' . __DIR__ .'"');
+        throw new \Exception('please run "composer require google/apiclient:~2.0" in "' . __DIR__ . '"');
     }
     require_once(__DIR__ . '/api/vendor/autoload.php');
 
@@ -2125,8 +2177,8 @@ function getminutesfromlastconexion($cmid, $user) {
     global $DB;
     $contextmodule = context_module::instance($cmid);
     $sqllastparticipating = 'select timecreated from {logstore_standard_log} where contextid = '
-        .$contextmodule->id.' and (action = \'participating\' or action = \'enter\') and userid
-         = '.$user.' order by timecreated DESC limit 1';
+        . $contextmodule->id . ' and (action = \'participating\' or action = \'enter\') and userid
+         = ' . $user . ' order by timecreated DESC limit 1';
     $usersconnected = $DB->get_record_sql($sqllastparticipating);
     return $usersconnected->timecreated;
 }
@@ -2178,18 +2230,18 @@ function senderror($jitsi, $user, $error, $source) {
     $DB->update_record('jitsi', $jitsiob);
 
     $user = $DB->get_record('user', ['id' => $user]);
-    $mensaje = "El usuario ".$user->firstname." ".$user->lastname.
-        " ha tenido un error al intentar grabar la sesión de jitsi con id ".$jitsi."\nInfo:\n".$error." en la cuenta: ".
-        $account->name." (id: ".$account->id.")\n
+    $mensaje = "El usuario " . $user->firstname . " " . $user->lastname .
+        " ha tenido un error al intentar grabar la sesión de jitsi con id " . $jitsi . "\nInfo:\n" . $error . " en la cuenta: " .
+        $account->name . " (id: " . $account->id . ")\n
     Para más información, mira el log:\n
-    LOG: ".$CFG->wwwroot."/report/log/index.php?chooselog=1&id=".$jitsiob->course."&modid=".$cmid."\n
-    URL: ".$CFG->wwwroot."/mod/jitsi/view.php?id=".$cmid."\n
-    Nombre de la sesión: ".$DB->get_record('jitsi', ['id' => $jitsi])->name."\n
-    Curso: ".$DB->get_record('course', ['id' => $DB->get_record('jitsi', ['id' => $jitsi])->course])->fullname."\n
-    Usuario: ".$user->username."\n";
+    LOG: " . $CFG->wwwroot . "/report/log/index.php?chooselog=1&id=" . $jitsiob->course . "&modid=" . $cmid . "\n
+    URL: " . $CFG->wwwroot . "/mod/jitsi/view.php?id=" . $cmid . "\n
+    Nombre de la sesión: " . $DB->get_record('jitsi', ['id' => $jitsi])->name . "\n
+    Curso: " . $DB->get_record('course', ['id' => $DB->get_record('jitsi', ['id' => $jitsi])->course])->fullname . "\n
+    Usuario: " . $user->username . "\n";
     foreach ($admins as $admin) {
         email_to_user($admin, $admin, "ERROR JITSI! el usuario: "
-            .$user->username." ha tenido un error en el jitsi: ".$jitsi, $mensaje);
+            . $user->username . " ha tenido un error en el jitsi: " . $jitsi, $mensaje);
     }
 
     $event = \mod_jitsi\event\jitsi_error::create([

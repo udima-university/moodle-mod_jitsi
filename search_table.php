@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/tablelib.php');
-require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir . '/adminlib.php');
 
 /**
  * Extend the standard table class for jitsi.
@@ -58,8 +58,8 @@ class mod_search_table extends table_sql {
         global $DB;
         $user = $DB->get_record('user', ['id' => $values->userid]);
         $urluser = new moodle_url('/user/profile.php', ['id' => $user->id]);
-        return "<a href=".$urluser." data-toggle=\"tooltip\" data-placement=\"top\" title=\""
-            .$user->username."\">" . $user->firstname . " ".$user->lastname.'</a>';
+        return "<a href=" . $urluser . " data-toggle=\"tooltip\" data-placement=\"top\" title=\""
+            . $user->username . "\">" . $user->firstname . " " . $user->lastname . '</a>';
     }
 
     /**
@@ -102,8 +102,8 @@ class mod_search_table extends table_sql {
         $coursemodule = get_coursemodule_from_instance('jitsi', $values->jitsi);
         $urlcourse = new moodle_url('/course/view.php', ['id' => $coursemodule->course]);
         $course = $DB->get_record('course', ['id' => $coursemodule->course]);
-        return "<a href=".$urlcourse." data-toggle=\"tooltip\" data-placement=\"top\" title=\"".$course->fullname."\">".
-        $course->shortname."</a></h6>";
+        return "<a href=" . $urlcourse . " data-toggle=\"tooltip\" data-placement=\"top\" title=\"" . $course->fullname . "\">" .
+        $course->shortname . "</a></h6>";
     }
 
     /**
@@ -115,8 +115,8 @@ class mod_search_table extends table_sql {
      *     when downloading.
      */
     protected function col_link($values) {
-        $thumb = 'https://img.youtube.com/vi/'.$values->link.'/default_live.jpg';
-        return '<a href="https://youtu.be/'.$values->link.'" target="_blank"><img src="'.$thumb.'" /></a>';
+        $thumb = 'https://img.youtube.com/vi/' . $values->link . '/default_live.jpg';
+        return '<a href="https://youtu.be/' . $values->link . '" target="_blank"><img src="' . $thumb . '" /></a>';
     }
 
     /**
@@ -133,7 +133,7 @@ class mod_search_table extends table_sql {
         $coursemodule = get_coursemodule_from_instance('jitsi', $values->jitsi);
         $urljitsiparams = ['id' => $coursemodule->id];
         $urljitsi = new moodle_url('/mod/jitsi/view.php', $urljitsiparams);
-        return "<a href=".$urljitsi." >".$jitsi->name."</a>";
+        return "<a href=" . $urljitsi . " >" . $jitsi->name . "</a>";
     }
 
     /**
@@ -152,5 +152,4 @@ class mod_search_table extends table_sql {
         }
         return $acount->name;
     }
-
 }

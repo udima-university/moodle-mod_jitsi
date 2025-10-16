@@ -14,16 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(__FILE__).'/lib.php');
+/**
+ * List of jitsi instances
+ *
+ * You can have a rather longer description of the file as well,
+ * if you like, and it can span multiple lines.
+ *
+ * @package    mod_jitsi
+ * @copyright  2025 Sergio Comerón <jitsi@sergiocomeron.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
+require_once(dirname(__FILE__) . '/lib.php');
 
 $id = required_param('id', PARAM_INT);   // Course ID.
 
 require_once($CFG->dirroot . '/course/format/lib.php');
 
 // Redirigir a la vista general moderna si está disponible (Moodle 5.0+).
-if (class_exists('core_courseformat\base') &&
-    method_exists('format_base', 'redirect_to_course_overview')) {
+if (
+    class_exists('core_courseformat\base') &&
+    method_exists('format_base', 'redirect_to_course_overview')
+) {
     format_base::redirect_to_course_overview($id, 'jitsi');
 }
 
@@ -67,7 +80,7 @@ $strname  = get_string('name');
 $table = new html_table();
 
 if ($usesections) {
-    $strsectionname = get_string('sectionname', 'format_'.$course->format);
+    $strsectionname = get_string('sectionname', 'format_' . $course->format);
     $table->head  = [$strsectionname, $strname];
     $table->align = ['center', 'left'];
 } else {

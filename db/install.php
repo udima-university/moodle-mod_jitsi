@@ -35,9 +35,7 @@ function xmldb_jitsi_install() {
     $dbman = $DB->get_manager();
     $table = new xmldb_table('jitsi_servers');
     if ($dbman->table_exists($table)) {
-
         if (!$DB->record_exists('jitsi_servers', ['domain' => 'meet.jit.si'])) {
-
             $server = new stdClass();
             $server->name         = 'Meet JitSi default';
             $server->type         = 0;

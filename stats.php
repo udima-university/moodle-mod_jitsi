@@ -44,7 +44,6 @@ $PAGE->set_title(get_string('jitsi_recording_statistics', 'jitsi'));
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class datesearchstats_form extends moodleform {
-
     /**
      * Defines forms elements
      */

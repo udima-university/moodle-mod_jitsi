@@ -97,5 +97,4 @@ class jitsi_delete_record extends \core\event\base {
     public static function get_objectid_mapping() {
         return false;
     }
-
 }

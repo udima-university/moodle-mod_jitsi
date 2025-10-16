@@ -67,7 +67,6 @@ function xmldb_jitsi_upgrade($oldversion) {
      * First example, some fields were added to install.xml on 2007/04/01
      */
     if ($oldversion < 2007040100) {
-
         // Define field course to be added to jitsi.
         $table = new xmldb_table('jitsi');
         $field = new xmldb_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'id');
@@ -88,8 +87,16 @@ function xmldb_jitsi_upgrade($oldversion) {
 
         // Define field introformat to be added to jitsi.
         $table = new xmldb_table('jitsi');
-        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0',
-            'intro');
+        $field = new xmldb_field(
+            'introformat',
+            XMLDB_TYPE_INTEGER,
+            '4',
+            XMLDB_UNSIGNED,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'intro',
+        );
 
         // Add field introformat.
         if (!$dbman->field_exists($table, $field)) {
@@ -105,11 +112,18 @@ function xmldb_jitsi_upgrade($oldversion) {
     // ... two more fields and one index were added to install.xml (note the micro increment
     // ... "01" in the last two digits of the version).
     if ($oldversion < 2007040101) {
-
         // Define field timecreated to be added to jitsi.
         $table = new xmldb_table('jitsi');
-        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0',
-            'introformat');
+        $field = new xmldb_field(
+            'timecreated',
+            XMLDB_TYPE_INTEGER,
+            '10',
+            XMLDB_UNSIGNED,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'introformat',
+        );
 
         // Add field timecreated.
         if (!$dbman->field_exists($table, $field)) {
@@ -118,8 +132,16 @@ function xmldb_jitsi_upgrade($oldversion) {
 
         // Define field timemodified to be added to jitsi.
         $table = new xmldb_table('jitsi');
-        $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0',
-            'timecreated');
+        $field = new xmldb_field(
+            'timemodified',
+            XMLDB_TYPE_INTEGER,
+            '10',
+            XMLDB_UNSIGNED,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'timecreated',
+        );
 
         // Add field timemodified.
         if (!$dbman->field_exists($table, $field)) {
@@ -142,14 +164,11 @@ function xmldb_jitsi_upgrade($oldversion) {
     // Third example, the next day, 2007/04/02 (with the trailing 00),
     // some actions were performed to install.php related with the module.
     if ($oldversion < 2007040200) {
-
         // Insert code here to perform some actions (same as in install.php).
-
         upgrade_mod_savepoint(true, 2007040200, 'jitsi');
     }
 
     if ($oldversion < 2021060300) {
-
         // Define table jitsi_record to be created.
         $table = new xmldb_table('jitsi_record');
 
@@ -175,8 +194,16 @@ function xmldb_jitsi_upgrade($oldversion) {
 
     if ($oldversion < 2021061802) {
         $table = new xmldb_table('jitsi');
-        $field = new xmldb_field('timeclose', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0',
-            'timeopen');
+        $field = new xmldb_field(
+            'timeclose',
+            XMLDB_TYPE_INTEGER,
+            '10',
+            XMLDB_UNSIGNED,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'timeopen',
+        );
 
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
@@ -188,8 +215,16 @@ function xmldb_jitsi_upgrade($oldversion) {
 
     if ($oldversion < 2021090100) {
         $table = new xmldb_table('jitsi');
-        $field = new xmldb_field('validitytime', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, '0',
-            'timeclose');
+        $field = new xmldb_field(
+            'validitytime',
+            XMLDB_TYPE_INTEGER,
+            '10',
+            XMLDB_UNSIGNED,
+            null,
+            null,
+            '0',
+            'timeclose',
+        );
 
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
@@ -200,17 +235,21 @@ function xmldb_jitsi_upgrade($oldversion) {
     }
 
     if ($oldversion < 2021092003) {
-        if ($onprivatesessionloggedin = $DB->get_record('config_plugins',
-            [
-                'name' => 'message_provider_mod_jitsi_onprivatesession_loggedin',
-            ])) {
+        if (
+            $onprivatesessionloggedin = $DB->get_record(
+                'config_plugins',
+                ['name' => 'message_provider_mod_jitsi_onprivatesession_loggedin']
+            )
+        ) {
             $onprivatesessionloggedin->value = 'airnotifier,popup';
             $DB->update_record('config_plugins', $onprivatesessionloggedin);
         }
-        if ($onprivatesessionloggedoff = $DB->get_record('config_plugins',
-            [
-                'name' => 'message_provider_mod_jitsi_onprivatesession_loggedoff',
-            ])) {
+        if (
+            $onprivatesessionloggedoff = $DB->get_record(
+                'config_plugins',
+                ['name' => 'message_provider_mod_jitsi_onprivatesession_loggedoff']
+            )
+        ) {
             $onprivatesessionloggedoff->value = 'airnotifier,popup';
             $DB->update_record('config_plugins', $onprivatesessionloggedoff);
         }
@@ -234,7 +273,6 @@ function xmldb_jitsi_upgrade($oldversion) {
     }
 
     if ($oldversion < 2021101503) {
-
         // Define table jitsi_record to be created.
         $table = new xmldb_table('jitsi_record_account');
 
@@ -270,7 +308,6 @@ function xmldb_jitsi_upgrade($oldversion) {
     }
 
     if ($oldversion < 2021101900) {
-
         // Define table jitsi_record to be created.
         $table = new xmldb_table('jitsi_source_record');
 
@@ -307,7 +344,6 @@ function xmldb_jitsi_upgrade($oldversion) {
             $record->source = $sourceid;
 
             $DB->update_record('jitsi_record', $record);
-
         }
         $fieldlink = new xmldb_field('link');
 
@@ -319,8 +355,16 @@ function xmldb_jitsi_upgrade($oldversion) {
 
     if ($oldversion < 2021102100) {
         $table = new xmldb_table('jitsi_source_record');
-        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, '0',
-            'account');
+        $field = new xmldb_field(
+            'timecreated',
+            XMLDB_TYPE_INTEGER,
+            '10',
+            XMLDB_UNSIGNED,
+            null,
+            null,
+            '0',
+            'account',
+        );
 
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
@@ -410,7 +454,6 @@ function xmldb_jitsi_upgrade($oldversion) {
     }
 
     if ($oldversion < 2022070400) {
-
         // Changing type of field name on table jitsi_record to text.
         $table = new xmldb_table('jitsi_record');
         $field = new xmldb_field('name', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, 'visible');
@@ -423,7 +466,6 @@ function xmldb_jitsi_upgrade($oldversion) {
     }
 
     if ($oldversion < 2022093000) {
-
         // Changing type of field name on table jitsi_record to text.
         $table = new xmldb_table('jitsi_source_record');
         $field = new xmldb_field('embed', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
@@ -435,7 +477,6 @@ function xmldb_jitsi_upgrade($oldversion) {
     }
 
     if ($oldversion < 2022120900) {
-
         // Define field status to be added to jitsi.
         $table = new xmldb_table('jitsi');
         $field = new xmldb_field('status', XMLDB_TYPE_CHAR, '50', null, null, null, null, 'completionminutes');
@@ -450,11 +491,18 @@ function xmldb_jitsi_upgrade($oldversion) {
     }
 
     if ($oldversion < 2023011000) {
-
         // Define field status to be added to jitsi.
         $table = new xmldb_table('jitsi');
-        $field = new xmldb_field('numberofparticipants', XMLDB_TYPE_INTEGER, '3', XMLDB_UNSIGNED, null, null, '0',
-            'status');
+        $field = new xmldb_field(
+            'numberofparticipants',
+            XMLDB_TYPE_INTEGER,
+            '3',
+            XMLDB_UNSIGNED,
+            null,
+            null,
+            '0',
+            'status',
+        );
 
         // Conditionally launch add field status.
         if (!$dbman->field_exists($table, $field)) {
@@ -466,7 +514,6 @@ function xmldb_jitsi_upgrade($oldversion) {
     }
 
     if ($oldversion < 2023012601) {
-
         // Define field status to be dropped from jitsi.
         $table = new xmldb_table('jitsi');
         $field = new xmldb_field('status');
@@ -481,7 +528,6 @@ function xmldb_jitsi_upgrade($oldversion) {
     }
 
     if ($oldversion < 2023021600) {
-
         // Define field sourcerecord to be added to jitsi.
         $table = new xmldb_table('jitsi');
         $field = new xmldb_field('sourcerecord', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'numberofparticipants');
@@ -496,7 +542,6 @@ function xmldb_jitsi_upgrade($oldversion) {
     }
 
     if ($oldversion < 2023030700) {
-
         // Define field sourcerecord to be added to jitsi.
         $table = new xmldb_table('jitsi_record_account');
         $field = new xmldb_field('embed');
@@ -519,7 +564,6 @@ function xmldb_jitsi_upgrade($oldversion) {
     }
 
     if ($oldversion < 2023051001) {
-
         // Define field maxparticipants to be added to jitsi_source_record.
         $table = new xmldb_table('jitsi_source_record');
         $field = new xmldb_field('maxparticipants', XMLDB_TYPE_INTEGER, '3', null, null, null, null, 'embed');
@@ -534,7 +578,6 @@ function xmldb_jitsi_upgrade($oldversion) {
     }
 
     if ($oldversion < 2023052901) {
-
         // Define field inqueue to be added to jitsi_record_account.
         $table = new xmldb_table('jitsi_record_account');
         $field = new xmldb_field('inqueue', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'inuse');
@@ -549,7 +592,6 @@ function xmldb_jitsi_upgrade($oldversion) {
     }
 
     if ($oldversion < 2023111500) {
-
         // Define field inqueue to be added to jitsi_record_account.
         $table = new xmldb_table('jitsi');
         $field = new xmldb_field('sessionwithtoken', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'sourcerecord');
@@ -591,8 +633,10 @@ function xmldb_jitsi_upgrade($oldversion) {
 
         if ($dbman->field_exists($table, $field)) {
             // Step 1: Update NULL values to empty string using Moodle's API (portable).
-            $records = $DB->get_records_select('jitsi', 
-                $DB->sql_isempty('jitsi', 'tokeninvitacion', false, true) . ' OR tokeninvitacion IS NULL');
+            $records = $DB->get_records_select(
+                'jitsi',
+                $DB->sql_isempty('jitsi', 'tokeninvitacion', false, true) . ' OR tokeninvitacion IS NULL'
+            );
             foreach ($records as $record) {
                 $record->tokeninvitacion = '';
                 $DB->update_record('jitsi', $record);
@@ -750,16 +794,16 @@ function xmldb_jitsi_upgrade($oldversion) {
 
             if (!$DB->record_exists('jitsi_servers', ['domain' => $olddomain])) {
                 $server = new stdClass();
-                $server->name                = $olddomain;
-                $server->type                = is_numeric($oldtype) ? (int)$oldtype : 0;
-                $server->domain              = $olddomain;
-                $server->appid               = (string)$oldappid;
-                $server->secret              = (string)$oldsecret;
-                $server->eightbyeightappid   = (string)$old8x8appid;
-                $server->eightbyeightapikeyid= (string)$old8x8apikeyid;
-                $server->privatekey          = (string)$oldprivatekey;
-                $server->timecreated         = time();
-                $server->timemodified        = time();
+                $server->name                 = $olddomain;
+                $server->type                 = is_numeric($oldtype) ? (int)$oldtype : 0;
+                $server->domain               = $olddomain;
+                $server->appid                = (string)$oldappid;
+                $server->secret               = (string)$oldsecret;
+                $server->eightbyeightappid    = (string)$old8x8appid;
+                $server->eightbyeightapikeyid = (string)$old8x8apikeyid;
+                $server->privatekey           = (string)$oldprivatekey;
+                $server->timecreated          = time();
+                $server->timemodified         = time();
                 $newserverid = $DB->insert_record('jitsi_servers', $server);
                 set_config('server', $newserverid, 'mod_jitsi');
             } else {
@@ -768,10 +812,10 @@ function xmldb_jitsi_upgrade($oldversion) {
             }
         }
 
-        // 2b) Migrate leftover CORE config entries (config.name LIKE 'jitsi_%') into mod_jitsi, if 2024122701 didn't run on this branch.
+        // Migrate leftover CORE config entries (config.name LIKE 'jitsi_%') into mod_jitsi.
         $corejitsi = $DB->get_records_select('config', "name LIKE 'jitsi_%'");
         foreach ($corejitsi as $rec) {
-            $newname = substr($rec->name, 6); // strip 'jitsi_'
+            $newname = substr($rec->name, 6); // Strip 'jitsi_'
             // Avoid overwriting existing mod_jitsi values.
             if (!$DB->record_exists('config_plugins', ['plugin' => 'mod_jitsi', 'name' => $newname])) {
                 set_config($newname, $rec->value, 'mod_jitsi');
@@ -800,12 +844,16 @@ function xmldb_jitsi_upgrade($oldversion) {
         unset_config('jitsi_domain');
 
         // 4b) Normalize plugin config names that still carry the 'jitsi_' prefix.
-        //     This covers cases where entries existed in config_plugins under the legacy
-        //     plugin 'jitsi' and were later renamed to 'mod_jitsi' without stripping the prefix.
-        //     Result: 'mod_jitsi'|'jitsi_help'  ->  'mod_jitsi'|'help'
-        $prefixedrecords = $DB->get_records_select('config_plugins', "plugin = :plugin AND name LIKE 'jitsi_%'", ['plugin' => 'mod_jitsi']);
+        // This covers cases where entries existed in config_plugins under the legacy
+        // plugin 'jitsi' and were later renamed to 'mod_jitsi' without stripping the prefix.
+        // Result: 'mod_jitsi'|'jitsi_help'  ->  'mod_jitsi'|'help'
+        $prefixedrecords = $DB->get_records_select(
+            'config_plugins',
+            "plugin = :plugin AND name LIKE 'jitsi_%'",
+            ['plugin' => 'mod_jitsi'],
+        );
         foreach ($prefixedrecords as $rec) {
-            $newname = substr($rec->name, 6); // remove 'jitsi_'
+            $newname = substr($rec->name, 6); // Remove 'jitsi_'
             // Do not overwrite if target exists. Keep existing target and drop the prefixed one.
             if (!$DB->record_exists('config_plugins', ['plugin' => 'mod_jitsi', 'name' => $newname])) {
                 set_config($newname, $rec->value, 'mod_jitsi');
@@ -831,11 +879,11 @@ function xmldb_jitsi_upgrade($oldversion) {
         // 8) Token fields upgrade - PORTABLE METHOD
         $table = new xmldb_table('jitsi');
 
-        // Handle 'token' field
         if ($dbman->field_exists($table, new xmldb_field('token'))) {
-            // Update NULL/empty values using portable method
-            $records = $DB->get_records_select('jitsi', 
-                $DB->sql_isempty('jitsi', 'token', false, true) . ' OR token IS NULL');
+            $records = $DB->get_records_select(
+                'jitsi',
+                $DB->sql_isempty('jitsi', 'token', false, true) . ' OR token IS NULL'
+            );
             foreach ($records as $record) {
                 if (empty($record->token)) {
                     $record->token = bin2hex(random_bytes(32));
@@ -843,39 +891,32 @@ function xmldb_jitsi_upgrade($oldversion) {
                 }
             }
 
-            // Change field to CHAR(64) - try precision change first (faster)
             $fieldtoken = new xmldb_field('token', XMLDB_TYPE_CHAR, '64', null, null, null, null);
-            
             try {
                 $dbman->change_field_precision($table, $fieldtoken);
             } catch (Exception $e) {
-                // Fallback for databases that don't support precision change
                 $dbman->change_field_type($table, $fieldtoken);
             }
-            
-            // Final enforcement of NOT NULL after ensuring no NULLs exist
             $DB->execute("UPDATE {jitsi} SET token = '' WHERE token IS NULL");
-            $fieldtoken_notnull = new xmldb_field('token', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL, null, null);
-            $dbman->change_field_notnull($table, $fieldtoken_notnull);
+            $fieldtokennotnull = new xmldb_field('token', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL, null, null);
+            $dbman->change_field_notnull($table, $fieldtokennotnull);
         }
 
-        // Handle 'tokeninterno' field (TEXT to CHAR needs special care)
         if ($dbman->field_exists($table, new xmldb_field('tokeninterno'))) {
-            // Step 1: Ensure all records have valid tokens
-            $records = $DB->get_records_select('jitsi', 
-                $DB->sql_isempty('jitsi', 'tokeninterno', false, true) . ' OR tokeninterno IS NULL');
+            $records = $DB->get_records_select(
+                'jitsi',
+                $DB->sql_isempty('jitsi', 'tokeninterno', false, true) . ' OR tokeninterno IS NULL'
+            );
             foreach ($records as $record) {
                 $record->tokeninterno = bin2hex(random_bytes(32));
                 $DB->update_record('jitsi', $record);
             }
 
-            // Step 2: Use temp column method (safest for TEXT→CHAR conversion)
             $tmpfield = new xmldb_field('tokeninterno_tmp', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL, null, null);
             if (!$dbman->field_exists($table, $tmpfield)) {
                 $dbman->add_field($table, $tmpfield);
             }
 
-            // Step 3: Copy data using Moodle API (portable)
             $allrecords = $DB->get_records('jitsi');
             foreach ($allrecords as $record) {
                 $update = new stdClass();
@@ -884,7 +925,6 @@ function xmldb_jitsi_upgrade($oldversion) {
                 $DB->update_record('jitsi', $update);
             }
 
-            // Step 4: Drop old and rename
             $dbman->drop_field($table, new xmldb_field('tokeninterno'));
             $dbman->rename_field($table, $tmpfield, 'tokeninterno');
         }

@@ -35,7 +35,6 @@ namespace mod_jitsi\event;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class jitsi_session_guest_form extends \core\event\base {
-
     /**
      * Init method.
      */
@@ -83,5 +82,4 @@ class jitsi_session_guest_form extends \core\event\base {
     public static function get_objectid_mapping() {
         return false;
     }
-
 }

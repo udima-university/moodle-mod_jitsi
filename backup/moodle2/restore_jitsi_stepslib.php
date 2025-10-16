@@ -23,7 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_jitsi_activity_structure_step extends restore_activity_structure_step {
-
     /**
      * Defines structure of path elements to be processed during the restore
      *
@@ -35,12 +34,13 @@ class restore_jitsi_activity_structure_step extends restore_activity_structure_s
         $userinfo = $this->get_setting_value('userinfo');
 
         $paths[] = new restore_path_element('jitsi', '/activity/jitsi');
-        $paths[] = new restore_path_element('jitsi_record_account',
-            '/activity/jitsi/records/record/sources/source/accounts/account');
+        $paths[] = new restore_path_element(
+            'jitsi_record_account',
+            '/activity/jitsi/records/record/sources/source/accounts/account'
+        );
         if ($userinfo) {
             $paths[] = new restore_path_element('jitsi_source_record', '/activity/jitsi/records/record/sources/source');
             $paths[] = new restore_path_element('jitsi_record', '/activity/jitsi/records/record');
-
         }
 
         // Return the paths wrapped into standard activity structure.

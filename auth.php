@@ -29,9 +29,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(dirname(dirname(__FILE__))).'/lib/moodlelib.php');
-require_once(dirname(__FILE__).'/lib.php');
+require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
+require_once(dirname(dirname(dirname(__FILE__))) . '/lib/moodlelib.php');
+require_once(dirname(__FILE__) . '/lib.php');
 require_once(__DIR__ . '/api/vendor/autoload.php');
 
 require_login();
@@ -43,7 +43,7 @@ $PAGE->set_context(context_system::instance());
 $tokensessionkey = 'token-' . "https://www.googleapis.com/auth/youtube";
 if ($name) {
     if (!file_exists(__DIR__ . '/api/vendor/autoload.php')) {
-        throw new \Exception('Api client not found on '.$CFG->wwwroot.'/mod/jitsi/api/vendor/autoload.php');
+        throw new \Exception('Api client not found on ' . $CFG->wwwroot . '/mod/jitsi/api/vendor/autoload.php');
     }
 
     $accountbyname = $DB->get_record('jitsi_record_account', ['name' => $name]);
@@ -94,7 +94,7 @@ if (get_config('mod_jitsi', 'oauth_id') == null || get_config('mod_jitsi', 'oaut
     echo "Empty parameters 'jitsi_oauth_id' & 'jitsi_oauth_secret'";
 } else {
     if (!file_exists(__DIR__ . '/api/vendor/autoload.php')) {
-        throw new \Exception('please run "composer require google/apiclient:~2.0" in "' . __DIR__ .'"');
+        throw new \Exception('please run "composer require google/apiclient:~2.0" in "' . __DIR__ . '"');
     }
 
     require_once(__DIR__ . '/api/vendor/autoload.php');
@@ -109,10 +109,12 @@ if (get_config('mod_jitsi', 'oauth_id') == null || get_config('mod_jitsi', 'oaut
     $client->setAccessType("offline");
 
     $httparray = explode(":", $CFG->wwwroot);
-    $principiohttp = $httparray[0].'://';
+    $principiohttp = $httparray[0] . '://';
 
-    $redirect = filter_var($principiohttp . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'],
-              FILTER_SANITIZE_URL);
+    $redirect = filter_var(
+        $principiohttp . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'],
+        FILTER_SANITIZE_URL
+    );
     $client->setRedirectUri($redirect);
 
     $tokensessionkey = 'token-' . $client->prepareScopes();
@@ -153,7 +155,7 @@ if (get_config('mod_jitsi', 'oauth_id') == null || get_config('mod_jitsi', 'oaut
             echo $OUTPUT->box(get_string('accountconnected', 'jitsi'));
 
             $link = new moodle_url('/mod/jitsi/adminaccounts.php');
-            echo '<a href='.$link.'>'.get_string('back').'</a>';
+            echo '<a href=' . $link . '>' . get_string('back') . '</a>';
 
             $account = $DB->get_record('jitsi_record_account', ['name' => $_SESSION['name']]);
 
@@ -176,19 +178,23 @@ if (get_config('mod_jitsi', 'oauth_id') == null || get_config('mod_jitsi', 'oaut
                 $account->inuse = 1;
                 $DB->update_record('jitsi_record_account', $account);
             }
-
         } catch (Google_Service_Exception $e) {
-            $htmlbody = sprintf('<p>A service error occurred: <code>%s</code></p>',
-                        htmlspecialchars($e->getMessage(), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401));
-
+            $htmlbody = sprintf(
+                '<p>A service error occurred: <code>%s</code></p>',
+                htmlspecialchars($e->getMessage(), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401)
+            );
         } catch (Google_Exception $e) {
-            $htmlbody = sprintf('<p>A service error occurred: <code>%s</code></p>',
-                        htmlspecialchars($e->getMessage(), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401));
+            $htmlbody = sprintf(
+                '<p>A service error occurred: <code>%s</code></p>',
+                htmlspecialchars(
+                    $e->getMessage(),
+                    ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401
+                )
+            );
         }
         $_SESSION[$tokensessionkey] = $client->getAccessToken();
 
         echo $OUTPUT->footer();
-
     } else if ($oauth2clientid == 'REPLACE_ME') {
         echo "<h3>Client Credentials Required</h3>";
         echo "<p>You need to set <code>\$OAUTH2_CLIENT_ID</code> and";
@@ -201,7 +207,7 @@ if (get_config('mod_jitsi', 'oauth_id') == null || get_config('mod_jitsi', 'oaut
         echo $OUTPUT->header();
 
         $rand = mt_rand();
-        $stateparameters = 'name='.$name.'&rand='.$rand;
+        $stateparameters = 'name=' . $name . '&rand=' . $rand;
         $state = base64UrlEncode($stateparameters);
         $client->setState($state);
         $_SESSION['rand'] = $rand;
@@ -212,5 +218,4 @@ if (get_config('mod_jitsi', 'oauth_id') == null || get_config('mod_jitsi', 'oaut
 
         echo $OUTPUT->footer();
     }
-
 }

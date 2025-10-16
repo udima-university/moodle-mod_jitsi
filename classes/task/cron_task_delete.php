@@ -24,7 +24,7 @@
 namespace mod_jitsi\task;
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/jitsi/lib.php');
+require_once($CFG->dirroot . '/mod/jitsi/lib.php');
 
 /**
  * A scheduled task class.
@@ -32,7 +32,6 @@ require_once($CFG->dirroot.'/mod/jitsi/lib.php');
  * @package    mod_jitsi
  */
 class cron_task_delete extends \core\task\scheduled_task {
-
     /**
      * Get a descriptive name for this task (shown to admins).
      *
@@ -48,21 +47,27 @@ class cron_task_delete extends \core\task\scheduled_task {
     public function execute() {
         global $CFG, $DB;
 
-        $recordstodelete = $DB->get_records('jitsi_record', ['deleted' => 1], '',
-         '*', 0, get_config('mod_jitsi', 'numbervideosdeleted'));
+        $recordstodelete = $DB->get_records(
+            'jitsi_record',
+            ['deleted' => 1],
+            '',
+            '*',
+            0,
+            get_config('mod_jitsi', 'numbervideosdeleted')
+        );
         $cont = 0;
-        echo "Fecha: ".userdate(time()).PHP_EOL;
-        echo "Borrando hasta: ".userdate(time() - get_config('mod_jitsi', 'videosexpiry')).PHP_EOL;
+        echo "Fecha: " . userdate(time()) . PHP_EOL;
+        echo "Borrando hasta: " . userdate(time() - get_config('mod_jitsi', 'videosexpiry')) . PHP_EOL;
         foreach ($recordstodelete as $recordtodelete) {
             $source = $DB->get_record('jitsi_source_record', ['id' => $recordtodelete->source]);
             if (($source->timecreated < time() - get_config('mod_jitsi', 'videosexpiry'))) {
                 if (deleterecordyoutube($source->id)) {
-                    echo "eliminando source: ".$source->link." del ".userdate($source->timecreated).PHP_EOL;
+                    echo "eliminando source: " . $source->link . " del " . userdate($source->timecreated) . PHP_EOL;
                     $DB->delete_records('jitsi_source_record', ['id' => $recordtodelete->source]);
-                    echo "eliminando record: ".$recordtodelete->name.PHP_EOL;
+                    echo "eliminando record: " . $recordtodelete->name . PHP_EOL;
                     $DB->delete_records('jitsi_record', ['id' => $recordtodelete->id]);
                 } else {
-                    echo "no se ha podido eliminar el source: ".$source->link;
+                    echo "no se ha podido eliminar el source: " . $source->link;
                 }
             }
         }

@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/tablelib.php');
-require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir . '/adminlib.php');
 
 /**
  * Extend the standard table class for jitsi.
@@ -96,7 +96,7 @@ class mod_adminrecords_table extends table_sql {
      *     when downloading.
      */
     protected function col_link($values) {
-        return '<a href="https://youtu.be/'.$values->link.'" target="_blank">'.$values->link.'</a>';
+        return '<a href="https://youtu.be/' . $values->link . '" target="_blank">' . $values->link . '</a>';
     }
 
     /**
@@ -113,11 +113,14 @@ class mod_adminrecords_table extends table_sql {
         $acount = $DB->get_record('jitsi_record_account', ['id' => $values->account]);
         if (isDeletable($values->id)) {
             if ($acount->clientaccesstoken != null) {
-                $deleteurl = new moodle_url('/mod/jitsi/adminrecord.php?&deletejitsisourceid='.
-                    $values->id. '&sesskey=' . sesskey());
+                $deleteurl = new moodle_url('/mod/jitsi/adminrecord.php?&deletejitsisourceid=' .
+                    $values->id . '&sesskey=' . sesskey());
                 $deleteicon = new pix_icon('t/delete', get_string('delete'));
-                $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon,
-                  new confirm_action(get_string('deletesourceq', 'jitsi')));
+                $deleteaction = $OUTPUT->action_icon(
+                    $deleteurl,
+                    $deleteicon,
+                    new confirm_action(get_string('deletesourceq', 'jitsi'))
+                );
                 return $deleteaction;
             } else {
                 return 'not deletable';

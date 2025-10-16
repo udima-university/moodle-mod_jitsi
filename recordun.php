@@ -25,21 +25,20 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(dirname(dirname(__FILE__))).'/lib/moodlelib.php');
-require_once(dirname(__FILE__).'/lib.php');
-
+require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
+require_once(dirname(dirname(dirname(__FILE__))) . '/lib/moodlelib.php');
+require_once(dirname(__FILE__) . '/lib.php');
 
 $token = required_param('t', PARAM_TEXT);
 
-$sql = "select * from {jitsi} where token = '".$token."'";
+$sql = "select * from {jitsi} where token = '" . $token . "'";
 $jitsi = $DB->get_record_sql($sql);
-$module = $DB->get_record ('modules', ['name' => 'jitsi']);
-$cm = $DB->get_record ('course_modules', ['instance' => $jitsi->id, 'module' => $module->id]);
+$module = $DB->get_record('modules', ['name' => 'jitsi']);
+$cm = $DB->get_record('course_modules', ['instance' => $jitsi->id, 'module' => $module->id]);
 $id = $cm->id;
 
 global $DB, $CFG;
-$PAGE->set_url($CFG->wwwroot.'/mod/jitsi/recordun.php');
+$PAGE->set_url($CFG->wwwroot . '/mod/jitsi/recordun.php');
 $course = $DB->get_record('course', ['id' => $jitsi->course]);
 $cm = get_coursemodule_from_id('jitsi', $id, 0, false, MUST_EXIST);
 $PAGE->set_cm($cm);
@@ -68,11 +67,11 @@ $optionsseparator = ['.', '-', '_', ''];
 for ($i = 0; $i < $max; $i++) {
     if ($i != $max - 1) {
         if ($allowed[$i] == 0) {
-            $sesparam .= string_sanitize($course->shortname).$optionsseparator[get_config('mod_jitsi', 'separator')];
+            $sesparam .= string_sanitize($course->shortname) . $optionsseparator[get_config('mod_jitsi', 'separator')];
         } else if ($allowed[$i] == 1) {
-            $sesparam .= $jitsi->id.$optionsseparator[get_config('mod_jitsi', 'separator')];
+            $sesparam .= $jitsi->id . $optionsseparator[get_config('mod_jitsi', 'separator')];
         } else if ($allowed[$i] == 2) {
-            $sesparam .= string_sanitize($jitsi->name).$optionsseparator[get_config('mod_jitsi', 'separator')];
+            $sesparam .= string_sanitize($jitsi->name) . $optionsseparator[get_config('mod_jitsi', 'separator')];
         }
     } else {
         if ($allowed[$i] == 0) {
@@ -94,10 +93,10 @@ if (!istimedout($jitsi)) {
     $sourcerecord = $DB->get_record('jitsi_source_record', ['id' => $jitsi->sourcerecord]);
     if ($sourcerecord) {
         echo "<div class=\"embed-responsive embed-responsive-16by9\">
-            <iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/".$sourcerecord->link."\" allowfullscreen>
+            <iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/" . $sourcerecord->link . "\" allowfullscreen>
             </iframe></div>";
     } else {
-        echo '<div class="alert alert-warning text-center" role="alert">'.get_string('norecording', 'jitsi').'</div>';
+        echo '<div class="alert alert-warning text-center" role="alert">' . get_string('norecording', 'jitsi') . '</div>';
     }
 } else {
     echo generateerrortime($jitsi);
@@ -141,8 +140,8 @@ echo "async function waitTenSeconds(response) {\n";
 echo "    document.getElementById('videoContainer').innerHTML = ";
 echo "    '<div class=\"d-flex flex-column align-items-center justify-content-center\" style=\"height: 100vh;\">";
 echo "     <div class=\"spinner-border\" role=\"status\">";
-echo "     <span class=\"sr-only\">".get_string('loadingvideo', 'jitsi')."</span></div><br>"
-    .get_string('loadingvideo', 'jitsi')."</div>';\n";
+echo "     <span class=\"sr-only\">" . get_string('loadingvideo', 'jitsi') . "</span></div><br>"
+    . get_string('loadingvideo', 'jitsi') . "</div>';\n";
 
 echo "    await wait(10000); // Esperar 10,000 milisegundos (10 segundos)\n";
 echo "    document.getElementById('videoContainer').innerHTML = ";
@@ -155,13 +154,13 @@ echo "}\n";
 echo "async function waitTenSecondsForDelete() {";
 echo "    await wait(10000);";
 echo "    document.getElementById('videoContainer').innerHTML = '<div class=\"alert alert-warning text-center\" role=\"alert\">"
-    .get_string('norecording', 'jitsi')."</div>';\n";
+    . get_string('norecording', 'jitsi') . "</div>';\n";
 echo "    hayVideo = false;\n";
 echo "};\n";
 
 // Llama a la función cada 5 segundos.
 echo "checkInterval = setInterval(function() {\n";
-echo "    checkSourceRecord(".$jitsi->id.");\n";
+echo "    checkSourceRecord(" . $jitsi->id . ");\n";
 echo "}, 10000);\n";
 echo "</script>\n";
 if (isloggedin()) {

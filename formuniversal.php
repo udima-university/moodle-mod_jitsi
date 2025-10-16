@@ -25,18 +25,18 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(dirname(dirname(__FILE__))).'/lib/moodlelib.php');
-require_once(dirname(__FILE__).'/lib.php');
+require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
+require_once(dirname(dirname(dirname(__FILE__))) . '/lib/moodlelib.php');
+require_once(dirname(__FILE__) . '/lib.php');
 require_once("$CFG->libdir/formslib.php");
 global $DB;
 
 $token = required_param('t', PARAM_TEXT);
 
-$sql = "select * from {jitsi} where token = '".$token."'";
+$sql = "select * from {jitsi} where token = '" . $token . "'";
 $jitsi = $DB->get_record_sql($sql);
-$module = $DB->get_record ('modules', ['name' => 'jitsi']);
-$cm = $DB->get_record ('course_modules', ['instance' => $jitsi->id, 'module' => $module->id]);
+$module = $DB->get_record('modules', ['name' => 'jitsi']);
+$cm = $DB->get_record('course_modules', ['instance' => $jitsi->id, 'module' => $module->id]);
 $id = $cm->id;
 
 $sessionid = $cm->instance;
@@ -74,7 +74,7 @@ class name_form extends moodleform {
     }
 }
 
-$PAGE->set_url($CFG->wwwroot.'/mod/jitsi/formuniversal.php');
+$PAGE->set_url($CFG->wwwroot . '/mod/jitsi/formuniversal.php');
 $sesion = $DB->get_record('jitsi', ['id' => $sessionid]);
 $PAGE->set_cm($cm);
 $PAGE->set_context(context_module::instance($id));
@@ -114,8 +114,13 @@ if (!istimedout($sesion)) {
                         $mform->display();
                     }
                 } else {
-                    echo $OUTPUT->box(get_string('nostart', 'jitsi',
-                        date("d-m-Y H:i", ($sesion->timeopen - ($sesion->minpretime * 60)))));
+                    echo $OUTPUT->box(
+                        get_string(
+                            'nostart',
+                            'jitsi',
+                            date("d-m-Y H:i", ($sesion->timeopen - ($sesion->minpretime * 60)))
+                        )
+                    );
                 }
             } else {
                 echo $OUTPUT->box(get_string('finish', 'jitsi'));
@@ -130,12 +135,12 @@ if (!istimedout($sesion)) {
                         $nom = $USER->username;
                         break;
                     case 'nameandsurname':
-                        $nom = $USER->firstname.' '.$USER->lastname;
+                        $nom = $USER->firstname . ' ' . $USER->lastname;
                         break;
                     case 'alias':
                         break;
                 }
-                $avatar = $CFG->wwwroot.'/user/pix.php/'.$USER->id.'/f1.jpg';
+                $avatar = $CFG->wwwroot . '/user/pix.php/' . $USER->id . '/f1.jpg';
                 $mail = '';
                 $urlparams = [
                     'avatar' => $avatar,
@@ -145,11 +150,19 @@ if (!istimedout($sesion)) {
                     'id' => $id,
                 ];
                 echo $OUTPUT->box(get_string('instruction', 'jitsi'));
-                echo $OUTPUT->single_button(new moodle_url('/mod/jitsi/universal.php', $urlparams),
-                    get_string('access', 'jitsi'), 'post');
+                echo $OUTPUT->single_button(
+                    new moodle_url('/mod/jitsi/universal.php', $urlparams),
+                    get_string('access', 'jitsi'),
+                    'post'
+                );
             } else {
-                echo $OUTPUT->box(get_string('nostart', 'jitsi',
-                        date("d-m-Y H:i", ($sesion->timeopen - ($sesion->minpretime * 60)))));
+                echo $OUTPUT->box(
+                    get_string(
+                        'nostart',
+                        'jitsi',
+                        date("d-m-Y H:i", ($sesion->timeopen - ($sesion->minpretime * 60))),
+                    )
+                );
             }
         }
     } else {

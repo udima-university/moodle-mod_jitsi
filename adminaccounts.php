@@ -28,9 +28,9 @@
  * @copyright  2021 Sergio Comerón Sánchez-Paniagua <sergiocomeron@icloud.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
+require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once("$CFG->libdir/formslib.php");
-require_once(dirname(__FILE__).'/lib.php');
+require_once(dirname(__FILE__) . '/lib.php');
 require_once(__DIR__ . '/api/vendor/autoload.php');
 
 global $DB, $CFG;
@@ -49,7 +49,6 @@ $queueaccountid = optional_param('queueaccountid', 0, PARAM_INT);
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class accountname_form extends moodleform {
-
     /**
      * Defines forms elements
      */
@@ -112,7 +111,7 @@ if ($daccountid && confirm_sesskey($sesskey)) {
         echo "First log in";
     } else {
         if (!file_exists(__DIR__ . '/api/vendor/autoload.php')) {
-            throw new \Exception('Api client not found on '.$CFG->wwwroot.'/mod/jitsi/api/vendor/autoload.php');
+            throw new \Exception('Api client not found on ' . $CFG->wwwroot . '/mod/jitsi/api/vendor/autoload.php');
         }
 
         $client = new Google_Client();
@@ -165,11 +164,11 @@ if (is_siteadmin()) {
     echo $OUTPUT->box(get_string('adminaccountex', 'jitsi'));
 
     foreach ($accounts as $account) {
-        $deleteurl = new moodle_url('/mod/jitsi/adminaccounts.php?&daccountid=' . $account->id. '&sesskey=' . sesskey());
+        $deleteurl = new moodle_url('/mod/jitsi/adminaccounts.php?&daccountid=' . $account->id . '&sesskey=' . sesskey());
         $deleteicon = new pix_icon('t/delete', get_string('deletetooltip', 'jitsi'));
         $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon, new confirm_action(get_string('deleteq', 'jitsi')));
 
-        $loginurl = new moodle_url('/mod/jitsi/adminaccounts.php?&change=' . $account->id. '&sesskey=' . sesskey());
+        $loginurl = new moodle_url('/mod/jitsi/adminaccounts.php?&change=' . $account->id . '&sesskey=' . sesskey());
         $loginicon = new pix_icon('i/publish', get_string('activatetooltip', 'jitsi'));
         $loginaction = $OUTPUT->action_icon($loginurl, $loginicon, new confirm_action(get_string('loginq', 'jitsi')));
 
@@ -180,12 +179,12 @@ if (is_siteadmin()) {
 
         if ($account->inqueue == 1) {
             $removefromqueueurl = new moodle_url('/mod/jitsi/adminaccounts.php?&queueaccountid='
-                .$account->id. '&sesskey=' . sesskey());
+                . $account->id . '&sesskey=' . sesskey());
             $inqueueicon = new pix_icon('t/switch_minus', get_string('removefromqueue', 'jitsi'));
             $inqueueaction = $OUTPUT->action_icon($removefromqueueurl, $inqueueicon, new confirm_action('Remove?'));
         } else {
             $addtoqueueurl = new moodle_url('/mod/jitsi/adminaccounts.php?&queueaccountid='
-                .$account->id. '&sesskey=' . sesskey());
+                . $account->id . '&sesskey=' . sesskey());
             $inqueueicon = new pix_icon('t/switch_plus', get_string('addtoqueue', 'jitsi'));
             $inqueueaction = $OUTPUT->action_icon($addtoqueueurl, $inqueueicon, new confirm_action('Add?'));
         }
@@ -193,17 +192,17 @@ if (is_siteadmin()) {
         if ($account->clientaccesstoken != null) {
             if ($account->inuse == 1) {
                 if ($numrecords == 0) {
-                    $table->data[] = [$account->id, $account->name.get_string('inuse', 'jitsi'),
+                    $table->data[] = [$account->id, $account->name . get_string('inuse', 'jitsi'),
                         $deleteaction, $numrecords, $inqueueaction,
                     ];
                 } else {
-                    $table->data[] = [$account->id, $account->name.get_string('inuse', 'jitsi'),
+                    $table->data[] = [$account->id, $account->name . get_string('inuse', 'jitsi'),
                         null, $numrecords, $inqueueaction,
                     ];
                 }
             } else {
                 if ($numrecords == 0) {
-                    $table->data[] = [$account->id, $account->name, $loginaction.' '.$deleteaction,
+                    $table->data[] = [$account->id, $account->name, $loginaction . ' ' . $deleteaction,
                         $numrecords, $inqueueaction,
                     ];
                 } else {

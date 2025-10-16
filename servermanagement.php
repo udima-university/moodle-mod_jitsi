@@ -78,7 +78,6 @@ if ($action === 'edit' && $id > 0) {
 
 if ($mform->is_cancelled()) {
     redirect(new moodle_url('/mod/jitsi/servermanagement.php'));
-
 } else if ($data = $mform->get_data()) {
     if ($data->id) {
         if (!$server = $DB->get_record('jitsi_servers', ['id' => $data->id])) {
@@ -110,7 +109,6 @@ if ($mform->is_cancelled()) {
             get_string('serverupdated', 'mod_jitsi', $server->name),
             \core\output\notification::NOTIFY_SUCCESS
         );
-
     } else {
         $server = new stdClass();
         $server->name   = $data->name;

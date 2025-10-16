@@ -25,9 +25,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(dirname(dirname(__FILE__))).'/lib/moodlelib.php');
-require_once(dirname(__FILE__).'/lib.php');
+require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
+require_once(dirname(dirname(dirname(__FILE__))) . '/lib/moodlelib.php');
+require_once(dirname(__FILE__) . '/lib.php');
 
 $sessionid = required_param('ses', PARAM_INT);
 $name = required_param('name', PARAM_TEXT);
@@ -35,7 +35,7 @@ $avatar = optional_param('avatar', null, PARAM_TEXT);
 $id = required_param('id', PARAM_INT);
 
 global $DB, $CFG;
-$PAGE->set_url($CFG->wwwroot.'/mod/jitsi/universal.php');
+$PAGE->set_url($CFG->wwwroot . '/mod/jitsi/universal.php');
 $sesion = $DB->get_record('jitsi', ['id' => $sessionid]);
 $course = $DB->get_record('course', ['id' => $sesion->course]);
 $cm = get_coursemodule_from_id('jitsi', $id, 0, false, MUST_EXIST);
@@ -61,7 +61,7 @@ echo "  console.log(\"RUNNING\");";
 echo "    require(['jquery', 'core/ajax', 'core/notification'], function($, ajax, notification) {\n";
 echo "       var respuesta = ajax.call([{\n";
 echo "            methodname: 'mod_jitsi_participating_session',\n";
-echo "            args: {jitsi:'".$jitsi->id."', user:'".$USER->id."', cmid:'".$cm->id."'},\n";
+echo "            args: {jitsi:'" . $jitsi->id . "', user:'" . $USER->id . "', cmid:'" . $cm->id . "'},\n";
 echo "       }]);\n";
 echo "        console.log(respuesta[0]);";
 echo "})\n";
@@ -78,11 +78,11 @@ $optionsseparator = ['.', '-', '_', ''];
 for ($i = 0; $i < $max; $i++) {
     if ($i != $max - 1) {
         if ($allowed[$i] == 0) {
-            $sesparam .= string_sanitize($course->shortname).$optionsseparator[get_config('mod_jitsi', 'separator')];
+            $sesparam .= string_sanitize($course->shortname) . $optionsseparator[get_config('mod_jitsi', 'separator')];
         } else if ($allowed[$i] == 1) {
-            $sesparam .= $sesion->id.$optionsseparator[get_config('mod_jitsi', 'separator')];
+            $sesparam .= $sesion->id . $optionsseparator[get_config('mod_jitsi', 'separator')];
         } else if ($allowed[$i] == 2) {
-            $sesparam .= string_sanitize($sesion->name).$optionsseparator[get_config('mod_jitsi', 'separator')];
+            $sesparam .= string_sanitize($sesion->name) . $optionsseparator[get_config('mod_jitsi', 'separator')];
         }
     } else {
         if ($allowed[$i] == 0) {
@@ -100,8 +100,7 @@ $PAGE->set_heading($sesion->name);
 
 echo $OUTPUT->header();
 if (!istimedout($sesion)) {
-    createsession(0, $id,  $avatar, $name, $sesparam, null, $sesion, true, null);
-
+    createsession(0, $id, $avatar, $name, $sesparam, null, $sesion, true, null);
 } else {
     echo generateerrortime($sesion);
 }

@@ -29,10 +29,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
+require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once("$CFG->libdir/formslib.php");
-require_once(dirname(__FILE__).'/lib.php');
-require_once($CFG->libdir.'/tablelib.php');
+require_once(dirname(__FILE__) . '/lib.php');
+require_once($CFG->libdir . '/tablelib.php');
 require_once('adminrecords_table.php');
 
 global $DB;
@@ -80,23 +80,23 @@ if (is_siteadmin()) {
                                 {jitsi_source_record}.embed
                             from {jitsi_source_record},
                                 {jitsi_record}
-                            where '.$jitsilive->sourcerecord.' = {jitsi_source_record}.id and
+                            where ' . $jitsilive->sourcerecord . ' = {jitsi_source_record}.id and
                                 {jitsi_record}.source = {jitsi_source_record}.id';
             $sourcelives = $DB->get_records_sql($sqlsourcelive);
             foreach ($sourcelives as $sourcelive) {
                 $cm = get_coursemodule_from_instance('jitsi', $jitsilive->id, $jitsilive->course, false, MUST_EXIST);
                 $contextmodule = context_module::instance($cm->id);
                 $sqllastparticipating = 'select timecreated from {logstore_standard_log} where contextid = '
-                    .$contextmodule->id.' and (action = \'participating\' or action = \'enter\') order by timecreated DESC limit 1';
+                    . $contextmodule->id . ' and (action = \'participating\' or action = \'enter\') order by timecreated DESC limit 1';
                 $usersconnected = $DB->get_record_sql($sqllastparticipating);
                 if ($usersconnected != null) {
-                    if ((getdate()[0] - $usersconnected->timecreated) > 72 ) {
+                    if ((getdate()[0] - $usersconnected->timecreated) > 72) {
                         $jitsilive->numberofparticipants = 0;
                         $DB->update_record('jitsi', $jitsilive);
                     }
                 }
                 if ($usersconnected != null) {
-                    if ($jitsilive->numberofparticipants == 0 && (getdate()[0] - $usersconnected->timecreated) > 72 ) {
+                    if ($jitsilive->numberofparticipants == 0 && (getdate()[0] - $usersconnected->timecreated) > 72) {
                         $jitsilive->sourcerecord = null;
                         $DB->update_record('jitsi', $jitsilive);
                     }
@@ -112,24 +112,24 @@ if (is_siteadmin()) {
                     echo "<div class=\"card\" >";
                     echo "<div class=\"card-body\">";
                     echo "<h5 class=\"card-title\">";
-                    echo "<a href=".$urljitsi." >".$sourcelive->name."</a> (".$jitsilive->numberofparticipants.")";
+                    echo "<a href=" . $urljitsi . " >" . $sourcelive->name . "</a> (" . $jitsilive->numberofparticipants . ")";
                     echo "</h5>";
-                    echo "<h6 class=\"card-subtitle mb-2 text-muted\"><a href=".$urljitsi."
-                        data-toggle=\"tooltip\" data-placement=\"top\" title=\"".$course->fullname."\">".
-                        $course->shortname."</a></h6>";
-                    echo "<h6 class=\"card-subtitle mb-2 text-muted\">".userdate($sourcelive->timecreated)."</h6>";
+                    echo "<h6 class=\"card-subtitle mb-2 text-muted\"><a href=" . $urljitsi . "
+                        data-toggle=\"tooltip\" data-placement=\"top\" title=\"" . $course->fullname . "\">" .
+                        $course->shortname . "</a></h6>";
+                    echo "<h6 class=\"card-subtitle mb-2 text-muted\">" . userdate($sourcelive->timecreated) . "</h6>";
                     if ($sourcelive->embed == 0) {
                         doembedable($sourcelive->link);
                         sleep(1);
                     }
                     echo "<div class=\"embed-responsive embed-responsive-16by9\">";
                     echo "<iframe class=\"embed-responsive-item\" src=\"https://youtube.com/embed/"
-                        .$sourcelive->link."\"allowfullscreen></iframe>";
+                        . $sourcelive->link . "\"allowfullscreen></iframe>";
                     echo "</div>";
                     $author = $DB->get_record('user', ['id' => $sourcelive->userid]);
                     $authorurl = new moodle_url('/user/view.php', ['id' => $sourcelive->userid]);
-                    echo "<a href=".$authorurl." target=\"_blank\"><h6 class=\"card-subtitle mb-2 text-muted\">"
-                        .$author->firstname." ".$author->lastname."</h6></a>";
+                    echo "<a href=" . $authorurl . " target=\"_blank\"><h6 class=\"card-subtitle mb-2 text-muted\">"
+                        . $author->firstname . " " . $author->lastname . "</h6></a>";
                     echo "</div>";
                     echo "</div>";
                     echo "</div>";

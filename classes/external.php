@@ -317,16 +317,16 @@ class mod_jitsi_external extends external_api {
         $DB->update_record('jitsi', $jitsiob);
 
         $user = $DB->get_record('user', ['id' => $user]);
-        $mensaje = "El usuario ".$user->firstname." ".$user->lastname.
-            " ha tenido un error al intentar grabar la sesión de jitsi con id ".$jitsi."\nInfo:\n".$error."\n
+        $mensaje = "El usuario " . $user->firstname . " " . $user->lastname .
+            " ha tenido un error al intentar grabar la sesión de jitsi con id " . $jitsi . "\nInfo:\n" . $error . "\n
         Para más información, accede a la sesión de jitsi y mira el log.\n
-        URL: ".$CFG->wwwroot."/mod/jitsi/view.php?id=".$cmid."\n
-        Nombre de la sesión: ".$DB->get_record('jitsi', ['id' => $jitsi])->name."\n
-        Curso: ".$DB->get_record('course', ['id' => $DB->get_record('jitsi', ['id' => $jitsi])->course])->fullname."\n
-        Usuario: ".$user->username."\n";
+        URL: " . $CFG->wwwroot . "/mod/jitsi/view.php?id=" . $cmid . "\n
+        Nombre de la sesión: " . $DB->get_record('jitsi', ['id' => $jitsi])->name . "\n
+        Curso: " . $DB->get_record('course', ['id' => $DB->get_record('jitsi', ['id' => $jitsi])->course])->fullname . "\n
+        Usuario: " . $user->username . "\n";
         foreach ($admins as $admin) {
             email_to_user($admin, $admin, "ERROR JITSI! el usuario: "
-                .$user->username." ha tenido un error en el jitsi: ".$jitsi, $mensaje);
+                . $user->username . " ha tenido un error en el jitsi: " . $jitsi, $mensaje);
         }
 
         $cm = get_coursemodule_from_id('jitsi', $cmid, 0, false, MUST_EXIST);
@@ -597,8 +597,10 @@ class mod_jitsi_external extends external_api {
     public static function view_jitsi($cmid) {
         global $DB;
 
-        $params = self::validate_parameters(self::view_jitsi_parameters(),
-            ['cmid' => $cmid]);
+        $params = self::validate_parameters(
+            self::view_jitsi_parameters(),
+            ['cmid' => $cmid]
+        );
         $warnings = [];
 
         $cm = get_coursemodule_from_id('jitsi', $cmid, 0, false, MUST_EXIST);
@@ -630,11 +632,13 @@ class mod_jitsi_external extends external_api {
     public static function state_record($jitsi, $state) {
         global $USER, $DB;
 
-        $params = self::validate_parameters(self::state_record_parameters(),
-                ['jitsi' => $jitsi, 'state' => $state]);
+        $params = self::validate_parameters(
+            self::state_record_parameters(),
+            ['jitsi' => $jitsi, 'state' => $state]
+        );
         $jitsiob = $DB->get_record('jitsi', ['id' => $jitsi]);
         $DB->update_record('jitsi', $jitsiob);
-        return 'recording'.$jitsiob->recording;
+        return 'recording' . $jitsiob->recording;
     }
 
     /**
@@ -646,8 +650,10 @@ class mod_jitsi_external extends external_api {
     public static function stop_stream($jitsi, $userid) {
         global $CFG, $DB;
 
-        $params = self::validate_parameters(self::stop_stream_parameters(),
-                ['jitsi' => $jitsi, 'userid' => $userid]);
+        $params = self::validate_parameters(
+            self::stop_stream_parameters(),
+            ['jitsi' => $jitsi, 'userid' => $userid]
+        );
         $jitsiob = $DB->get_record('jitsi', ['id' => $jitsi]);
         $sourcealmacenada = $DB->get_record('jitsi_source_record', ['id' => $jitsiob->sourcerecord]);
         $author = $DB->get_record('user', ['id' => $sourcealmacenada->userid]);
@@ -656,7 +662,7 @@ class mod_jitsi_external extends external_api {
             $result = [];
             $result['error'] = 'errorauthor';
             $result['user'] = $author->id;
-            $result['usercomplete'] = $author->firstname.' '.$author->lastname;
+            $result['usercomplete'] = $author->firstname . ' ' . $author->lastname;
             return $result;
         }
         $jitsiob->sourcerecord = null;
@@ -665,7 +671,7 @@ class mod_jitsi_external extends external_api {
 
         $result['error'] = '';
         $result['user'] = $author->id;
-        $result['usercomplete'] = $author->firstname.' '.$author->lastname;
+        $result['usercomplete'] = $author->firstname . ' ' . $author->lastname;
         doembedable($sourcealmacenada->link);
         return $result;
     }
@@ -679,8 +685,10 @@ class mod_jitsi_external extends external_api {
     public static function stop_stream_byerror($jitsi, $userid) {
         global $CFG, $DB;
 
-        $params = self::validate_parameters(self::stop_stream_byerror_parameters(),
-                ['jitsi' => $jitsi, 'userid' => $userid]);
+        $params = self::validate_parameters(
+            self::stop_stream_byerror_parameters(),
+            ['jitsi' => $jitsi, 'userid' => $userid]
+        );
         $jitsiob = $DB->get_record('jitsi', ['id' => $jitsi]);
         if ($userid != $jitsiob->sourcerecord) {
             $jitsiob->sourcerecord = null;
@@ -699,8 +707,10 @@ class mod_jitsi_external extends external_api {
     public static function stop_stream_noauthor($jitsi, $userid) {
         global $CFG, $DB;
 
-        $params = self::validate_parameters(self::stop_stream_byerror_parameters(),
-                ['jitsi' => $jitsi, 'userid' => $userid]);
+        $params = self::validate_parameters(
+            self::stop_stream_byerror_parameters(),
+            ['jitsi' => $jitsi, 'userid' => $userid]
+        );
         $jitsiob = $DB->get_record('jitsi', ['id' => $jitsi]);
         if ($userid != $jitsiob->sourcerecord) {
             $jitsiob->sourcerecord = null;
@@ -720,8 +730,10 @@ class mod_jitsi_external extends external_api {
     public static function create_stream($session, $jitsi, $userid) {
         global $CFG, $DB;
 
-        $params = self::validate_parameters(self::create_stream_parameters(),
-                ['session' => $session, 'jitsi' => $jitsi, 'userid' => $userid]);
+        $params = self::validate_parameters(
+            self::create_stream_parameters(),
+            ['session' => $session, 'jitsi' => $jitsi, 'userid' => $userid]
+        );
 
         $author = $DB->get_record('user', ['id' => $userid]);
         $jitsiob = $DB->get_record('jitsi', ['id' => $jitsi]);
@@ -734,7 +746,7 @@ class mod_jitsi_external extends external_api {
                 $result['error'] = 'errorauthor';
                 $result['user'] = $sourcealmacenada->userid;
                 $authoralmacenada = $DB->get_record('user', ['id' => $sourcealmacenada->userid]);
-                $result['usercomplete'] = $authoralmacenada->firstname.' '.$authoralmacenada->lastname;
+                $result['usercomplete'] = $authoralmacenada->firstname . ' ' . $authoralmacenada->lastname;
                 $result['errorinfo'] = '';
                 $result['link'] = '';
                 return $result;
@@ -756,7 +768,7 @@ class mod_jitsi_external extends external_api {
         $record->source = $DB->insert_record('jitsi_source_record', $source);
         $record->deleted = 0;
         $record->visible = 1;
-        $record->name = get_string('recordtitle', 'jitsi').' '.mb_substr($jitsiob->name, 0, 30);
+        $record->name = get_string('recordtitle', 'jitsi') . ' ' . mb_substr($jitsiob->name, 0, 30);
 
         $DB->insert_record('jitsi_record', $record);
         $jitsiob = $DB->get_record('jitsi', ['id' => $jitsi]);
@@ -767,7 +779,7 @@ class mod_jitsi_external extends external_api {
             $broadcastsnippet = new Google_Service_YouTube_LiveBroadcastSnippet();
             $testdate = time();
 
-            $broadcastsnippet->setTitle("Record ".date('Y-m-d\T H:i A', $testdate));
+            $broadcastsnippet->setTitle("Record " . date('Y-m-d\T H:i A', $testdate));
             $broadcastsnippet->setScheduledStartTime(date('Y-m-d\TH:i:s', $testdate));
 
             $status = new Google_Service_YouTube_LiveBroadcastStatus();
@@ -794,11 +806,14 @@ class mod_jitsi_external extends external_api {
             $broadcastinsert->setKind('youtube#liveBroadcast');
             $broadcastinsert->setContentDetails($contentdetails);
             sleep(rand(1, 2));
-            $broadcastsresponse = $youtube->liveBroadcasts->insert('snippet,status,contentDetails',
-                $broadcastinsert, []);
+            $broadcastsresponse = $youtube->liveBroadcasts->insert(
+                'snippet,status,contentDetails',
+                $broadcastinsert,
+                [],
+            );
 
             $streamsnippet = new Google_Service_YouTube_LiveStreamSnippet();
-            $streamsnippet->setTitle("Record ".date('l jS \of F', $testdate));
+            $streamsnippet->setTitle("Record " . date('l jS \of F', $testdate));
 
             $cdn = new Google_Service_YouTube_CdnSettings();
             $cdn->setIngestionType('rtmp');
@@ -812,18 +827,21 @@ class mod_jitsi_external extends external_api {
             sleep(rand(1, 2));
             $streamsresponse = $youtube->liveStreams->insert('snippet,cdn', $streaminsert, []);
             sleep(rand(1, 2));
-            $bindbroadcastresponse = $youtube->liveBroadcasts->bind($broadcastsresponse['id'], 'id,contentDetails',
-                ['streamId' => $streamsresponse['id']]);
+            $bindbroadcastresponse = $youtube->liveBroadcasts->bind(
+                $broadcastsresponse['id'],
+                'id,contentDetails',
+                ['streamId' => $streamsresponse['id']],
+            );
         } catch (Google_Service_Exception $e) {
             $result = [];
             $result['stream'] = $streamsresponse['cdn']['ingestionInfo']['streamName'];
             $result['idsource'] = $record->source;
             $result['error'] = 'erroryoutube';
             $result['user'] = $jitsiob->sourcerecord;
-            $result['usercomplete'] = $author->firstname.' '.$author->lastname;
+            $result['usercomplete'] = $author->firstname . ' ' . $author->lastname;
             $result['errorinfo'] = $e->getMessage();
             $result['link'] = '';
-            senderror($jitsi, $userid, 'ERROR DE YOUTUBE: '.$e->getMessage(), $source);
+            senderror($jitsi, $userid, 'ERROR DE YOUTUBE: ' . $e->getMessage(), $source);
             changeaccount();
             return $result;
         } catch (Google_Exception $e) {
@@ -832,10 +850,10 @@ class mod_jitsi_external extends external_api {
             $result['idsource'] = $record->source;
             $result['error'] = 'erroryoutube';
             $result['user'] = $jitsiob->sourcerecord;
-            $result['usercomplete'] = $author->firstname.' '.$author->lastname;
+            $result['usercomplete'] = $author->firstname . ' ' . $author->lastname;
             $result['errorinfo'] = $e->getMessage();
             $result['link'] = '';
-            senderror($jitsi, $userid, 'ERROR DE YOUTUBE: '.$e->getMessage(), $source);
+            senderror($jitsi, $userid, 'ERROR DE YOUTUBE: ' . $e->getMessage(), $source);
             changeaccount();
             return $result;
         }
@@ -850,7 +868,7 @@ class mod_jitsi_external extends external_api {
         $result['idsource'] = $record->source;
         $result['error'] = '';
         $result['user'] = $author->id;
-        $result['usercomplete'] = $author->firstname.' '.$author->lastname;
+        $result['usercomplete'] = $author->firstname . ' ' . $author->lastname;
         $result['errorinfo'] = '';
         $result['link'] = $broadcastsresponse['id'];
         changeaccount();
@@ -866,8 +884,10 @@ class mod_jitsi_external extends external_api {
     public static function update_participants($jitsi, $numberofparticipants) {
         global $CFG, $DB;
 
-        $params = self::validate_parameters(self::update_participants_parameters(),
-                ['jitsi' => $jitsi, 'numberofparticipants' => $numberofparticipants]);
+        $params = self::validate_parameters(
+            self::update_participants_parameters(),
+            ['jitsi' => $jitsi, 'numberofparticipants' => $numberofparticipants],
+        );
         if ($numberofparticipants >= 0) {
             $jitsiob = $DB->get_record('jitsi', ['id' => $jitsi]);
             if ($numberofparticipants != $jitsiob->numberofparticipants) {
@@ -893,8 +913,10 @@ class mod_jitsi_external extends external_api {
     public static function get_participants($jitsi) {
         global $CFG, $DB;
 
-        $params = self::validate_parameters(self::update_participants_parameters(),
-                ['jitsi' => $jitsi]);
+        $params = self::validate_parameters(
+            self::update_participants_parameters(),
+            ['jitsi' => $jitsi],
+        );
         $jitsiob = $DB->get_record('jitsi', ['id' => $jitsi]);
         $jitsiob->name = 'modificado';
         $DB->update_record('jitsi', $jitsiob);
@@ -918,8 +940,7 @@ class mod_jitsi_external extends external_api {
                 'error' => new external_value(PARAM_TEXT, 'error'),
                 'user' => new external_value(PARAM_INT, 'user id'),
                 'usercomplete' => new external_value(PARAM_TEXT, 'user complete name'),
-            ]
-        );
+            ]);
     }
 
     /**
@@ -947,8 +968,7 @@ class mod_jitsi_external extends external_api {
         return new external_single_structure([
                 'status' => new external_value(PARAM_BOOL, 'status: true if success'),
                 'warnings' => new external_warnings(),
-            ]
-        );
+            ]);
     }
 
     /**
@@ -965,8 +985,7 @@ class mod_jitsi_external extends external_api {
                 'usercomplete' => new external_value(PARAM_TEXT, 'user complete name'),
                 'errorinfo' => new external_value(PARAM_TEXT, 'error info'),
                 'link' => new external_value(PARAM_TEXT, 'link'),
-            ]
-        );
+            ]);
     }
 
     /**

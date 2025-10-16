@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/tablelib.php');
-require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir . '/adminlib.php');
 
 /**
  * Extend the standard table class for jitsi.
@@ -58,13 +58,13 @@ class mod_view_table extends table_sql {
         global $DB, $OUTPUT, $CFG;
 
         if ($CFG->branch >= 500) {
-            $alignmentClass = 'text-end';
-            $videoContainerStart = "<div class=\"ratio ratio-16x9\">";
-            $iframeClass = ""; 
+            $alignmentclass = 'text-end';
+            $videocontainerstart = "<div class=\"ratio ratio-16x9\">";
+            $iframeclass = "";
         } else {
-            $alignmentClass = 'text-right';
-            $videoContainerStart = "<div class=\"embed-responsive embed-responsive-16by9\">";
-            $iframeClass = "class=\"embed-responsive-item\"";
+            $alignmentclass = 'text-right';
+            $videocontainerstart = "<div class=\"embed-responsive embed-responsive-16by9\">";
+            $iframeclass = "class=\"embed-responsive-item\"";
         }
 
         $jitsi = $DB->get_record('jitsi', ['id' => $values->jitsi]);
@@ -75,66 +75,85 @@ class mod_view_table extends table_sql {
         $record = $DB->get_record('jitsi_record', ['id' => $values->id]);
         $sourcerecord = $DB->get_record('jitsi_source_record', ['id' => $record->source]);
         if ($sourcerecord->id && $sourcerecord->link != null) {
-            $deleteurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&deletejitsirecordid=' .
+            $deleteurl = new moodle_url('/mod/jitsi/view.php?id=' . $cm->id . '&deletejitsirecordid=' .
             $record->id . '&sesskey=' . sesskey() . '#record');
             $deleteicon = new pix_icon('t/delete', get_string('delete'));
-            $deleteaction = $OUTPUT->action_icon($deleteurl, $deleteicon,
-                new confirm_action(get_string('confirmdeleterecordinactivity', 'jitsi')));
+            $deleteaction = $OUTPUT->action_icon(
+                $deleteurl,
+                $deleteicon,
+                new confirm_action(get_string('confirmdeleterecordinactivity', 'jitsi'))
+            );
 
-            $hideurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&hidejitsirecordid=' .
-                $record->id . '&sesskey=' . sesskey(). '#record');
-            $showurl = new moodle_url('/mod/jitsi/view.php?id='.$cm->id.'&showjitsirecordid=' .
-                $record->id . '&sesskey=' . sesskey(). '#record');
+            $hideurl = new moodle_url('/mod/jitsi/view.php?id=' . $cm->id . '&hidejitsirecordid=' .
+                $record->id . '&sesskey=' . sesskey() . '#record');
+            $showurl = new moodle_url('/mod/jitsi/view.php?id=' . $cm->id . '&showjitsirecordid=' .
+                $record->id . '&sesskey=' . sesskey() . '#record');
             $hideicon = new pix_icon('t/hide', get_string('hide'));
             $showicon = new pix_icon('t/show', get_string('show'));
             $hideaction = $OUTPUT->action_icon($hideurl, $hideicon, new confirm_action('Hide?'));
             $showaction = $OUTPUT->action_icon($showurl, $showicon, new confirm_action('Show?'));
 
-            $tmpl = new \core\output\inplace_editable('mod_jitsi', 'recordname', $values->id,
+            $tmpl = new \core\output\inplace_editable(
+                'mod_jitsi',
+                'recordname',
+                $values->id,
                 has_capability('mod/jitsi:editrecordname', $context),
-                format_string($values->name), $values->name, get_string('editrecordname', 'jitsi'),
-                get_string('newvaluefor', 'jitsi') . format_string($values->name));
+                format_string($values->name),
+                $values->name,
+                get_string('editrecordname', 'jitsi'),
+                get_string('newvaluefor', 'jitsi') . format_string($values->name)
+            );
             if ($jitsi->sessionwithtoken == 0) {
                 if (has_capability('mod/jitsi:deleterecord', $context) && !has_capability('mod/jitsi:hide', $context)) {
-                    return "<h5>".$OUTPUT->render($tmpl)."</h5><h6 class=\"card-subtitle mb-2 text-muted\">".
-                        userdate($values->timecreated)."</h6><span class=\"align-middle ".$alignmentClass."\"><p>".$deleteaction.
-                        "</p></span>".$videoContainerStart."<iframe ".$iframeClass." src=\"https://youtube.com/embed/".$values->link."\"
+                    return "<h5>" . $OUTPUT->render($tmpl) . "</h5><h6 class=\"card-subtitle mb-2 text-muted\">" .
+                        userdate($values->timecreated) . "</h6><span class=\"align-middle " .
+                        $alignmentclass . "\"><p>" . $deleteaction .
+                        "</p></span>" . $videocontainerstart .
+                        "<iframe " . $iframeclass . " src=\"https://youtube.com/embed/" . $values->link . "\"
                         allowfullscreen></iframe></div><br>";
                 }
                 if (has_capability('mod/jitsi:hide', $context) && !has_capability('mod/jitsi:deleterecord', $context)) {
                     if ($record->visible != 0) {
-                        return "<h5>".$OUTPUT->render($tmpl)."</h5><h6 class=\"card-subtitle mb-2 text-muted\">".
-                            userdate($values->timecreated)."</h6><span class=\"align-middle ".$alignmentClass."\"><p>".$hideaction.
-                            "</p></span>".$videoContainerStart."<iframe ".$iframeClass." src=\"https://youtube.com/embed/".$values->link."\"
+                        return "<h5>" . $OUTPUT->render($tmpl) . "</h5><h6 class=\"card-subtitle mb-2 text-muted\">" .
+                            userdate($values->timecreated) . "</h6><span class=\"align-middle " .
+                            $alignmentclass . "\"><p>" . $hideaction .
+                            "</p></span>" . $videocontainerstart .
+                            "<iframe " . $iframeclass . " src=\"https://youtube.com/embed/" . $values->link . "\"
                             allowfullscreen></iframe></div><br>";
                     } else {
-                        return "<h5>".$OUTPUT->render($tmpl)."</h5><h6 class=\"card-subtitle mb-2 text-muted\">".
-                            userdate($values->timecreated)."</h6><span class=\"align-middle ".$alignmentClass."\"><p>".$showaction.
-                            "</p></span>".$videoContainerStart."<iframe ".$iframeClass." src=\"https://youtube.com/embed/".$values->link."\"
+                        return "<h5>" . $OUTPUT->render($tmpl) . "</h5><h6 class=\"card-subtitle mb-2 text-muted\">" .
+                            userdate($values->timecreated) . "</h6><span class=\"align-middle " .
+                            $alignmentclass . "\"><p>" . $showaction .
+                            "</p></span>" . $videocontainerstart .
+                            "<iframe " . $iframeclass . " src=\"https://youtube.com/embed/" . $values->link . "\"
                             allowfullscreen></iframe></div><br>";
                     }
                 }
                 if (has_capability('mod/jitsi:hide', $context) && has_capability('mod/jitsi:deleterecord', $context)) {
                     if ($record->visible != 0) {
-                        return "<h5>".$OUTPUT->render($tmpl)."</h5><h6 class=\"card-subtitle mb-2 text-muted\">".
-                            userdate($values->timecreated)."</h6><span class=\"align-middle ".$alignmentClass."\"><p>".$deleteaction.
-                            "".$hideaction."</p></span>".$videoContainerStart."<iframe ".$iframeClass." src=\"https://youtube.com/embed/".$values->link."\"
+                        return "<h5>" . $OUTPUT->render($tmpl) . "</h5><h6 class=\"card-subtitle mb-2 text-muted\">" .
+                            userdate($values->timecreated) . "</h6><span class=\"align-middle " .
+                            $alignmentclass . "\"><p>" . $deleteaction .
+                            "" . $hideaction . "</p></span>" . $videocontainerstart .
+                            "<iframe " . $iframeclass . " src=\"https://youtube.com/embed/" . $values->link . "\"
                             allowfullscreen></iframe></div><br>";
                     } else {
-                        return "<h5>".$OUTPUT->render($tmpl)."</h5><h6 class=\"card-subtitle mb-2 text-muted\">".
-                            userdate($values->timecreated)."</h6><span class=\"align-middle ".$alignmentClass."\"><p>".$deleteaction.
-                            "".$showaction."</p></span>".$videoContainerStart."<iframe ".$iframeClass." src=\"https://youtube.com/embed/".$values->link."\"
+                        return "<h5>" . $OUTPUT->render($tmpl) . "</h5><h6 class=\"card-subtitle mb-2 text-muted\">" .
+                            userdate($values->timecreated) . "</h6><span class=\"align-middle " .
+                            $alignmentclass . "\"><p>" . $deleteaction .
+                            "" . $showaction . "</p></span>" . $videocontainerstart .
+                            "<iframe " . $iframeclass . " src=\"https://youtube.com/embed/" . $values->link . "\"
                             allowfullscreen></iframe></div><br>";
                     }
                 }
                 if (!has_capability('mod/jitsi:hide', $context) && !has_capability('mod/jitsi:deleterecord', $context)) {
-                    return "<h5>".$OUTPUT->render($tmpl)."</h5><h6 class=\"card-subtitle mb-2 text-muted\">".
-                        userdate($values->timecreated)."</h6><br>".$videoContainerStart."<iframe ".$iframeClass." src=\"https://youtube.com/embed/".$values->link."\"
+                    return "<h5>" . $OUTPUT->render($tmpl) . "</h5><h6 class=\"card-subtitle mb-2 text-muted\">" .
+                        userdate($values->timecreated) . "</h6><br>" . $videocontainerstart . "<iframe " . $iframeclass . " src=\"https://youtube.com/embed/" . $values->link . "\"
                         allowfullscreen></iframe></div>";
                 }
             } else {
-                return "<h5>".$OUTPUT->render($tmpl)."</h5><h6 class=\"card-subtitle mb-2 text-muted\">".
-                    userdate($values->timecreated)."</h6><br>".$videoContainerStart."<iframe ".$iframeClass." src=\"https://youtube.com/embed/".$values->link."\"
+                return "<h5>" . $OUTPUT->render($tmpl) . "</h5><h6 class=\"card-subtitle mb-2 text-muted\">" .
+                    userdate($values->timecreated) . "</h6><br>" . $videocontainerstart . "<iframe " . $iframeclass . " src=\"https://youtube.com/embed/" . $values->link . "\"
                     allowfullscreen></iframe></div>";
             }
         } else {

@@ -25,8 +25,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(__FILE__).'/lib.php');
+require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
+require_once(dirname(__FILE__) . '/lib.php');
 require_once("$CFG->libdir/formslib.php");
 
 /**
@@ -85,7 +85,6 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('privatesession', 'jitsi', $user->firstname));
 
 if (get_config('mod_jitsi', 'privatesessions')) {
-
     if ($USER->id == $user->id) {
         $moderation = 1;
     } else {
@@ -98,7 +97,7 @@ if (get_config('mod_jitsi', 'privatesessions')) {
             $nom = $USER->username;
             break;
         case 'nameandsurname':
-            $nom = $USER->firstname.' '.$USER->lastname;
+            $nom = $USER->firstname . ' ' . $USER->lastname;
             break;
         case 'alias':
             break;
@@ -110,11 +109,11 @@ if (get_config('mod_jitsi', 'privatesessions')) {
     $max = count($allowed);
 
     if ($fromuserid) {
-        $sesparam = $SITE->shortname.'-'.$user->username.'-'.$fromuserid;
+        $sesparam = $SITE->shortname . '-' . $user->username . '-' . $fromuserid;
     } else {
-        $sesparam = $SITE->shortname.'-'.$user->username.'-'.$USER->id;
+        $sesparam = $SITE->shortname . '-' . $user->username . '-' . $USER->id;
     }
-    $avatar = $CFG->wwwroot.'/user/pix.php/'.$USER->id.'/f1.jpg';
+    $avatar = $CFG->wwwroot . '/user/pix.php/' . $USER->id . '/f1.jpg';
 
     $urlparams = [
         'avatar' => $avatar,
@@ -135,7 +134,6 @@ if (get_config('mod_jitsi', 'privatesessions')) {
 
     echo "<p></p>";
     echo get_config('mod_jitsi', 'help');
-
 } else {
     echo get_string('privatesessiondisabled', 'jitsi');
 }

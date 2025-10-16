@@ -117,5 +117,4 @@ class jitsi_session_enter extends \core\event\base {
     public static function get_objectid_mapping() {
         return false;
     }
-
 }

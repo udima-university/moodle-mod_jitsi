@@ -25,10 +25,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(dirname(dirname(__FILE__))).'/lib/moodlelib.php');
-require_once(dirname(__FILE__).'/lib.php');
-$PAGE->set_url($CFG->wwwroot.'/mod/jitsi/session.php');
+require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
+require_once(dirname(dirname(dirname(__FILE__))) . '/lib/moodlelib.php');
+require_once(dirname(__FILE__) . '/lib.php');
+$PAGE->set_url($CFG->wwwroot . '/mod/jitsi/session.php');
 $PAGE->set_context(context_system::instance());
 require_login();
 $nombre = required_param('nom', PARAM_USERNAME);
@@ -49,7 +49,7 @@ if (get_config('mod_jitsi', 'privatesessions') == 1) {
     if ($USER->id != $user->id) {
         sendnotificationprivatesession($USER, $user);
     }
-    createsessionpriv($teacher, 0, $avatar, $nombre, $session, null, 0, false , $user->id);
+    createsessionpriv($teacher, 0, $avatar, $nombre, $session, null, 0, false, $user->id);
 } else {
     echo get_string('privatesessiondisabled', 'jitsi');
 }

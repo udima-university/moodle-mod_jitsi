@@ -25,8 +25,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(__FILE__).'/lib.php');
+require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
+require_once(dirname(__FILE__) . '/lib.php');
 
 // Allow CORS requests.
 header('Access-Control-Allow-Origin: *');
@@ -66,8 +66,8 @@ $params = ['contextid' => $contextmodule->id];
 $usersconnected = $DB->get_records_sql($sqlusersconnected, $params);
 
 $table = new html_table();
-$table->head = [get_string('name'), get_string('minutestoday', 'jitsi').
-    ': '.date('d/m', strtotime('today midnight')), get_string('totalminutes', 'jitsi')];
+$table->head = [get_string('name'), get_string('minutestoday', 'jitsi') .
+    ': ' . date('d/m', strtotime('today midnight')), get_string('totalminutes', 'jitsi')];
 $table->data = [];
 $userids = [];
 foreach ($usersconnected as $userconnected) {

@@ -29,11 +29,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
+require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once("$CFG->libdir/formslib.php");
 require_once('search_table.php');
-require_once($CFG->dirroot.'/user/selector/lib.php');
-
+require_once($CFG->dirroot . '/user/selector/lib.php');
 
 /**
  * Guest access form.
@@ -43,7 +42,6 @@ require_once($CFG->dirroot.'/user/selector/lib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class datesearch_form extends moodleform {
-
     /**
      * Defines forms elements
      */
@@ -57,15 +55,19 @@ class datesearch_form extends moodleform {
             'hour' => 0,
             'minute' => 0,
         ];
-        $mform->addElement('date_time_selector', 'timestart', get_string('from'),
-            ['defaulttime' => $defaulttimestart]);
+        $mform->addElement(
+            'date_time_selector',
+            'timestart',
+            get_string('from'),
+            ['defaulttime' => $defaulttimestart]
+        );
         $mform->addElement('date_time_selector', 'timeend', get_string('to'));
 
         $usersid = $DB->get_records_sql('SELECT DISTINCT userid FROM {jitsi_source_record}');
         $users = [];
         foreach ($usersid as $userid) {
             $user = $DB->get_record('user', ['id' => $userid->userid]);
-            $users[$user->id] = $user->firstname.' '.$user->lastname;
+            $users[$user->id] = $user->firstname . ' ' . $user->lastname;
         }
         $options = [
             'multiple' => true,
@@ -128,10 +130,20 @@ if ($timestart == 0) {
     $timestart = ['year' => 2021, 'month' => 1, 'day' => 1, 'hour' => 0, 'minute' => 0];
     $timeend = ['year' => 2021, 'month' => 12, 'day' => 31, 'hour' => 23, 'minute' => 59];
 }
-$timestarttimestamp = make_timestamp($timestart['year'], $timestart['month'],
-     $timestart['day'], $timestart['hour'], $timestart['minute']);
-$timeendtimestamp = make_timestamp($timeend['year'], $timeend['month'],
-     $timeend['day'], $timeend['hour'], $timeend['minute']);
+$timestarttimestamp = make_timestamp(
+    $timestart['year'],
+    $timestart['month'],
+    $timestart['day'],
+    $timestart['hour'],
+    $timestart['minute']
+);
+$timeendtimestamp = make_timestamp(
+    $timeend['year'],
+    $timeend['month'],
+    $timeend['day'],
+    $timeend['hour'],
+    $timeend['minute']
+);
 
 $PAGE->set_title(format_string(get_string('search')));
 $PAGE->set_heading(format_string(get_string('search')));
@@ -151,19 +163,19 @@ if (is_siteadmin()) {
                 {jitsi_record}.deleted';
     $from = '{jitsi_source_record}, {jitsi_record}';
     $where = '{jitsi_record}.source = {jitsi_source_record}.id and
-                {jitsi_source_record}.timecreated > '.$timestarttimestamp.' and
-                {jitsi_source_record}.timecreated < '.$timeendtimestamp;
+                {jitsi_source_record}.timecreated > ' . $timestarttimestamp . ' and
+                {jitsi_source_record}.timecreated < ' . $timeendtimestamp;
 
     if (!empty($recorder)) {
         $recorderlist = implode(',', $recorder);
-        $where .= ' AND {jitsi_source_record}.account IN ('.$recorderlist.')';
+        $where .= ' AND {jitsi_source_record}.account IN (' . $recorderlist . ')';
     }
     if (!empty($userselected)) {
         $userlist = implode(',', $userselected);
-        $where .= ' AND {jitsi_source_record}.userid IN ('.$userlist.')';
+        $where .= ' AND {jitsi_source_record}.userid IN (' . $userlist . ')';
     }
     $table->set_sql($fields, $from, $where, ['1']);
-    $table->define_baseurl('/mod/jitsi/search.php?'.
+    $table->define_baseurl('/mod/jitsi/search.php?' .
         http_build_query(['timestart' => $timestart, 'timeend' => $timeend,
             'recorder' => $recorder, 'userselected' => $userselected]));
     $table->out(10, true);

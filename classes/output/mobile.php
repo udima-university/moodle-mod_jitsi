@@ -85,7 +85,6 @@ class mobile {
 
             $intro = str_replace(['<h4', '<h5', '<h6'], '<h2', $intro);
             $intro = str_replace(['</h4>', '</h5>', '</h6>'], '</h2>', $intro);
-
         } else {
             $intro = "";
         }
@@ -101,7 +100,7 @@ class mobile {
                 $nom = $USER->username;
                 break;
             case 'nameandsurname':
-                $nom = $USER->firstname.' '.$USER->lastname;
+                $nom = $USER->firstname . ' ' . $USER->lastname;
                 break;
             case 'alias':
                 break;
@@ -117,11 +116,11 @@ class mobile {
         for ($i = 0; $i < $max; $i++) {
             if ($i != $max - 1) {
                 if ($allowed[$i] == 0) {
-                    $sesparam .= string_sanitize($course->shortname).$optionsseparator[get_config('mod_jitsi', 'separator')];
+                    $sesparam .= string_sanitize($course->shortname) . $optionsseparator[get_config('mod_jitsi', 'separator')];
                 } else if ($allowed[$i] == 1) {
-                    $sesparam .= $jitsi->id.$optionsseparator[get_config('mod_jitsi', 'separator')];
+                    $sesparam .= $jitsi->id . $optionsseparator[get_config('mod_jitsi', 'separator')];
                 } else if ($allowed[$i] == 2) {
-                    $sesparam .= string_sanitize($jitsi->name).$optionsseparator[get_config('mod_jitsi', 'separator')];
+                    $sesparam .= string_sanitize($jitsi->name) . $optionsseparator[get_config('mod_jitsi', 'separator')];
                 }
             } else {
                 if ($allowed[$i] == 0) {
@@ -144,7 +143,7 @@ class mobile {
         }
 
         $contextuserpic = $DB->get_record('context', ['instanceid' => $USER->id, 'contextlevel' => 30]);
-        $avatar = $CFG->wwwroot.'/pluginfile.php/'.$contextuserpic->id.'/user/icon/boost/f1';
+        $avatar = $CFG->wwwroot . '/pluginfile.php/' . $contextuserpic->id . '/user/icon/boost/f1';
 
         $data = [
             'avatar' => $avatar,
@@ -290,30 +289,32 @@ class mobile {
             $mutevideoeveryone = 'mute-video-everyone';
         }
 
-        $buttons = "[\"microphone\",\"camera\",\"closedcaptions\",\"".$desktop."\",\"fullscreen\",";
+        $buttons = "[\"microphone\",\"camera\",\"closedcaptions\",\"" . $desktop . "\",\"fullscreen\",";
         $buttons .= "\"fodeviceselection\",\"hangup\",\"profile\",\"chat\",\"recording\",\"etherpad\",";
-        $buttons .= "\"".$youtubeoption."\",\"settings\",\"raisehand\",\"videoquality\",\"filmstrip\",";
-        $buttons .= "\"".$invite."\",\"feedback\",\"stats\",\"shortcuts\",\"tileview\",\"".$bluroption."\",";
-        $buttons .= "\"download\",\"help\",\"".$muteeveryone."\",\"".$mutevideoeveryone."\",\"".$security."\"]";
+        $buttons .= "\"" . $youtubeoption . "\",\"settings\",\"raisehand\",\"videoquality\",\"filmstrip\",";
+        $buttons .= "\"" . $invite . "\",\"feedback\",\"stats\",\"shortcuts\",\"tileview\",\"" . $bluroption . "\",";
+        $buttons .= "\"download\",\"help\",\"" . $muteeveryone . "\",\"" . $mutevideoeveryone . "\",\"" . $security . "\"]";
 
         $data = [];
         if ($appid != null && $secret != null) {
-            $data['jwt'] = 'jwt='.$jwt;
+            $data['jwt'] = 'jwt=' . $jwt;
         }
 
-        $config = '&config.channelLastN='.get_config('mod_jitsi', 'channellastcam');
+        $config = '&config.channelLastN=' . get_config('mod_jitsi', 'channellastcam');
         $config .= '&config.startWithAudioMuted=true';
         $config .= '&config.startWithVideoMuted=true';
         if (get_config('mod_jitsi', 'deeplink') == 0) {
             $config .= '&config.disableDeepLinking=true';
         }
         $config .= '&config.disableProfile=true';
-        $config .= '&config.toolbarButtons='.urlencode($buttons);
+        $config .= '&config.toolbarButtons=' . urlencode($buttons);
         $data['config'] = $config;
-        $data['displayName'] = 'userInfo.displayName="'.$nombre.'"';
+        $data['displayName'] = 'userInfo.displayName="' . $nombre . '"';
 
         $interfaceconfig .= '&interfaceConfig.SHOW_JITSI_WATERMARK=false';
-        $interfaceconfig .= '&interfaceConfig.JITSI_WATERMARK_LINK='.urlencode("'".get_config('mod_jitsi', 'watermarklink')."'");
+        $interfaceconfig .= '&interfaceConfig.JITSI_WATERMARK_LINK=' . urlencode(
+            "'" . get_config('mod_jitsi', 'watermarklink') . "'"
+        );
         $data['interface_config'] = $interfaceconfig;
 
         $data['is_desktop'] = $args['appisdesktop'];

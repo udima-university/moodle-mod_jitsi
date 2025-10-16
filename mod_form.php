@@ -27,7 +27,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/course/moodleform_mod.php');
+require_once($CFG->dirroot . '/course/moodleform_mod.php');
 
 /**
  * Jitsi settings form.
@@ -108,8 +108,12 @@ class mod_jitsi_mod_form extends moodleform_mod {
             $optionsinvitation = ['defaulttime' => time() + 86400, 'optional' => true];
             $mform->addElement('header', 'invitations', get_string('externalinvitations', 'jitsi'));
             $mform->addElement('static', 'linkexplication', '', get_string('staticinvitationlinkcapabilityex', 'jitsi'));
-            $mform->addElement('date_time_selector', 'validitytime',
-                get_string('finishinvitation', 'jitsi'), $optionsinvitation);
+            $mform->addElement(
+                'date_time_selector',
+                'validitytime',
+                get_string('finishinvitation', 'jitsi'),
+                $optionsinvitation,
+            );
             if (!has_capability('mod/jitsi:createlink', $PAGE->context)) {
                 $mform->hardFreeze('validitytime');
             }
@@ -125,10 +129,10 @@ class mod_jitsi_mod_form extends moodleform_mod {
             $mform->addElement('hidden', 'token', $token);
             $mform->setDefault('token', $token);
 
-            $urlinvitacion = $CFG->wwwroot.'/mod/jitsi/formuniversal.php?t='.$token;
+            $urlinvitacion = $CFG->wwwroot . '/mod/jitsi/formuniversal.php?t=' . $token;
             $mform->addElement('static', 'urltoken', get_string('urlinvitacion', 'jitsi'), $urlinvitacion);
             if (get_config('mod_jitsi', 'sharestream')) {
-                $urlinvitacionrecord = $CFG->wwwroot.'/mod/jitsi/recordun.php?t='.$token;
+                $urlinvitacionrecord = $CFG->wwwroot . '/mod/jitsi/recordun.php?t=' . $token;
                 $mform->addElement('static', 'urltokenrecord', get_string('urlinvitacionrecord', 'jitsi'), $urlinvitacionrecord);
             }
             $mform->setType('token', PARAM_TEXT);
@@ -164,15 +168,15 @@ class mod_jitsi_mod_form extends moodleform_mod {
         $mform =&  $this->_form;
 
         $group = [
-            $mform->createElement('checkbox', 'completionminutesenabled'.$suffix, ' ', get_string('completionminutesex', 'jitsi')),
-            $mform->createElement('text', 'completionminutes'.$suffix, ' ', ['size' => 3]),
+            $mform->createElement('checkbox', 'completionminutesenabled' . $suffix, ' ', get_string('completionminutesex', 'jitsi')),
+            $mform->createElement('text', 'completionminutes' . $suffix, ' ', ['size' => 3]),
         ];
-        $mform->setType('completionminutes'.$suffix, PARAM_INT);
-        $mform->addGroup($group, 'completionminutesgroup'.$suffix, get_string('completionminutes', 'jitsi'), [' '], false);
-        $mform->addHelpButton('completionminutesgroup'.$suffix, 'completionminutes', 'jitsi');
-        $mform->disabledIf('completionminutes'.$suffix, 'completionminutesenabled', 'notchecked');
+        $mform->setType('completionminutes' . $suffix, PARAM_INT);
+        $mform->addGroup($group, 'completionminutesgroup' . $suffix, get_string('completionminutes', 'jitsi'), [' '], false);
+        $mform->addHelpButton('completionminutesgroup' . $suffix, 'completionminutes', 'jitsi');
+        $mform->disabledIf('completionminutes' . $suffix, 'completionminutesenabled', 'notchecked');
 
-        return ['completionminutesgroup'.$suffix];
+        return ['completionminutesgroup' . $suffix];
     }
 
     /**
@@ -189,7 +193,7 @@ class mod_jitsi_mod_form extends moodleform_mod {
             $suffix = $this->get_suffix();
         }
 
-        return (!empty($data['completionminutesenabled'.$suffix]) && $data['completionminutes'.$suffix] != 0);
+        return (!empty($data['completionminutesenabled' . $suffix]) && $data['completionminutes' . $suffix] != 0);
     }
 
     /**
@@ -242,24 +246,30 @@ class mod_jitsi_mod_form extends moodleform_mod {
         $errors = parent::validation($data, $files);
 
         // Check open and close times are consistent.
-        if ($data['timeopen'] != 0 && $data['timeclose'] != 0 &&
-                $data['timeclose'] < $data['timeopen']) {
+        if (
+            $data['timeopen'] != 0 && $data['timeclose'] != 0 &&
+            $data['timeclose'] < $data['timeopen']
+        ) {
             $errors['timeclose'] = get_string('closebeforeopen', 'jitsi');
         }
 
         // Check validitity time is consistent with open and close times.
-        if (isset($data['validitytime']) && $data['validitytime'] != 0) {
-            if (($data['timeopen'] != 0 && $data['validitytime'] < $data['timeopen']) ||
-                ($data['timeclose'] != 0 && $data['validitytime'] > $data['timeclose'])) {
+        if (
+            isset($data['validitytime']) &&
+            $data['validitytime'] != 0
+        ) {
+            if (
+                ($data['timeopen'] != 0 && $data['validitytime'] < $data['timeopen']) ||
+                ($data['timeclose'] != 0 && $data['validitytime'] > $data['timeclose'])
+            ) {
                 $errors['validitytime'] = get_string('validitytimevalidation', 'jitsi');
             }
         }
         if (isset($data['validitytime']) && $data['validitytime'] <= time() && $data['validitytime'] != 0) {
             $errors['validitytime'] = get_string('tokeninvitationnotvalid', 'jitsi');
-
         }
         if ($data['sessionwithtoken'] == 1) {
-            $sql = "select * from {jitsi} where tokeninterno = '".$data['tokeninvitacion']."'";
+            $sql = "select * from {jitsi} where tokeninterno = '" . $data['tokeninvitacion'] . "'";
             if ($DB->get_record_sql($sql) == null) {
                 $errors['tokeninvitacion'] = get_string('tokeninvitationvalidation', 'jitsi');
             }

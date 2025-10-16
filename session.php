@@ -25,11 +25,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(dirname(dirname(__FILE__))).'/lib/moodlelib.php');
-require_once(dirname(__FILE__).'/lib.php');
+require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
+require_once(dirname(dirname(dirname(__FILE__))) . '/lib/moodlelib.php');
+require_once(dirname(__FILE__) . '/lib.php');
 
-$PAGE->set_url($CFG->wwwroot.'/mod/jitsi/session.php');
+$PAGE->set_url($CFG->wwwroot . '/mod/jitsi/session.php');
 
 $state = optional_param('state', null, PARAM_TEXT);
 
@@ -40,7 +40,6 @@ if ($state == null) {
     $session = required_param('ses', PARAM_TEXT);
     $avatar = get_config('mod_jitsi', 'showavatars') == true ? required_param('avatar', PARAM_TEXT) : null;
     $teacher = required_param('t', PARAM_BOOL);
-
 } else {
     $paramdecode = base64urldecode($state);
     $parametrosarray = explode("&", $paramdecode);
@@ -85,18 +84,23 @@ if ($jitsi->sourcerecord != null) {
     $contextmodule = context_module::instance($cm->id);
 
     $sqllastparticipating = 'select timecreated from {logstore_standard_log} where contextid = '
-    .$contextmodule->id.' and (action = \'participating\' or action = \'enter\') order by timecreated DESC limit 1';
+    . $contextmodule->id . ' and (action = \'participating\' or action = \'enter\') order by timecreated DESC limit 1';
     $usersconnected = $DB->get_record_sql($sqllastparticipating);
 
-    if (($jitsi->numberofparticipants == 1 || $jitsi->numberofparticipants == 0) &&
-     (getdate()[0] - $usersconnected->timecreated) > 72 ) {
+    if (
+        ($jitsi->numberofparticipants == 1 ||
+        $jitsi->numberofparticipants == 0) &&
+        (getdate()[0] - $usersconnected->timecreated) > 72
+    ) {
         $jitsi->sourcerecord = null;
         $DB->update_record('jitsi', $jitsi);
     }
 }
-if (get_config('mod_jitsi', 'id') == 'username' && $nombre != $USER->username ||
-    get_config('mod_jitsi', 'id') == 'nameandsurname' && $nombre != $USER->firstname.' '.$USER->lastname ||
-    get_config('mod_jitsi', 'id') == 'alias' && $nombre != "") {
+if (
+    get_config('mod_jitsi', 'id') == 'username' && $nombre != $USER->username ||
+    get_config('mod_jitsi', 'id') == 'nameandsurname' && $nombre != $USER->firstname . ' ' . $USER->lastname ||
+    get_config('mod_jitsi', 'id') == 'alias' && $nombre != ""
+) {
     echo $OUTPUT->notification(get_string('urlerror', 'jitsi'), 'error');
 } else {
     $nombre = str_replace("'", "\\'", $nombre);
