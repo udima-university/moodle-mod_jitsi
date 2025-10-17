@@ -363,6 +363,100 @@ if ($ADMIN->fulltree) {
         )
     );
 
+    // Google Cloud (GCP) integration for single shared Jitsi server.
+    $settings->add(
+        new admin_setting_heading(
+            'jitsigcp',
+            get_string('gcpheading', 'jitsi'),
+            get_string('gcpheadingex', 'jitsi')
+        )
+    );
+
+    $settings->add(
+        new admin_setting_configtext(
+            'mod_jitsi/gcp_project',
+            get_string('gcpproject', 'jitsi'),
+            get_string('gcpprojectex', 'jitsi'),
+            ''
+        )
+    );
+
+    $settings->add(
+        new admin_setting_configtext(
+            'mod_jitsi/gcp_zone',
+            get_string('gcpzone', 'jitsi'),
+            get_string('gcpzoneex', 'jitsi'),
+            ''
+        )
+    );
+
+    $settings->add(
+        new admin_setting_configtext(
+            'mod_jitsi/gcp_machine_type',
+            get_string('gcpmachinetype', 'jitsi'),
+            get_string('gcpmachinetypeex', 'jitsi'),
+            'e2-standard-4'
+        )
+    );
+
+    $settings->add(
+        new admin_setting_configtext(
+            'mod_jitsi/gcp_image',
+            get_string('gcpimage', 'jitsi'),
+            get_string('gcpimageex', 'jitsi'),
+            'projects/debian-cloud/global/images/family/debian-12'
+        )
+    );
+
+    $settings->add(
+        new admin_setting_configtext(
+            'mod_jitsi/gcp_network',
+            get_string('gcpnetwork', 'jitsi'),
+            get_string('gcpnetworkex', 'jitsi'),
+            'global/networks/default'
+        )
+    );
+
+    $settings->add(
+        new admin_setting_configtext(
+            'mod_jitsi/gcp_hostname',
+            get_string('gcphostname', 'jitsi'),
+            get_string('gcphostnameex', 'jitsi'),
+            ''
+        )
+    );
+
+    $settings->add(
+        new admin_setting_configtext(
+            'mod_jitsi/gcp_letsencrypt_email',
+            get_string('gcpleemail', 'jitsi'),
+            get_string('gcpleemailex', 'jitsi'),
+            ''
+        )
+    );
+
+    $settings->add(
+        new admin_setting_configtextarea(
+            'mod_jitsi/gcp_startup_script',
+            get_string('gcpstartupscript', 'jitsi'),
+            get_string('gcpstartupscriptex', 'jitsi'),
+            '',
+            PARAM_RAW,
+            10, 80
+        )
+    );
+
+    $settings->add(
+        new admin_setting_configstoredfile(
+            'mod_jitsi/gcp_serviceaccount_jsonfile',
+            get_string('gcpserviceaccountjsonfile', 'jitsi'),
+            get_string('gcpserviceaccountjsonfileex', 'jitsi'),
+            'gcpserviceaccountjson',
+            0,
+            ['maxfiles' => 1, 'accepted_types' => ['.json']]
+        )
+    );
+
     // Experimental Section.
     $settings->add(
         new admin_setting_heading(
