@@ -1,4 +1,17 @@
 # Changelog
+## v4.0 ()
+# Fixed
+ * Code style corrections
+ * Some errors in the exception strings.
+# Changed
+ * Server management. Stores and manages multiple Jitsi servers.
+ * Upgrade google api php to 2.18.4.
+ * Config parameters migration. 
+# Aded
+ * Add Google api compute.
+ 
+---
+
 ## v3.5 (20025041400)
 # Fixed
  * Escape single quotes in the username before creating the session. #134
