@@ -40,7 +40,7 @@ $string['actions'] = 'Actions';
 $string['activatetooltip'] = 'Click to put into use';
 $string['addaccount'] = 'Add account';
 $string['addedtoqueue'] = 'Added to queue';
-$string['addnewserver'] = 'Añadir nuevo servidor';
+$string['addnewserver'] = 'Add new server';
 $string['addtoqueue'] = 'Add to queue';
 $string['adminaccountex'] = 'At least one account is required in order to stream/record sessions with the "Moodle integrated" method for streaming.
  </br>Just one account can be "<b>in use</b>" and will be used to stream/record the next recording demanded by one teacher.
@@ -315,3 +315,44 @@ $string['whiteboard'] = 'Whiteboard';
 $string['whiteboardex'] = 'Show the whiteboard button to all users. Actually Whiteboard is not available on Jaas Servers.';
 $string['youtubebutton'] = 'Youtube sharing option';
 $string['youtubebuttonex'] = 'Show the youtube videos sharing option';
+
+// --- Google Cloud (GCP) integration strings ---
+$string['gcpheading'] = 'Google Cloud (GCP)';
+$string['gcpheadingex'] = 'Configure the project and VM where the shared Jitsi server will be deployed.';
+$string['gcpproject'] = 'Project ID';
+$string['gcpprojectex'] = 'Google Cloud project ID (e.g. my-project).';
+$string['gcpzone'] = 'Zone';
+$string['gcpzoneex'] = 'Compute Engine zone (e.g. europe-west1-b).';
+$string['gcpmachinetype'] = 'Machine type';
+$string['gcpmachinetypeex'] = 'Compute Engine machine type (e.g. e2-standard-4).';
+$string['gcpimage'] = 'Base image';
+$string['gcpimageex'] = 'Image to use for the VM (default: Debian 12 family).';
+$string['gcpnetwork'] = 'Network';
+$string['gcpnetworkex'] = 'VPC/network to attach the instance to (e.g. global/networks/default).';
+$string['gcphostname'] = 'Hostname (FQDN)';
+$string['gcphostnameex'] = 'Fully-qualified domain name that will point to the VM (required for Let\'s Encrypt).';
+$string['gcpleemail'] = 'Let\'s Encrypt email';
+$string['gcpleemailex'] = 'Email address used to request the Let\'s Encrypt certificate.';
+$string['gcpstartupscript'] = 'Startup script';
+$string['gcpstartupscriptex'] = 'cloud-init/bash script to install and configure Jitsi on first boot.';
+$string['gcpserviceaccountjsonfile'] = 'Service Account JSON';
+$string['gcpserviceaccountjsonfileex'] = 'Upload the Service Account JSON with permissions to manage Compute Engine.';
+
+// Buttons / actions / notifications for GCP creation.
+$string['creategcpserver'] = 'Create server in Google Cloud';
+$string['gcpapimissing'] = 'Google Cloud PHP library (google/apiclient) not found. Install it to create servers in GCP.';
+$string['gcpsettingsmissing'] = 'Missing GCP settings: {$a}';
+$string['gcpservercreated'] = 'Google Cloud server created: {$a}';
+$string['gcpservercreatefail'] = 'Failed to create Google Cloud server: {$a}';
+$string['gcpoperationerror'] = 'Google Cloud operation error: {$a}';
+$string['gcpoperationtimeout'] = 'Google Cloud operation timed out.';
+
+// Default server selection.
+$string['serversetasdefault'] = 'Server "{$a}" set as default';
+$string['setdefault'] = 'Set as default';
+
+$string['creatingvm'] = 'Creating VM… ({$a})';
+$string['gcpcreatingmodal'] = 'Creating virtual machine in Google Cloud';
+$string['gcpcreatingwait'] = 'Please wait while the virtual machine is being created. This may take a few minutes.';
+$string['gcpcreationerror'] = 'An error occurred while creating the Google Cloud VM: {$a}';
+$string['gcpcreationdone'] = 'Google Cloud VM successfully created: {$a}';

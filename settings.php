@@ -435,16 +435,6 @@ if ($ADMIN->fulltree) {
         )
     );
 
-    $settings->add(
-        new admin_setting_configtextarea(
-            'mod_jitsi/gcp_startup_script',
-            get_string('gcpstartupscript', 'jitsi'),
-            get_string('gcpstartupscriptex', 'jitsi'),
-            '',
-            PARAM_RAW,
-            10, 80
-        )
-    );
 
     $settings->add(
         new admin_setting_configstoredfile(
